@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=HackyBalls
+Type=Application
+Exec=com.endlessm.hackyballs
+StartupNotify=true
+Icon=com.endlessm.hackyballs
+Categories=Game;
+X-Endless-LaunchMaximized=true

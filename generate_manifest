@@ -1,0 +1,55 @@
+#!/bin/bash -e
+
+ARGS=$(getopt -o h \
+  -l "flatpak-branch:,git-branch:,help" \
+  -n "generate_manifest" -- "$@")
+eval set -- "$ARGS"
+
+usage() {
+    cat <<EOF
+Usage: $0 [OPTION]... APP_ID
+Generate flatpak manifest for the given app
+
+  --flatpak-branch          flatpak branch to export it to
+  --git-branch              git branch to use in manifest
+  -h, --help                display this help and exit
+
+EOF
+}
+
+while true; do
+  case "$1" in
+  --flatpak-branch)
+    FLATPAK_BRANCH=$2
+    shift 2
+    ;;
+  --git-branch)
+    GIT_BRANCH=$2
+    shift 2
+    ;;
+  -h|--help)
+    usage
+    exit 0
+    ;;
+  --)
+    shift
+    break
+    ;;
+  esac
+done
+
+if [ $# -lt 1 ]; then
+  echo "No app ID provided" >&2
+  exit 1
+fi
+
+APP_ID=$1
+FLATPAK_BRANCH=${FLATPAK_BRANCH:-master}
+GIT_BRANCH=${GIT_BRANCH:-master}
+
+sed \
+  -e "s|@APP_ID@|${APP_ID}|g" \
+  -e "s|@FLATPAK_BRANCH@|${FLATPAK_BRANCH}|g" \
+  -e "s|@GIT_BRANCH@|${GIT_BRANCH}|g" \
+  manifest.json.in \
+  > ${APP_ID}.json

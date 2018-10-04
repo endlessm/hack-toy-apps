@@ -1,0 +1,32 @@
+{
+  "app-id": "@APP_ID@",
+  "branch": "@FLATPAK_BRANCH@",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "3.30",
+  "sdk": "org.gnome.Sdk",
+  "command": "@APP_ID@",
+  "finish-args": [
+    "--share=ipc",
+    "--socket=x11",
+    "--socket=wayland",
+    "--socket=pulseaudio",
+    "--device=dri",
+    "--own-name=@APP_ID@"
+  ],
+  "modules": [
+    {
+      "name": "toyapp",
+      "buildsystem": "meson",
+      "config-opts": [
+        "-Dapp-id=@APP_ID@"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "path": ".",
+          "branch": "@GIT_BRANCH@"
+        }
+      ]
+    }
+  ]
+}

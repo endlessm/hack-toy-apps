@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 ARGS=$(getopt -o h \
-  -l "flatpak-branch:,git-branch:,help" \
+  -l "flatpak-branch:,git-branch:,jenkins-mode,help" \
   -n "generate_manifest" -- "$@")
 eval set -- "$ARGS"
 
@@ -12,11 +12,13 @@ Generate flatpak manifest for the given app
 
   --flatpak-branch          flatpak branch to export it to
   --git-branch              git branch to use in manifest
+  --jenkins-mode            only substitute app ID
   -h, --help                display this help and exit
 
 EOF
 }
 
+JENKINS_MODE=
 while true; do
   case "$1" in
   --flatpak-branch)
@@ -26,6 +28,10 @@ while true; do
   --git-branch)
     GIT_BRANCH=$2
     shift 2
+    ;;
+  --jenkins-mode)
+    JENKINS_MODE=true
+    shift
     ;;
   -h|--help)
     usage
@@ -47,9 +53,16 @@ APP_ID=$1
 FLATPAK_BRANCH=${FLATPAK_BRANCH:-master}
 GIT_BRANCH=${GIT_BRANCH:-master}
 
-sed \
-  -e "s|@APP_ID@|${APP_ID}|g" \
-  -e "s|@FLATPAK_BRANCH@|${FLATPAK_BRANCH}|g" \
-  -e "s|@GIT_BRANCH@|${GIT_BRANCH}|g" \
-  manifest.json.in \
-  > ${APP_ID}.json
+if [ -n "$JENKINS_MODE" ]; then
+  sed \
+    -e "s|@APP_ID@|${APP_ID}|g" \
+    manifest.json.in \
+    > ${APP_ID}.json.in
+else
+  sed \
+    -e "s|@APP_ID@|${APP_ID}|g" \
+    -e "s|@BRANCH@|${FLATPAK_BRANCH}|g" \
+    -e "s|@GIT_CLONE_BRANCH@|${GIT_BRANCH}|g" \
+    manifest.json.in \
+    > ${APP_ID}.json
+fi

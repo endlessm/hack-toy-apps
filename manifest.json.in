@@ -1,6 +1,6 @@
 {
   "app-id": "@APP_ID@",
-  "branch": "@FLATPAK_BRANCH@",
+  "branch": "@BRANCH@",
   "runtime": "org.gnome.Platform",
   "runtime-version": "3.30",
   "sdk": "org.gnome.Sdk",
@@ -24,7 +24,7 @@
         {
           "type": "git",
           "path": ".",
-          "branch": "@GIT_BRANCH@"
+          "branch": "@GIT_CLONE_BRANCH@"
         }
       ]
     }

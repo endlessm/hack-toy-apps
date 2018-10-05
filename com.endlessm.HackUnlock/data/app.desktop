@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=HackUnlock
+Type=Application
+Exec=com.endlessm.HackUnlock
+StartupNotify=true
+Icon=com.endlessm.HackUnlock
+Categories=Game;
+X-Endless-LaunchMaximized=true

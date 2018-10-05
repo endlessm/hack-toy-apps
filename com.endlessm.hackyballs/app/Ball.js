@@ -4,18 +4,6 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var BALL_MIN_RADIUS 		= 10.0;
-var BALL_MAX_RADIUS 		= 50.0;
-
-var BALL_MIN_GRAVITY 		= 0.0;
-var BALL_MAX_GRAVITY 		= 0.8;
-
-var BALL_MIN_COLLISION 		= 0.01;
-var BALL_MAX_COLLISION 		= 0.2;
-
-var BALL_MIN_AIR_FRICTION 	= 0.0;
-var BALL_MAX_AIR_FRICTION 	= 0.3;
-
 var WALL_SOUND = new Audio( "sounds/wall-bump.wav" ); 
 var WALL_SOUND_THRESHOLD = 1.5;
 
@@ -26,7 +14,6 @@ function Ball()
 	var _position		= new Vector2D();
 	var _grabPosition	= new Vector2D();
 	var _velocity		= new Vector2D();
-	var _hacked			= false;
 	var _grabbed		= false;
 	var _radius			= ZERO;
 	var _leftWall 		= ZERO;
@@ -37,26 +24,11 @@ function Ball()
 	var _airFriction	= ZERO;
 	var _collision 		= ZERO;
 	var _type	 		= 0;
-	var _active			= false;
+	var _usingPhysics	= false;
 
-
-	//--------------------------
-	this.initialize = function()
-    {	
-		_active			= true;
-		_image.src  	= "images/ball_0.png";
-		_gravity 		= BALL_MIN_GRAVITY;
-		_airFriction	= BALL_MIN_AIR_FRICTION;
-		_radius	 		= BALL_MIN_RADIUS;
-		_collision		= BALL_MIN_COLLISION;
-		_position.clear();
-		_velocity.clear();
-    }
-
-
-	//------------------------
-	this.update = function()
-	{	        
+	//----------------------------------
+	this.update = function( deltaTime )
+	{	        	
 		if ( _grabbed )
 		{
 			_position.set( _grabPosition );
@@ -66,9 +38,12 @@ function Ball()
 		}
 		else
 		{
-			this.updatePhysics();
-		}	 
-
+			if ( _usingPhysics )
+			{
+				this.updatePhysics( deltaTime );
+			}	 
+		}
+		
 		//----------------------------------
 		// update wall collisions...
 		//----------------------------------
@@ -76,19 +51,27 @@ function Ball()
 	}
 
 
-	//-------------------------------
-	this.updatePhysics = function()
+	//------------------------------------------
+	this.updatePhysics = function( deltaTime )
 	{
-		//----------------------------
+		//-------------------------------------
 		// ball falls from gravity
-		//----------------------------
-		 _velocity.y += _gravity;
+		//-------------------------------------
+		 _velocity.y += _gravity * deltaTime;
 
 		//--------------------------------------
 		// dampen velocity by air friction
 		//--------------------------------------
-		 _velocity.scale( 1.0 - _airFriction );
-		
+		var friction = _airFriction * deltaTime;		
+		if ( friction < ONE )
+		{
+			 _velocity.scale( ONE - friction );
+		}
+		else
+		{
+			_velocity.clear();
+		}
+				
 		//----------------------------------
 		// update position by velocity...
 		//----------------------------------
@@ -144,42 +127,44 @@ function Ball()
 	}
 
 
-	//-------------------------------------------------------
+	//---------------------------------------------------------------
 	// get methods
-	//-------------------------------------------------------
-	this.getPosition 	= function() { return _position; 	}
-	this.getVelocity 	= function() { return _velocity; 	}
-	this.getRadius   	= function() { return _radius; 		}
-	this.getGravity 	= function() { return _gravity; 	}
-	this.getAirFriction	= function() { return _airFriction; }
-	this.getCollision	= function() { return _collision; 	}
-	this.getGrabbed  	= function() { return _grabbed; 	}
-	this.getType  		= function() { return _type; 		}
-	this.getActive		= function() { return _active; 		}
+	//---------------------------------------------------------------
+	this.getPosition 		= function() { return _position; 		}
+	this.getVelocity 		= function() { return _velocity; 		}
+	this.getRadius   		= function() { return _radius; 			}
+	this.getGravity 		= function() { return _gravity; 		}
+	this.getAirFriction		= function() { return _airFriction; 	}
+	this.getCollision		= function() { return _collision; 		}
+	this.getUsingPhysics	= function() { return _usingPhysics;	}
+	this.getGrabbed  		= function() { return _grabbed; 		}
+	this.getType  			= function() { return _type; 			}
 
-	//-------------------------------------------------------
+	//---------------------------------------------------------------
 	// set methods
-	//-------------------------------------------------------
-	this.setPosition 	= function(p) { _position.set(p);	}
-	this.setPosition 	= function(p) { _position.set(p);	}
-	this.setVelocity 	= function(v) { _velocity.set(v);	}
-	this.setRadius 		= function(r) { _radius  	 = r;	}
-	this.setGravity 	= function(g) { _gravity 	 = g;	}
-	this.setAirFriction	= function(a) { _airFriction = a;	}
-	this.setCollision	= function(c) { _collision	 = c;	}
+	//---------------------------------------------------------------
+	this.setPosition 		= function(p) { _position.set(p);		}
+	this.setVelocity 		= function(v) { _velocity.set(v);		}
+	this.setRadius 			= function(r) { _radius  	 	= r;	}
+	this.setGravity 		= function(g) { _gravity 	 	= g;	}
+	this.setAirFriction		= function(a) { _airFriction 	= a;	}
+	this.setCollision		= function(c) { _collision	 	= c;	}
+	this.setUsingPhysics	= function(p) { _usingPhysics	= p; 	}
 
 	//-------------------------------------------------------
-	this.addVelocity 	= function(v) { _velocity.add(v);	}
+	this.addVelocity   = function(v) { _velocity.add(v);	}
+	this.scaleVelocity = function(s) { _velocity.scale(s);	}
 
 	//-------------------------
 	this.setType = function(t) 
 	{ 
-		_image.src = "images/ball_0.png"; 
-		
 		_type = t;	
+	}
 
-			 if ( _type == 1 ) { _image.src = "images/ball_1.png"; }
-		else if ( _type == 2 ) { _image.src = "images/ball_2.png"; }
+	//-------------------------------
+	this.setImageID = function( id ) 
+	{ 
+		_image.src = "images/ball_" + id + ".png"; 
 	}
 
 	//---------------------------------------------------
@@ -189,23 +174,6 @@ function Ball()
 		_rightWall 	= right;
 		_bottomWall = bottom;
 		_topWall	= top;
-	}
-
-	//----------------------------
-	this.setHacked = function(h) 
-	{ 
-		_hacked = h;		
-	
-		/*
-		if ( _hacked )
-		{
-			_image.src = "images/ball_hacked.png";
-		}
-		else 
-		{
-			_image.src = "images/ball_1.png";
-		}
-		*/
 	}
 
 	//------------------------------------
@@ -219,13 +187,6 @@ function Ball()
 	{
 		_grabbed = true;	 
 		_grabPosition.set(p);
-	}
-
-
-	//--------------------------
-	this.setActive = function(a)
-	{
-		_active = a;
 	}
 
 	//------------------------

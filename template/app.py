@@ -52,6 +52,7 @@ class Application(Gtk.Application):
         self._window = builder.get_object('app_window')
         self._window.set_application(self)
         self._window.set_title(self._get_app_name())
+        self._window.maximize()
         self._window.show_all()
 
     def _setup_actions(self):

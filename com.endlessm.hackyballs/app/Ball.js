@@ -7,6 +7,8 @@ var canvas = canvasID.getContext( '2d' );
 var WALL_SOUND = new Audio( "sounds/wall-bump.wav" ); 
 var WALL_SOUND_THRESHOLD = 1.5;
 
+//thingypoo
+
 //---------------
 function Ball()
 {	

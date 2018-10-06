@@ -563,7 +563,7 @@ function HackyBalls()
 		//----------------------------------------------------------------
 		else if ( presetID == 2 )
 		{
-			globalParameters.backgroundImageIndex = 4;
+			globalParameters.backgroundImageIndex = 3;
 
 			globalParameters.radius_0 			= 100.0;
 			globalParameters.gravity_0 			= 0.0;

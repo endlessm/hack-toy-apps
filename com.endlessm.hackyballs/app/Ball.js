@@ -166,7 +166,7 @@ function Ball()
 	//-------------------------------
 	this.setImageID = function( id ) 
 	{ 
-		_image.src = "images/ball_" + id + ".png"; 
+		_image.src = "images/ball-" + id + ".png"; 
 	}
 
 	//---------------------------------------------------

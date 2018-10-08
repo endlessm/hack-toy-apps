@@ -85,23 +85,21 @@ var globalParameters =
 }
 
 
-
+//------------------------------------------------------------------
+// The object gameState contains all the dynamic data pertaining 
+// to the number species-to-species collisions per gameSate period
+//------------------------------------------------------------------
 var gameState = 
 {
-	numCollisions_0_0	:  0,
-	numCollisions_0_1	:  0,
-	numCollisions_0_2	:  0,
-	
-	numCollisions_1_0	:  0,
-	numCollisions_1_1	:  0,
-	numCollisions_1_2	:  0,
-	
-	numCollisions_2_0	:  0,
-	numCollisions_2_1	:  0,
-	numCollisions_2_2	:  0,
+	running				: false,
+	success				: false,
+	clock  				: 0,
+	period  			: 0,
+	collisionSpecies1	: 0,
+	collisionSpecies2	: 0,
+	numCollisionsGoal  	: 0,
+	numCollisions		: 0
 }
-
-
 
 
 //----------------------
@@ -149,7 +147,7 @@ function HackyBalls()
 	var MOVE_FLING_SOUND	= new Audio( "sounds/move-fling.wav"	); 
 	var SUCCESS_SOUND		= new Audio( "sounds/success.wav"		); 
 
-
+	
 	//--------------------
 	function Species()
 	{	
@@ -248,6 +246,7 @@ function HackyBalls()
 	var _logo				= new Image();
 	var _cursor				= new Image();
 	var _success			= new Image();
+	var _gameStateInfo		= new Image();
 	var _balls 				= new Array();
 	var _toolButtons 		= new Array( NUM_TOOLS );
 	var _deathAnimation		= new DeathAnimation();
@@ -267,8 +266,6 @@ function HackyBalls()
 	var _startTime			= ZERO;
 	var _useAudio			= false;
 	var _deleteImage 		= new Image();
-
-
 
 	//--------------------------
 	this.initialize = function()
@@ -310,6 +307,7 @@ function HackyBalls()
 		_background.src 	= "images/background-0.png";
 		_flinger.image.src	= "images/flinger.png";
 		_deleteImage.src 	= "images/delete-ball.png";	
+		_gameStateInfo.src 	= "images/game-state-info.png";	
 
 		//-------------------------------------------------------
 		// set all hack parameters and balls to default state
@@ -377,7 +375,7 @@ function HackyBalls()
 		_deathAnimation.radius		= ZERO;
 		_deathAnimation.duration   	= 20;
 		_deathAnimation.image.src 	= "images/death-0.png";	
-		
+				
 		//------------------------------------------------------------------------
 		// start up the timer
 		//------------------------------------------------------------------------
@@ -386,6 +384,7 @@ function HackyBalls()
 		// this forces the frame rate to be same as browser		
 		window.requestAnimationFrame( this.update.bind(this) );				
     }
+
 
 
 
@@ -641,8 +640,8 @@ function HackyBalls()
 
 			globalParameters.radius_0 			= 50.0;
 			globalParameters.gravity_0 			= 0.0;
-			globalParameters.collision_0 		= 0.0;
-			globalParameters.friction_0 		= 0.0;
+			globalParameters.collision_0 		= 0.2;
+			globalParameters.friction_0 		= 0.05;
 			globalParameters.usePhysics_0 		= true;
 			globalParameters.imageIndex_0		= 4;
 			globalParameters.socialForce_0_0 	= 0.0;
@@ -656,12 +655,12 @@ function HackyBalls()
 			globalParameters.deathEffect_0_2	= 0;
 
 			// parameters for species 1 balls
-			globalParameters.radius_1 			= 10.0;
+			globalParameters.radius_1 			= 50.0;
 			globalParameters.gravity_1 			= 0.0;
 			globalParameters.collision_1 		= 0.2;
-			globalParameters.friction_1 		= 0.1;
+			globalParameters.friction_1 		= 0.05;
 			globalParameters.usePhysics_1 		= true;
-			globalParameters.imageIndex_1		= 4;
+			globalParameters.imageIndex_1		= 5;
 			globalParameters.socialForce_1_0 	=  0.0;
 			globalParameters.socialForce_1_1 	=  0.0;
 			globalParameters.socialForce_1_2 	=  0.0;
@@ -699,6 +698,18 @@ function HackyBalls()
 			var velocity = new Vector2D();
 			velocity.setXY( 6.0, 7.0 );			
 			_balls[0].setVelocity( velocity );
+			
+			this.createBall( 1000, 250, 1 );					
+			this.createBall( 1060, 350, 1 );	
+			
+			//------------------------------------------------------------------------
+			// set up the game state to detect collisions between species...
+			//------------------------------------------------------------------------
+			var period 	 = 1;
+			var species1 = 0; 
+			var species2 = 1;
+			var numCollisions = 8;
+			this.initializeGameState( period, species1, species2, numCollisions );							
 		}
 		
 		//---------------------------------------------
@@ -800,6 +811,11 @@ function HackyBalls()
 			this.updateBall( b, deltaTime );
 		}
 		
+		//-----------------------
+		// update game state
+		//-----------------------
+		this.updateGameState();
+			
 		//-----------------------------
 		// update flinger
 		//-----------------------------
@@ -839,7 +855,51 @@ function HackyBalls()
 	} 
 
 
+	//---------------------------------------------------------------------------------
+	this.initializeGameState = function( period, species1, species2, numCollisions )
+	{		
+		gameState.period 			= period;
+		gameState.collisionSpecies1 = species1;
+		gameState.collisionSpecies2 = species2;
+		gameState.numCollisionsGoal = numCollisions;
+		gameState.running			= true;
+		gameState.success			= false;
+		gameState.clock 			= 0;
+		gameState.numCollisions		= 0;
+	}
 
+
+	//--------------------------------
+	this.updateGameState = function()
+	{
+		if ( gameState.running )
+		{
+			gameState.clock ++;
+		
+			if ( gameState.success )
+			{
+				if ( gameState.clock > 100 )
+				{
+					gameState.running = false
+				}
+			}
+			else
+			{
+				if ( gameState.clock > gameState.period )
+				{
+					if ( gameState.numCollisions >= gameState.numCollisionsGoal )
+					{
+						gameState.success = true;	
+						if ( _useAudio ) { SUCCESS_SOUND.play(); }		
+					}
+		
+					gameState.clock = 0;
+					gameState.numCollisions	= 0;			
+				}
+			}
+		}		
+	}
+	
 
 	//------------------------------------------
 	this.updateBall = function( b, deltaTime )
@@ -938,12 +998,21 @@ function HackyBalls()
 
 						if ( distance < collisionDistance )
 						{	
+							//--------------------------------------------					
+							// accumulate game state numCollisions 		
+							//--------------------------------------------					
+							if ((( gameState.collisionSpecies1 == bSpecies ) && ( gameState.collisionSpecies2 == oSpecies ))
+							||  (( gameState.collisionSpecies1 == oSpecies ) && ( gameState.collisionSpecies2 == bSpecies )))
+							{
+								gameState.numCollisions ++;
+							}
+												
 							if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
 							{
 								this.killBallFromCollision( b, oSpecies );								
 							}
 							else
-							{			
+							{
 								//--------------------------------------------					
 								// apply collision force 		
 								//--------------------------------------------					
@@ -1113,6 +1182,23 @@ function HackyBalls()
 		{
 			_hackyBallsGUI.render();
 		}		
+		
+		//---------------------------------
+		// show game state success screen
+		//---------------------------------
+		if (( gameState.running )
+		&&  ( gameState.success ))
+		{
+			var width  = 300;
+			var height = 200;
+			canvas.drawImage
+			( 
+				_gameStateInfo, 
+				WINDOW_WIDTH  * ONE_HALF - width * ONE_HALF, 
+				WINDOW_HEIGHT * ONE_HALF - height * ONE_HALF, 
+				width, height
+			);		
+		}
 	}
 	
 

@@ -4,7 +4,7 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var USING_TEST_GUI = true;
+var USING_TEST_GUI = false;
 var CANVAS_PIXEL_OFFSET = 8; // this is a tad hacky, but it fixes the problem of the canvas being offset a bit. 
 
 var WINDOW_WIDTH  = canvasID.width;

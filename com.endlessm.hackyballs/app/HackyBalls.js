@@ -114,6 +114,7 @@ function HackyBalls()
 	var FLINGER_FLING_DURATION		= 30;
 	var FLINGER_HANDLE_SIZE			= 19.0;
 	var FLINGER_SIZE	 			= 50.0;
+	var FLINGER_MIN_RADIUS			= 60.0;
 	
 	var CURSOR_SIZE					= 40.0;
 	var NUM_BALL_SPECIES 			= 3;
@@ -213,6 +214,46 @@ function HackyBalls()
 			_flinger.handlePosition.add( _flinger.handleVelocity );
 		}		
 	}
+
+
+
+
+
+var MAX_NUMBER = 10;
+
+function Partition()
+{
+	this.valid = false;
+	this.part = new Array( MAX_NUMBER );
+	
+	for (var p=0; p<MAX_NUMBER; p++)
+	{
+		this.part[p] = 0;
+	}
+}	
+
+var _partitions = new Array( NUM_BALL_SPECIES );
+
+//-----------------------------------
+// set up the array of partitions
+//-----------------------------------
+for (var p=0; p<NUM_BALL_SPECIES; p++)
+{
+	_partitions[p] = new Partition();
+}
+
+for (var p=0; p<NUM_BALL_SPECIES; p++)
+{
+	_partitions[p].valid = false;
+	
+	for (var d=0; d<MAX_NUMBER; d++)
+	{	    
+		_partitions[p].part[d] = 0;
+	}        
+}  
+
+
+
 
 
 	//-------------------------
@@ -562,7 +603,7 @@ function HackyBalls()
 		//----------------------------------------------------------------
 		else if ( presetID == 2 )
 		{
-			globalParameters.backgroundImageIndex = 3;
+			globalParameters.backgroundImageIndex = 1;
 
 			globalParameters.radius_0 			= 100.0;
 			globalParameters.gravity_0 			= 0.0;
@@ -890,7 +931,7 @@ function HackyBalls()
 					if ( gameState.numCollisions >= gameState.numCollisionsGoal )
 					{
 						gameState.success = true;	
-						if ( _useAudio ) { SUCCESS_SOUND.play(); }		
+						//if ( _useAudio ) { SUCCESS_SOUND.play(); }		
 					}
 		
 					gameState.clock = 0;
@@ -1005,6 +1046,8 @@ function HackyBalls()
 							||  (( gameState.collisionSpecies1 == oSpecies ) && ( gameState.collisionSpecies2 == bSpecies )))
 							{
 								gameState.numCollisions ++;
+								
+								//collision[ bSpecies ].otherSpecies[c] = 
 							}
 												
 							if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
@@ -1183,6 +1226,7 @@ function HackyBalls()
 			_hackyBallsGUI.render();
 		}		
 		
+		/*
 		//---------------------------------
 		// show game state success screen
 		//---------------------------------
@@ -1199,6 +1243,7 @@ function HackyBalls()
 				width, height
 			);		
 		}
+		*/
 	}
 	
 
@@ -1303,7 +1348,6 @@ function HackyBalls()
 		canvas.fill();
 		canvas.closePath();	
 		
-	
 		//-----------------------------------
 		// show slingshot harness
 		//-----------------------------------
@@ -1312,10 +1356,16 @@ function HackyBalls()
 			_balls[ _flinger.ballIndex ].getPosition().x - xx - yy, 
 			_balls[ _flinger.ballIndex ].getPosition().y - yy + xx 
 		);
+		
+		var flingerRadius = radius * 2.0;
+		//if ( flingerRadius < FLINGER_MIN_RADIUS ) 
+		//{
+		//	flingerRadius = FLINGER_MIN_RADIUS;
+		//}
 	
 		var angle = -Math.PI * ONE_HALF + Math.atan2( yy, xx ); 
 		canvas.rotate( angle );	
-		canvas.scale( radius * 2.0, radius * 2.0 );
+		canvas.scale( flingerRadius, flingerRadius );
 		canvas.drawImage( _flinger.image, ZERO, ZERO, ONE, ONE );
 		canvas.resetTransform();
 	}

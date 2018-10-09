@@ -122,7 +122,7 @@ function HackyBalls()
 	var MAX_BALLS					= 100;
 	var INTERACTION_RADIUS 			= 200.0;
 	var MILLISECONDS_PER_UPDATE 	= 10;
-	var COLLISION_DISTANCE_FUDGE 	= 5;
+	var COLLISION_DISTANCE_FUDGE 	= 10;
 
 	var MAX_COLLISION_BALLS 		= 10;
 	var GAME_SUCCESS_DISPLAY_DURATION = 100;
@@ -674,7 +674,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 			this.createBall( WINDOW_WIDTH * ONE_HALF, WINDOW_HEIGHT * ONE_HALF, 1 );
 			
-			var num = 8;
+			var num = 5;
 			for (var i=0; i<num; i++)
 			{
 				var a = ( i / num ) * PI2;
@@ -691,7 +691,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			var testBall = 0; 			// which ball is being tested? 
 			var period = 3;				// how many time steps are used to run this test? 	
 			var collisionSpecies = 0; 	// which species of balls do we care about for collisions?
-			var numCollisionsGoal = 9; 	// how many unique balls do we want to test for collisions?
+			var numCollisionsGoal = 10; 	// how many unique balls do we want to test for collisions?
 			this.initializeGameState( testBall, period, collisionSpecies, numCollisionsGoal );							
 		}
 		//----------------------------------------------------------------
@@ -917,7 +917,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		gameState.collisionSpecies  = collisionSpecies;
 		gameState.numCollisionsGoal = numCollisionsGoal;
 		gameState.running			= true;
-		gameState.success			= false;
+		gameState.quest1Success		= false;
 		gameState.clock 			= 0;
 		gameState.numCollisions		= 0;
 		
@@ -927,6 +927,29 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		}			
 	}
 
+
+
+	this.isQuest1GoalReached = function()
+	{
+		var type2BallCount = 0;
+		for (var i=0; i<_numBalls; i++)
+		{	
+			if (_balls[i].getType() == 1)
+			{
+				type2BallCount++;
+				if (type2BallCount > 1)
+					return false;
+			}
+		}
+		if (type2BallCount != 1)
+			return false;
+
+	
+		if ( gameState.numCollisions >= gameState.numCollisionsGoal )
+			return true;
+		
+		return false;
+	}
 
 
 	//--------------------------------
@@ -960,7 +983,13 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			}
 
 			gameState.clock ++;
-			
+
+
+			if (!gameState.quest1Success)
+			{
+				gameState.quest1Success = this.isQuest1GoalReached();
+			}
+			/*
 			if ( gameState.success ) 
 			{
 				if ( gameState.clock > GAME_SUCCESS_DISPLAY_DURATION )
@@ -970,6 +999,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			}
 			else
 			{
+				gameState.quest1Success = this.isQuest1GoalReached();
+
+
 				//----------------------------------
 				// game goal reached! :)
 				//----------------------------------
@@ -983,16 +1015,17 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 				// periodically clear out the collisions array and start over.
 				// this test refers to a limited time span, defined by gameState.period
 				//------------------------------------------------------------------------------------
-				if ( gameState.clock > gameState.period )
-				{
-					gameState.clock = 0;
-					gameState.numCollisions	= 0;	
-					
-					for (var c=0; c<gameState.numCollisionsGoal; c++)
-					{							
-						_collisionBalls[c] = NULL_BALL;
-					}	
-				}		
+			}
+			*/
+			if ( gameState.clock > gameState.period )
+			{
+				gameState.clock = 0;
+				gameState.numCollisions	= 0;	
+				
+				for (var c=0; c<gameState.numCollisionsGoal; c++)
+				{							
+					_collisionBalls[c] = NULL_BALL;
+				}	
 			}
 		}		
 	}
@@ -1306,7 +1339,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		// show game state success screen
 		//---------------------------------
 		if (( gameState.running )
-		&&  ( gameState.success ))
+		&&  ( gameState.quest1Success ))
 		{
 			var width  = 300;
 			var height = 200;
@@ -1797,4 +1830,3 @@ document.onkeydown = function(e)
     if ( e.keyCode === 32 ) { hackyBalls.spaceKeyPressed();  }
     if ( e.keyCode ===  8 ) { hackyBalls.deleteKeyPressed(); }
 }
-

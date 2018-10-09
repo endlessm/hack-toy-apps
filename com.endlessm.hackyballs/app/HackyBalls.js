@@ -122,8 +122,8 @@ function HackyBalls()
 	var MAX_BALLS					= 100;
 	var INTERACTION_RADIUS 			= 200.0;
 	var MILLISECONDS_PER_UPDATE 	= 10;
-	var COLLISION_DISTANCE_SCALAR 	= 0.86;
-	
+	var COLLISION_DISTANCE_FUDGE 	= 5;
+
 	var MAX_COLLISION_BALLS 		= 10;
 	var GAME_SUCCESS_DISPLAY_DURATION = 100;
 
@@ -618,12 +618,12 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			globalParameters.backgroundImageIndex = 0;
 
 			globalParameters.radius_0 			= 30.0;
-			globalParameters.gravity_0 			= 0.0;
+			globalParameters.gravity_0 			= 100.0;
 			globalParameters.collision_0 		= 0.2;
-			globalParameters.friction_0 		= 10.0;
+			globalParameters.friction_0 		= 1.0;
 			globalParameters.usePhysics_0 		= true;
 			globalParameters.imageIndex_0		= 0;
-			globalParameters.socialForce_0_0 	= -10.0;
+			globalParameters.socialForce_0_0 	= 0.0;
 			globalParameters.socialForce_0_1 	= 0.0;
 			globalParameters.socialForce_0_2 	= 0.0;
 			globalParameters.touchDeath_0_0 	= false;
@@ -635,9 +635,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 			// parameters for species 1 balls
 			globalParameters.radius_1 			= 50.0;
-			globalParameters.gravity_1 			= 0.0;
+			globalParameters.gravity_1 			= 100.0;
 			globalParameters.collision_1 		= 0.2;
-			globalParameters.friction_1 		= 2.0;
+			globalParameters.friction_1 		= 1.0;
 			globalParameters.usePhysics_1 		= true;
 			globalParameters.imageIndex_1		= 1;
 			globalParameters.socialForce_1_0 	=  0.0;
@@ -1093,7 +1093,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 						//-----------------------------------------------------------------------------------------------------
 						// collisions
 						//-----------------------------------------------------------------------------------------------------
-						var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) * COLLISION_DISTANCE_SCALAR;
+						var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) - COLLISION_DISTANCE_FUDGE;
 
 						if ( distance < collisionDistance )
 						{

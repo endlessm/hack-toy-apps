@@ -284,7 +284,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _flinger			= new Flinger();
 	var _species			= new Array( NUM_BALL_SPECIES );
 	var _background			= new Image();
-	var _logo				= new Image();
 	var _cursor				= new Image();
 	var _success			= new Image();
 	var _gameStateInfo		= new Image();
@@ -343,7 +342,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//--------------------------------------
 		// grab images
 		//--------------------------------------
-		_logo.src 			= "images/logo.png";
 		_cursor.src 		= "images/move-tool-selected.png";
 		_background.src 	= "images/background-0.png";
 		_flinger.image.src	= "images/flinger.png";
@@ -1157,11 +1155,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//-------------------------------------------
 		canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
 
-		//----------------
-		// show info 
-		//----------------
-		this.showInfo();
-		
 		//-------------------------
 		// show tools
 		//-------------------------
@@ -1246,20 +1239,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		*/
 	}
 	
-
-	//-------------------------
-	this.showInfo = function()
-	{		
-		canvas.drawImage( _logo, 10, 10, 50, 20 );
-
-		//-------------------------------------------
-		// title and instructions
-		//-------------------------------------------
-		canvas.font = '16px sans-serif';
-		canvas.fillStyle = "rgb( 220, 210, 200 )";		
-		canvas.fillText( "HackyBalls", 10, 50 );
-	}
-
 
 	//----------------------------
 	this.showFlinger = function()

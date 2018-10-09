@@ -92,7 +92,7 @@ var globalParameters =
 var gameState = 
 {
 	running				: false,
-	success				: false,
+	quest1Success		: false,
 	clock  				: 0,
 	period  			: 0,
 	testBall			: 0,
@@ -688,11 +688,10 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			//------------------------------------------------------------------------
 			// set up the game state to detect collisions between species...
 			//------------------------------------------------------------------------
-			var testBall = 0; 			// which ball is being tested? 
-			var period = 3;				// how many time steps are used to run this test? 	
+			var period = 5;				// how many time steps are used to run this test? 	
 			var collisionSpecies = 0; 	// which species of balls do we care about for collisions?
 			var numCollisionsGoal = 10; 	// how many unique balls do we want to test for collisions?
-			this.initializeGameState( testBall, period, collisionSpecies, numCollisionsGoal );							
+			this.initializeGameState( period, collisionSpecies, numCollisionsGoal );							
 		}
 		//----------------------------------------------------------------
 		// Game 4  
@@ -842,6 +841,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//------------------------------------
 		this.applyParameters();
 		
+		//-----------------------
+		// update game logic
+		//-----------------------
+		this.updateGameLogic();
+		
 		//----------------------------------------------------
 		// get seconds since started, and derive deltaTime...
 		//----------------------------------------------------
@@ -865,11 +869,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			this.updateBall( b, deltaTime );
 		}
 		
-		//-----------------------
-		// update game logic
-		//-----------------------
-		this.updateGameLogic();
-			
 		//-----------------------------
 		// update flinger
 		//-----------------------------
@@ -910,9 +909,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 
 	//-------------------------------------------------------------------------------------------
-	this.initializeGameState = function( testBall, period, collisionSpecies, numCollisionsGoal )
+	this.initializeGameState = function( period, collisionSpecies, numCollisionsGoal )
 	{				
-		gameState.testBall 			= testBall;
+		gameState.testBall 			= NULL_BALL;
 		gameState.period 			= period;
 		gameState.collisionSpecies  = collisionSpecies;
 		gameState.numCollisionsGoal = numCollisionsGoal;
@@ -943,7 +942,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		}
 		if (type2BallCount != 1)
 			return false;
-
 	
 		if ( gameState.numCollisions >= gameState.numCollisionsGoal )
 			return true;
@@ -983,6 +981,16 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			}
 
 			gameState.clock ++;
+
+			gameState.testBall = NULL_BALL;
+			for (var i=0; i<_numBalls; i++)
+			{	
+				if (_balls[i].getType() == 1)
+				{
+					gameState.testBall = i;
+					break;
+				}
+			}
 
 
 			if (!gameState.quest1Success)
@@ -1335,6 +1343,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			_hackyBallsGUI.render();
 		}		
 		
+		/*
 		//---------------------------------
 		// show game state success screen
 		//---------------------------------
@@ -1351,6 +1360,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 				width, height
 			);		
 		}
+		*/
 	}
 	
 

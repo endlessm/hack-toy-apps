@@ -1,5 +1,4 @@
-﻿
-var canvasID = document.getElementById( 'canvas' );
+﻿var canvasID = document.getElementById( 'canvas' );
 var canvas = canvasID.getContext( '2d' );
 
 "use strict";
@@ -28,10 +27,13 @@ var globalParameters =
 	maxFriction		:  18.0,
 	minSocialForce	: -30.0,
 	maxSocialForce	:  30.0,
-	preset 			: -1,
-	
+
 	// index of background image
 	backgroundImageIndex: 0,
+
+	// Communication with Clubhouse
+	preset 			: 0,
+	quest1Success   : false,
 
 	// parameters for species 0 balls
 	radius_0 		: ZERO,
@@ -93,7 +95,6 @@ var globalParameters =
 var gameState = 
 {
 	running				: false,
-	quest1Success		: false,
 	clock  				: 0,
 	period  			: 0,
 	testBall			: 0,
@@ -836,10 +837,10 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	//-----------------------
 	this.update = function()
 	{	   
-		if (globalParameters.preset != -1)
+		if (globalParameters.preset != 0)
 		{
-			this.setStateToPreset(globalParameters.preset);
-			globalParameters.preset = -1;
+			this.setStateToPreset(globalParameters.preset-1);
+			globalParameters.preset = 0;
 		}
 
 		//------------------------------------
@@ -923,10 +924,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		gameState.collisionSpecies  = collisionSpecies;
 		gameState.numCollisionsGoal = numCollisionsGoal;
 		gameState.running			= true;
-		gameState.quest1Success		= false;
 		gameState.clock 			= 0;
 		gameState.numCollisions		= 0;
-		
+
+		globalParameters.quest1Success = false;
+
 		for (var c=0; c<gameState.numCollisionsGoal; c++)
 		{							
 			_collisionBalls[c] = NULL_BALL;
@@ -1002,7 +1004,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 			if (!gameState.quest1Success)
 			{
-				gameState.quest1Success = this.isQuest1GoalReached();
+				globalParameters.quest1Success = this.isQuest1GoalReached();
 			}
 			/*
 			if ( gameState.success ) 

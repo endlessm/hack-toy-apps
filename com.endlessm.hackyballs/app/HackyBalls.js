@@ -3,7 +3,7 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var USING_TEST_GUI = false;
+var USING_TEST_GUI = true;
 var CANVAS_PIXEL_OFFSET = 8; // this is a tad hacky, but it fixes the problem of the canvas being offset a bit. 
 
 var WINDOW_WIDTH  = canvasID.width;
@@ -174,7 +174,20 @@ function HackyBalls()
 			this.deathEffect[s] = 0;				
 		}
 	}
+	
 
+	//-----------------------------
+	function SpeciesButtonImages()
+	{	
+		this.ballImage = new Array( NUM_BALL_SPECIES );
+		
+		for (var s=0; s<NUM_BALL_SPECIES; s++)
+		{
+			this.ballImage[s] = new Image();
+		}
+	}
+	
+	
 	//------------------
 	function Flinger()
 	{	
@@ -311,6 +324,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _useAudio			= false;
 	var _deleteImage 		= new Image();
 	var _collisionBalls 	= new Array( MAX_COLLISION_BALLS );
+	var _speciesButtonImages= new SpeciesButtonImages();
 	
 
 	//--------------------------
@@ -410,7 +424,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 		_toolButtons[ TOOL_SPECIES  ].position.setXY( left + size + 3, _toolButtons[ TOOL_CREATE ].position.y );
 		_toolButtons[ TOOL_SPECIES  ].height = size * 2.7;
-		_toolButtons[ TOOL_SPECIES  ].image.src = "images/ball-type-0.png";
+	//_toolButtons[ TOOL_SPECIES  ].image.src = "images/ball-type-0.png";
+	_toolButtons[ TOOL_SPECIES  ].image.src = "images/species-panel.png";
 		_toolButtons[ TOOL_SPECIES  ].visible = false;
 
 		this.selectTool( TOOL_MOVE );
@@ -1341,6 +1356,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 					_toolButtons[t].width, 
 					_toolButtons[t].height 
 				);
+				
+				if ( t == TOOL_SPECIES )
+				{
+					this.showSpeciesButtonImages(t);
+				}
 			}
 		}
 		
@@ -1371,6 +1391,24 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		}
 		*/
 	}
+	
+	
+	
+
+	//---------------------------------
+	this.showSpeciesButtonImages = function(t)
+	{									
+		var rm = _toolButtons[t].width * 0.1;
+		var rr = _toolButtons[t].width * 0.8;
+
+		for (var s=0; s<NUM_BALL_SPECIES; s++)
+		{
+			_speciesButtonImages.ballImage[s].src = "images/ball-" + _species[s].imageID + ".png"	
+			canvas.drawImage( _speciesButtonImages.ballImage[s], _toolButtons[t].position.x + rm, _toolButtons[t].position.y + rm + rr * s, rr, rr );
+		}
+	}
+	
+	
 	
 
 	//----------------------------
@@ -1524,9 +1562,13 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 					var h = ( y - _toolButtons[t].position.y ) / _toolButtons[t].height;
 					_selectedSpecies = Math.floor( h * NUM_BALL_SPECIES );
 					
+					_toolButtons[ TOOL_SPECIES ].image.src = "images/species-panel.png";
+					
+					/*
 					if ( _selectedSpecies == 0 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-0.png"; }
 					if ( _selectedSpecies == 1 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-1.png"; }
 					if ( _selectedSpecies == 2 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-2.png"; }
+					*/
 				}
 				else if ( t != TOOL_SPECIES )
 				{

@@ -28,6 +28,7 @@ var globalParameters =
 	maxFriction		:  18.0,
 	minSocialForce	: -30.0,
 	maxSocialForce	:  30.0,
+	preset 			: -1,
 	
 	// index of background image
 	backgroundImageIndex: 0,
@@ -835,6 +836,12 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	//-----------------------
 	this.update = function()
 	{	   
+		if (globalParameters.preset != -1)
+		{
+			this.setStateToPreset(globalParameters.preset);
+			globalParameters.preset = -1;
+		}
+
 		//------------------------------------
 		// this gets called all the time to 
 		// catch any changes from the UI

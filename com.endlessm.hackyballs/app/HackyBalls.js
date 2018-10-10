@@ -1151,9 +1151,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	this.render = function()
 	{	
 		//-------------------------------------------
-		// show background
+		// clear background
 		//-------------------------------------------
-		canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+		canvas.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		//-------------------------
 		// show tools
@@ -1596,8 +1596,12 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 	//---------------------------------
 	this.applyParameters = function()
-	{	
-		_background.src = "images/background-" + globalParameters.backgroundImageIndex + ".png";
+	{
+		/* NOTE: set background on DOM element instead of drawing it on the canvas to avoid
+		 * performance issues with webkit2gtk, since its canvas implementation scales images
+		 * in software.
+		 */
+		canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')"
 				
 		_species[0].gravity			= globalParameters.gravity_0;
 		_species[0].radius			= globalParameters.radius_0;

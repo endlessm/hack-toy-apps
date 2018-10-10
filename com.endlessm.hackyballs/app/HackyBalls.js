@@ -87,7 +87,7 @@ var globalParameters =
 
 //------------------------------------------------------------------
 // The object gameState contains all the dynamic data pertaining 
-// to the number species-to-species collisions per gameSate period
+// to the species-to-species collisions per gameSate period
 //------------------------------------------------------------------
 var gameState = 
 {
@@ -95,8 +95,8 @@ var gameState =
 	success				: false,
 	clock  				: 0,
 	period  			: 0,
-	collisionSpecies1	: 0,
-	collisionSpecies2	: 0,
+	testBall			: 0,
+	collisionSpecies	: 0,
 	numCollisionsGoal  	: 0,
 	numCollisions		: 0
 }
@@ -216,9 +216,17 @@ function HackyBalls()
 	}
 
 
+	//--------------------
+	function GameLogic()
+	{	
+		this.ballIndex			= 0;
+		this.collisionSpecies	= 0;
+		this.collisions			= new Array();
+	}
 
 
 
+/*
 var MAX_NUMBER = 10;
 
 function Partition()
@@ -251,6 +259,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		_partitions[p].part[d] = 0;
 	}        
 }  
+*/
 
 
 
@@ -292,7 +301,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _deathAnimation		= new DeathAnimation();
 	var _numBalls			= 0;
 	var _hackyBallsGUI 		= new HackyBallsGUI();
-	var _leftWall 			= 90;
+	var _leftWall 			= ZERO;
 	var _topWall 			= ZERO;
 	var _bottomWall 		= WINDOW_HEIGHT;
 	var _rightWall 			= WINDOW_WIDTH;
@@ -306,6 +315,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _startTime			= ZERO;
 	var _useAudio			= false;
 	var _deleteImage 		= new Image();
+	var _gameLogic			= new GameLogic();
 
 	//--------------------------
 	this.initialize = function()
@@ -351,7 +361,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//-------------------------------------------------------
 		// set all hack parameters and balls to default state
 		//-------------------------------------------------------
-		this.setStateToPreset(0);
+//this.setStateToPreset(0);
+this.setStateToPreset(2);
 
 		//---------------------------------------------
 		// initialize user interface with parameters
@@ -601,15 +612,15 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//----------------------------------------------------------------
 		else if ( presetID == 2 )
 		{
-			globalParameters.backgroundImageIndex = 1;
+			globalParameters.backgroundImageIndex = 0;
 
-			globalParameters.radius_0 			= 100.0;
+			globalParameters.radius_0 			= 30.0;
 			globalParameters.gravity_0 			= 0.0;
-			globalParameters.collision_0 		= 0.0;
-			globalParameters.friction_0 		= 0.0;
-			globalParameters.usePhysics_0 		= false;
-			globalParameters.imageIndex_0		= 3;
-			globalParameters.socialForce_0_0 	= 0.0;
+			globalParameters.collision_0 		= 0.2;
+			globalParameters.friction_0 		= 10.0;
+			globalParameters.usePhysics_0 		= true;
+			globalParameters.imageIndex_0		= 0;
+			globalParameters.socialForce_0_0 	= -10.0;
 			globalParameters.socialForce_0_1 	= 0.0;
 			globalParameters.socialForce_0_2 	= 0.0;
 			globalParameters.touchDeath_0_0 	= false;
@@ -620,14 +631,14 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			globalParameters.deathEffect_0_2	= 0;
 
 			// parameters for species 1 balls
-			globalParameters.radius_1 			= 10.0;
+			globalParameters.radius_1 			= 50.0;
 			globalParameters.gravity_1 			= 0.0;
 			globalParameters.collision_1 		= 0.2;
 			globalParameters.friction_1 		= 2.0;
 			globalParameters.usePhysics_1 		= true;
-			globalParameters.imageIndex_1		= 4;
-			globalParameters.socialForce_1_0 	= -5.0;
-			globalParameters.socialForce_1_1 	=  0.1;
+			globalParameters.imageIndex_1		= 1;
+			globalParameters.socialForce_1_0 	=  0.0;
+			globalParameters.socialForce_1_1 	=  0.0;
 			globalParameters.socialForce_1_2 	=  0.0;
 			globalParameters.touchDeath_1_0 	= false;
 			globalParameters.touchDeath_1_1 	= false;
@@ -658,16 +669,16 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			//----------------------------
 			this.applyParameters();
 
-			this.createBall( WINDOW_WIDTH * ONE_HALF, WINDOW_HEIGHT * ONE_HALF, 0 );
+			this.createBall( WINDOW_WIDTH * ONE_HALF, WINDOW_HEIGHT * ONE_HALF, 1 );
 			
-			var num = 90;
+			var num = 8;
 			for (var i=0; i<num; i++)
 			{
 				var a = ( i / num ) * PI2;
-				var r = 150.0 + 20.0 * Math.sin( a * 10.0 );
+				var r = 150.0 + 30.0 * Math.random();
 				var x = WINDOW_WIDTH  * ONE_HALF + r * Math.sin(a);
 				var y = WINDOW_HEIGHT * ONE_HALF + r * Math.cos(a);
-				this.createBall( x, y, 1 );
+				this.createBall( x, y, 0 );
 			}
 		}
 		//----------------------------------------------------------------
@@ -744,11 +755,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			//------------------------------------------------------------------------
 			// set up the game state to detect collisions between species...
 			//------------------------------------------------------------------------
-			var period 	 = 1;
-			var species1 = 0; 
-			var species2 = 1;
-			var numCollisions = 8;
-			this.initializeGameState( period, species1, species2, numCollisions );							
+			var testBall = 0; 	// which ball is being tested? 
+			var period = 2;		// how many time steps are used to run this test? 	
+			var collisionSpecies = 1; // which species of balls do we care about for collisions?
+			var numCollisionsGoal = 8; // how many unique balls do we want to test for collisions?
+			this.initializeGameState( testBall, period, collisionSpecies, numCollisionsGoal );							
 		}
 		
 		//---------------------------------------------
@@ -851,9 +862,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		}
 		
 		//-----------------------
-		// update game state
+		// update game logic
 		//-----------------------
-		this.updateGameState();
+		this.updateGameLogic();
 			
 		//-----------------------------
 		// update flinger
@@ -894,13 +905,13 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	} 
 
 
-	//---------------------------------------------------------------------------------
-	this.initializeGameState = function( period, species1, species2, numCollisions )
-	{		
+	//------------------------------------------------------------------------------------------
+	this.initializeGameState = function( testBall, period, collisionSpecies, numCollisionsGoal )
+	{				
+		gameState.testBall 			= testBall;
 		gameState.period 			= period;
-		gameState.collisionSpecies1 = species1;
-		gameState.collisionSpecies2 = species2;
-		gameState.numCollisionsGoal = numCollisions;
+		gameState.collisionSpecies  = collisionSpecies;
+		gameState.numCollisionsGoal = numCollisionsGoal;
 		gameState.running			= true;
 		gameState.success			= false;
 		gameState.clock 			= 0;
@@ -908,9 +919,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	}
 
 
+
 	//--------------------------------
-	this.updateGameState = function()
+	this.updateGameLogic = function()
 	{
+		/*
 		if ( gameState.running )
 		{
 			gameState.clock ++;
@@ -937,6 +950,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 				}
 			}
 		}		
+		*/
 	}
 	
 
@@ -1036,10 +1050,23 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 						var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) * COLLISION_DISTANCE_SCALAR;
 
 						if ( distance < collisionDistance )
-						{	
+						{
 							//--------------------------------------------					
-							// accumulate game state numCollisions 		
+							// accumulate game state collision info	
 							//--------------------------------------------					
+							if ( b == gameState.testBall )
+							{
+								console.log( gameState.testBall );
+								if ( oSpecies == gameState.collisionSpecies )
+								{
+									for (var c=0; c<gameState.numCollisionsGoal; c++)
+									{
+										
+									}
+								}
+							}
+							
+							/*
 							if ((( gameState.collisionSpecies1 == bSpecies ) && ( gameState.collisionSpecies2 == oSpecies ))
 							||  (( gameState.collisionSpecies1 == oSpecies ) && ( gameState.collisionSpecies2 == bSpecies )))
 							{
@@ -1047,7 +1074,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 								
 								//collision[ bSpecies ].otherSpecies[c] = 
 							}
-												
+							*/
+							
 							if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
 							{
 								this.killBallFromCollision( b, oSpecies );								
@@ -1154,24 +1182,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		// show background
 		//-------------------------------------------
 		canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
-
-		//-------------------------
-		// show tools
-		//-------------------------
-		for (var t=0; t<NUM_TOOLS; t++)
-		{
-			if ( _toolButtons[t].visible )
-			{
-				canvas.drawImage
-				( 
-					_toolButtons[t].image, 
-					_toolButtons[t].position.x, 
-					_toolButtons[t].position.y, 
-					_toolButtons[t].width, 
-					_toolButtons[t].height 
-				);
-			}
-		}
 		
 		//-----------------------
 		// show the flinger
@@ -1180,7 +1190,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		{		
 			this.showFlinger();
 		}		
-		
 		
 		//-----------------------------------------
 		// show animation from balls being killed
@@ -1209,6 +1218,24 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		for (var b=0; b<_numBalls; b++)
 		{
 			_balls[b].render();
+		}
+		
+		//-------------------------
+		// show tools
+		//-------------------------
+		for (var t=0; t<NUM_TOOLS; t++)
+		{
+			if ( _toolButtons[t].visible )
+			{
+				canvas.drawImage
+				( 
+					_toolButtons[t].image, 
+					_toolButtons[t].position.x, 
+					_toolButtons[t].position.y, 
+					_toolButtons[t].width, 
+					_toolButtons[t].height 
+				);
+			}
 		}
 		
 		//-------------------------

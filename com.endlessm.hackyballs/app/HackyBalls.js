@@ -123,6 +123,9 @@ function HackyBalls()
 	var INTERACTION_RADIUS 			= 200.0;
 	var MILLISECONDS_PER_UPDATE 	= 10;
 	var COLLISION_DISTANCE_SCALAR 	= 0.86;
+	
+	var MAX_COLLISION_BALLS 		= 10;
+	var GAME_SUCCESS_DISPLAY_DURATION = 100;
 
 	var TOOL_MOVE 		=  0;
 	var TOOL_CREATE 	=  1;
@@ -216,16 +219,6 @@ function HackyBalls()
 	}
 
 
-	//--------------------
-	function GameLogic()
-	{	
-		this.ballIndex			= 0;
-		this.collisionSpecies	= 0;
-		this.collisions			= new Array();
-	}
-
-
-
 /*
 var MAX_NUMBER = 10;
 
@@ -315,7 +308,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _startTime			= ZERO;
 	var _useAudio			= false;
 	var _deleteImage 		= new Image();
-	var _gameLogic			= new GameLogic();
+	var _collisionBalls 	= new Array( MAX_COLLISION_BALLS );
+	
 
 	//--------------------------
 	this.initialize = function()
@@ -344,6 +338,15 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			_toolButtons[t] = new ToolButton();
 		}
 		
+		//--------------------------------------
+		// initialize collision ball array  
+		//--------------------------------------
+		for (var c=0; c<MAX_COLLISION_BALLS; c++)
+		{
+			_collisionBalls[c] = NULL_BALL;
+		}
+
+		
 		//----------------------------
 		// get start time
 		//----------------------------
@@ -361,8 +364,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//-------------------------------------------------------
 		// set all hack parameters and balls to default state
 		//-------------------------------------------------------
-//this.setStateToPreset(0);
-this.setStateToPreset(2);
+		this.setStateToPreset(0);
 
 		//---------------------------------------------
 		// initialize user interface with parameters
@@ -441,6 +443,7 @@ this.setStateToPreset(2);
 	//--------------------------------------------
 	this.setStateToPreset = function( presetID )
 	{
+		gameState.running = false;
 		_numBalls = 0;
 				
 		//----------------------------------------------------------------
@@ -675,11 +678,21 @@ this.setStateToPreset(2);
 			for (var i=0; i<num; i++)
 			{
 				var a = ( i / num ) * PI2;
-				var r = 150.0 + 30.0 * Math.random();
+				var r = 150.0 + 130.0 * Math.random();
 				var x = WINDOW_WIDTH  * ONE_HALF + r * Math.sin(a);
 				var y = WINDOW_HEIGHT * ONE_HALF + r * Math.cos(a);
 				this.createBall( x, y, 0 );
 			}
+			
+			
+			//------------------------------------------------------------------------
+			// set up the game state to detect collisions between species...
+			//------------------------------------------------------------------------
+			var testBall = 0; 			// which ball is being tested? 
+			var period = 3;				// how many time steps are used to run this test? 	
+			var collisionSpecies = 0; 	// which species of balls do we care about for collisions?
+			var numCollisionsGoal = 9; 	// how many unique balls do we want to test for collisions?
+			this.initializeGameState( testBall, period, collisionSpecies, numCollisionsGoal );							
 		}
 		//----------------------------------------------------------------
 		// Game 4  
@@ -751,15 +764,6 @@ this.setStateToPreset(2);
 			
 			this.createBall( 1000, 250, 1 );					
 			this.createBall( 1060, 350, 1 );	
-			
-			//------------------------------------------------------------------------
-			// set up the game state to detect collisions between species...
-			//------------------------------------------------------------------------
-			var testBall = 0; 	// which ball is being tested? 
-			var period = 2;		// how many time steps are used to run this test? 	
-			var collisionSpecies = 1; // which species of balls do we care about for collisions?
-			var numCollisionsGoal = 8; // how many unique balls do we want to test for collisions?
-			this.initializeGameState( testBall, period, collisionSpecies, numCollisionsGoal );							
 		}
 		
 		//---------------------------------------------
@@ -905,7 +909,7 @@ this.setStateToPreset(2);
 	} 
 
 
-	//------------------------------------------------------------------------------------------
+	//-------------------------------------------------------------------------------------------
 	this.initializeGameState = function( testBall, period, collisionSpecies, numCollisionsGoal )
 	{				
 		gameState.testBall 			= testBall;
@@ -916,41 +920,81 @@ this.setStateToPreset(2);
 		gameState.success			= false;
 		gameState.clock 			= 0;
 		gameState.numCollisions		= 0;
+		
+		for (var c=0; c<gameState.numCollisionsGoal; c++)
+		{							
+			_collisionBalls[c] = NULL_BALL;
+		}			
 	}
 
 
 
 	//--------------------------------
 	this.updateGameLogic = function()
-	{
-		/*
+	{		
 		if ( gameState.running )
 		{
-			gameState.clock ++;
-		
-			if ( gameState.success )
-			{
-				if ( gameState.clock > 100 )
+			/*
+			console.log( "                                                            " );
+			console.log( "------------------------------------------------------------" );
+			console.log( "gameState.testBall 		  = " + gameState.testBall			);
+			console.log( "gameState.period 			  = " + gameState.period			);
+			console.log( "gameState.collisionSpecies  = " + gameState.collisionSpecies	);
+			console.log( "gameState.numCollisionsGoal = " + gameState.numCollisionsGoal	);
+			console.log( "gameState.running		  	  = " + gameState.running			);
+			console.log( "gameState.success			  = " + gameState.success			);
+			console.log( "gameState.clock 			  = " + gameState.clock				);
+			console.log( "gameState.numCollisions	  = " + gameState.numCollisions		);
+			*/
+			
+			//----------------------------------
+			// collect num collisions
+			//----------------------------------
+			gameState.numCollisions = 0;
+			for (var c=0; c<gameState.numCollisionsGoal; c++)
+			{							
+				if ( _collisionBalls[c] != NULL_BALL )
 				{
-					gameState.running = false
+					gameState.numCollisions ++;
+				}
+			}
+
+			gameState.clock ++;
+			
+			if ( gameState.success ) 
+			{
+				if ( gameState.clock > GAME_SUCCESS_DISPLAY_DURATION )
+				{
+					gameState.running = false;
 				}
 			}
 			else
 			{
+				//----------------------------------
+				// game goal reached! :)
+				//----------------------------------
+				if ( gameState.numCollisions >= gameState.numCollisionsGoal )
+				{
+					gameState.success = true;	
+					if ( _useAudio ) { SUCCESS_SOUND.play(); }		
+				}
+
+				//------------------------------------------------------------------------------------
+				// periodically clear out the collisions array and start over.
+				// this test refers to a limited time span, defined by gameState.period
+				//------------------------------------------------------------------------------------
 				if ( gameState.clock > gameState.period )
 				{
-					if ( gameState.numCollisions >= gameState.numCollisionsGoal )
-					{
-						gameState.success = true;	
-						//if ( _useAudio ) { SUCCESS_SOUND.play(); }		
-					}
-		
 					gameState.clock = 0;
-					gameState.numCollisions	= 0;			
-				}
+					gameState.numCollisions	= 0;	
+					
+					for (var c=0; c<gameState.numCollisionsGoal; c++)
+					{							
+						_collisionBalls[c] = NULL_BALL;
+					}	
+				}		
 			}
 		}		
-		*/
 	}
 	
 
@@ -1018,6 +1062,8 @@ this.setStateToPreset(2);
 			}
 		}
 
+//console.log( "------------------" );
+
 		//-----------------------------
 		// ball-to-ball interactions
 		//-----------------------------
@@ -1044,38 +1090,48 @@ this.setStateToPreset(2);
 						force.scale( _species[ bSpecies ].forces[ oSpecies ] * deltaTime );
 						_balls[b].addVelocity( force );
 					
-						//-----------------------------
+						//-----------------------------------------------------------------------------------------------------
 						// collisions
-						//-----------------------------
+						//-----------------------------------------------------------------------------------------------------
 						var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) * COLLISION_DISTANCE_SCALAR;
 
 						if ( distance < collisionDistance )
 						{
-							//--------------------------------------------					
-							// accumulate game state collision info	
-							//--------------------------------------------					
-							if ( b == gameState.testBall )
-							{
-								console.log( gameState.testBall );
-								if ( oSpecies == gameState.collisionSpecies )
+							//-------------------------------------------------------------
+							// if we are running a game and collecting collision info...	
+							//-------------------------------------------------------------
+							if ( gameState.running )
+							{				
+								//------------------------------------
+								// accumulate collisions that adhere 
+								// to the spcification in game state	
+								//------------------------------------	
+								if ( b == gameState.testBall )
 								{
-									for (var c=0; c<gameState.numCollisionsGoal; c++)
+									if ( oSpecies == gameState.collisionSpecies )
 									{
+										var alreadyExistingBallIndex = NULL_BALL;
+										var slot = 0;
+										for (var c=0; c<gameState.numCollisionsGoal; c++)
+										{
+											if ( _collisionBalls[c] == NULL_BALL )
+											{
+												slot = c;
+											}
+											else if ( _collisionBalls[c] == o )
+											{
+												alreadyExistingBallIndex = o;
+											}											
+										}
 										
+										if ( alreadyExistingBallIndex == NULL_BALL )
+										{
+											_collisionBalls[ slot ] = o;
+										}
 									}
 								}
 							}
-							
-							/*
-							if ((( gameState.collisionSpecies1 == bSpecies ) && ( gameState.collisionSpecies2 == oSpecies ))
-							||  (( gameState.collisionSpecies1 == oSpecies ) && ( gameState.collisionSpecies2 == bSpecies )))
-							{
-								gameState.numCollisions ++;
-								
-								//collision[ bSpecies ].otherSpecies[c] = 
-							}
-							*/
-							
+
 							if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
 							{
 								this.killBallFromCollision( b, oSpecies );								
@@ -1246,7 +1302,6 @@ this.setStateToPreset(2);
 			_hackyBallsGUI.render();
 		}		
 		
-		/*
 		//---------------------------------
 		// show game state success screen
 		//---------------------------------
@@ -1263,7 +1318,6 @@ this.setStateToPreset(2);
 				width, height
 			);		
 		}
-		*/
 	}
 	
 

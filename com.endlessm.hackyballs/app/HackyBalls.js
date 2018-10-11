@@ -145,14 +145,19 @@ function HackyBalls()
 	var FLINGER_STATE_PULLING	=  2;
 	var FLINGER_STATE_FLINGING	=  3;
 	
-	var BUTTON_SOUND		= new Audio( "sounds/button.wav"		); 
-	var CREATE_SOUND		= new Audio( "sounds/create.wav"		); 
-	var TOO_MANY_SOUND		= new Audio( "sounds/too-many.wav"		); 
-	var KILL_SOUND			= new Audio( "sounds/kill.wav"  		); 
-	var FLING_SOUND			= new Audio( "sounds/fling.wav" 		); 
-	var MOVE_FLING_SOUND	= new Audio( "sounds/move-fling.wav"	); 
-	var SUCCESS_SOUND		= new Audio( "sounds/success.wav"		); 
-
+	var BUTTON_SOUND		= new Audio( "sounds/Tool_Grab.wav"				); 
+	var CREATE_1_SOUND		= new Audio( "sounds/CreateBall_Species1.wav"	); 
+	var CREATE_2_SOUND		= new Audio( "sounds/CreateBall_Species2.wav"	); 
+	var CREATE_3_SOUND		= new Audio( "sounds/CreateBall_Species3.wav"	); 
+	var TOO_MANY_SOUND		= new Audio( "sounds/too-many.wav"				); 
+	var DEATH_1_SOUND		= new Audio( "sounds/Death_Species1.wav"		); 
+	var DEATH_2_SOUND		= new Audio( "sounds/Death_Species2.wav"		); 
+	var DEATH_3_SOUND		= new Audio( "sounds/Death_Species3.wav"		); 
+	var FLING_SOUND			= new Audio( "sounds/Slingshot_Release.wav"		); 
+	var MOVE_FLING_SOUND	= new Audio( "sounds/Slingshot_Grab.wav"		); 
+	var SUCCESS_1_SOUND		= new Audio( "sounds/Success_Species1.wav"		); 
+	var SUCCESS_2_SOUND		= new Audio( "sounds/Success_Species2.wav"		); 
+	var SUCCESS_3_SOUND		= new Audio( "sounds/Success_Species3.wav"		); 
 	
 	//--------------------
 	function Species()
@@ -760,7 +765,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			globalParameters.socialForce_2_0 	= 0.0;	
 			globalParameters.socialForce_2_1 	= 0.0;
 			globalParameters.socialForce_2_2 	= 0.0;	
-			globalParameters.touchDeath_2_0 	= false;
+			globalParameters.touchDeath_2_0 	= true;
 			globalParameters.touchDeath_2_1 	= false;
 			globalParameters.touchDeath_2_2 	= false;
 			globalParameters.deathEffect_2_0 	= 0;
@@ -811,7 +816,12 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	{	
 		if ( _numBalls < MAX_BALLS )
 		{
-			if ( _useAudio ) { CREATE_SOUND.play(); }  		
+			if ( _useAudio ) 
+			{ 
+					 if ( species == 0 ) { this.playSound( CREATE_1_SOUND ); }
+				else if ( species == 1 ) { this.playSound( CREATE_2_SOUND ); }
+				else if ( species == 2 ) { this.playSound( CREATE_3_SOUND ); }
+			}  		
 	
 			//---------------------------------------------
 			// jitter discourages balls from being created 
@@ -843,7 +853,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		}
 		else
 		{
-			if ( _useAudio ) { TOO_MANY_SOUND.play(); }	
+			this.playSound( TOO_MANY_SOUND );
 		}
 	}
 
@@ -1118,8 +1128,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 				force.setToDifference( _flinger.position, _balls[b].getPosition() );
 				force.scale( FLINGER_FLING_FORCE * deltaTime );
 				
-				if ( _useAudio ) { FLING_SOUND.play(); }		
-
+				this.playSound( FLING_SOUND );
+	
 				_balls[b].addVelocity( force );
 				_balls[b].scaleVelocity( ONE - FLINGER_HOLD_FRICTION );			
 
@@ -1242,7 +1252,16 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		else if ( _species[ ballSpecies ].deathEffect[ otherBallSpecies ] == 2 ) { deathImage.src = "images/death-2.png"; }
 		else if ( _species[ ballSpecies ].deathEffect[ otherBallSpecies ] == 3 ) { deathImage.src = "images/death-3.png"; }
 		
-		if ( _useAudio ) { KILL_SOUND.play(); }	
+		/*
+		if ( _useAudio ) 
+		{ 
+			//KILL_SOUND.play(); 
+
+				 if ( ballSpecies == 0 ) { DEATH_1_SOUND.play(); }
+			else if ( ballSpecies == 1 ) { DEATH_2_SOUND.play(); }
+			else if ( ballSpecies == 2 ) { DEATH_3_SOUND.play(); }
+		}	
+		*/
 		
 		this.deleteBall( b, deathImage );	
 	}	
@@ -1291,7 +1310,17 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		_deathAnimation.radius = _balls[b].getRadius();		
 		_deathAnimation.image = deathImage;	
 
-		if ( _useAudio ) { KILL_SOUND.play(); }		
+		if ( _useAudio ) 
+		{ 
+			var ballSpecies = _balls[b].getType();
+
+				//this.playSound( FLING_SOUND );
+
+
+				 if ( ballSpecies == 0 ) { this.playSound( DEATH_1_SOUND ); }
+			else if ( ballSpecies == 1 ) { this.playSound( DEATH_2_SOUND ); }
+			else if ( ballSpecies == 2 ) { this.playSound( DEATH_3_SOUND ); }		
+		}		
 	}	
 
 
@@ -1640,7 +1669,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	//---------------------------------
 	this.putBallInFlinger = function(b)
 	{
-		if ( _useAudio ) { MOVE_FLING_SOUND.play(); }		
+		this.playSound( MOVE_FLING_SOUND ); 
 
 		_flinger.handleLength 		= _balls[b].getRadius() + 4.0;	
 		_flinger.state 				= FLINGER_STATE_MOVING;
@@ -1656,7 +1685,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	//-----------------------------
 	this.selectTool = function(t)
 	{
-		if ( _useAudio ) { BUTTON_SOUND.play(); }		
+		this.playSound( BUTTON_SOUND );
 	
 		_currentTool = t;
 		_flinger.ballIndex = NULL_BALL;
@@ -1833,6 +1862,18 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 				_balls[b].setImageID		( _species[s].imageID		);	
 				_balls[b].setUsingPhysics	( _species[s].usePhysics	); 	
 			}
+		}
+	}
+	
+	
+	//----------------------------------
+	this.playSound = function( sound )
+	{
+		if ( _useAudio ) 
+		{
+			sound.pause();
+			sound.currentTime = 0; 
+			sound.play(); 
 		}
 	}
 	

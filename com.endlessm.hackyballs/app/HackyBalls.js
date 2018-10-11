@@ -145,19 +145,23 @@ function HackyBalls()
 	var FLINGER_STATE_PULLING	=  2;
 	var FLINGER_STATE_FLINGING	=  3;
 	
-	var BUTTON_SOUND		= new Audio( "sounds/Tool_Grab.wav"				); 
-	var CREATE_1_SOUND		= new Audio( "sounds/CreateBall_Species1.wav"	); 
-	var CREATE_2_SOUND		= new Audio( "sounds/CreateBall_Species2.wav"	); 
-	var CREATE_3_SOUND		= new Audio( "sounds/CreateBall_Species3.wav"	); 
-	var TOO_MANY_SOUND		= new Audio( "sounds/too-many.wav"				); 
-	var DEATH_1_SOUND		= new Audio( "sounds/Death_Species1.wav"		); 
-	var DEATH_2_SOUND		= new Audio( "sounds/Death_Species2.wav"		); 
-	var DEATH_3_SOUND		= new Audio( "sounds/Death_Species3.wav"		); 
-	var FLING_SOUND			= new Audio( "sounds/Slingshot_Release.wav"		); 
-	var MOVE_FLING_SOUND	= new Audio( "sounds/Slingshot_Grab.wav"		); 
-	var SUCCESS_1_SOUND		= new Audio( "sounds/Success_Species1.wav"		); 
-	var SUCCESS_2_SOUND		= new Audio( "sounds/Success_Species2.wav"		); 
-	var SUCCESS_3_SOUND		= new Audio( "sounds/Success_Species3.wav"		); 
+	var TOOL_TRASH_SOUND		= new Audio( "sounds/Tool_Trash.wav"			); 
+	var TOOL_GRAB_SOUND			= new Audio( "sounds/Tool_Grab.wav"				); 
+	var TOOL_SPECIES_1_SOUND	= new Audio( "sounds/Tool_Species1.wav"			); 
+	var TOOL_SPECIES_2_SOUND	= new Audio( "sounds/Tool_Species2.wav"			); 
+	var TOOL_SPECIES_3_SOUND	= new Audio( "sounds/Tool_Species3.wav"			); 
+	var CREATE_1_SOUND			= new Audio( "sounds/CreateBall_Species1.wav"	); 
+	var CREATE_2_SOUND			= new Audio( "sounds/CreateBall_Species2.wav"	); 
+	var CREATE_3_SOUND			= new Audio( "sounds/CreateBall_Species3.wav"	); 
+	var TOO_MANY_SOUND			= new Audio( "sounds/too-many.wav"				); 
+	var DEATH_1_SOUND			= new Audio( "sounds/Death_Species1.wav"		); 
+	var DEATH_2_SOUND			= new Audio( "sounds/Death_Species2.wav"		); 
+	var DEATH_3_SOUND			= new Audio( "sounds/Death_Species3.wav"		); 
+	var FLING_SOUND				= new Audio( "sounds/Slingshot_Release.wav"		); 
+	var MOVE_FLING_SOUND		= new Audio( "sounds/Slingshot_Grab.wav"		); 
+	var SUCCESS_1_SOUND			= new Audio( "sounds/Success_Species1.wav"		); 
+	var SUCCESS_2_SOUND			= new Audio( "sounds/Success_Species2.wav"		); 
+	var SUCCESS_3_SOUND			= new Audio( "sounds/Success_Species3.wav"		); 
 	
 	//--------------------
 	function Species()
@@ -1593,6 +1597,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 					
 					_toolButtons[ TOOL_SPECIES ].image.src = "images/species-panel.png";
 					
+					if ( _selectedSpecies == 0 ) { this.playSound( TOOL_SPECIES_1_SOUND  ); }
+					if ( _selectedSpecies == 1 ) { this.playSound( TOOL_SPECIES_2_SOUND  ); }
+					if ( _selectedSpecies == 2 ) { this.playSound( TOOL_SPECIES_3_SOUND  ); }
+					
+					
 					/*
 					if ( _selectedSpecies == 0 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-0.png"; }
 					if ( _selectedSpecies == 1 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-1.png"; }
@@ -1685,7 +1694,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	//-----------------------------
 	this.selectTool = function(t)
 	{
-		this.playSound( BUTTON_SOUND );
+		//this.playSound( BUTTON_SOUND );
 	
 		_currentTool = t;
 		_flinger.ballIndex = NULL_BALL;
@@ -1699,9 +1708,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		_toolButtons[ TOOL_PRESET_3	].image.src = "images/preset-3-tool.png";
 		_toolButtons[ TOOL_PRESET_4	].image.src = "images/preset-4-tool.png";
 
-			 if ( t == TOOL_MOVE 		) { _toolButtons[t].image.src = "images/move-tool-selected.png"; 		}
-		else if ( t == TOOL_CREATE 		) { _toolButtons[t].image.src = "images/create-tool-selected.png"; 		}
-		else if ( t == TOOL_DELETE 		) { _toolButtons[t].image.src = "images/delete-tool-selected.png"; 		}
+			 if ( t == TOOL_MOVE 		) { _toolButtons[t].image.src = "images/move-tool-selected.png"; 		this.playSound( TOOL_GRAB_SOUND  ); }
+		else if ( t == TOOL_CREATE 		) { _toolButtons[t].image.src = "images/create-tool-selected.png"; 		this.playSound( TOOL_GRAB_SOUND  ); }
+		else if ( t == TOOL_DELETE 		) { _toolButtons[t].image.src = "images/delete-tool-selected.png"; 		this.playSound( TOOL_TRASH_SOUND ); }
 		else if ( t == TOOL_PRESET_1 	) { _toolButtons[t].image.src = "images/preset-1-tool-selected.png";	}
 		else if ( t == TOOL_PRESET_2 	) { _toolButtons[t].image.src = "images/preset-2-tool-selected.png"; 	}
 		else if ( t == TOOL_PRESET_3 	) { _toolButtons[t].image.src = "images/preset-3-tool-selected.png"; 	}

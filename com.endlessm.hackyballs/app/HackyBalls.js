@@ -287,7 +287,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _prevSeconds		= ZERO;
 	var _flinger			= new Flinger();
 	var _species			= new Array( NUM_BALL_SPECIES );
-	var _background			= new Image();
 	var _cursor				= new Image();
 	var _success			= new Image();
 	var _gameStateInfo		= new Image();
@@ -358,7 +357,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		// grab images
 		//--------------------------------------
 		_cursor.src 		= "images/move-tool-selected.png";
-		_background.src 	= "images/background-0.png";
+		canvasID.style.backgroundImage = "url('images/background-0.png')";
 		_flinger.image.src	= "images/flinger.png";
 		_deleteImage.src 	= "images/delete-ball.png";	
 		_gameStateInfo.src 	= "images/game-state-info.png";	
@@ -1285,9 +1284,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	this.render = function()
 	{	
 		//-------------------------------------------
-		// show background
+		// clear background
 		//-------------------------------------------
-		canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+		canvas.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 		//-----------------------
 		// show the flinger
@@ -1730,8 +1729,12 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	//---------------------------------
 	this.applyParameters = function()
 	{	
-		_background.src = "images/background-" + globalParameters.backgroundImageIndex + ".png";
-				
+		/* NOTE: set background on DOM element instead of drawing it on the canvas to avoid
+		 * performance issues with webkit2gtk, since its canvas implementation scales images
+		 * in software.
+		 */
+		canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')";
+
 		_species[0].gravity			= globalParameters.gravity_0;
 		_species[0].radius			= globalParameters.radius_0;
 		_species[0].friction		= globalParameters.friction_0;

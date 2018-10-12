@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=OperatingSystemApp
+Type=Application
+Exec=com.endlessm.OperatingSystemApp
+StartupNotify=true
+Icon=com.endlessm.OperatingSystemApp
+Categories=Game;
+X-Endless-LaunchMaximized=true

@@ -33,7 +33,12 @@ var globalParameters =
 
 	// Communication with Clubhouse
 	preset 			: 0,
-	quest1Success   : false,
+	quest0Success	        : false,
+	quest1Success           : false,
+	quest2Success	        : false,
+	type0BallCount          : 0,
+	type1BallCount          : 0,
+	type2BallCount          : 0,
 
 	// parameters for species 0 balls
 	radius_0 		: ZERO,
@@ -100,7 +105,8 @@ var gameState =
 	testBall			: 0,
 	collisionSpecies	: 0,
 	numCollisionsGoal  	: 0,
-	numCollisions		: 0
+	numCollisions		        : 0,
+	totalCollisionCount             : 0
 }
 
 
@@ -311,6 +317,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _useAudio			= false;
 	var _deleteImage 		= new Image();
 	var _collisionBalls 	= new Array( MAX_COLLISION_BALLS );
+	var _ballsWithSomeCollision = new Array( MAX_BALLS );
 	
 
 	//--------------------------
@@ -442,12 +449,25 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 
 
+	this.createBallCircle = function( x, y, ballType, radius, ballCount )
+	{
+		for (var i=0; i<ballCount; i++)
+		{
+			var a = ( i / ballCount ) * PI2;
+			var r = radius + 0.5 * radius * Math.random();
+			var bx = x + r * Math.sin(a);
+			var by = y + r * Math.cos(a);
+			this.createBall( bx, by, ballType );
+		}
+	}
+
+
 	//--------------------------------------------
 	this.setStateToPreset = function( presetID )
 	{
 		gameState.running = false;
 		_numBalls = 0;
-				
+
 		//----------------------------------------------------------------
 		// Game 1  
 		//----------------------------------------------------------------
@@ -766,7 +786,77 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			this.createBall( 1000, 250, 1 );					
 			this.createBall( 1060, 350, 1 );	
 		}
+
+		// QUEST: Hacky Balls 0
+		else if ( presetID == 10 )
+		{
+			globalParameters.backgroundImageIndex = 0;
+
+			globalParameters.radius_0 		= 30.0;
+			globalParameters.gravity_0 		= 100.0;
+			globalParameters.collision_0 		= 0.2;
+			globalParameters.friction_0 		= 1.0;
+			globalParameters.usePhysics_0 		= true;
+			globalParameters.imageIndex_0		= 0;
+			globalParameters.socialForce_0_0 	= 0.0;
+			globalParameters.socialForce_0_1 	= 0.0;
+			globalParameters.socialForce_0_2 	= 0.0;
+			globalParameters.touchDeath_0_0 	= false;
+			globalParameters.touchDeath_0_1 	= false;
+			globalParameters.touchDeath_0_2 	= false;
+			globalParameters.deathEffect_0_0 	= 0;
+			globalParameters.deathEffect_0_1 	= 0;
+			globalParameters.deathEffect_0_2	= 0;
+
+			// parameters for species 1 balls
+			globalParameters.radius_1 		= 50.0;
+			globalParameters.gravity_1 		= 100.0;
+			globalParameters.collision_1 		= 0.2;
+			globalParameters.friction_1 		= 1.0;
+			globalParameters.usePhysics_1 		= true;
+			globalParameters.imageIndex_1		= 1;
+			globalParameters.socialForce_1_0 	= 0.0;
+			globalParameters.socialForce_1_1 	= 0.0;
+			globalParameters.socialForce_1_2 	= 0.0;
+			globalParameters.touchDeath_1_0 	= false;
+			globalParameters.touchDeath_1_1 	= false;
+			globalParameters.touchDeath_1_2 	= false;
+			globalParameters.deathEffect_1_0 	= 0;
+			globalParameters.deathEffect_1_1 	= 0;
+			globalParameters.deathEffect_1_2	= 0;
+
+			// parameters for species 2 balls
+			globalParameters.radius_2 		= 10.0;
+			globalParameters.gravity_2 		= 100.0;
+			globalParameters.collision_2 		= 0.2;
+			globalParameters.friction_2 		= 1.0;
+			globalParameters.usePhysics_2 		= true;
+			globalParameters.imageIndex_2		= 2;
+			globalParameters.socialForce_2_0 	= 0.0;
+			globalParameters.socialForce_2_1 	= 0.0;
+			globalParameters.socialForce_2_2 	= 0.0;
+			globalParameters.touchDeath_2_0 	= false;
+			globalParameters.touchDeath_2_1 	= false;
+			globalParameters.touchDeath_2_2 	= false;
+			globalParameters.deathEffect_2_0 	= 0;
+			globalParameters.deathEffect_2_1 	= 0;
+			globalParameters.deathEffect_2_2	= 0;
 		
+			//----------------------------
+			// apply parameters
+			//----------------------------
+			this.applyParameters();
+
+			var r = 300;
+			this.createBallCircle( 0.5 * WINDOW_WIDTH, 0.5 * WINDOW_HEIGHT, 1, r, 20 );
+
+			//------------------------------------------------------------------------
+			// set up the game state to detect collisions between species...
+			//------------------------------------------------------------------------
+			var period = 50; // how many time steps are used to run this test?
+			this.initializeGameState( period, 0, 0 );
+		}
+
 		//---------------------------------------------
 		// initialize user interface with parameters
 		//---------------------------------------------
@@ -926,30 +1016,42 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		gameState.running			= true;
 		gameState.clock 			= 0;
 		gameState.numCollisions		= 0;
+		gameState.totalCollisionCount   = 0;
 
+		globalParameters.quest0Success = false;
 		globalParameters.quest1Success = false;
+		globalParameters.quest2Success = false;
 
 		for (var c=0; c<gameState.numCollisionsGoal; c++)
 		{							
 			_collisionBalls[c] = NULL_BALL;
 		}			
+		for (var i=0; i<MAX_BALLS; i++)
+		{
+			_ballsWithSomeCollision[i] = false;
+		}
 	}
 
+
+	this.isQuest0GoalReached = function()
+	{
+		if (globalParameters.type1BallCount < 20)
+			return false;
+
+		if ( gameState.totalCollisionCount > 0 )
+		{
+			//console.log( "Collisions " + gameState.totalCollisionCount);
+			return false;
+		}
+
+		//console.log( "Goal met");
+		return true;
+	}
 
 
 	this.isQuest1GoalReached = function()
 	{
-		var type2BallCount = 0;
-		for (var i=0; i<_numBalls; i++)
-		{	
-			if (_balls[i].getType() == 1)
-			{
-				type2BallCount++;
-				if (type2BallCount > 1)
-					return false;
-			}
-		}
-		if (type2BallCount != 1)
+		if (globalParameters.type2BallCount != 1)
 			return false;
 	
 		if ( gameState.numCollisions >= gameState.numCollisionsGoal )
@@ -988,20 +1090,45 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 					gameState.numCollisions ++;
 				}
 			}
+			gameState.totalCollisionCount = 0;
+			for (var i=0; i<MAX_BALLS; i++)
+			{	
+				if (_ballsWithSomeCollision[i])
+					gameState.totalCollisionCount++;
+			}
 
 			gameState.clock ++;
 
+			var type0BallCount = 0;
+			var type1BallCount = 0;
+			var type2BallCount = 0;
 			gameState.testBall = NULL_BALL;
 			for (var i=0; i<_numBalls; i++)
 			{	
-				if (_balls[i].getType() == 1)
+				switch (_balls[i].getType())
 				{
+				case 0:
+					type0BallCount++;
+					break;
+				case 1:
+					type1BallCount++;
 					gameState.testBall = i;
 					break;
+				case 2:
+					type2BallCount++;
+					break;
+				default:
+					break;	
 				}
 			}
+                        globalParameters.type0BallCount = type0BallCount;
+                        globalParameters.type1BallCount = type1BallCount;
+                        globalParameters.type2BallCount = type2BallCount;
 
-
+			if (!gameState.quest0Success)
+			{
+				globalParameters.quest0Success = this.isQuest0GoalReached();
+			}
 			if (!gameState.quest1Success)
 			{
 				globalParameters.quest1Success = this.isQuest1GoalReached();
@@ -1043,6 +1170,10 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 				{							
 					_collisionBalls[c] = NULL_BALL;
 				}	
+				for (var i=0; i<MAX_BALLS; i++)
+				{
+					_ballsWithSomeCollision[i] = false;
+				}
 			}
 		}		
 	}
@@ -1180,6 +1311,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 										}
 									}
 								}
+								_ballsWithSomeCollision[b] = true;
 							}
 
 							if ( _species[ bSpecies ].touchDeath[ oSpecies ] )

@@ -484,7 +484,7 @@ function HackyBallsGUI()
 	{
 		if ( _flipped )
 		{
-			canvas.drawImageCached( _hackOverlay, 0, 0, canvasID.width, canvasID.height );
+			canvas.drawImage( _hackOverlay, 0, 0, canvasID.width, canvasID.height );
 		}
 			
 		_userInterface.render();

@@ -1439,7 +1439,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			
 			var r = _deathAnimation.radius + 40.0 + 40.0 * wave; 
 
-			canvas.drawImageCached
+			canvas.drawImage
 			( 
 				_deathAnimation.image, 
 				_deathAnimation.position.x - r * ONE_HALF,
@@ -1464,7 +1464,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		{
 			if ( _toolButtons[t].visible )
 			{
-				canvas.drawImageCached
+				canvas.drawImage
 				( 
 					_toolButtons[t].image, 
 					_toolButtons[t].position.x, 
@@ -1492,7 +1492,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		{
 			var width  = 300;
 			var height = 200;
-			canvas.drawImageCached
+			canvas.drawImage
 			( 
 				_gameStateInfo, 
 				WINDOW_WIDTH  * ONE_HALF - width * ONE_HALF, 
@@ -1609,7 +1609,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		var angle = -Math.PI * ONE_HALF + Math.atan2( yy, xx ); 
 		canvas.rotate( angle );	
 		canvas.scale( flingerRadius, flingerRadius );
-		canvas.drawImageCached( _flinger.image, ZERO, ZERO, ONE, ONE );
+		canvas.drawImage( _flinger.image, ZERO, ZERO, ONE, ONE );
 		canvas.resetTransform();
 	}
 	

@@ -6,12 +6,12 @@ var canvas = canvasID.getContext( '2d' );
 
 var USING_TEST_GUI = true;
 var CANVAS_PIXEL_OFFSET = 8;
-var MAX_FORCE = 0.5;
-
-
 
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
+
+
+var testClock = 0;
 
 //---------------------------------------------------------
 // The object globalParameters contains all the data that
@@ -80,11 +80,14 @@ var globalParameters =
 //----------------------
 function Selfie()
 {	
+	var NUM_PHOTOS = 6;
+
 	var PAINT_BRUSH_STATE_NULL 				= -1;
 	var PAINT_BRUSH_STATE_SEARCHING_COLOR 	=  0;
 	var PAINT_BRUSH_STATE_HOLDING_COLOR 	=  1;
 	var PAINT_BRUSH_STATE_PAINTING_COLOR 	=  2;
 
+	var MAX_COLOR_VALUE			= 255;
 	var MAX_STROKE_NODES		= 20;
 	var MAX_PAINT_STROKES		= 12;
 	var MAX_NODE_RADIUS			= 20.0;
@@ -92,19 +95,13 @@ function Selfie()
 	var BRUSH_SIZE 				= 100;
 
 	var USE_AUDIO				= true;
-	var CURSOR_SIZE				= 40.0;
-	var NUM_BALL_SPECIES 		= 3;
-	var NULL_BALL 				= -1;
-	var MAX_BALLS				= 100;
 	var INTERACTION_RADIUS 		= 200.0;
-	var SCORE_EFFECT_DURATION 	= 60; 
 	var MILLISECONDS_PER_UPDATE = 10;
 
-	var TOOL_MOVE 		= 0;
+	var TOOL_PHOTO 		= 0;
 	var TOOL_CREATE 	= 1;
 	var TOOL_DELETE 	= 2;
-	var TOOL_SPECIES  	= 3;
-	var NUM_TOOLS		= 4;
+	var NUM_TOOLS		= 3;
 	
 	var BUTTON_SOUND		= new Audio( "sounds/button.wav"		); 
 	var CREATE_SOUND		= new Audio( "sounds/create.wav"		); 
@@ -114,7 +111,15 @@ function Selfie()
 	var MOVE_FLING_SOUND	= new Audio( "sounds/move-fling.wav"	); 
 	var SUCCESS_SOUND		= new Audio( "sounds/success.wav"		); 
 
-	//--------------------
+	function Photo()
+	{	
+		this.index			= 0;
+		this.size			= ZERO;
+		this.shootTime		= ZERO;
+		this.shootDuration	= ZERO;
+		this.image			= new Image();
+	}
+
 	function Palette()
 	{	
 		this.position		= new Vector2D();
@@ -148,24 +153,6 @@ function Selfie()
 	}
 	
 	//--------------------
-	function Species()
-	{	
-		this.gravity	= ZERO;
-		this.radius		= ZERO;
-		this.friction	= ZERO;
-		this.collision	= ZERO;
-		this.forces		= new Array( NUM_BALL_SPECIES );
-		this.touchDeath	= new Array( NUM_BALL_SPECIES );
-
-		for (var s=0; s<NUM_BALL_SPECIES; s++)
-		{	
-			this.forces		[s] = ZERO;				
-			this.touchDeath	[s] = false;				
-		}
-	}
-
-
-	//--------------------
 	function ToolButton()
 	{	
 		this.visible	= false;
@@ -175,56 +162,27 @@ function Selfie()
 		this.image		= new Image();
 	}
 	
-	//----------------
-	function Score()
-	{	
-		this.number		= 0;
-		this.clock		= 0;
-		this.ballIndex 	= NULL_BALL;
-		this.image		= new Image();
-	}
 	
+	var _photo				= new Photo();
+	var _seconds			= ZERO;
 	var _synthesizer 		= new Synthesizer();
 	var _palette			= new Palette();
-	var _species			= new Array( NUM_BALL_SPECIES );
 	var _paintBrush			= new PaintBrush();
 	var _paintStrokes		= new Array();
 	var _numPaintStrokes	= 0;	
-	var _background			= new Image();
-	var _logo				= new Image();
-	var _cursor				= new Image();
-	var _success			= new Image();
-	var _balls 				= new Array();
 	var _toolButtons 		= new Array( NUM_TOOLS );
-	var _numBalls			= 0;
 	var _selfieGUI 			= new SelfieGUI();
-	var _leftWall 			= 90;
-	var _topWall 			= ZERO;
-	var _bottomWall 		= WINDOW_HEIGHT;
-	var _rightWall 			= WINDOW_WIDTH;
-	var _grabbedBall		= NULL_BALL;
-	var _selectedSpecies	= 0;
-	var _currentTool		= TOOL_MOVE;
+	var _currentTool		= TOOL_PHOTO;
     var _mousePosition		= new Vector2D();
     var _prevMousePosition	= new Vector2D();
     var _mouseVelocity		= new Vector2D();
     var _vector				= new Vector2D();
 	var _startTime			= ZERO;
-	var _score				= new Score();
 	var _useAudio			= false;
-
 
 	//--------------------------
 	this.initialize = function()
-    {	  	      
-		//--------------------------------------
-		// create species array  
-		//--------------------------------------
-		for (var i=0; i<NUM_BALL_SPECIES; i++) 
-		{
-			_species[i] = new Species();
-		}
-
+    {
 		//-------------------------------------
 		// configure parameters to start game
 		//-------------------------------------
@@ -282,13 +240,6 @@ function Selfie()
 		// get start time
 		//----------------------------
 		_startTime = (new Date).getTime();
-
-		//--------------------------------------
-		// grab images
-		//--------------------------------------
-		_logo.src 			= "images/logo.png";
-		_cursor.src 		= "images/move-tool-selected.png";
-		_background.src 	= "images/0.png";
 		
 		//-------------------------------
 		// initialize synthesizer
@@ -297,6 +248,19 @@ function Selfie()
 		{
 			_synthesizer.initialize();
 		}
+		
+		//----------------------------
+		// initialize photo
+		//----------------------------
+		_photo.index			= 0;
+		_photo.size				= 500.0;
+		_photo.shootTime		= ZERO;
+		_photo.shootDuration	= 0.7;
+				
+ 		//_photo.image.crossOrigin = "anonymous";
+		
+		_photo.image.src 		= "images/photo-0.png";
+		
 		
 		//----------------------------
 		// initialize palette
@@ -323,7 +287,6 @@ function Selfie()
 		_paintBrush.image.src = "images/paint-brush.png";
 		_paintBrush.state = PAINT_BRUSH_STATE_NULL;
 		
-		
 		//------------------------------------
 		// create tools
 		//------------------------------------
@@ -336,47 +299,24 @@ function Selfie()
 			_toolButtons[t].position.setXY( left, 100 + t * 60.0 );
 			_toolButtons[t].width  = 50.0;
 			_toolButtons[t].height = 50.0;
-			_toolButtons[t].image.src = "images/move-tool.png";
+			_toolButtons[t].image.src = "images/photo-tool.png";
 		}
 		
-		_toolButtons[ TOOL_MOVE		].image.src = "images/move-tool.png";
+		_toolButtons[ TOOL_PHOTO	].image.src = "images/photo-tool.png";
 		_toolButtons[ TOOL_CREATE	].image.src = "images/create-tool.png";
 		_toolButtons[ TOOL_DELETE	].image.src = "images/delete-tool.png";
-
-		_toolButtons[ TOOL_SPECIES ].position.setXY( left + size + 3, _toolButtons[ TOOL_CREATE ].position.y );
-		_toolButtons[ TOOL_SPECIES ].height = size * 2.7;
-		_toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-0.png";
-		_toolButtons[ TOOL_SPECIES ].visible = false;
-
-		this.selectTool( TOOL_MOVE );
 
 		//----------------------------
 		// apply parameters  
 		//----------------------------
 		this.applyParameters();
 		
-		//----------------------------
-		// create some initial balls  
-		//----------------------------
-		var r = _species[0].radius;
-		var x = _leftWall + r;
-		var y = WINDOW_HEIGHT - r;
-		var species = 0;
-		
-		
 		//-----------------------------------------------------------------------------
 		// turn this on only after creating the initial balls, because some browsers
 		// don't want to have sounds played until the user has done some interaction. 
 		//-----------------------------------------------------------------------------
 		_useAudio = true;		
-		
-		//------------------------------------------------------------------------
-		// set up scoring
-		//------------------------------------------------------------------------
-		_score.showing	 = 0;
-		_score.clock	 = 0.0;
-		_score.image.src = "images/fireworks.png";
-				
+						
 		//------------------------------------------------------------------------
 		// start up the timer
 		//------------------------------------------------------------------------
@@ -384,6 +324,47 @@ function Selfie()
     }
 
 
+/*
+canvas.drawImage( _originalImage, REFERENCE_X, REFERENCE_Y, IMAGE_RES, IMAGE_RES );  
+
+_referenceData = canvas.getImageData( REFERENCE_X, REFERENCE_Y, IMAGE_RES, IMAGE_RES );
+
+_resultingData = canvas.createImageData( IMAGE_RES, IMAGE_RES );
+
+for (var i=0; i<_referenceData.data.length; i+=4)
+{
+	var r = _referenceData.data[ i + 0 ];
+	var g = _referenceData.data[ i + 1 ];
+	var b = _referenceData.data[ i + 2 ];
+	var a = _referenceData.data[ i + 3 ];
+	
+	//-------------------------------------------------------
+	// for all non-transparent pixels, invert the colors 
+	//-------------------------------------------------------
+	if ( a != 0 )
+	{
+		_resultingData.data[ i + 0 ] = MAX_COLOR_VALUE - r;
+		_resultingData.data[ i + 1 ] = MAX_COLOR_VALUE - g;
+		_resultingData.data[ i + 2 ] = MAX_COLOR_VALUE - b;  
+	}
+	_resultingData.data[ i + 3 ] = MAX_COLOR_VALUE;            
+}
+
+canvas.putImageData( _resultingData, RESULTING_X, RESULTING_Y );
+
+_closestMatch = this.getDifferenceBetweenImages( _referenceData, _resultingData );
+
+bestData = canvas.getImageData( RESULTING_X, RESULTING_Y, IMAGE_RES, IMAGE_RES );
+
+
+var imageData = canvas.getImageData
+( 
+	Math.floor( x - size * ONE_HALF ), 
+	Math.floor( y - size * ONE_HALF ), 
+	Math.floor( size ),
+	Math.floor( size )
+);
+*/
 
 	//-------------------------------------------
 	this.positionOverPalette = function( x, y )
@@ -522,17 +503,81 @@ function Selfie()
 		// trigger next update...
 		//---------------------------
 		this.timer = setTimeout( "selfie.update()", MILLISECONDS_PER_UPDATE );
-	} 
 
+		testClock ++;
+		
+		if ( testClock == 4 )
+		{		
+			var imageData = canvas.getImageData( 300, 300, 400, 400 );
 
+			for (var i=0; i<imageData.data.length; i+=4)
+			{
+				var r = imageData.data[ i + 0 ];
+				var g = imageData.data[ i + 1 ];
+				var b = imageData.data[ i + 2 ];
+				var a = imageData.data[ i + 3 ];
+
+				console.log(g);						
+			}
+			
+			var newImage = canvas.createImageData( 400, 400 );
+
+			for (var i=0; i<newImage.data.length; i+=4)
+			{
+				newImage.data[ i + 0 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
+				newImage.data[ i + 1 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
+				newImage.data[ i + 2 ] = Math.floor( Math.random() * MAX_COLOR_VALUE ); 
+				newImage.data[ i + 3 ] = MAX_COLOR_VALUE;            
+			}	
+
+			canvas.putImageData( newImage, 100, 100 );
+		}
+	}		
 	
-	//---------------------------
-	this.killBall = function(b)
-	{	
+
+
+	//--------------------------
+	this.takePhoto = function()
+	{
+		_photo.index ++;
+		_photo.shootTime = _seconds;
+
+		if ( _photo.index >= NUM_PHOTOS )
+		{
+			_photo.index = 0;
+		}
+		
+		/*
+		if ( USE_AUDIO )
+		{
+			_synthesizer.turnOffAllNotes();
+
+			var note     = 100;
+			var duration = 0.01;
+			var attack   = 0.0;
+			var release  = 0.0;
+			_synthesizer.playNote( note, duration, attack, release );
+
+			var note     = 110;
+			var duration = 0.015;
+			var attack   = 0.0;
+			var release  = 0.0;
+			_synthesizer.playNote( note, duration, attack, release );
+
+			var note     = 120;
+			var duration = 0.018;
+			var attack   = 0.0;
+			var release  = 0.0;
+			_synthesizer.playNote( note, duration, attack, release );
+		}
+		*/
+		
+		_photo.image.src = "images/photo-" + _photo.index + ".png";
+
+		this.clearBrushStrokes();
 	}
-	
-	
-	
+
+
 	
 	//------------------------
 	this.render = function()
@@ -540,13 +585,8 @@ function Selfie()
 		//-------------------------------------------
 		// show background
 		//-------------------------------------------
-		canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+		canvas.drawImage( _photo.image, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
 
-		//----------------
-		// show info 
-		//----------------
-		this.showInfo();
-		
 		//-------------------------
 		// show tools
 		//-------------------------
@@ -598,28 +638,7 @@ function Selfie()
 		if ( _paintBrush.state != PAINT_BRUSH_STATE_NULL )
 		{
 			canvas.drawImage( _paintBrush.image, _mousePosition.x, _mousePosition.y - BRUSH_SIZE, BRUSH_SIZE, BRUSH_SIZE );
-		}
-		
-		
-		//-------------------------------------
-		// show success from advancing score
-		//-------------------------------------
-		if ( _score.clock > 0 )
-		{
-			var f = ONE - ( _score.clock / SCORE_EFFECT_DURATION );
-			var size = 300.0 + 200.0 * f;
-			
-			canvas.drawImage
-			(
-				_score.image, 
-				WINDOW_WIDTH  * ONE_HALF - size * ONE_HALF, 
-				WINDOW_HEIGHT * ONE_HALF - size * ONE_HALF, 
-				size, 
-				size 
-			);
-			
-			_score.clock --;
-		}
+		}		
 	}
 	
 	
@@ -651,37 +670,18 @@ function Selfie()
 			}	
 		}
 	}
-
-
-	
 	
 
-	//-------------------------
-	this.showInfo = function()
-	{		
-		canvas.drawImage( _logo, 10, 10, 50, 20 );
-
-		//-------------------------------------------
-		// title and instructions
-		//-------------------------------------------
-		canvas.font = '16px sans-serif';
-		canvas.fillStyle = "rgb( 220, 210, 200 )";		
-		canvas.fillText( "Selfie", 10, 50 );
-	}
-
-
+	
 
 	//--------------------------------
 	this.mouseDown = function( x, y )
 	{
 		if ( USING_TEST_GUI )
 		{
-			if ( _grabbedBall == NULL_BALL )
-			{
-				_selfieGUI.setMouseDown( x, y );
-				globalParameters = _selfieGUI.getParameters();			
-				this.applyParameters();			
-			}
+			_selfieGUI.setMouseDown( x, y );
+			globalParameters = _selfieGUI.getParameters();			
+			this.applyParameters();			
 		}
 		
 		//--------------------------
@@ -698,24 +698,6 @@ function Selfie()
 			{
 				this.selectTool(t);
 				buttonSelected = true;
-			
-				if ( t == TOOL_CREATE )
-				{
-					_toolButtons[ TOOL_SPECIES ].visible = true;
-				}
-				else if ( t == TOOL_SPECIES )
-				{
-					var h = ( y - _toolButtons[t].position.y ) / _toolButtons[t].height;
-					_selectedSpecies = Math.floor( h * NUM_BALL_SPECIES );
-					
-					if ( _selectedSpecies == 0 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-0.png"; }
-					if ( _selectedSpecies == 1 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-1.png"; }
-					if ( _selectedSpecies == 2 ) { _toolButtons[ TOOL_SPECIES ].image.src = "images/ball-type-2.png"; }
-				}
-				else if ( t != TOOL_SPECIES )
-				{
-					_toolButtons[ TOOL_SPECIES ].visible = false;
-				}
 			}
 		}
 
@@ -773,13 +755,18 @@ function Selfie()
 	
 		_currentTool = t;
 
-		_toolButtons[ TOOL_MOVE		].image.src = "images/move-tool.png";
+		_toolButtons[ TOOL_PHOTO	].image.src = "images/photo-tool.png";
 		_toolButtons[ TOOL_CREATE	].image.src = "images/create-tool.png";
 		_toolButtons[ TOOL_DELETE	].image.src = "images/delete-tool.png";
 
-			 if ( t == TOOL_MOVE 	) { _toolButtons[t].image.src = "images/move-tool-selected.png"; 	}
+			 if ( t == TOOL_PHOTO 	) { _toolButtons[t].image.src = "images/photo-tool-selected.png"; 	}
 		else if ( t == TOOL_CREATE 	) { _toolButtons[t].image.src = "images/create-tool-selected.png"; 	}
 		else if ( t == TOOL_DELETE 	) { _toolButtons[t].image.src = "images/delete-tool-selected.png"; 	}
+		
+		if ( _currentTool == TOOL_PHOTO )
+		{
+			this.takePhoto();
+		}
 	}
 
 
@@ -889,8 +876,9 @@ function Selfie()
 	//---------------------------------
 	this.applyParameters = function()
 	{	
-		_background.src = "images/background-" + globalParameters.backgroundImageIndex + ".png";
-				
+		/*
+		//_photo.image.src = "images/photo-" + globalParameters.backgroundImageIndex + ".png";
+		
 		_species[0].gravity			= globalParameters.gravity_0;
 		_species[0].radius			= globalParameters.radius_0;
 		_species[0].friction		= globalParameters.friction_0;
@@ -923,6 +911,7 @@ function Selfie()
 		_species[2].touchDeath[0] 	= globalParameters.touchDeath_2_0;				
 		_species[2].touchDeath[1] 	= globalParameters.touchDeath_2_1;
 		_species[2].touchDeath[2] 	= globalParameters.touchDeath_2_2;	
+		*/
 	}
 	
 	//---------------------

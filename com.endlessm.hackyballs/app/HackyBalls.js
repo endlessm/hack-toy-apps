@@ -5,9 +5,6 @@ var canvas = canvasID.getContext( '2d' );
 
 var USING_TEST_GUI = false;
 
-var WINDOW_WIDTH  = canvasID.width;
-var WINDOW_HEIGHT = canvasID.height;
-
 //---------------------------------------------------------
 // The object globalParameters contains all the data that
 // must be exposed to and share with GTK so that the UI 
@@ -302,8 +299,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 	var _hackyBallsGUI 		= new HackyBallsGUI();
 	var _leftWall 			= ZERO;
 	var _topWall 			= ZERO;
-	var _bottomWall 		= WINDOW_HEIGHT;
-	var _rightWall 			= WINDOW_WIDTH;
+	var _bottomWall 		= 768;
+	var _rightWall 			= 1280;
 	var _grabbedBall		= NULL_BALL;
 	var _selectedSpecies	= 0;
 	var _currentTool		= TOOL_MOVE;
@@ -320,7 +317,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 
 	//--------------------------
 	this.initialize = function()
-    {	  	      
+    {
+		// Set canvas size
+		_rightWall = canvasID.width = window.innerWidth;
+		_bottomWall = canvasID.height = window.innerHeight;
+
 		//--------------------------------------
 		// create species array  
 		//--------------------------------------
@@ -534,7 +535,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			//----------------------------
 			var r = _species[0].radius;
 			var x = _leftWall + r;
-			var y = WINDOW_HEIGHT - r;
+			var y = canvasID.height - r;
 			var speciesID = 0;
 		
 			this.createBall( x + r * 0, y, 				speciesID );
@@ -544,7 +545,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			this.createBall( x + r * 3, y - r * 1.7,	speciesID );
 			this.createBall( x + r * 2, y - r * 3.4,	speciesID );
 
-			x = WINDOW_WIDTH * ONE_HALF;
+			x = canvasID.width * ONE_HALF;
 			y = 200;
 			s = 130;
 			speciesID = 1;
@@ -555,7 +556,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		
 			var r = _species[2].radius;
 			var x = 1000;
-			var y = WINDOW_HEIGHT - r;
+			var y = canvasID.height - r;
 
 			this.createBall( x + r *  0, y, 2 );
 			this.createBall( x + r *  2, y, 2 );
@@ -692,15 +693,15 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			//----------------------------
 			this.applyParameters();
 
-			this.createBall( WINDOW_WIDTH * ONE_HALF, WINDOW_HEIGHT * ONE_HALF, 1 );
+			this.createBall( canvasID.width * ONE_HALF, canvasID.height * ONE_HALF, 1 );
 			
 			var num = 5;
 			for (var i=0; i<num; i++)
 			{
 				var a = ( i / num ) * PI2;
 				var r = 150.0 + 130.0 * Math.random();
-				var x = WINDOW_WIDTH  * ONE_HALF + r * Math.sin(a);
-				var y = WINDOW_HEIGHT * ONE_HALF + r * Math.cos(a);
+				var x = canvasID.width  * ONE_HALF + r * Math.sin(a);
+				var y = canvasID.height * ONE_HALF + r * Math.cos(a);
 				this.createBall( x, y, 0 );
 			}
 			
@@ -846,7 +847,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			this.applyParameters();
 
 			var r = 300;
-			this.createBallCircle( 0.5 * WINDOW_WIDTH, 0.5 * WINDOW_HEIGHT, 1, r, 20 );
+			this.createBallCircle( 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
 
 			//------------------------------------------------------------------------
 			// set up the game state to detect collisions between species...
@@ -1417,7 +1418,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		//-------------------------------------------
 		// clear background
 		//-------------------------------------------
-		canvas.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		canvas.clearRect(0, 0, canvasID.width, canvasID.height);
 		
 		//-----------------------
 		// show the flinger
@@ -1494,8 +1495,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 			canvas.drawImageCached
 			( 
 				_gameStateInfo, 
-				WINDOW_WIDTH  * ONE_HALF - width * ONE_HALF, 
-				WINDOW_HEIGHT * ONE_HALF - height * ONE_HALF, 
+				canvasID.width  * ONE_HALF - width * ONE_HALF,
+				canvasID.height * ONE_HALF - height * ONE_HALF,
 				width, height
 			);		
 		}
@@ -1928,12 +1929,22 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 		}
 	}
 	
+	this.setWalls = function( left, bottom, right, top )
+	{
+		_leftWall 	= left;
+		_rightWall 	= right;
+		_bottomWall = bottom;
+		_topWall	= top;
+
+		for (var i=0; i<_numBalls; i++)
+			_balls[i].setWalls( left, bottom, right, top );
+	}
+
 	//---------------------
 	// start this puppy!
 	//---------------------
 	this.initialize();
 }
-
 
 //--------------------------------
 document.onmousedown = function(e) 
@@ -1959,3 +1970,17 @@ document.onkeydown = function(e)
     if ( e.keyCode === 32 ) { hackyBalls.spaceKeyPressed();  }
     if ( e.keyCode ===  8 ) { hackyBalls.deleteKeyPressed(); }
 }
+
+/* Declare main object */
+var hackyBalls = new HackyBalls();
+
+window.addEventListener("resize", function () {
+
+    // Resize canvas
+    canvasID.width = window.innerWidth;
+    canvasID.height = window.innerHeight;
+
+    // Update balls walls
+    hackyBalls.setWalls ( ZERO, canvasID.height, canvasID.width, ZERO );
+});
+

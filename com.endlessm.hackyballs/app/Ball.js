@@ -12,7 +12,7 @@ var ImageCache = {};
 //---------------
 function Ball()
 {	
-	var _image			= null
+	var _image		= null;
 	var _position		= new Vector2D();
 	var _grabPosition	= new Vector2D();
 	var _velocity		= new Vector2D();

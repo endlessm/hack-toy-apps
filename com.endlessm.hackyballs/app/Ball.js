@@ -7,12 +7,12 @@ var canvas = canvasID.getContext( '2d' );
 var WALL_SOUND = new Audio( "sounds/wall-bump.wav" ); 
 var WALL_SOUND_THRESHOLD = 1.5;
 
-//thingypoo
+var ImageCache = {};
 
 //---------------
 function Ball()
 {	
-	var _image			= new Image();
+	var _image			= null
 	var _position		= new Vector2D();
 	var _grabPosition	= new Vector2D();
 	var _velocity		= new Vector2D();
@@ -166,7 +166,16 @@ function Ball()
 	//-------------------------------
 	this.setImageID = function( id ) 
 	{ 
-		_image.src = "images/ball-" + id + ".png"; 
+		var imageID = "images/ball-" + id + ".png";
+
+		_image = ImageCache[imageID];
+
+		if (!_image)
+		{
+			_image = new Image();
+			_image.src = imageID;
+			ImageCache[imageID] = _image;
+		}
 	}
 
 	//---------------------------------------------------
@@ -197,7 +206,7 @@ function Ball()
 		//-----------------
 		// show the ball
 		//-----------------
-		canvas.drawImage
+		canvas.drawImageCached
 		( 
 			_image, 
 			_position.x - _radius, 

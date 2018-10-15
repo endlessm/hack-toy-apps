@@ -4,7 +4,6 @@ var canvas = canvasID.getContext( '2d' );
 "use strict";
 
 var USING_TEST_GUI = false;
-var CANVAS_PIXEL_OFFSET = 8; // this is a tad hacky, but it fixes the problem of the canvas being offset a bit. 
 
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
@@ -1939,43 +1938,19 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
 //--------------------------------
 document.onmousedown = function(e) 
 {
-	var rect = e.target.getBoundingClientRect();
-    var xOffset = -rect.left;
-    var yOffset = -rect.top;
-
-	// overwrite the above (for now). It's not working! 
-    xOffset = -CANVAS_PIXEL_OFFSET;
-    yOffset = -CANVAS_PIXEL_OFFSET;
-    
-    hackyBalls.mouseDown( e.pageX + xOffset, e.pageY + yOffset );
+    hackyBalls.mouseDown( e.pageX, e.pageY );
 }
 
 //---------------------------------
 document.onmousemove = function(e) 
 {
-	var rect = e.target.getBoundingClientRect();
-    var xOffset = -rect.left;
-    var yOffset = -rect.top;
-
-	// overwrite the above (for now). It's not working! 
-    xOffset = -CANVAS_PIXEL_OFFSET;
-    yOffset = -CANVAS_PIXEL_OFFSET;
-
-    hackyBalls.mouseMove( e.pageX + xOffset, e.pageY + yOffset );
+    hackyBalls.mouseMove( e.pageX, e.pageY );
 }
 
 //-------------------------------
 document.onmouseup = function(e) 
 {
-	var rect = e.target.getBoundingClientRect();
-    var xOffset = -rect.left;
-    var yOffset = -rect.top;
-
-	// overwrite the above (for now). It's not working! 
-    xOffset = -CANVAS_PIXEL_OFFSET;
-    yOffset = -CANVAS_PIXEL_OFFSET;
-
-    hackyBalls.mouseUp( e.pageX + xOffset, e.pageY + yOffset );
+    hackyBalls.mouseUp( e.pageX, e.pageY );
 }
 
 //-------------------------------

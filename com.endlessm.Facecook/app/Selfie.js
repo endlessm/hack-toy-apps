@@ -11,6 +11,8 @@ var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
 
 
+var newImage;
+
 var testClock = 0;
 
 //---------------------------------------------------------
@@ -99,10 +101,11 @@ function Selfie()
 	var MILLISECONDS_PER_UPDATE = 10;
 
 	var TOOL_PHOTO 		= 0;
-	var TOOL_CREATE 	= 1;
-	var TOOL_DELETE 	= 2;
+	var TOOL_PAINT 	= 1;
+	var TOOL_MUSIC 	= 2;
 	var NUM_TOOLS		= 3;
 	
+	var PHOTO_SOUND			= new Audio( "sounds/photo.wav"			); 
 	var BUTTON_SOUND		= new Audio( "sounds/button.wav"		); 
 	var CREATE_SOUND		= new Audio( "sounds/create.wav"		); 
 	var TOO_MANY_SOUND		= new Audio( "sounds/too-many.wav"		); 
@@ -255,12 +258,9 @@ function Selfie()
 		_photo.index			= 0;
 		_photo.size				= 500.0;
 		_photo.shootTime		= ZERO;
-		_photo.shootDuration	= 0.7;
-				
- 		//_photo.image.crossOrigin = "anonymous";
-		
+		_photo.shootDuration	= 0.4;		
+ 	  //_photo.image.crossOrigin = "anonymous";
 		_photo.image.src 		= "images/photo-0.png";
-		
 		
 		//----------------------------
 		// initialize palette
@@ -303,8 +303,8 @@ function Selfie()
 		}
 		
 		_toolButtons[ TOOL_PHOTO	].image.src = "images/photo-tool.png";
-		_toolButtons[ TOOL_CREATE	].image.src = "images/create-tool.png";
-		_toolButtons[ TOOL_DELETE	].image.src = "images/delete-tool.png";
+		_toolButtons[ TOOL_PAINT	].image.src = "images/paint-tool.png";
+		_toolButtons[ TOOL_MUSIC	].image.src = "images/music-tool.png";
 
 		//----------------------------
 		// apply parameters  
@@ -506,34 +506,16 @@ var imageData = canvas.getImageData
 
 		testClock ++;
 		
-		if ( testClock == 4 )
+		if ( testClock == 40 )
 		{		
-			var imageData = canvas.getImageData( 300, 300, 400, 400 );
-
-			for (var i=0; i<imageData.data.length; i+=4)
-			{
-				var r = imageData.data[ i + 0 ];
-				var g = imageData.data[ i + 1 ];
-				var b = imageData.data[ i + 2 ];
-				var a = imageData.data[ i + 3 ];
-
-				console.log(g);						
-			}
-			
-			var newImage = canvas.createImageData( 400, 400 );
-
-			for (var i=0; i<newImage.data.length; i+=4)
-			{
-				newImage.data[ i + 0 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
-				newImage.data[ i + 1 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
-				newImage.data[ i + 2 ] = Math.floor( Math.random() * MAX_COLOR_VALUE ); 
-				newImage.data[ i + 3 ] = MAX_COLOR_VALUE;            
-			}	
-
-			canvas.putImageData( newImage, 100, 100 );
+			this.changePhoto();
 		}
+		
+		canvas.putImageData( newImage, 100, 100 );		
 	}		
 	
+
+
 
 
 	//--------------------------
@@ -546,6 +528,9 @@ var imageData = canvas.getImageData
 		{
 			_photo.index = 0;
 		}
+		
+		
+		if ( _useAudio ) { PHOTO_SOUND.play(); }		
 		
 		/*
 		if ( USE_AUDIO )
@@ -578,6 +563,38 @@ var imageData = canvas.getImageData
 	}
 
 
+	//------------------------
+	this.changePhoto = function()
+	{	
+		var imageData = canvas.getImageData( 300, 300, 400, 400 );
+
+		for (var i=0; i<imageData.data.length; i+=4)
+		{
+			var r = imageData.data[ i + 0 ];
+			var g = imageData.data[ i + 1 ];
+			var b = imageData.data[ i + 2 ];
+			var a = imageData.data[ i + 3 ];
+
+			//console.log(g);						
+		}
+		
+		newImage = canvas.createImageData( 400, 400 );
+
+		for (var i=0; i<newImage.data.length; i+=4)
+		{
+			/*
+			newImage.data[ i + 0 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
+			newImage.data[ i + 1 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
+			newImage.data[ i + 2 ] = Math.floor( Math.random() * MAX_COLOR_VALUE ); 
+			newImage.data[ i + 3 ] = MAX_COLOR_VALUE;    
+			*/        
+
+			newImage.data[ i + 0 ] = imageData.data[ i + 0 + 20 ];
+			newImage.data[ i + 1 ] = imageData.data[ i + 1 + 200 ];
+			newImage.data[ i + 2 ] = imageData.data[ i + 2 + 200 ];
+			newImage.data[ i + 3 ] = MAX_COLOR_VALUE;    
+		}		
+	}
 	
 	//------------------------
 	this.render = function()
@@ -586,6 +603,18 @@ var imageData = canvas.getImageData
 		// show background
 		//-------------------------------------------
 		canvas.drawImage( _photo.image, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
+
+
+		//-------------------------------------
+		// render photo flash
+		//-------------------------------------
+		var shootClock = ( _seconds - _photo.shootTime ) / _photo.shootDuration;
+		if ( shootClock < ONE )
+		{
+			canvas.fillStyle = "rgba( 255, 255, 255, " + ( ONE - shootClock ) + " )";
+			canvas.fillRect( 0, 0, canvasID.width, canvasID.height );
+		}
+
 
 		//-------------------------
 		// show tools
@@ -755,13 +784,13 @@ var imageData = canvas.getImageData
 	
 		_currentTool = t;
 
-		_toolButtons[ TOOL_PHOTO	].image.src = "images/photo-tool.png";
-		_toolButtons[ TOOL_CREATE	].image.src = "images/create-tool.png";
-		_toolButtons[ TOOL_DELETE	].image.src = "images/delete-tool.png";
+		_toolButtons[ TOOL_PHOTO ].image.src = "images/photo-tool.png";
+		_toolButtons[ TOOL_PAINT ].image.src = "images/paint-tool.png";
+		_toolButtons[ TOOL_MUSIC ].image.src = "images/music-tool.png";
 
-			 if ( t == TOOL_PHOTO 	) { _toolButtons[t].image.src = "images/photo-tool-selected.png"; 	}
-		else if ( t == TOOL_CREATE 	) { _toolButtons[t].image.src = "images/create-tool-selected.png"; 	}
-		else if ( t == TOOL_DELETE 	) { _toolButtons[t].image.src = "images/delete-tool-selected.png"; 	}
+			 if ( t == TOOL_PHOTO ) { _toolButtons[t].image.src = "images/photo-tool-selected.png"; 	}
+		else if ( t == TOOL_PAINT ) { _toolButtons[t].image.src = "images/paint-tool-selected.png"; 	}
+		else if ( t == TOOL_MUSIC ) { _toolButtons[t].image.src = "images/music-tool-selected.png"; 	}
 		
 		if ( _currentTool == TOOL_PHOTO )
 		{

@@ -42,7 +42,7 @@ function switchToUnlockScreen()
 //----------------------
 function Unlock()
 {	
-	var USING_TEST_GUI		= true;
+	var USING_TEST_GUI		= false;
 	var USING_SYNTHESIZER	= true;
 
 	var IDEAL_AMPLITUDE 	= 0.46;

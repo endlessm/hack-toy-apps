@@ -7,3 +7,4 @@ StartupNotify=true
 Icon=com.endlessm.hackyballs
 Categories=Game;
 X-Endless-LaunchMaximized=true
+X-Endless-SplashBackground=com.endlessm.hackyballs.png

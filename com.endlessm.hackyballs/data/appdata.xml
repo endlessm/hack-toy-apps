@@ -17,6 +17,10 @@
     </screenshot>
   </screenshots>
 
+  <metadata>
+    <value key="GnomeSoftware::popular-background">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.hackyballs/data/thumbnail.png</value>
+  </metadata>
+
   <url type="homepage">http://www.endlessm.com</url>
 
   <releases>

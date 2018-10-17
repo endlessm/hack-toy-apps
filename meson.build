@@ -32,6 +32,12 @@ install_data(
     rename: app_id + '.png'
 )
 
+install_data(
+    join_paths(app_id, 'data', 'splashscreen.png'),
+    install_dir: 'share/eos-shell-content/splash',
+    rename: app_id + '.png'
+)
+
 data = configuration_data()
 data.set('APP_ID', app_id)
 runner = configure_file(

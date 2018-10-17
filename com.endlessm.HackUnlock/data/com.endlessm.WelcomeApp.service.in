@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.endlessm.WelcomeApp
+Exec=@bindir@/eos-welcome-app

@@ -4,19 +4,10 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var USING_TEST_GUI = true;
+var MODE_FIRST_SCREEN 	= 0;
+var MODE_SOLVING_PUZZLE = 1;
+var MODE_SUCCESS 		= 2;
 
-var IDEAL_AMPLITUDE 	= 0.484;
-var IDEAL_FREQUENCY 	= 11.7;
-var IDEAL_PHASE			= -1.538;	
-
-//var AMPLITUDE_BUFFER 	= 0.1;
-//var FREQUENCY_BUFFER 	= 0.5;
-//var PHASE_BUFFER		= 1.7;
-
-var AMPLITUDE_BUFFER 	= 1.0;
-var FREQUENCY_BUFFER 	= 3.0;
-var PHASE_BUFFER		= 6.0;
 
 //---------------------------------------------------------
 // The object globalParameters contains all the data that
@@ -26,47 +17,63 @@ var PHASE_BUFFER		= 6.0;
 var globalParameters = 
 {
 	minAmplitude 	: 0.0,
-	maxAmplitude 	: 20.0,
-	
-	minFrequency 	: 5.0,
-	maxFrequency 	: 30.0,
-
-	minPhase 		: -2.0,
-	maxPhase 		: 2.0,
-	
+	maxAmplitude 	: 0.7,
+	minFrequency 	: 0.0,
+	maxFrequency 	: 50.0,
+	minPhase 		: -3.0,
+	maxPhase 		: 3.0,
 	amplitude		: 0.0,
 	frequency		: 0.0,
 	phase			: 0.0,
-	
-	unlocked		: false
+	mode			: 0,
+}
+
+
+//-----------------------------------------------------------------
+// This function should be called from outside to tell this app
+// to switch from the initial screen to the unlock screen
+//-----------------------------------------------------------------
+function switchToUnlockScreen()
+{
+	globalParameters.mode = MODE_SOLVING_PUZZLE;
 }
 
 
 //----------------------
 function Unlock()
 {	
+	var USING_TEST_GUI		= true;
+	var USING_SYNTHESIZER	= true;
+
+	var IDEAL_AMPLITUDE 	= 0.46;
+	var IDEAL_FREQUENCY 	= 11.84;
+	var IDEAL_PHASE			= -1.536;	
+
+	var AMPLITUDE_BUFFER 	= 0.1;
+	var FREQUENCY_BUFFER 	= 0.5;
+	var PHASE_BUFFER		= 0.2;
+
 	var MILLISECONDS_PER_UPDATE = 30;
 	var SINE_WAVE_RES 			= 100;
 	var BASE_NOTE 				= 44;
-	var FREQUENCY_SCALAR 		= 0.2;
-	var USE_SYNTHESIZER			= true;
-	var SINE_WAVE_HEIGHT 		= canvasID.height * ONE_HALF + 20;
+	var SINE_WAVE_FREQ_SCALE	= 0.4;
+	var SINE_WAVE_Y_POSITION	= canvasID.height * ONE_HALF + 20;
+	var SINE_WAVE_AMP_SCALE		= 300;
+	var FIRST_FLIP_SOUND 		= new Audio( "sounds/first-flip.wav" ); 
 	var SUCCESS_SOUND 			= new Audio( "sounds/success.wav" ); 
-
-	var _solvingPuzzle			= false;
+	
 	var _synthesizer 			= new Synthesizer();
-	var _successScreen			= new Image();
-	var _gateImage				= new Image();
+	var _background				= new Image();
 	var _testGUI 				= new UnlockTestGUI();
     var _mousePosition			= new Vector2D();
     var _prevMousePosition		= new Vector2D();
     var _mouseVelocity			= new Vector2D();
     var _vector					= new Vector2D();
 	var _startTime				= ZERO;
-	var _frequency 				= ZERO;
 	var _amplitude 				= ZERO;
+	var _frequency 				= ZERO;
+	var _phase	 				= ZERO;
 	var _soundClock				= 0;
-
 
 	//---------------------------
 	this.initialize = function()
@@ -74,11 +81,11 @@ function Unlock()
 		//-------------------------------------
 		// configure parameters to start
 		//-------------------------------------
-		globalParameters.amplitude	= 3.0;
+		globalParameters.amplitude	= 0.2;
 		globalParameters.frequency	= 20.0;
 		globalParameters.phase		= ZERO;
-		globalParameters.unlocked	= false;
-    		
+		globalParameters.mode 		= MODE_FIRST_SCREEN;
+    	
 		//---------------------------------------------
 		// initialize user interface with parameters
 		//---------------------------------------------
@@ -92,10 +99,9 @@ function Unlock()
 		_startTime = (new Date).getTime();
 
 		//--------------------------------------
-		// load images
+		// load background image
 		//--------------------------------------
-		_gateImage.src	   = "images/sine-gate.png";			
-		_successScreen.src = "images/success.png";
+		_background.src = "images/first-screen.png";			
 		
 		//----------------------------
 		// apply parameters  
@@ -105,25 +111,11 @@ function Unlock()
 		//-------------------------------
 		// initialize synthesizer
 		//-------------------------------
-		if ( USE_SYNTHESIZER )
+		if ( USING_SYNTHESIZER )
 		{
 			_synthesizer.initialize();
-
-			var note     = BASE_NOTE + _frequency * FREQUENCY_SCALAR;
-			var duration = 100;
-			var attack   = 3.0;
-			var release  = 0.0;
-
-			_synthesizer.playNote( note, 0.7, duration, attack, release );
 		}
 				
-		if ( USING_TEST_GUI )
-		{
-			//_testGUI.showPanel();
-		}
-		
-		_solvingPuzzle = true;		
-		
 		//--------------------------------------------------------------------
 		// start up the timer
 		//--------------------------------------------------------------------
@@ -131,22 +123,18 @@ function Unlock()
     }
 
 
-
-	
-
 	//------------------------
 	this.update = function()
 	{	
-		//------------------------------------
-		// this gets called all the time to 
-		// catch any changes from the UI
-		//------------------------------------
-		this.applyParameters();	   							
+		//-----------------------------------------------------
+		// this gets called all the time to catch any changes
+		//-----------------------------------------------------
+		this.applyParameters();
 				
 		//---------------------------
 		// update solving puzzle...
 		//---------------------------
-		if ( _solvingPuzzle )
+		if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
 		{
 			this.updateSolvingPuzzle();
 		}
@@ -167,28 +155,27 @@ function Unlock()
 	//-------------------------------------
 	this.updateSolvingPuzzle = function()
 	{			
-		_soundClock ++;
-
-		if ( _soundClock > 2 )
+		_background.src = "images/sine-gate.png";	
+	
+		if ( USING_SYNTHESIZER )
 		{
-			_soundClock = 0;
+			_synthesizer.update();
 
-			if ( USE_SYNTHESIZER )
+			_soundClock ++;
+
+			if ( _soundClock > 2 )
 			{
+				_soundClock = 0;
+
 				_synthesizer.turnOffAllNotes();
 
-				var note     = BASE_NOTE + _frequency * FREQUENCY_SCALAR;
+				var note     = BASE_NOTE + _frequency * SINE_WAVE_FREQ_SCALE;
 				var duration = 10.0;
 				var attack   = 0.0;
 				var release  = 0.0;
 
 				_synthesizer.playNote( note, _amplitude, duration, attack, release );
 			}
-		}
-					
-		if ( USE_SYNTHESIZER )
-		{
-			_synthesizer.update();
 		}
 		
 		var amplitudeDiff 	= Math.abs( _amplitude 	- IDEAL_AMPLITUDE 	);
@@ -199,14 +186,14 @@ function Unlock()
 		&&  ( frequencyDiff < FREQUENCY_BUFFER 	)
 		&&  ( phaseDiff     < PHASE_BUFFER		))
 		{
-			if ( USE_SYNTHESIZER )
+			if ( USING_SYNTHESIZER )
 			{			
 				_synthesizer.turnOffAllNotes();
 			}
 
-			_solvingPuzzle = false;
+			globalParameters.mode = MODE_SUCCESS;
 			SUCCESS_SOUND.play();
-			globalParameters.unlocked = true;
+			_background.src = "images/success.png";			
 		}
 	}
 	
@@ -216,15 +203,15 @@ function Unlock()
 	//------------------------
 	this.render = function()
 	{
-		if ( _solvingPuzzle )
-		{
+		//-------------------------------------------
+		// show background
+		//-------------------------------------------
+		canvas.drawImage( _background, 0, 0, canvasID.width, canvasID.height );
+
+		if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
+		{				
 			//-------------------------------------------
-			// show gate
-			//-------------------------------------------
-			canvas.drawImage( _gateImage, 0, 0, canvasID.width, canvasID.height );
-				
-			//-------------------------------------------
-			// show sine wave
+			// show composite sine wave
 			//-------------------------------------------
 			canvas.lineWidth = 15; 			
 			canvas.strokeStyle = "rgba( 255, 100, 100, 0.3 )";	
@@ -237,13 +224,6 @@ function Unlock()
 			canvas.lineWidth = 3; 			
 			canvas.strokeStyle = "rgba( 255, 255, 255, 0.3 )";	
 			this.showSineWave();
-		}
-		else
-		{
-			//-------------------------------------------
-			// show success screen
-			//-------------------------------------------
-			canvas.drawImage( _successScreen, 0, 0, canvasID.width, canvasID.height );
 		}
 
 		//-------------------------
@@ -267,7 +247,7 @@ function Unlock()
 		{					
 			var f = -ONE_HALF + i / SINE_WAVE_RES;			
 			var x = canvasID.width * ONE_HALF + f * canvasID.width;
-			var y = SINE_WAVE_HEIGHT + _amplitude * globalParameters.maxAmplitude * Math.sin( f * _frequency + _phase );
+			var y = SINE_WAVE_Y_POSITION + _amplitude * SINE_WAVE_AMP_SCALE * Math.sin( f * _frequency + _phase );
 			
 			if ( i == 0 )
 			{

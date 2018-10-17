@@ -47,10 +47,13 @@ function UnlockTestGUI()
 		y += 30; _userInterface.createSlider( x, y, w, h, "frequency", 	_parameters.minFrequency, 	_parameters.maxFrequency, 	_parameters.frequency 	);
 		y += 30; _userInterface.createSlider( x, y, w, h, "phase", 		_parameters.minPhase, 		_parameters.maxPhase, 		_parameters.phase 		);
 		
+		_userInterface.setButtonActive( "flip to hack", true );
+		_userInterface.setButtonActive( "flip back",   	false );
 		_userInterface.setPanelActive ( "hack panel",   false );
 		_userInterface.setSliderActive( "amplitude",	false );
 		_userInterface.setSliderActive( "frequency",	false );
-		_userInterface.setSliderActive( "phase",		false );		
+		_userInterface.setSliderActive( "phase",		false );
+				
 	}
 	
 
@@ -120,6 +123,8 @@ function UnlockTestGUI()
 			{
 				_flipped = false;
 				
+				_userInterface.setButtonActive( "flip to hack", true  );
+				_userInterface.setButtonActive( "flip back",   	false );
 				_userInterface.setPanelActive ( "hack panel", 	false );
 				_userInterface.setSliderActive( "amplitude",	false );
 				_userInterface.setSliderActive( "frequency",	false );
@@ -132,6 +137,8 @@ function UnlockTestGUI()
 			{
 				_flipped = true;
 				
+				_userInterface.setButtonActive( "flip to hack", false);
+				_userInterface.setButtonActive( "flip back",   	true );
 				_userInterface.setPanelActive ( "hack panel", 	true );
 				_userInterface.setSliderActive( "amplitude",	true );
 				_userInterface.setSliderActive( "frequency",	true );

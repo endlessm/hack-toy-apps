@@ -43,11 +43,11 @@ class Application(Gtk.Application):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(SCRIPT_PATH, 'app.ui'))
 
-        view = View()
-        view.props.expand = True
+        self._view = View()
+        self._view.props.expand = True
 
         container = builder.get_object('game_container')
-        container.add(view)
+        container.add(self._view)
 
         self._window = builder.get_object('app_window')
         self._window.set_application(self)
@@ -66,7 +66,7 @@ class Application(Gtk.Application):
         self.add_action(quit)
 
     def _flip_action_activated_cb(self, action, param):
-        pass
+        self._view.run_javascript('if(typeof flip !== "undefined"){flip();}');
 
     def _quit_action_activated_cb(self, action, param):
         self.quit()

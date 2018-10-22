@@ -263,36 +263,7 @@ function Unlock()
             canvas.strokeStyle = "rgba( 255, 255, 255, 0.3 )";    
             this.showSineWave();  
         }
-        
-        
-        /*
-        if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
-        {                
-            //-------------------------------------------
-            // show composite sine wave
-            //-------------------------------------------
-            canvas.lineWidth = 15;             
-            canvas.strokeStyle = "rgba( 255, 100, 100, 0.3 )";    
-            this.showSineWave();
 
-            canvas.lineWidth = 7;             
-            canvas.strokeStyle = "rgba( 255, 255, 100, 0.3 )";    
-            this.showSineWave();
-
-            canvas.lineWidth = 3;             
-            canvas.strokeStyle = "rgba( 255, 255, 255, 0.3 )";    
-            this.showSineWave();
-        }
-        else if ( globalParameters.mode == MODE_SUCCESS )
-        {
-            var f = _successClock / SUCCESS_DURATION;
-            var wave = ONE_HALF - ONE_HALF * Math.cos( f * PI2 );
-            canvas.globalAlpha = wave;        
-            canvas.drawImage( _glowImage, 0, 0, canvasID.width, canvasID.height );        
-            canvas.globalAlpha = 1.0;        
-        }        
-        */
-        
         //-------------------------
         // show user interface
         //-------------------------

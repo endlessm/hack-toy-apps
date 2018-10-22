@@ -107,17 +107,6 @@ var gameState =
 //----------------------
 function HackyBalls()
 {    
-    var FLINGER_SPRING_FORCE        = 10.0;
-    var FLINGER_FRICTION            = 20.0;
-    var FLINGER_GRAVITY                = 200.0;
-    var FLINGER_HOLD_FORCE             = 20.0;
-    var FLINGER_HOLD_FRICTION        = 0.2;
-    var FLINGER_FLING_FORCE         = 40.0;
-    var FLINGER_FLING_DURATION        = 30;
-    var FLINGER_HANDLE_SIZE            = 19.0;
-    var FLINGER_SIZE                 = 50.0;
-    var FLINGER_MIN_RADIUS            = 60.0;
-    
     var CURSOR_SIZE                    = 40.0;
     var NUM_BALL_SPECIES             = 3;
     var NULL_BALL                     = -1;
@@ -138,12 +127,6 @@ function HackyBalls()
     var TOOL_PRESET_3      =  6;
     var TOOL_PRESET_4      =  7;
     var NUM_TOOLS        =  8;
-
-    var FLINGER_STATE_NULL        = -1;
-    var FLINGER_STATE_MOVING    =  0;
-    var FLINGER_STATE_WAITING    =  1;
-    var FLINGER_STATE_PULLING    =  2;
-    var FLINGER_STATE_FLINGING    =  3;
     
     var TOOL_TRASH_SOUND        = new Audio( "sounds/Tool_Trash.wav"            ); 
     var TOOL_GRAB_SOUND            = new Audio( "sounds/Tool_Grab.wav"                ); 
@@ -196,53 +179,6 @@ function HackyBalls()
         }
     }
     
-    
-    //------------------
-    function Flinger()
-    {    
-        this.state             = FLINGER_STATE_NULL;
-        this.ballIndex        = NULL_BALL;
-        this.position        = new Vector2D();
-        this.handlePosition    = new Vector2D();
-        this.handleVelocity    = new Vector2D();
-        this.handleLength    = ZERO;
-        this.image            = new Image();
-        
-        //---------------------------------
-        this.update = function( deltaTime )
-        {    
-            var xx = _flinger.handlePosition.x - _flinger.position.x;
-            var yy = _flinger.handlePosition.y - _flinger.position.y;
-
-            var currentLength = Math.sqrt( xx*xx + yy*yy );
-            if ( currentLength > ZERO )
-            {
-                var springForce = ( _flinger.handleLength - currentLength ) * FLINGER_SPRING_FORCE * deltaTime;
-                
-                xx /= currentLength;
-                yy /= currentLength;
-            
-                _flinger.handleVelocity.x += xx * springForce;    
-                _flinger.handleVelocity.y += yy * springForce;                    
-            }
-
-            _flinger.handleVelocity.addY( FLINGER_GRAVITY * deltaTime );
-            
-            var friction = FLINGER_FRICTION * deltaTime;
-            if ( friction < ONE )
-            {
-                _flinger.handleVelocity.scale( ONE - friction );            
-            }
-            else
-            {
-                _flinger.handleVelocity.clear();            
-            }
-            
-            _flinger.handlePosition.add( _flinger.handleVelocity );
-        }        
-    }
-
-
 /*
 var MAX_NUMBER = 10;
 
@@ -312,7 +248,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     var _background            = new Image();
     var _cursor                = new Image();
     var _success            = new Image();
-    var _gameStateInfo        = new Image();
+    //var _gameStateInfo        = new Image();
     var _balls                 = new Array();
     var _toolButtons         = new Array( NUM_TOOLS );
     var _deathAnimation        = new DeathAnimation();
@@ -382,9 +318,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         //--------------------------------------
         _cursor.src         = "images/move-tool-selected.png";
         _background.src     = "images/background-0.png";
-        _flinger.image.src    = "images/flinger.png";
         _deleteImage.src     = "images/delete-ball.png";    
-        _gameStateInfo.src     = "images/game-state-info.png";    
+        //_gameStateInfo.src     = "images/game-state-info.png";    
 
         //-------------------------------------------------------
         // set all hack parameters and balls to default state
@@ -802,9 +737,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         //------------------------------
         // delete flinger
         //------------------------------
-        _flinger.ballIndex  = NULL_BALL;
-        _flinger.state         = FLINGER_STATE_NULL;
-        _grabbedBall        = NULL_BALL    
+        _flinger.cancel();
+         _grabbedBall = NULL_BALL    
 
         //----------------------------------
         // start with this tool selected...
@@ -1298,8 +1232,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         //--------------------------------------------------------
         if ( b == _flinger.ballIndex )
         {
-            _flinger.state = FLINGER_STATE_NULL;        
-            _flinger.ballIndex = NULL_BALL;        
+             _flinger.cancel();
         }    
     }
     
@@ -1337,14 +1270,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         //-------------------------------------------
         canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
         
-        //-----------------------
-        // show the flinger
-        //-----------------------
-        if ( _flinger.state != FLINGER_STATE_NULL )
-        {        
-            this.showFlinger();
-        }        
-        
         //-----------------------------------------
         // show animation from balls being killed
         //-----------------------------------------
@@ -1373,6 +1298,16 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         {
             _balls[b].render();
         }
+        
+       
+        //-----------------------
+        // show the flinger
+        //-----------------------
+        if ( _flinger.state != FLINGER_STATE_NULL )
+        {        
+            _flinger.render( _balls[ _flinger.ballIndex ].getPosition(), _balls[ _flinger.ballIndex ].getRadius() );
+        }        
+        
         
         //-------------------------
         // show tools
@@ -1404,8 +1339,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         {
             _hackyBallsGUI.render();
         }        
-        
-        /*
+ 
+         /*
         //---------------------------------
         // show game state success screen
         //---------------------------------
@@ -1443,117 +1378,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     
     
     
-
-    //----------------------------
-    this.showFlinger = function()
-    {            
-        canvas.lineWidth = 4; 
-        canvas.strokeStyle = "rgba( 200, 230, 255, 0.3 )";
-                
-        var radius = _balls[ _flinger.ballIndex ].getRadius() * 1.5;
-                    
-        var xx = _flinger.handlePosition.x - _flinger.position.x;
-        var yy = _flinger.handlePosition.y - _flinger.position.y;    
-        
-        var d = Math.sqrt( xx*xx + yy*yy );        
-                    
-        if ( d > ZERO )
-        {                    
-            xx /= d;
-            yy /= d;    
-        }
-        else
-        {
-            xx = ZERO;
-            yy = ONE;
-        }
-            
-        xx *= radius;
-        yy *= radius;
-        
-        var xl = xx * 0.9;
-        var yl = yy * 0.9;
-        
-        //-----------------------------------
-        // show slingshot rubber band lines
-        //-----------------------------------
-        canvas.beginPath();
-        canvas.moveTo
-        ( 
-            _balls[ _flinger.ballIndex ].getPosition().x - yl, 
-            _balls[ _flinger.ballIndex ].getPosition().y + xl
-        );
-
-        canvas.lineTo
-        ( 
-            _flinger.position.x - yl, 
-            _flinger.position.y + xl
-        );
-
-        canvas.closePath();
-        canvas.stroke();
-
-        canvas.beginPath();
-        canvas.moveTo
-        ( 
-            _balls[ _flinger.ballIndex ].getPosition().x + yl, 
-            _balls[ _flinger.ballIndex ].getPosition().y - xl
-        );
-
-        canvas.lineTo
-        ( 
-            _flinger.position.x + yl, 
-            _flinger.position.y - xl
-        );
-        
-        canvas.closePath();
-        canvas.stroke();        
-        
-        canvas.fillStyle = "rgba( 255, 255, 255, 0.4 )";    
-
-        canvas.beginPath();
-        canvas.arc
-        ( 
-            _flinger.position.x - yl, 
-            _flinger.position.y + xl,
-            5.0, 0, PI2, false 
-        );            
-        canvas.fill();
-        canvas.closePath();    
-
-        canvas.beginPath();
-        canvas.arc
-        ( 
-            _flinger.position.x + yl, 
-            _flinger.position.y - xl,
-            5.0, 0, PI2, false 
-        );            
-        canvas.fill();
-        canvas.closePath();    
-        
-        //-----------------------------------
-        // show slingshot harness
-        //-----------------------------------
-        canvas.translate
-        ( 
-            _balls[ _flinger.ballIndex ].getPosition().x - xx - yy, 
-            _balls[ _flinger.ballIndex ].getPosition().y - yy + xx 
-        );
-        
-        var flingerRadius = radius * 2.0;
-        //if ( flingerRadius < FLINGER_MIN_RADIUS ) 
-        //{
-        //    flingerRadius = FLINGER_MIN_RADIUS;
-        //}
-    
-        var angle = -Math.PI * ONE_HALF + Math.atan2( yy, xx ); 
-        canvas.rotate( angle );    
-        canvas.scale( flingerRadius, flingerRadius );
-        canvas.drawImage( _flinger.image, ZERO, ZERO, ONE, ONE );
-        canvas.resetTransform();
-    }
-    
-
 
     //--------------------------------
     this.mouseDown = function( x, y )
@@ -1678,16 +1502,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     //---------------------------------
     this.putBallInFlinger = function(b)
     {
-        this.playSound( MOVE_FLING_SOUND ); 
-
-        _flinger.handleLength         = _balls[b].getRadius() + 4.0;    
-        _flinger.state                 = FLINGER_STATE_MOVING;
-        _flinger.ballIndex            = b;
-        _flinger.position.x         = _balls[b].getPosition().x;
-        _flinger.position.y         = _balls[b].getPosition().y;
-        _flinger.handlePosition.x    = _flinger.position.x;
-        _flinger.handlePosition.y    = _flinger.position.y + _flinger.handleLength;
-        _flinger.handleVelocity.clear();
+        this.playSound( MOVE_FLING_SOUND );         
+        _flinger.setBall( b, _balls[b].getPosition(), _balls[b].getRadius() );
     }
 
 
@@ -1696,25 +1512,24 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     {
         //this.playSound( BUTTON_SOUND );
     
-        _currentTool = t;
-        _flinger.ballIndex = NULL_BALL;
-        _flinger.state = FLINGER_STATE_NULL;
+        _currentTool = t;        
+        _flinger.cancel();
 
-        _toolButtons[ TOOL_MOVE        ].image.src = "images/move-tool.png";
-        _toolButtons[ TOOL_CREATE    ].image.src = "images/create-tool.png";
-        _toolButtons[ TOOL_DELETE    ].image.src = "images/delete-tool.png";
-        _toolButtons[ TOOL_PRESET_1    ].image.src = "images/preset-1-tool.png";
-        _toolButtons[ TOOL_PRESET_2    ].image.src = "images/preset-2-tool.png";
-        _toolButtons[ TOOL_PRESET_3    ].image.src = "images/preset-3-tool.png";
-        _toolButtons[ TOOL_PRESET_4    ].image.src = "images/preset-4-tool.png";
+        _toolButtons[ TOOL_MOVE     ].image.src = "images/move-tool.png";
+        _toolButtons[ TOOL_CREATE   ].image.src = "images/create-tool.png";
+        _toolButtons[ TOOL_DELETE   ].image.src = "images/delete-tool.png";
+        _toolButtons[ TOOL_PRESET_1 ].image.src = "images/preset-1-tool.png";
+        _toolButtons[ TOOL_PRESET_2 ].image.src = "images/preset-2-tool.png";
+        _toolButtons[ TOOL_PRESET_3 ].image.src = "images/preset-3-tool.png";
+        _toolButtons[ TOOL_PRESET_4 ].image.src = "images/preset-4-tool.png";
 
-             if ( t == TOOL_MOVE         ) { _toolButtons[t].image.src = "images/move-tool-selected.png";         this.playSound( TOOL_GRAB_SOUND  ); }
-        else if ( t == TOOL_CREATE         ) { _toolButtons[t].image.src = "images/create-tool-selected.png";         this.playSound( TOOL_GRAB_SOUND  ); }
-        else if ( t == TOOL_DELETE         ) { _toolButtons[t].image.src = "images/delete-tool-selected.png";         this.playSound( TOOL_TRASH_SOUND ); }
-        else if ( t == TOOL_PRESET_1     ) { _toolButtons[t].image.src = "images/preset-1-tool-selected.png";    }
-        else if ( t == TOOL_PRESET_2     ) { _toolButtons[t].image.src = "images/preset-2-tool-selected.png";     }
-        else if ( t == TOOL_PRESET_3     ) { _toolButtons[t].image.src = "images/preset-3-tool-selected.png";     }
-        else if ( t == TOOL_PRESET_4     ) { _toolButtons[t].image.src = "images/preset-4-tool-selected.png";     }
+             if ( t == TOOL_MOVE     ) { _toolButtons[t].image.src = "images/move-tool-selected.png";   this.playSound( TOOL_GRAB_SOUND  ); }
+        else if ( t == TOOL_CREATE   ) { _toolButtons[t].image.src = "images/create-tool-selected.png"; this.playSound( TOOL_GRAB_SOUND  ); }
+        else if ( t == TOOL_DELETE   ) { _toolButtons[t].image.src = "images/delete-tool-selected.png"; this.playSound( TOOL_TRASH_SOUND ); }
+        else if ( t == TOOL_PRESET_1 ) { _toolButtons[t].image.src = "images/preset-1-tool-selected.png"; }
+        else if ( t == TOOL_PRESET_2 ) { _toolButtons[t].image.src = "images/preset-2-tool-selected.png"; }
+        else if ( t == TOOL_PRESET_3 ) { _toolButtons[t].image.src = "images/preset-3-tool-selected.png"; }
+        else if ( t == TOOL_PRESET_4 ) { _toolButtons[t].image.src = "images/preset-4-tool-selected.png"; }
         
         if ( t != TOOL_SPECIES )
         {

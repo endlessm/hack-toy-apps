@@ -26,6 +26,7 @@ var globalParameters =
 	frequency		: 0.0,
 	phase			: 0.0,
 	mode			: 0,
+	unlocked        : false
 }
 
 
@@ -35,7 +36,8 @@ var globalParameters =
 //-----------------------------------------------------------------
 function flip()
 {
-	globalParameters.mode = MODE_SOLVING_PUZZLE;
+    globalParameters.mode = MODE_SOLVING_PUZZLE;
+    globalParameters.unlocked = false;
 }
 
 
@@ -85,6 +87,7 @@ function Unlock()
 		globalParameters.frequency	= 20.0;
 		globalParameters.phase		= ZERO;
 		globalParameters.mode 		= MODE_FIRST_SCREEN;
+		globalParameters.unlocked   = false;
     	
 		//---------------------------------------------
 		// initialize user interface with parameters
@@ -192,13 +195,13 @@ function Unlock()
 			}
 
 			globalParameters.mode = MODE_SUCCESS;
+			globalParameters.unlocked = true;
 			SUCCESS_SOUND.play();
 			_background.src = "images/success.png";			
 		}
 	}
 	
 
- 
 
 	//------------------------
 	this.render = function()

@@ -22,6 +22,7 @@ class View(WebKit2.WebView):
         settings.set_enable_accelerated_2d_canvas(True)
         settings.set_allow_universal_access_from_file_urls(True)
         settings.set_enable_write_console_messages_to_stdout(True)
+        settings.set_enable_webaudio(True)
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):
             settings.set_enable_developer_extras(True)
         self.load_uri('file://%s/app/index.html' % SCRIPT_PATH)

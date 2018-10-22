@@ -10,7 +10,6 @@ var CANVAS_PIXEL_OFFSET = 8;
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
 
-
 var newImage;
 
 var testClock = 0;
@@ -511,9 +510,11 @@ var imageData = canvas.getImageData
 			this.changePhoto();
 		}
 		
-		canvas.putImageData( newImage, 100, 100 );		
-	}		
-	
+		if ( newImage != null )
+		{
+    		canvas.putImageData( newImage, 100, 100 );		
+	    }		
+	}
 
 
 
@@ -529,33 +530,7 @@ var imageData = canvas.getImageData
 			_photo.index = 0;
 		}
 		
-		
 		if ( _useAudio ) { PHOTO_SOUND.play(); }		
-		
-		/*
-		if ( USE_AUDIO )
-		{
-			_synthesizer.turnOffAllNotes();
-
-			var note     = 100;
-			var duration = 0.01;
-			var attack   = 0.0;
-			var release  = 0.0;
-			_synthesizer.playNote( note, duration, attack, release );
-
-			var note     = 110;
-			var duration = 0.015;
-			var attack   = 0.0;
-			var release  = 0.0;
-			_synthesizer.playNote( note, duration, attack, release );
-
-			var note     = 120;
-			var duration = 0.018;
-			var attack   = 0.0;
-			var release  = 0.0;
-			_synthesizer.playNote( note, duration, attack, release );
-		}
-		*/
 		
 		_photo.image.src = "images/photo-" + _photo.index + ".png";
 
@@ -563,10 +538,10 @@ var imageData = canvas.getImageData
 	}
 
 
-	//------------------------
+	//---------------------------
 	this.changePhoto = function()
 	{	
-		var imageData = canvas.getImageData( 300, 300, 400, 400 );
+		var imageData = canvas.getImageData( 300, 300, 600, 600 );
 
 		for (var i=0; i<imageData.data.length; i+=4)
 		{
@@ -575,24 +550,25 @@ var imageData = canvas.getImageData
 			var b = imageData.data[ i + 2 ];
 			var a = imageData.data[ i + 3 ];
 
-			//console.log(g);						
+			//console.log(g);
 		}
 		
-		newImage = canvas.createImageData( 400, 400 );
+		newImage = canvas.createImageData( 600, 600 );
 
 		for (var i=0; i<newImage.data.length; i+=4)
 		{
-			/*
+			
 			newImage.data[ i + 0 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
 			newImage.data[ i + 1 ] = Math.floor( Math.random() * MAX_COLOR_VALUE );
 			newImage.data[ i + 2 ] = Math.floor( Math.random() * MAX_COLOR_VALUE ); 
 			newImage.data[ i + 3 ] = MAX_COLOR_VALUE;    
-			*/        
-
-			newImage.data[ i + 0 ] = imageData.data[ i + 0 + 20 ];
+		
+            /*
+			newImage.data[ i + 0 ] = imageData.data[ i + 0 +   0 ];
 			newImage.data[ i + 1 ] = imageData.data[ i + 1 + 200 ];
 			newImage.data[ i + 2 ] = imageData.data[ i + 2 + 200 ];
 			newImage.data[ i + 3 ] = MAX_COLOR_VALUE;    
+			*/
 		}		
 	}
 	
@@ -785,7 +761,7 @@ var imageData = canvas.getImageData
 		_currentTool = t;
 
 		_toolButtons[ TOOL_PHOTO ].image.src = "images/photo-tool.png";
-		_toolButtons[ TOOL_PAINT ].image.src = "images/paint-tool.png";
+		_toolButtons[ TOOL_PAINT ].image.src = "images/paint-tool.png";       
 		_toolButtons[ TOOL_MUSIC ].image.src = "images/music-tool.png";
 
 			 if ( t == TOOL_PHOTO ) { _toolButtons[t].image.src = "images/photo-tool-selected.png"; 	}
@@ -797,7 +773,6 @@ var imageData = canvas.getImageData
 			this.takePhoto();
 		}
 	}
-
 
 
 	//--------------------------------

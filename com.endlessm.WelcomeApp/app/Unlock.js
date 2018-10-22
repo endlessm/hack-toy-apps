@@ -33,7 +33,7 @@ var globalParameters =
 // This function should be called from outside to tell this app
 // to switch from the initial screen to the unlock screen
 //-----------------------------------------------------------------
-function switchToUnlockScreen()
+function flip()
 {
 	globalParameters.mode = MODE_SOLVING_PUZZLE;
 }
@@ -42,7 +42,7 @@ function switchToUnlockScreen()
 //----------------------
 function Unlock()
 {	
-	var USING_TEST_GUI		= false;
+	var USING_TEST_GUI		= true;
 	var USING_SYNTHESIZER	= true;
 
 	var IDEAL_AMPLITUDE 	= 0.46;

@@ -1447,7 +1447,22 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             }
         }
 
-        if ( ! buttonSelected )
+        
+        //----------------------------------
+        // detect selecting flinger handle
+        //----------------------------------
+        var flingerSelected = false;
+        if ( _flinger.state == FLINGER_STATE_WAITING )
+        {
+            if ( _flinger.positionOverHandle( _mousePosition ) )
+            {
+                flingerSelected = true;
+                _flinger.state = FLINGER_STATE_PULLING;
+            }
+        }
+
+        if (( !buttonSelected )
+        &&  ( !flingerSelected )) 
         {
             if (( _currentTool == TOOL_CREATE )
             ||  ( _currentTool == TOOL_SPECIES  ))
@@ -1484,17 +1499,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
                         }
                     }
                 }
-            }
-        }
-        
-        //----------------------------------
-        // detect selecting flinger handle
-        //----------------------------------
-        if ( _flinger.state == FLINGER_STATE_WAITING )
-        {
-            if ( _flinger.positionOverHandle( _mousePosition ) )
-            {
-                _flinger.state = FLINGER_STATE_PULLING;
             }
         }
     }

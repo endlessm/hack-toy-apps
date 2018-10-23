@@ -118,15 +118,16 @@ function HackyBalls()
     var MAX_COLLISION_BALLS         = 10;
     var GAME_SUCCESS_DISPLAY_DURATION = 100;
 
-    var TOOL_MOVE         =  0;
-    var TOOL_CREATE     =  1;
-    var TOOL_DELETE     =  2;
-    var TOOL_SPECIES      =  3;
-    var TOOL_PRESET_1      =  4;
-    var TOOL_PRESET_2      =  5;
-    var TOOL_PRESET_3      =  6;
-    var TOOL_PRESET_4      =  7;
-    var NUM_TOOLS        =  8;
+    var TOOL_MOVE       =  0;
+    var TOOL_FLING      =  1;
+    var TOOL_CREATE     =  2;
+    var TOOL_DELETE     =  3;
+    var TOOL_SPECIES    =  4;
+    var TOOL_PRESET_1   =  5;
+    var TOOL_PRESET_2   =  6;
+    var TOOL_PRESET_3   =  7;
+    var TOOL_PRESET_4   =  8;
+    var NUM_TOOLS       =  9;
     
     var TOOL_TRASH_SOUND        = new Audio( "sounds/Tool_Trash.wav"            ); 
     var TOOL_GRAB_SOUND            = new Audio( "sounds/Tool_Grab.wav"                ); 
@@ -260,7 +261,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     var _rightWall             = WINDOW_WIDTH;
     var _grabbedBall        = NULL_BALL;
     var _selectedSpecies    = 0;
-    var _currentTool        = TOOL_MOVE;
+    var _currentTool        = TOOL_FLING;
     var _mousePosition        = new Vector2D();
     var _prevMousePosition    = new Vector2D();
     var _mouseVelocity        = new Vector2D();
@@ -324,7 +325,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         //-------------------------------------------------------
         // set all hack parameters and balls to default state
         //-------------------------------------------------------
-        this.setStateToPreset(0);
+        this.setStateToPreset(3);
 
         //---------------------------------------------
         // initialize user interface with parameters
@@ -350,26 +351,28 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         var top  = 80.0;
         var ys      = 55.0;
         
-        _toolButtons[ TOOL_MOVE        ].position.setXY( left, top +  0 * ys );
-        _toolButtons[ TOOL_CREATE     ].position.setXY( left, top +  1 * ys );
-        _toolButtons[ TOOL_DELETE     ].position.setXY( left, top +  2 * ys );
-        _toolButtons[ TOOL_PRESET_1 ].position.setXY( left, top +  4 * ys );
-        _toolButtons[ TOOL_PRESET_2 ].position.setXY( left, top +  5 * ys );
-        _toolButtons[ TOOL_PRESET_3 ].position.setXY( left, top +  6 * ys );
-        _toolButtons[ TOOL_PRESET_4 ].position.setXY( left, top +  7 * ys );
+        _toolButtons[ TOOL_MOVE     ].position.setXY( left, top +  0 * ys );
+        _toolButtons[ TOOL_FLING    ].position.setXY( left, top +  1 * ys );
+        _toolButtons[ TOOL_CREATE   ].position.setXY( left, top +  2 * ys );
+        _toolButtons[ TOOL_DELETE   ].position.setXY( left, top +  3 * ys );
         
-        _toolButtons[ TOOL_MOVE        ].image.src = "images/move-tool.png";
-        _toolButtons[ TOOL_CREATE    ].image.src = "images/create-tool.png";
-        _toolButtons[ TOOL_DELETE    ].image.src = "images/delete-tool.png";
-        _toolButtons[ TOOL_PRESET_1    ].image.src = "images/preset-1-tool.png";
-        _toolButtons[ TOOL_PRESET_2    ].image.src = "images/preset-2-tool.png";
-        _toolButtons[ TOOL_PRESET_3    ].image.src = "images/preset-3-tool.png";
-        _toolButtons[ TOOL_PRESET_4    ].image.src = "images/preset-4-tool.png";
+        _toolButtons[ TOOL_PRESET_1 ].position.setXY( left, top +  5 * ys );
+        _toolButtons[ TOOL_PRESET_2 ].position.setXY( left, top +  6 * ys );
+        _toolButtons[ TOOL_PRESET_3 ].position.setXY( left, top +  7 * ys );
+        _toolButtons[ TOOL_PRESET_4 ].position.setXY( left, top +  8 * ys );
+        
+        _toolButtons[ TOOL_MOVE     ].image.src = "images/move-tool.png";
+        _toolButtons[ TOOL_FLING    ].image.src = "images/fling-tool.png";
+        _toolButtons[ TOOL_CREATE   ].image.src = "images/create-tool.png";
+        _toolButtons[ TOOL_DELETE   ].image.src = "images/delete-tool.png";
+        _toolButtons[ TOOL_PRESET_1 ].image.src = "images/preset-1-tool.png";
+        _toolButtons[ TOOL_PRESET_2 ].image.src = "images/preset-2-tool.png";
+        _toolButtons[ TOOL_PRESET_3 ].image.src = "images/preset-3-tool.png";
+        _toolButtons[ TOOL_PRESET_4 ].image.src = "images/preset-4-tool.png";
 
         _toolButtons[ TOOL_SPECIES  ].position.setXY( left + size + 3, _toolButtons[ TOOL_CREATE ].position.y );
         _toolButtons[ TOOL_SPECIES  ].height = size * 2.7;
-    //_toolButtons[ TOOL_SPECIES  ].image.src = "images/ball-type-0.png";
-    _toolButtons[ TOOL_SPECIES  ].image.src = "images/species-panel.png";
+        _toolButtons[ TOOL_SPECIES  ].image.src = "images/species-panel.png";
         _toolButtons[ TOOL_SPECIES  ].visible = false;
 
         this.selectTool( TOOL_MOVE );
@@ -408,7 +411,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         _numBalls = 0;
                 
         //----------------------------------------------------------------
-        // Game 1  
+        // Game 0
         //----------------------------------------------------------------
         if ( presetID == 0 )
         {
@@ -506,7 +509,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             this.createBall( x + r * 10, y, 2 );    
         }
         //----------------------------------------------------------------
-        // Game 2  
+        // Game 1
         //----------------------------------------------------------------
         else if ( presetID == 1 )
         {
@@ -572,7 +575,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             this.createBall( 350, 360, 2 );
         }
         //----------------------------------------------------------------
-        // Game 3  
+        // Game 2
         //----------------------------------------------------------------
         else if ( presetID == 2 )
         {
@@ -655,18 +658,18 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             this.initializeGameState( period, collisionSpecies, numCollisionsGoal );                            
         }
         //----------------------------------------------------------------
-        // Game 4  
+        // Game 3
         //----------------------------------------------------------------
         else if ( presetID == 3 )
         {
             globalParameters.backgroundImageIndex = 2;
 
-            globalParameters.radius_0             = 50.0;
+            globalParameters.radius_0             = 40.0;
             globalParameters.gravity_0             = 0.0;
-            globalParameters.collision_0         = 0.2;
-            globalParameters.friction_0         = 0.05;
+            globalParameters.collision_0         = 0.0;
+            globalParameters.friction_0         = 1.0;
             globalParameters.usePhysics_0         = true;
-            globalParameters.imageIndex_0        = 4;
+            globalParameters.imageIndex_0        = 6;
             globalParameters.socialForce_0_0     = 0.0;
             globalParameters.socialForce_0_1     = 0.0;
             globalParameters.socialForce_0_2     = 0.0;
@@ -678,12 +681,12 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             globalParameters.deathEffect_0_2    = 0;
 
             // parameters for species 1 balls
-            globalParameters.radius_1             = 50.0;
+            globalParameters.radius_1             = 60.0;
             globalParameters.gravity_1             = 0.0;
             globalParameters.collision_1         = 0.2;
             globalParameters.friction_1         = 0.05;
-            globalParameters.usePhysics_1         = true;
-            globalParameters.imageIndex_1        = 5;
+            globalParameters.usePhysics_1         = false;
+            globalParameters.imageIndex_1        = 8;
             globalParameters.socialForce_1_0     =  0.0;
             globalParameters.socialForce_1_1     =  0.0;
             globalParameters.socialForce_1_2     =  0.0;
@@ -716,14 +719,14 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             //----------------------------
             this.applyParameters();
 
-            this.createBall( 121, 121, 0 );        
+            this.createBall( 400, 400, 0 );        
 
-            var velocity = new Vector2D();
-            velocity.setXY( 6.0, 7.0 );            
-            _balls[0].setVelocity( velocity );
+            //var velocity = new Vector2D();
+            //velocity.setXY( 6.0, 7.0 );            
+            //_balls[0].setVelocity( velocity );
             
             this.createBall( 1000, 250, 1 );                    
-            this.createBall( 1060, 350, 1 );    
+            //this.createBall( 1060, 350, 1 );    
         }
         
         //---------------------------------------------
@@ -800,9 +803,9 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     //-----------------------
     this.update = function()
     {       
-        if (globalParameters.preset != 0)
+        if ( globalParameters.preset != 0 )
         {
-            this.setStateToPreset(globalParameters.preset-1);
+            this.setStateToPreset( globalParameters.preset - 1 );
             globalParameters.preset = 0;
         }
 
@@ -1391,6 +1394,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         }
         
         //--------------------------
+        // update mouse state
+        //--------------------------
+        this.updateMouse( x, y );
+        
+        //--------------------------
         // detect selecting a tool
         //--------------------------
         var buttonSelected = false;
@@ -1467,7 +1475,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
                         }
                         else 
                         {                            
-                            if ( _currentTool == TOOL_MOVE )
+                            if ( _currentTool == TOOL_FLING )
                             {
                                 this.putBallInFlinger(b);
                             }
@@ -1479,22 +1487,16 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             }
         }
         
-        
         //----------------------------------
         // detect selecting flinger handle
         //----------------------------------
         if ( _flinger.state == FLINGER_STATE_WAITING )
         {
-            if (( x > _flinger.handlePosition.x - FLINGER_HANDLE_SIZE )
-            &&  ( x < _flinger.handlePosition.x + FLINGER_HANDLE_SIZE )
-            &&  ( y > _flinger.handlePosition.y - FLINGER_HANDLE_SIZE )
-            &&  ( y < _flinger.handlePosition.y + FLINGER_HANDLE_SIZE ))
+            if ( _flinger.positionOverHandle( _mousePosition ) )
             {
                 _flinger.state = FLINGER_STATE_PULLING;
             }
         }
-
-        this.updateMouse( x, y );
     }
 
 
@@ -1516,6 +1518,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         _flinger.cancel();
 
         _toolButtons[ TOOL_MOVE     ].image.src = "images/move-tool.png";
+        _toolButtons[ TOOL_FLING    ].image.src = "images/fling-tool.png";
         _toolButtons[ TOOL_CREATE   ].image.src = "images/create-tool.png";
         _toolButtons[ TOOL_DELETE   ].image.src = "images/delete-tool.png";
         _toolButtons[ TOOL_PRESET_1 ].image.src = "images/preset-1-tool.png";
@@ -1524,6 +1527,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         _toolButtons[ TOOL_PRESET_4 ].image.src = "images/preset-4-tool.png";
 
              if ( t == TOOL_MOVE     ) { _toolButtons[t].image.src = "images/move-tool-selected.png";   this.playSound( TOOL_GRAB_SOUND  ); }
+        else if ( t == TOOL_FLING    ) { _toolButtons[t].image.src = "images/fling-tool-selected.png";   this.playSound( TOOL_GRAB_SOUND  ); }
         else if ( t == TOOL_CREATE   ) { _toolButtons[t].image.src = "images/create-tool-selected.png"; this.playSound( TOOL_GRAB_SOUND  ); }
         else if ( t == TOOL_DELETE   ) { _toolButtons[t].image.src = "images/delete-tool-selected.png"; this.playSound( TOOL_TRASH_SOUND ); }
         else if ( t == TOOL_PRESET_1 ) { _toolButtons[t].image.src = "images/preset-1-tool-selected.png"; }
@@ -1549,7 +1553,20 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             }
         }
 
-        if ( _flinger.state == FLINGER_STATE_PULLING )
+
+        if ( _flinger.state == FLINGER_STATE_WAITING )
+        {
+            if ( _flinger.positionOverHandle( _mousePosition ) )
+            {
+                console.log( "hover!" );
+                _flinger.setHover( true );
+            }
+            else
+            {
+                _flinger.setHover( false );
+            }
+        }
+        else if ( _flinger.state == FLINGER_STATE_PULLING )
         {
             _flinger.handlePosition.x = x;
             _flinger.handlePosition.y = y;

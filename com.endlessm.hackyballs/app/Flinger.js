@@ -87,6 +87,38 @@ function Flinger()
         this.handlePosition.add( this.handleVelocity );
     }   
     
+
+
+    
+    //----------------------------------------------
+    this.positionOverHandle = function( position )
+    {
+        if (( position.x > this.handlePosition.x - FLINGER_HANDLE_SIZE )
+        &&  ( position.x < this.handlePosition.x + FLINGER_HANDLE_SIZE )
+        &&  ( position.y > this.handlePosition.y - FLINGER_HANDLE_SIZE )
+        &&  ( position.y < this.handlePosition.y + FLINGER_HANDLE_SIZE ))
+        {
+            return true;
+        }
+    
+        return false;            
+    }
+    
+    
+
+    //----------------------------------------------
+    this.setHover = function( hover )
+    {
+        if ( hover )
+        {
+            this.image.src = "images/flinger-hover.png";
+        }
+        else
+        {
+            this.image.src = "images/flinger.png";
+        }    
+    }
+    
     
     //------------------------------------------
     this.render = function( ballPosition, radius )

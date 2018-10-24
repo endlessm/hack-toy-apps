@@ -1,6 +1,26 @@
 ﻿var canvasID = document.getElementById( 'canvas' );
 var canvas = canvasID.getContext( '2d' );
 
+/*
+
+from converation wt Chaim Oct 24...
+
+Separate presets into a separate file
+Separate out the hack state from the game state
+
+"Hack state" is like: "Gopher World", "Space 1" and "Space 2"...etc. These are comprized of hackable parameters only.
+
+Game state is organized as follows:
+* level
+* score
+* ball positions
+* pointer to the hack state
+
+Each level should be saved as a json. Call them something like: "SpaceGameLevel1"
+
+*/
+
+
 "use strict";
 
 var USING_TEST_GUI = true;
@@ -30,6 +50,13 @@ var globalParameters =
 
     // index of background image
     backgroundImageIndex: 0,
+
+    // switches for including game tools
+    moveToolActive:     false,
+    flingToolActive:    false,
+    createToolActive:   false,
+    deleteToolActive:   false,
+    speciesToolActive:  false,
 
     // Communication with Clubhouse
     preset          : 0,
@@ -190,21 +217,21 @@ function HackyBalls()
     //-------------------------
     function DeathAnimation()
     {    
-        this.position     = new Vector2D();
-        this.image        = new Image();
-        this.clock        = 0;
-        this.radius        = ZERO;
-        this.duration   = 20;
+        this.position = new Vector2D();
+        this.image    = new Image();
+        this.clock    = 0;
+        this.radius   = ZERO;
+        this.duration = 20;
     }
 
     //--------------------
     function ToolButton()
     {    
-        this.visible    = false;
-        this.position    = new Vector2D();
-        this.width        = ZERO;
-        this.height        = ZERO;
-        this.image        = new Image();
+        this.visible  = false;
+        this.position = new Vector2D();
+        this.width    = ZERO;
+        this.height   = ZERO;
+        this.image    = new Image();
     }
     
     //-------------------------------
@@ -295,11 +322,6 @@ function HackyBalls()
         _deleteImage.src     = "images/delete-ball.png";    
         //_gameStateInfo.src     = "images/game-state-info.png";    
 
-        //-------------------------------------------------------
-        // set all hack parameters and balls to default state
-        //-------------------------------------------------------
-        this.setStateToPreset(3);
-
         //---------------------------------------------
         // initialize user interface with parameters
         //---------------------------------------------
@@ -348,7 +370,13 @@ function HackyBalls()
         _toolButtons[ TOOL_SPECIES  ].image.src = "images/species-panel.png";
         _toolButtons[ TOOL_SPECIES  ].visible = false;
 
-        this.selectTool( TOOL_MOVE );
+        //this.selectTool( TOOL_MOVE );
+        
+        globalParameters.moveToolActive    = true;
+        globalParameters.flingToolActive   = true;
+        globalParameters.createToolActive  = true;
+        globalParameters.deleteToolActive  = true;
+        globalParameters.speciesToolActive = true;
         
         //-----------------------------------------------------------------------------
         // turn this on only after creating the initial balls, because some browsers
@@ -371,7 +399,12 @@ function HackyBalls()
         //this.timer = setTimeout( "hackyBalls.update()", MILLISECONDS_PER_UPDATE );    
         
         // this forces the frame rate to be same as browser        
-        window.requestAnimationFrame( this.update.bind(this) );                
+        window.requestAnimationFrame( this.update.bind(this) ); 
+        
+        //-------------------------------------------------------
+        // set all hack parameters and balls to default state
+        //-------------------------------------------------------
+        this.setStateToPreset(3);
     }
 
 
@@ -491,6 +524,8 @@ function HackyBalls()
             this.createBall( x + r *  6, y, 2 );
             this.createBall( x + r *  8, y, 2 );
             this.createBall( x + r * 10, y, 2 );    
+            
+            this.selectTool( TOOL_MOVE );    
         }
         //----------------------------------------------------------------
         // Game 1
@@ -557,6 +592,8 @@ function HackyBalls()
             this.createBall( 300, 300, 0 );
             this.createBall( 400, 300, 1 );
             this.createBall( 350, 360, 2 );
+
+            this.selectTool( TOOL_MOVE );    
         }
         //----------------------------------------------------------------
         // Game 2
@@ -638,7 +675,9 @@ function HackyBalls()
             var period = 5;                // how many time steps are used to run this test?     
             var collisionSpecies = 0;     // which species of balls do we care about for collisions?
             var numCollisionsGoal = 10;     // how many unique balls do we want to test for collisions?
-            this.initializeGameState( period, collisionSpecies, numCollisionsGoal );                            
+            this.initializeGameState( period, collisionSpecies, numCollisionsGoal );   
+
+            this.selectTool( TOOL_MOVE );    
         }
         //----------------------------------------------------------------
         // Game 3
@@ -710,6 +749,8 @@ function HackyBalls()
             
             this.createBall( 1000, 250, 1 );                    
             //this.createBall( 1060, 350, 1 );    
+
+            this.selectTool( TOOL_FLING );    
         }
 	// QUEST: Hacky Balls 0
 	else if ( presetID == 10 )
@@ -788,11 +829,6 @@ function HackyBalls()
         //------------------------------
         _flinger.cancel();
          _grabbedBall = NULL_BALL    
-
-        //----------------------------------
-        // start with this tool selected...
-        //----------------------------------
-        this.selectTool( TOOL_MOVE );    
     }
 
 
@@ -809,7 +845,7 @@ function HackyBalls()
                 else if ( species == 1 ) { this.playSound( CREATE_2_SOUND ); }
                 else if ( species == 2 ) { this.playSound( CREATE_3_SOUND ); }
             }          
-    
+
             //---------------------------------------------
             // jitter discourages balls from being created 
             // at the same position as other balls due to 
@@ -1799,6 +1835,7 @@ document.onmouseup = function(e)
 {
     hackyBalls.mouseUp( e.pageX, e.pageY );
 }
+
 
 //-------------------------------
 document.onkeydown = function(e) 

@@ -44,7 +44,7 @@ function flip()
 //----------------------
 function Unlock()
 {    
-    var USING_TEST_GUI      = false;
+    var USING_TEST_GUI      = true;
     var USING_SYNTHESIZER   = false;
 
     var IDEAL_AMPLITUDE     = 0.46;

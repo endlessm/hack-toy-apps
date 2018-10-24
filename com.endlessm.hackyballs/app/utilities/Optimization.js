@@ -3,7 +3,7 @@
 //-------------------------------------------------------
 CanvasRenderingContext2D.prototype.drawImageCached = function (image, dx, dy, dWidth, dHeight)
 {
-    if (!this.getTransform().isIdentity)
+    if (!this.currentTransform.isIdentity)
     {
         this.drawImage(image, dx, dy, dWidth, dHeight);
         return;

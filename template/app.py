@@ -22,6 +22,7 @@ class View(WebKit2.WebView):
         settings.set_enable_accelerated_2d_canvas(True)
         settings.set_allow_universal_access_from_file_urls(True)
         settings.set_enable_write_console_messages_to_stdout(True)
+        settings.set_enable_webaudio(True)
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):
             settings.set_enable_developer_extras(True)
         self.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
@@ -43,11 +44,11 @@ class Application(Gtk.Application):
         builder = Gtk.Builder()
         builder.add_from_file(os.path.join(SCRIPT_PATH, 'app.ui'))
 
-        view = View()
-        view.props.expand = True
+        self._view = View()
+        self._view.props.expand = True
 
         container = builder.get_object('game_container')
-        container.add(view)
+        container.add(self._view)
 
         self._window = builder.get_object('app_window')
         self._window.set_application(self)
@@ -66,7 +67,7 @@ class Application(Gtk.Application):
         self.add_action(quit)
 
     def _flip_action_activated_cb(self, action, param):
-        pass
+        self._view.run_javascript('if(typeof flip !== "undefined"){flip();}');
 
     def _quit_action_activated_cb(self, action, param):
         self.quit()

@@ -33,7 +33,12 @@ var globalParameters =
 
     // Communication with Clubhouse
     preset          : 0,
-    quest1Success   : false,
+    quest0Success	        : false,
+    quest1Success           : false,
+    quest2Success	        : false,
+    type0BallCount          : 0,
+    type1BallCount          : 0,
+    type2BallCount          : 0,
 
     // parameters for species 0 balls
     radius_0        : ZERO,
@@ -100,7 +105,8 @@ var gameState =
     testBall            : 0,
     collisionSpecies    : 0,
     numCollisionsGoal   : 0,
-    numCollisions       : 0
+    numCollisions       : 0,
+    totalCollisionCount             : 0
 }
 
 
@@ -180,44 +186,6 @@ function HackyBalls()
         }
     }
     
-/*
-var MAX_NUMBER = 10;
-
-function Partition()
-{
-    this.valid = false;
-    this.part = new Array( MAX_NUMBER );
-    
-    for (var p=0; p<MAX_NUMBER; p++)
-    {
-        this.part[p] = 0;
-    }
-}    
-
-var _partitions = new Array( NUM_BALL_SPECIES );
-
-//-----------------------------------
-// set up the array of partitions
-//-----------------------------------
-for (var p=0; p<NUM_BALL_SPECIES; p++)
-{
-    _partitions[p] = new Partition();
-}
-
-for (var p=0; p<NUM_BALL_SPECIES; p++)
-{
-    _partitions[p].valid = false;
-    
-    for (var d=0; d<MAX_NUMBER; d++)
-    {        
-        _partitions[p].part[d] = 0;
-    }        
-}  
-*/
-
-
-
-
 
     //-------------------------
     function DeathAnimation()
@@ -271,11 +239,16 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     var _deleteImage         = new Image();
     var _collisionBalls     = new Array( MAX_COLLISION_BALLS );
     var _speciesButtonImages= new SpeciesButtonImages();
+    var _ballsWithSomeCollision = new Array( MAX_BALLS );
     
 
     //--------------------------
     this.initialize = function()
     {                
+		// Set canvas size
+		_rightWall = canvasID.width = window.innerWidth;
+		_bottomWall = canvasID.height = window.innerHeight;
+
         //--------------------------------------
         // create species array  
         //--------------------------------------
@@ -318,7 +291,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         // grab images
         //--------------------------------------
         _cursor.src         = "images/move-tool-selected.png";
-        _background.src     = "images/background-0.png";
+	canvasID.style.backgroundImage = "url('images/background-0.png')";
         _deleteImage.src     = "images/delete-ball.png";    
         //_gameStateInfo.src     = "images/game-state-info.png";    
 
@@ -402,6 +375,17 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     }
 
 
+    this.createBallCircle = function( x, y, ballType, radius, ballCount )
+    {
+	for (var i=0; i<ballCount; i++)
+	{
+	    var a = ( i / ballCount ) * PI2;
+	    var r = radius + 0.5 * radius * Math.random();
+	    var bx = x + r * Math.sin(a);
+	    var by = y + r * Math.cos(a);
+	    this.createBall( bx, by, ballType );
+	}
+    }
 
 
     //--------------------------------------------
@@ -648,7 +632,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
                 this.createBall( x, y, 0 );
             }
             
-            
             //------------------------------------------------------------------------
             // set up the game state to detect collisions between species...
             //------------------------------------------------------------------------
@@ -727,6 +710,69 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             
             this.createBall( 1000, 250, 1 );                    
             //this.createBall( 1060, 350, 1 );    
+        }
+	// QUEST: Hacky Balls 0
+	else if ( presetID == 10 )
+	{
+	    globalParameters.backgroundImageIndex = 0;
+
+	    globalParameters.radius_0 		= 30.0;
+	    globalParameters.gravity_0 		= 100.0;
+	    globalParameters.collision_0 		= 0.2;
+	    globalParameters.friction_0 		= 1.0;
+	    globalParameters.usePhysics_0 		= true;
+	    globalParameters.imageIndex_0		= 0;
+	    globalParameters.socialForce_0_0 	= 0.0;
+	    globalParameters.socialForce_0_1 	= 0.0;
+	    globalParameters.socialForce_0_2 	= 0.0;
+	    globalParameters.touchDeath_0_0 	= false;
+	    globalParameters.touchDeath_0_1 	= false;
+	    globalParameters.touchDeath_0_2 	= false;
+	    globalParameters.deathEffect_0_0 	= 0;
+	    globalParameters.deathEffect_0_1 	= 0;
+	    globalParameters.deathEffect_0_2	= 0;
+
+	    // parameters for species 1 balls
+	    globalParameters.radius_1 		= 50.0;
+	    globalParameters.gravity_1 		= 100.0;
+	    globalParameters.collision_1 		= 0.2;
+	    globalParameters.friction_1 		= 1.0;
+	    globalParameters.usePhysics_1 		= true;
+	    globalParameters.imageIndex_1		= 1;
+	    globalParameters.socialForce_1_0 	= 0.0;
+	    globalParameters.socialForce_1_1 	= 0.0;
+	    globalParameters.socialForce_1_2 	= 0.0;
+	    globalParameters.touchDeath_1_0 	= false;
+	    globalParameters.touchDeath_1_1 	= false;
+	    globalParameters.touchDeath_1_2 	= false;
+	    globalParameters.deathEffect_1_0 	= 0;
+	    globalParameters.deathEffect_1_1 	= 0;
+	    globalParameters.deathEffect_1_2	= 0;
+
+	    // parameters for species 2 balls
+	    globalParameters.radius_2 		= 10.0;
+	    globalParameters.gravity_2 		= 100.0;
+	    globalParameters.collision_2 		= 0.2;
+	    globalParameters.friction_2 		= 1.0;
+	    globalParameters.usePhysics_2 		= true;
+	    globalParameters.imageIndex_2		= 2;
+	    globalParameters.socialForce_2_0 	= 0.0;
+	    globalParameters.socialForce_2_1 	= 0.0;
+	    globalParameters.socialForce_2_2 	= 0.0;
+	    globalParameters.touchDeath_2_0 	= false;
+	    globalParameters.touchDeath_2_1 	= false;
+	    globalParameters.touchDeath_2_2 	= false;
+	    globalParameters.deathEffect_2_0 	= 0;
+	    globalParameters.deathEffect_2_1 	= 0;
+	    globalParameters.deathEffect_2_2	= 0;
+		
+	    //----------------------------
+	    // apply parameters
+	    //----------------------------
+	    this.applyParameters();
+
+	    var r = 300;
+	    this.createBallCircle( 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
         }
         
         //---------------------------------------------
@@ -892,30 +938,43 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         gameState.running            = true;
         gameState.clock             = 0;
         gameState.numCollisions        = 0;
+	gameState.totalCollisionCount   = 0;
 
-        globalParameters.quest1Success = false;
+	globalParameters.quest0Success = false;
+	globalParameters.quest1Success = false;
+	globalParameters.quest2Success = false;
 
         for (var c=0; c<gameState.numCollisionsGoal; c++)
         {                            
             _collisionBalls[c] = NULL_BALL;
         }            
+
+	for (var i=0; i<MAX_BALLS; i++)
+	{
+	    _ballsWithSomeCollision[i] = false;
+	}
     }
 
+
+    this.isQuest0GoalReached = function()
+    {
+	if (globalParameters.type1BallCount < 20)
+	    return false;
+
+	if ( gameState.totalCollisionCount > 0 )
+	{
+	    //console.log( "Collisions " + gameState.totalCollisionCount);
+	    return false;
+	}
+
+	//console.log( "Goal met");
+	return true;
+    }
 
 
     this.isQuest1GoalReached = function()
     {
-        var type2BallCount = 0;
-        for (var i=0; i<_numBalls; i++)
-        {    
-            if (_balls[i].getType() == 1)
-            {
-                type2BallCount++;
-                if (type2BallCount > 1)
-                    return false;
-            }
-        }
-        if (type2BallCount != 1)
+        if (globalParameters.type2BallCount != 1)
             return false;
     
         if ( gameState.numCollisions >= gameState.numCollisionsGoal )
@@ -955,51 +1014,51 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
                 }
             }
 
+	    gameState.totalCollisionCount = 0;
+	    for (var i=0; i<MAX_BALLS; i++)
+	    {	
+		if (_ballsWithSomeCollision[i])
+		    gameState.totalCollisionCount++;
+	    }
+
             gameState.clock ++;
 
-            gameState.testBall = NULL_BALL;
-            for (var i=0; i<_numBalls; i++)
-            {    
-                if (_balls[i].getType() == 1)
-                {
-                    gameState.testBall = i;
-                    break;
-                }
+	    var type0BallCount = 0;
+	    var type1BallCount = 0;
+	    var type2BallCount = 0;
+	    gameState.testBall = NULL_BALL;
+	    for (var i=0; i<_numBalls; i++)
+	    {	
+		switch (_balls[i].getType())
+		{
+		case 0:
+		    type0BallCount++;
+		    break;
+		case 1:
+		    type1BallCount++;
+		    gameState.testBall = i;
+		    break;
+		case 2:
+		    type2BallCount++;
+		    break;
+		default:
+		    break;	
+		}   
             }
 
+            globalParameters.type0BallCount = type0BallCount;
+            globalParameters.type1BallCount = type1BallCount;
+            globalParameters.type2BallCount = type2BallCount;
 
-            if (!gameState.quest1Success)
-            {
-                globalParameters.quest1Success = this.isQuest1GoalReached();
-            }
-            /*
-            if ( gameState.success ) 
-            {
-                if ( gameState.clock > GAME_SUCCESS_DISPLAY_DURATION )
-                {
-                    gameState.running = false;
-                }
-            }
-            else
-            {
-                gameState.quest1Success = this.isQuest1GoalReached();
+	    if (!gameState.quest0Success)
+	    {
+		globalParameters.quest0Success = this.isQuest0GoalReached();
+	    }
+	    if (!gameState.quest1Success)
+	    {
+		globalParameters.quest1Success = this.isQuest1GoalReached();
+	    }
 
-
-                //----------------------------------
-                // game goal reached! :)
-                //----------------------------------
-                if ( gameState.numCollisions >= gameState.numCollisionsGoal )
-                {
-                    gameState.success = true;    
-                    if ( _useAudio ) { SUCCESS_SOUND.play(); }        
-                }
-
-                //------------------------------------------------------------------------------------
-                // periodically clear out the collisions array and start over.
-                // this test refers to a limited time span, defined by gameState.period
-                //------------------------------------------------------------------------------------
-            }
-            */
             if ( gameState.clock > gameState.period )
             {
                 gameState.clock = 0;
@@ -1009,6 +1068,10 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
                 {                            
                     _collisionBalls[c] = NULL_BALL;
                 }    
+		for (var i=0; i<MAX_BALLS; i++)
+		{
+		    _ballsWithSomeCollision[i] = false;
+		}
             }
         }        
     }
@@ -1146,6 +1209,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
                                         }
                                     }
                                 }
+								_ballsWithSomeCollision[b] = true;
                             }
 
                             if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
@@ -1263,16 +1327,15 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         }        
     }    
 
-
-        
+		
     //------------------------
     this.render = function()
     {    
         //-------------------------------------------
-        // show background
+		// clear background
         //-------------------------------------------
-        canvas.drawImage( _background, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT );
-        
+	canvas.clearRect(0, 0, canvasID.width, canvasID.height);
+		
         //-----------------------------------------
         // show animation from balls being killed
         //-----------------------------------------
@@ -1284,7 +1347,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             
             var r = _deathAnimation.radius + 40.0 + 40.0 * wave; 
 
-            canvas.drawImage
+	    canvas.drawImageCached
             ( 
                 _deathAnimation.image, 
                 _deathAnimation.position.x - r * ONE_HALF,
@@ -1301,8 +1364,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         {
             _balls[b].render();
         }
-        
        
+
         //-----------------------
         // show the flinger
         //-----------------------
@@ -1319,7 +1382,7 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         {
             if ( _toolButtons[t].visible )
             {
-                canvas.drawImage
+		canvas.drawImageCached
                 ( 
                     _toolButtons[t].image, 
                     _toolButtons[t].position.x, 
@@ -1341,29 +1404,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
         if ( USING_TEST_GUI )
         {
             _hackyBallsGUI.render();
-        }        
- 
-         /*
-        //---------------------------------
-        // show game state success screen
-        //---------------------------------
-        if (( gameState.running )
-        &&  ( gameState.quest1Success ))
-        {
-            var width  = 300;
-            var height = 200;
-            canvas.drawImage
-            ( 
-                _gameStateInfo, 
-                WINDOW_WIDTH  * ONE_HALF - width * ONE_HALF, 
-                WINDOW_HEIGHT * ONE_HALF - height * ONE_HALF, 
-                width, height
-            );        
         }
-        */
     }
-    
-    
     
 
     //---------------------------------
@@ -1377,10 +1419,8 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             _speciesButtonImages.ballImage[s].src = "images/ball-" + _species[s].imageID + ".png"    
             canvas.drawImage( _speciesButtonImages.ballImage[s], _toolButtons[t].position.x + rm, _toolButtons[t].position.y + rm + rr * s, rr, rr );
         }
-    }
-    
-    
-    
+    }    
+
 
     //--------------------------------
     this.mouseDown = function( x, y )
@@ -1502,7 +1542,6 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             }
         }
     }
-
 
 
     //---------------------------------
@@ -1646,7 +1685,11 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     //---------------------------------
     this.applyParameters = function()
     {    
-        _background.src = "images/background-" + globalParameters.backgroundImageIndex + ".png";
+		/* NOTE: set background on DOM element instead of drawing it on the canvas to avoid
+		 * performance issues with webkit2gtk, since its canvas implementation scales images
+		 * in software.
+		 */
+		canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')";
                 
         _species[0].gravity            = globalParameters.gravity_0;
         _species[0].radius            = globalParameters.radius_0;
@@ -1721,6 +1764,17 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
             sound.play(); 
         }
     }
+
+    this.setWalls = function( left, bottom, right, top )
+    {
+	_leftWall 	= left;
+	_rightWall 	= right;
+	_bottomWall = bottom;
+	_topWall	= top;
+
+	for (var i=0; i<_numBalls; i++)
+	    _balls[i].setWalls( left, bottom, right, top );
+    }
     
     //---------------------
     // start this puppy!
@@ -1728,47 +1782,22 @@ for (var p=0; p<NUM_BALL_SPECIES; p++)
     this.initialize();
 }
 
-
 //--------------------------------
 document.onmousedown = function(e) 
 {
-    var rect = e.target.getBoundingClientRect();
-    var xOffset = -rect.left;
-    var yOffset = -rect.top;
-
-    // overwrite the above (for now). It's not working! 
-    xOffset = -CANVAS_PIXEL_OFFSET;
-    yOffset = -CANVAS_PIXEL_OFFSET;
-    
-    hackyBalls.mouseDown( e.pageX + xOffset, e.pageY + yOffset );
+    hackyBalls.mouseDown( e.pageX, e.pageY );
 }
 
 //---------------------------------
 document.onmousemove = function(e) 
 {
-    var rect = e.target.getBoundingClientRect();
-    var xOffset = -rect.left;
-    var yOffset = -rect.top;
-
-    // overwrite the above (for now). It's not working! 
-    xOffset = -CANVAS_PIXEL_OFFSET;
-    yOffset = -CANVAS_PIXEL_OFFSET;
-
-    hackyBalls.mouseMove( e.pageX + xOffset, e.pageY + yOffset );
+    hackyBalls.mouseMove( e.pageX, e.pageY );
 }
 
 //-------------------------------
 document.onmouseup = function(e) 
 {
-    var rect = e.target.getBoundingClientRect();
-    var xOffset = -rect.left;
-    var yOffset = -rect.top;
-
-    // overwrite the above (for now). It's not working! 
-    xOffset = -CANVAS_PIXEL_OFFSET;
-    yOffset = -CANVAS_PIXEL_OFFSET;
-
-    hackyBalls.mouseUp( e.pageX + xOffset, e.pageY + yOffset );
+    hackyBalls.mouseUp( e.pageX, e.pageY );
 }
 
 //-------------------------------
@@ -1777,3 +1806,16 @@ document.onkeydown = function(e)
     if ( e.keyCode === 32 ) { hackyBalls.spaceKeyPressed();  }
     if ( e.keyCode ===  8 ) { hackyBalls.deleteKeyPressed(); }
 }
+
+/* Declare main object */
+var hackyBalls = new HackyBalls();
+
+window.addEventListener("resize", function () {
+
+    // Resize canvas
+    canvasID.width = window.innerWidth;
+    canvasID.height = window.innerHeight;
+
+    // Update balls walls
+    hackyBalls.setWalls ( ZERO, canvasID.height, canvasID.width, ZERO );
+});

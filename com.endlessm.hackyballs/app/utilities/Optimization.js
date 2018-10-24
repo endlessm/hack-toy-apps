@@ -3,7 +3,8 @@
 //-------------------------------------------------------
 CanvasRenderingContext2D.prototype.drawImageCached = function (image, dx, dy, dWidth, dHeight)
 {
-    if (!this.currentTransform.isIdentity)
+    var transform = this.mozCurrentTransform || this.currentTransform || this.getTransform();
+    if (!transform || (transform && !transform.isIdentity))
     {
         this.drawImage(image, dx, dy, dWidth, dHeight);
         return;

@@ -1377,8 +1377,7 @@ function HackyBalls()
             
             var r = _deathAnimation.radius + 40.0 + 40.0 * wave; 
 
-	    //canvas.drawImageCached
-	    canvas.drawImage
+	    canvas.drawImageCached
             ( 
                 _deathAnimation.image, 
                 _deathAnimation.position.x - r * ONE_HALF,
@@ -1413,8 +1412,7 @@ function HackyBalls()
         {
             if ( _toolButtons[t].visible )
             {
-		//canvas.drawImageCached
-		canvas.drawImage
+		canvas.drawImageCached
                 ( 
                     _toolButtons[t].image, 
                     _toolButtons[t].position.x, 

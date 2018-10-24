@@ -58,7 +58,7 @@ function HackyBallsGUI()
         y += 10; _userInterface.createButton( x + 55 * 0, y, 45, 30, "bg 1" );
         y +=  0; _userInterface.createButton( x + 55 * 1, y, 45, 30, "bg 2" );
         y +=  0; _userInterface.createButton( x + 55 * 2, y, 45, 30, "bg 3" );
-        y +=  0; _userInterface.createButton( x + 55 * 3, y, 45, 30, "bg 4" );
+        //y +=  0; _userInterface.createButton( x + 55 * 3, y, 45, 30, "bg 4" );
 
         y += 60; _userInterface.createLabel ( x, y, "Choose which species of ball to hack..." );
 
@@ -105,7 +105,7 @@ function HackyBallsGUI()
         _userInterface.setButtonActive( "bg 1", false );
         _userInterface.setButtonActive( "bg 2", false );
         _userInterface.setButtonActive( "bg 3", false );
-        _userInterface.setButtonActive( "bg 4", false );
+        //_userInterface.setButtonActive( "bg 4", false );
 
         _userInterface.setLabelActive( "Choose which species of ball to hack...", false );
 
@@ -318,7 +318,7 @@ function HackyBallsGUI()
                 _userInterface.setButtonActive( "bg 1", false );
                 _userInterface.setButtonActive( "bg 2", false );
                 _userInterface.setButtonActive( "bg 3", false );
-                _userInterface.setButtonActive( "bg 4", false );
+                //_userInterface.setButtonActive( "bg 4", false );
 
                 _userInterface.setLabelActive( "Choose which species of ball to hack...", false );
                 _userInterface.setButtonActive( "species 1", false );
@@ -355,7 +355,7 @@ function HackyBallsGUI()
             else if ( _userInterface.buttonPressed( "bg 1"         ) ) { _parameters.backgroundImageIndex = 0; }
             else if ( _userInterface.buttonPressed( "bg 2"         ) ) { _parameters.backgroundImageIndex = 1; }
             else if ( _userInterface.buttonPressed( "bg 3"         ) ) { _parameters.backgroundImageIndex = 2; }
-            else if ( _userInterface.buttonPressed( "bg 4"         ) ) { _parameters.backgroundImageIndex = 3; }
+            //else if ( _userInterface.buttonPressed( "bg 4"         ) ) { _parameters.backgroundImageIndex = 3; }
             else if ( _userInterface.buttonPressed( "species 1" ) ) { _selectedSpecies = 0; }
             else if ( _userInterface.buttonPressed( "species 2" ) ) { _selectedSpecies = 1; }
             else if ( _userInterface.buttonPressed( "species 3" ) ) { _selectedSpecies = 2; }
@@ -418,7 +418,7 @@ function HackyBallsGUI()
                 _userInterface.setButtonActive( "bg 1", true );
                 _userInterface.setButtonActive( "bg 2", true );
                 _userInterface.setButtonActive( "bg 3", true );
-                _userInterface.setButtonActive( "bg 4", true );
+                //_userInterface.setButtonActive( "bg 4", true );
 
                 _userInterface.setLabelActive( "Choose which species of ball to hack...", true );
                 _userInterface.setButtonActive( "species 1", true );

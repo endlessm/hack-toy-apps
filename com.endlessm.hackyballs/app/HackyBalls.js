@@ -3,7 +3,7 @@ var canvas = canvasID.getContext( '2d' );
 
 /*
 
-from converation wt Chaim Oct 24...
+from conversation wt Chaim Oct 24...
 
 Separate presets into a separate file
 Separate out the hack state from the game state
@@ -133,23 +133,21 @@ var gameState =
     collisionSpecies    : 0,
     numCollisionsGoal   : 0,
     numCollisions       : 0,
-    totalCollisionCount             : 0
+    totalCollisionCount : 0
 }
 
 
 //----------------------
 function HackyBalls()
 {    
-    var CURSOR_SIZE                    = 40.0;
-    var NUM_BALL_SPECIES             = 3;
-    var NULL_BALL                     = -1;
-    var MAX_BALLS                    = 100;
-    var INTERACTION_RADIUS             = 200.0;
+    var CURSOR_SIZE                 = 40.0;
+    var NUM_BALL_SPECIES            = 3;
+    var NULL_BALL                   = -1;
+    var MAX_BALLS                   = 100;
+    var INTERACTION_RADIUS          = 200.0;
     var MILLISECONDS_PER_UPDATE     = 10;
-    var COLLISION_DISTANCE_FUDGE     = 10;
-
+    var COLLISION_DISTANCE_FUDGE    = 10;
     var MAX_COLLISION_BALLS         = 10;
-    var GAME_SUCCESS_DISPLAY_DURATION = 100;
 
     var TOOL_MOVE       =  0;
     var TOOL_FLING      =  1;
@@ -242,9 +240,7 @@ function HackyBalls()
     var _flinger            = new Flinger();
     var _species            = new Array( NUM_BALL_SPECIES );
     var _background            = new Image();
-    var _cursor                = new Image();
-    var _success            = new Image();
-    //var _gameStateInfo        = new Image();
+     var _success            = new Image();
     var _balls                 = new Array();
     var _toolButtons         = new Array( NUM_TOOLS );
     var _deathAnimation        = new DeathAnimation();
@@ -317,10 +313,8 @@ function HackyBalls()
         //--------------------------------------
         // grab images
         //--------------------------------------
-        _cursor.src         = "images/move-tool-selected.png";
-	canvasID.style.backgroundImage = "url('images/background-0.png')";
-        _deleteImage.src     = "images/delete-ball.png";    
-        //_gameStateInfo.src     = "images/game-state-info.png";    
+    	canvasID.style.backgroundImage = "url('images/background-0.png')";
+        _deleteImage.src = "images/delete-ball.png";    
 
         //---------------------------------------------
         // initialize user interface with parameters
@@ -1383,7 +1377,8 @@ function HackyBalls()
             
             var r = _deathAnimation.radius + 40.0 + 40.0 * wave; 
 
-	    canvas.drawImageCached
+	    //canvas.drawImageCached
+	    canvas.drawImage
             ( 
                 _deathAnimation.image, 
                 _deathAnimation.position.x - r * ONE_HALF,
@@ -1418,7 +1413,8 @@ function HackyBalls()
         {
             if ( _toolButtons[t].visible )
             {
-		canvas.drawImageCached
+		//canvas.drawImageCached
+		canvas.drawImage
                 ( 
                     _toolButtons[t].image, 
                     _toolButtons[t].position.x, 

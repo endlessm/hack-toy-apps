@@ -206,7 +206,8 @@ function Ball()
         //-----------------
         // show the ball
         //-----------------
-		canvas.drawImageCached
+		//canvas.drawImageCached
+		canvas.drawImage
         ( 
             _image, 
             _position.x - _radius, 

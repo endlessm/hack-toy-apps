@@ -23,8 +23,7 @@ Each level should be saved as a json. Call them something like: "SpaceGameLevel1
 
 "use strict";
 
-var USING_TEST_GUI = true;
-var CANVAS_PIXEL_OFFSET = 8; // this is a tad hacky, but it fixes the problem of the canvas being offset a bit. 
+var USING_TEST_GUI = false;
 
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;

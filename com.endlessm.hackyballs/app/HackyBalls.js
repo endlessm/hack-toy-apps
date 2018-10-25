@@ -745,7 +745,7 @@ function HackyBalls()
 
             this.selectTool( TOOL_FLING );    
         }
-	// QUEST: Hacky Balls 0
+	// QUEST: Fizzics1
 	else if ( presetID == 10 )
 	{
 	    globalParameters.backgroundImageIndex = 0;
@@ -767,7 +767,7 @@ function HackyBalls()
 	    globalParameters.deathEffect_0_2	= 0;
 
 	    // parameters for species 1 balls
-	    globalParameters.radius_1 		= 50.0;
+	    globalParameters.radius_1 		= 80.0;
 	    globalParameters.gravity_1 		= 100.0;
 	    globalParameters.collision_1 		= 0.2;
 	    globalParameters.friction_1 		= 1.0;
@@ -807,8 +807,7 @@ function HackyBalls()
 
 	    var r = 300;
 	    this.createBallCircle( 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
-        }
-        
+
         //---------------------------------------------
         // initialize user interface with parameters
         //---------------------------------------------
@@ -822,9 +821,94 @@ function HackyBalls()
         //------------------------------
         _flinger.cancel();
          _grabbedBall = NULL_BALL    
+
+        var period = 50; // how many time steps are used to run this test?
+        this.initializeGameState( period, 0, 0 );
     }
+    // FIZZICS 2 QUEST
+    else if ( presetID == 11 )
+    {
+        globalParameters.backgroundImageIndex = 0;
 
+        globalParameters.radius_0           = 30.0;
+        globalParameters.gravity_0          = 100.0;
+        globalParameters.collision_0        = 0.2;
+        globalParameters.friction_0         = 1.0;
+        globalParameters.usePhysics_0       = true;
+        globalParameters.imageIndex_0       = 0;
+        globalParameters.socialForce_0_0    = 0.0;
+        globalParameters.socialForce_0_1    = 0.0;
+        globalParameters.socialForce_0_2    = 0.0;
+        globalParameters.touchDeath_0_0     = false;
+        globalParameters.touchDeath_0_1     = false;
+        globalParameters.touchDeath_0_2     = false;
+        globalParameters.deathEffect_0_0    = 0;
+        globalParameters.deathEffect_0_1    = 0;
+        globalParameters.deathEffect_0_2    = 0;
 
+        // parameters for species 1 balls
+        globalParameters.radius_1           = 50.0;
+        globalParameters.gravity_1          = 100.0;
+        globalParameters.collision_1        = 0.2;
+        globalParameters.friction_1         = 1.0;
+        globalParameters.usePhysics_1       = true;
+        globalParameters.imageIndex_1       = 1;
+        globalParameters.socialForce_1_0    =  0.0;
+        globalParameters.socialForce_1_1    =  0.0;
+        globalParameters.socialForce_1_2    =  0.0;
+        globalParameters.touchDeath_1_0     = false;
+        globalParameters.touchDeath_1_1     = false;
+        globalParameters.touchDeath_1_2     = false;
+        globalParameters.deathEffect_1_0    = 0;
+        globalParameters.deathEffect_1_1    = 0;
+        globalParameters.deathEffect_1_2    = 0;
+
+        // parameters for species 2 balls
+        globalParameters.radius_2           = 10.0;
+        globalParameters.gravity_2          = 0.0;
+        globalParameters.collision_2        = 0.0;
+        globalParameters.friction_2         = 0.0;
+        globalParameters.usePhysics_2       = false;
+        globalParameters.imageIndex_2       = 0;
+        globalParameters.socialForce_2_0    = 0.0;  
+        globalParameters.socialForce_2_1    = 0.0;
+        globalParameters.socialForce_2_2    = 0.0;  
+        globalParameters.touchDeath_2_0     = false;
+        globalParameters.touchDeath_2_1     = false;
+        globalParameters.touchDeath_2_2     = false;
+        globalParameters.deathEffect_2_0    = 0;
+        globalParameters.deathEffect_2_1    = 0;
+        globalParameters.deathEffect_2_2    = 0;
+                
+        //----------------------------
+        // apply parameters  
+        //----------------------------
+        this.applyParameters();
+
+        posX = 1200;
+        this.createBall( posX, WINDOW_HEIGHT * ONE_HALF, 1 );
+        
+        var num = 10;
+        for (var i=0; i<num; i++)
+        {
+            var a = ( i / num ) * PI2;
+            var r = 150.0 + 130.0 * Math.random();
+            var x = posX + r * Math.sin(a);
+            var y = WINDOW_HEIGHT * ONE_HALF + r * Math.cos(a);
+            this.createBall( x, y, 0 );
+        }
+        
+        
+        //------------------------------------------------------------------------
+        // set up the game state to detect collisions between species...
+        //------------------------------------------------------------------------
+        var period = 5;             // how many time steps are used to run this test?   
+        var collisionSpecies = 0;   // which species of balls do we care about for collisions?
+        var numCollisionsGoal = 10;     // how many unique balls do we want to test for collisions?
+        this.initializeGameState( period, collisionSpecies, numCollisionsGoal );            
+            
+    }
+    }
 
 
     //------------------------------------------
@@ -1003,7 +1087,7 @@ function HackyBalls()
 
     this.isQuest1GoalReached = function()
     {
-        if (globalParameters.type2BallCount != 1)
+        if (globalParameters.type1BallCount != 1)
             return false;
     
         if ( gameState.numCollisions >= gameState.numCollisionsGoal )

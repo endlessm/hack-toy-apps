@@ -36,10 +36,11 @@ var globalParameters =
 //-----------------------------------------------------------------
 function flip()
 {
-    globalParameters.mode = MODE_SOLVING_PUZZLE;
-    globalParameters.unlocked = false;
+    if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
+        globalParameters.mode = MODE_FIRST_SCREEN;
+    else if ( globalParameters.mode === MODE_FIRST_SCREEN )
+        globalParameters.mode = MODE_SOLVING_PUZZLE;
 }
-
 
 //----------------------
 function Unlock()
@@ -145,7 +146,11 @@ function Unlock()
         //---------------------------
         // update solving puzzle...
         //---------------------------
-        if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
+        if ( globalParameters.mode == MODE_FIRST_SCREEN )
+        {
+            _background.src = "images/first-screen.png";
+        }
+        else if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
         {
             this.updateSolvingPuzzle();
         }

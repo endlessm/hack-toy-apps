@@ -83,6 +83,11 @@ function Unlock()
     //---------------------------
     this.initialize = function()
     {                        
+		canvasID.width  = window.innerWidth;
+		canvasID.height = window.innerHeight;
+        SINE_WAVE_Y_POSITION = canvasID.height * ONE_HALF + 20;
+
+    
         //-------------------------------------
         // configure parameters to start
         //-------------------------------------
@@ -373,6 +378,21 @@ function Unlock()
     this.initialize();
 }
 
+
+
+var unlock = new Unlock();
+
+
+window.addEventListener("resize", function () {
+     // Resize canvas
+    canvasID.width = window.innerWidth; 
+    canvasID.height = window.innerHeight;
+    
+    SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + 20;
+
+     // Update balls walls
+    //hackyBalls.setWalls ( ZERO, canvasID.height, canvasID.width, ZERO );
+});
 
 //--------------------------------
 document.onmousedown = function(e) 

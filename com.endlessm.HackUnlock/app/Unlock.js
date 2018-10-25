@@ -36,10 +36,11 @@ var globalParameters =
 //-----------------------------------------------------------------
 function flip()
 {
-    globalParameters.mode = MODE_SOLVING_PUZZLE;
-    globalParameters.unlocked = false;
+    if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
+        globalParameters.mode = MODE_FIRST_SCREEN;
+    else if ( globalParameters.mode === MODE_FIRST_SCREEN )
+        globalParameters.mode = MODE_SOLVING_PUZZLE;
 }
-
 
 //----------------------
 function Unlock()
@@ -83,6 +84,10 @@ function Unlock()
     //---------------------------
     this.initialize = function()
     {                        
+        canvasID.width  = window.innerWidth;
+        canvasID.height = window.innerHeight;
+        SINE_WAVE_Y_POSITION = canvasID.height * ONE_HALF + 20;
+
         //-------------------------------------
         // configure parameters to start
         //-------------------------------------
@@ -141,7 +146,11 @@ function Unlock()
         //---------------------------
         // update solving puzzle...
         //---------------------------
-        if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
+        if ( globalParameters.mode == MODE_FIRST_SCREEN )
+        {
+            _background.src = "images/first-screen.png";
+        }
+        else if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
         {
             this.updateSolvingPuzzle();
         }
@@ -373,6 +382,18 @@ function Unlock()
     this.initialize();
 }
 
+
+
+var unlock = new Unlock();
+
+
+window.addEventListener("resize", function () {
+     // Resize canvas
+    canvasID.width = window.innerWidth; 
+    canvasID.height = window.innerHeight;
+    
+    SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + 20;
+});
 
 //--------------------------------
 document.onmousedown = function(e) 

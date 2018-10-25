@@ -767,7 +767,7 @@ function HackyBalls()
 	    globalParameters.deathEffect_0_2	= 0;
 
 	    // parameters for species 1 balls
-	    globalParameters.radius_1 		= 50.0;
+	    globalParameters.radius_1 		= 80.0;
 	    globalParameters.gravity_1 		= 100.0;
 	    globalParameters.collision_1 		= 0.2;
 	    globalParameters.friction_1 		= 1.0;
@@ -822,8 +822,10 @@ function HackyBalls()
         //------------------------------
         _flinger.cancel();
          _grabbedBall = NULL_BALL    
-    }
 
+        var period = 50; // how many time steps are used to run this test?
+        this.initializeGameState( period, 0, 0 );
+    }
 
 
 

@@ -38,6 +38,14 @@ install_data(
     rename: app_id + '.png'
 )
 
+if app_id == 'com.endlessm.HackUnlock'
+    install_data(
+        join_paths(app_id, 'data', 'app.service'),
+        install_dir: 'share/dbus-1/services',
+        rename: app_id + '.service'
+    )
+endif
+
 data = configuration_data()
 data.set('APP_ID', app_id)
 runner = configure_file(

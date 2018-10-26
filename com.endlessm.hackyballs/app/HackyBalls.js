@@ -1714,7 +1714,6 @@ function HackyBalls()
         {
             if ( _flinger.positionOverHandle( _mousePosition ) )
             {
-                console.log( "hover!" );
                 _flinger.setHover( true );
             }
             else

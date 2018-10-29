@@ -50,6 +50,7 @@ class Application(Gtk.Application):
         container.add(self._view)
 
         self._window = builder.get_object('app_window')
+        self._window.connect('destroy', self._window_destroy_cb)
         self._window.set_application(self)
         self._window.set_title(self._get_app_name())
         self._window.maximize()
@@ -70,6 +71,9 @@ class Application(Gtk.Application):
 
     def _quit_action_activated_cb(self, action, param):
         self.quit()
+
+    def _window_destroy_cb(self, window):
+        self._window = None
 
     def do_startup(self):
         Gtk.Application.do_startup(self)

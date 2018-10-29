@@ -91,5 +91,10 @@ class Application(Gtk.Application):
 
 
 if __name__ == "__main__":
+    # argv is /path/to/script.py $APP_ID $ARGUMENTS, but
+    # we can't pass sys.argv[2:] directly since GApplication.run()
+    # expects argv[0] to be the program name
+    args = sys.argv[2:]
+    args.insert(0, sys.argv[0])
     app = Application(sys.argv[1])
-    app.run()
+    app.run(args)

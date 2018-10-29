@@ -34,10 +34,9 @@ class Application(Gtk.Application):
     def __init__(self, application_id):
         super().__init__(application_id=application_id)
         self._window = None
-        self._application_id = application_id
 
     def _get_app_name(self):
-        info = Gio.DesktopAppInfo.new(self._application_id + '.desktop')
+        info = Gio.DesktopAppInfo.new(self.get_application_id() + '.desktop')
         return info.get_name()
 
     def _setup_ui(self):

@@ -1,5 +1,5 @@
 body {
-  background: url('images/background.png') no-repeat;
-  position: absolute;
+  background: url('images/background.png') no-repeat center center fixed;
+  background-size: cover;
 }
 

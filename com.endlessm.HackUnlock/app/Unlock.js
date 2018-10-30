@@ -8,6 +8,8 @@ var MODE_FIRST_SCREEN   = 0;
 var MODE_SOLVING_PUZZLE = 1;
 var MODE_SUCCESS        = 2;
 var MODE_FINISHED       = 3;
+var MODE_VIDEO_PLAYBACK = 4;
+var MODE_VIDEO_PLAYED   = 5;
 
 //---------------------------------------------------------
 // The object globalParameters contains all the data that
@@ -36,10 +38,14 @@ var globalParameters =
 //-----------------------------------------------------------------
 function flip()
 {
-    if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
-        globalParameters.mode = MODE_FIRST_SCREEN;
-    else if ( globalParameters.mode === MODE_FIRST_SCREEN )
+    if ( globalParameters.mode === MODE_FIRST_SCREEN )
+    {
         globalParameters.mode = MODE_SOLVING_PUZZLE;
+    }
+    else if ( globalParameters.mode === MODE_SUCCESS )
+    {
+        globalParameters.mode = MODE_FINISHED;
+    }
 }
 
 //----------------------
@@ -57,6 +63,7 @@ function Unlock()
     var PHASE_BUFFER        = 0.2;
 
     var SUCCESS_DURATION        = 30;
+    var FINISH_DURATION         = 50;
     var SINE_WAVE_RES           = 100;
     var BASE_NOTE               = 44;
     var SINE_WAVE_FREQ_SCALE    = 0.4;
@@ -79,6 +86,8 @@ function Unlock()
     var _phase                  = ZERO;
     var _soundClock             = 0;
     var _successClock           = 0;
+    var _finishClock            = 0;
+    var _video                  = null;
 
     //---------------------------
     this.initialize = function()
@@ -161,13 +170,21 @@ function Unlock()
             }
             
             _successClock ++;
-            
-            if ( _successClock > SUCCESS_DURATION )
+        }
+        else if ( globalParameters.mode == MODE_FINISHED )
+        {
+            _background.src = "images/gate.png";
+
+            _finishClock ++;
+
+            if ( _finishClock > FINISH_DURATION )
             {
-                globalParameters.unlocked = true;
-                _background.src = "images/gate.png";
-                globalParameters.mode = MODE_FINISHED;
+                globalParameters.mode = MODE_VIDEO_PLAYBACK;
             }
+        }
+        else if ( globalParameters.mode == MODE_VIDEO_PLAYBACK )
+        {
+            this.ensureVideoPlayback();
         }
         
         //---------------------------
@@ -181,6 +198,23 @@ function Unlock()
         window.requestAnimationFrame( this.update.bind(this) );
     } 
 
+
+    //-------------------------------------
+    this.ensureVideoPlayback = function()
+    {
+        if (_video)
+        {
+            return;
+        }
+
+        _video = document.createElement("video");
+        _video.src = "videos/success.webm";
+        _video.addEventListener("ended", function() {
+            globalParameters.unlocked = true;
+            globalParameters.mode = MODE_VIDEO_PLAYED;
+        });
+        _video.play();
+    }
 
 
     //-------------------------------------
@@ -233,6 +267,21 @@ function Unlock()
     //------------------------
     this.render = function()
     {
+        if ( globalParameters.mode == MODE_VIDEO_PLAYED )
+        {
+            return;
+        }
+
+        if ( globalParameters.mode == MODE_VIDEO_PLAYBACK )
+        {
+            if ( _video && !_video.ended )
+            {
+                canvas.drawImage( _video, 0, 0, canvasID.width, canvasID.height );
+            }
+
+            return;
+        }
+
         //-------------------------------------------
         // show background
         //-------------------------------------------

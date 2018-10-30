@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Fizzics
+Type=Application
+Exec=com.endlessm.Fizzics
+StartupNotify=true
+Icon=com.endlessm.Fizzics
+Categories=Game;
+X-Endless-LaunchMaximized=true
+X-Endless-SplashBackground=com.endlessm.Fizzics.png

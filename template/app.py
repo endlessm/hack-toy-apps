@@ -1,4 +1,5 @@
 import gi
+import json
 import os
 import sys
 gi.require_version('Gdk', '3.0')  # nopep8
@@ -56,6 +57,8 @@ class Application(Gtk.Application):
         self._window.maximize()
         self._window.show_all()
 
+        self._window.set_decorated(self._metadata.get('decorated', True))
+
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
                                 parameter_type=GLib.VariantType('b'))
@@ -86,6 +89,12 @@ class Application(Gtk.Application):
             provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
+
+        try:
+            with open(os.path.join(SCRIPT_PATH, 'metadata.json')) as metadata_file:
+                self._metadata = json.load(metadata_file)
+        except IOError:
+            self._metadata = {}
 
     def do_activate(self):
         if not self._window:

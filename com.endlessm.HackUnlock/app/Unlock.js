@@ -111,7 +111,7 @@ function Unlock()
         //--------------------------------------
         // load background and glow images
         //--------------------------------------
-        _background.src = "images/first-screen.png";            
+        _background.src = "images/gate.png";
         _glowImage.src  = "images/glow.png";            
         
         //----------------------------
@@ -147,7 +147,7 @@ function Unlock()
         //---------------------------
         if ( globalParameters.mode == MODE_FIRST_SCREEN )
         {
-            _background.src = "images/first-screen.png";
+            _background.src = "images/gate.png";
         }
         else if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
         {
@@ -165,7 +165,7 @@ function Unlock()
             if ( _successClock > SUCCESS_DURATION )
             {
                 globalParameters.unlocked = true;
-                _background.src = "images/success.png";                
+                _background.src = "images/gate.png";
                 globalParameters.mode = MODE_FINISHED;
             }
         }

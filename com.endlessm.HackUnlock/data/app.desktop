@@ -4,3 +4,4 @@ Type=Application
 Exec=com.endlessm.HackUnlock
 NoDisplay=true
 X-Endless-Hackable=true
+X-Endless-HackShader=none

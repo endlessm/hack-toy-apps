@@ -77,7 +77,6 @@ function Unlock()
     var SUCCESS_SOUND           = new Audio( "sounds/success.wav" ); 
     
     var _synthesizer            = new Synthesizer();
-    var _background             = new Image();
     var _glowImage              = new Image();
     var _testGUI                = new UnlockTestGUI();
     var _mousePosition          = new Vector2D();
@@ -124,7 +123,7 @@ function Unlock()
         //--------------------------------------
         // load background and glow images
         //--------------------------------------
-        _background.src = "images/gate.png";
+        this.setBackground("images/gate.png");
         _glowImage.src  = "images/glow.png";            
         
         //----------------------------
@@ -148,6 +147,13 @@ function Unlock()
 
 
     //------------------------
+    this.setBackground = function(background)
+    {
+        canvasID.style.backgroundImage = `url('${background}')`;
+    }
+
+
+    //------------------------
     this.update = function()
     {    
         //-----------------------------------------------------
@@ -160,7 +166,7 @@ function Unlock()
         //---------------------------
         if ( globalParameters.mode == MODE_FIRST_SCREEN )
         {
-            _background.src = "images/gate.png";
+            this.setBackground("images/gate.png");
         }
         else if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
         {
@@ -177,7 +183,7 @@ function Unlock()
         }
         else if ( globalParameters.mode == MODE_FINISHED )
         {
-            _background.src = "images/gate.png";
+            this.setBackground("images/gate.png");
 
             _finishClock ++;
 
@@ -223,8 +229,8 @@ function Unlock()
 
     //-------------------------------------
     this.updateSolvingPuzzle = function()
-    {            
-        _background.src = "images/sine-gate.png";    
+    {
+        this.setBackground("images/sine-gate.png");
     
         if ( USING_SYNTHESIZER )
         {
@@ -287,9 +293,9 @@ function Unlock()
         }
 
         //-------------------------------------------
-        // show background
+        // clear background
         //-------------------------------------------
-        canvas.drawImage( _background, 0, 0, canvasID.width, canvasID.height );
+        canvas.clearRect( 0, 0, canvasID.width, canvasID.height );
 
         //-------------------------------------------
         // show puzzle solving

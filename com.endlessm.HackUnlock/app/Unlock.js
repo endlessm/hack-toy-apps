@@ -46,6 +46,10 @@ function flip()
     {
         globalParameters.mode = MODE_FINISHED;
     }
+    else if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
+    {
+        globalParameters.mode = MODE_FIRST_SCREEN;
+    }
 }
 
 //----------------------

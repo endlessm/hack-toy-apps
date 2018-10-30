@@ -44,6 +44,10 @@ if app_id == 'com.endlessm.HackUnlock'
         install_dir: 'share/dbus-1/services',
         rename: app_id + '.service'
     )
+    install_data(
+        join_paths(app_id, 'data', 'metadata.json'),
+        install_dir: 'share/toy'
+    )
 endif
 
 data = configuration_data()

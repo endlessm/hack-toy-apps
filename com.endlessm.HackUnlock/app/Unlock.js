@@ -57,7 +57,6 @@ function Unlock()
     var PHASE_BUFFER        = 0.2;
 
     var SUCCESS_DURATION        = 30;
-    var MILLISECONDS_PER_UPDATE = 30;
     var SINE_WAVE_RES           = 100;
     var BASE_NOTE               = 44;
     var SINE_WAVE_FREQ_SCALE    = 0.4;
@@ -131,7 +130,7 @@ function Unlock()
         //--------------------------------------------------------------------
         // start up the timer
         //--------------------------------------------------------------------
-        this.timer = setTimeout( "unlock.update()", MILLISECONDS_PER_UPDATE );    
+        window.requestAnimationFrame( this.update.bind(this) );
     }
 
 
@@ -179,7 +178,7 @@ function Unlock()
         //---------------------------
         // trigger next update...
         //---------------------------
-        this.timer = setTimeout( "unlock.update()", MILLISECONDS_PER_UPDATE );
+        window.requestAnimationFrame( this.update.bind(this) );
     } 
 
 

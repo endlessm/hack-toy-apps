@@ -1,5 +1,15 @@
+div.Animation,
+div.Animation > img {
+  position: absolute;
+}
+
 body {
-  background: url('images/background.png') no-repeat center center fixed;
-  background-size: cover;
+  margin: 0px;
+  overflow: hidden;
+  background: url('images/background.png') no-repeat;
+}
+
+body > * {
+  position: absolute;
 }
 

@@ -13,3 +13,18 @@ body > * {
   position: absolute;
 }
 
+div.clock > img {
+  position: absolute;
+}
+
+div.clock > img.hand {
+  top: 0px;
+  left: 92px;
+  transform-origin: 10px 102px;
+}
+
+div.clock > img.hand.shadow {
+  top: 2px;
+  left: 94px;
+}
+

@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>com.endlessm.hackyballs.desktop</id>
+  <id>com.endlessm.Fizzics.desktop</id>
   <metadata_license>CC0</metadata_license>
   <project_license>LicenseRef-proprietary</project_license>
   <categories>
     <category>Game</category>
   </categories>
-  <name>HackyBalls</name>
-  <summary>HackyBalls</summary>
+  <name>Fizzics</name>
+  <summary>Fizzics</summary>
 
-  <description><p>HackyBalls</p></description>
+  <description><p>Fizzics</p></description>
 
   <screenshots>
     <screenshot>
-      <image type="source">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.hackyballs/data/screenshot1-C.png</image>
+      <image type="source">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.Fizzics/data/screenshot1-C.png</image>
     </screenshot>
   </screenshots>
 
   <metadata>
-    <value key="GnomeSoftware::popular-background">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.hackyballs/data/thumbnail.png</value>
+    <value key="GnomeSoftware::popular-background">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.Fizzics/data/thumbnail.png</value>
   </metadata>
 
   <url type="homepage">http://www.endlessm.com</url>

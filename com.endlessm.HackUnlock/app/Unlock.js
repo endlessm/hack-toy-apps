@@ -58,9 +58,9 @@ function Unlock()
     var USING_TEST_GUI      = false;
     var USING_SYNTHESIZER   = false;
 
-    var IDEAL_AMPLITUDE     = 0.46;
-    var IDEAL_FREQUENCY     = 11.84;
-    var IDEAL_PHASE         = -1.536;    
+    var IDEAL_AMPLITUDE     = 0.615;
+    var IDEAL_FREQUENCY     = 12.183;
+    var IDEAL_PHASE         = -1.585;
 
     var AMPLITUDE_BUFFER    = 0.1;
     var FREQUENCY_BUFFER    = 0.5;
@@ -69,6 +69,7 @@ function Unlock()
     var SUCCESS_DURATION        = 30;
     var FINISH_DURATION         = 50;
     var SINE_WAVE_RES           = 100;
+    var SINE_WAVE_WIDTH         = 15;
     var BASE_NOTE               = 44;
     var SINE_WAVE_FREQ_SCALE    = 0.4;
     var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + 20;
@@ -318,15 +319,15 @@ function Unlock()
             //-------------------------------------------
             // show composite sine wave
             //-------------------------------------------
-            canvas.lineWidth = 15;             
+            canvas.lineWidth = SINE_WAVE_WIDTH;
             canvas.strokeStyle = "rgba( 255, 100, 100, 0.3 )";    
             this.showSineWave();
 
-            canvas.lineWidth = 7;             
+            canvas.lineWidth = Math.floor(SINE_WAVE_WIDTH / 2);
             canvas.strokeStyle = "rgba( 255, 255, 100, 0.3 )";    
             this.showSineWave();
 
-            canvas.lineWidth = 3;             
+            canvas.lineWidth = Math.floor(SINE_WAVE_WIDTH / 5);
             canvas.strokeStyle = "rgba( 255, 255, 255, 0.3 )";    
             this.showSineWave();  
         }
@@ -351,7 +352,7 @@ function Unlock()
         for (var i=0; i<SINE_WAVE_RES; i++)
         {                    
             var f = -ONE_HALF + i / SINE_WAVE_RES;            
-            var x = canvasID.width * ONE_HALF + f * canvasID.width;
+            var x = canvasID.width * ONE_HALF + f * canvasID.width + SINE_WAVE_WIDTH / 2;
             var y = SINE_WAVE_Y_POSITION + _amplitude * SINE_WAVE_AMP_SCALE * Math.sin( f * _frequency + _phase );
             
             if ( i == 0 )

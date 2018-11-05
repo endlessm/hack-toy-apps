@@ -58,9 +58,9 @@ function Unlock()
     var USING_TEST_GUI      = false;
     var USING_SYNTHESIZER   = false;
 
-    var IDEAL_AMPLITUDE     = 0.46;
-    var IDEAL_FREQUENCY     = 11.84;
-    var IDEAL_PHASE         = -1.536;    
+    var IDEAL_AMPLITUDE     = 0.615;
+    var IDEAL_FREQUENCY     = 12.183;
+    var IDEAL_PHASE         = -1.585;
 
     var AMPLITUDE_BUFFER    = 0.1;
     var FREQUENCY_BUFFER    = 0.5;

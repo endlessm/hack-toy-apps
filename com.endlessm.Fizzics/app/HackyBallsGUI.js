@@ -36,7 +36,7 @@ function HackyBallsGUI()
         _userInterface.createButton( canvasID.width - 120, 20, 100,  37, "flip back"    );
 
         var panelWidth  = 320.0;
-        var panelHeight = 680.0;
+        var panelHeight = 790.0;
         var panelMargin = 10;
 
         var panelLeft   = canvasID.width  - ( panelWidth  + panelMargin );
@@ -96,6 +96,17 @@ function HackyBallsGUI()
         y +=  0; _userInterface.createButton( x + 60 * 1, y, 50, 30, "img 7" );
         y +=  0; _userInterface.createButton( x + 60 * 2, y, 50, 30, "img 8" );
 
+        y += 40; _userInterface.createButton( x + 60 * 0, y, 110, 25, "move tool on" );
+        y +=  0; _userInterface.createButton( x + 60 * 2, y, 110, 25, "move tool off" );
+        y += 30; _userInterface.createButton( x + 60 * 0, y, 110, 25, "fling tool on" );
+        y +=  0; _userInterface.createButton( x + 60 * 2, y, 110, 25, "fling tool off" );
+        y += 30; _userInterface.createButton( x + 60 * 0, y, 110, 25, "create tool on" );
+        y +=  0; _userInterface.createButton( x + 60 * 2, y, 110, 25, "create tool off" );
+        y += 30; _userInterface.createButton( x + 60 * 0, y, 110, 25, "delete tool on" );
+        y +=  0; _userInterface.createButton( x + 60 * 2, y, 110, 25, "delete tool off" );
+
+
+
         _userInterface.setButtonActive( "flip to hack", true );
         _userInterface.setButtonActive( "flip back",     false );
         _userInterface.setPanelActive ( "hack panel",   false );
@@ -139,6 +150,15 @@ function HackyBallsGUI()
         _userInterface.setButtonActive( "img 6", false );
         _userInterface.setButtonActive( "img 7", false );
         _userInterface.setButtonActive( "img 8", false );
+        
+       _userInterface.setButtonActive( "move tool on",    false );
+       _userInterface.setButtonActive( "move tool off",   false );
+       _userInterface.setButtonActive( "fling tool on",   false );
+       _userInterface.setButtonActive( "fling tool off",  false );
+       _userInterface.setButtonActive( "create tool on",  false );
+       _userInterface.setButtonActive( "create tool off", false );
+       _userInterface.setButtonActive( "delete tool on",  false );
+       _userInterface.setButtonActive( "delete tool off", false );
     }
     
 
@@ -228,55 +248,112 @@ function HackyBallsGUI()
     {        
         _parameters = parameters;
 
-        _parameters.backgroundImageIndex     = parameters.backgroundImageIndex;
+        _parameters.backgroundImageIndex = parameters.backgroundImageIndex;
 
-        _parameters.radius_0             = parameters.radius_0;
-        _parameters.gravity_0             = parameters.gravity_0;
+        _parameters.radius_0            = parameters.radius_0;
+        _parameters.gravity_0           = parameters.gravity_0;
         _parameters.collision_0         = parameters.collision_0;
-        _parameters.friction_0             = parameters.friction_0;
-        _parameters.usePhysics_0         = parameters.usePhysics_0;
+        _parameters.friction_0          = parameters.friction_0;
+        _parameters.usePhysics_0        = parameters.usePhysics_0;
         _parameters.socialForce_0_0     = parameters.socialForce_0_0;
         _parameters.socialForce_0_1     = parameters.socialForce_0_1;
         _parameters.socialForce_0_2     = parameters.socialForce_0_2;
-        _parameters.touchDeath_0_0         = parameters.touchDeath_0_0;
-        _parameters.touchDeath_0_1         = parameters.touchDeath_0_1;
-        _parameters.touchDeath_0_2         = parameters.touchDeath_0_2;
-        _parameters.imageIndex_0        = parameters.imageIndex_0;        
-        _parameters.deathEffect_0_0     = globalParameters.deathEffect_0_0;
-        _parameters.deathEffect_0_1     = globalParameters.deathEffect_0_1;
-        _parameters.deathEffect_0_2     = globalParameters.deathEffect_0_2;
-
-        _parameters.radius_1             = parameters.radius_1;
-        _parameters.gravity_1             = parameters.gravity_1;
+        _parameters.socialForce_0_3     = parameters.socialForce_0_3;
+        _parameters.socialForce_0_4     = parameters.socialForce_0_4;
+        _parameters.touchDeath_0_0      = parameters.touchDeath_0_0;
+        _parameters.touchDeath_0_1      = parameters.touchDeath_0_1;
+        _parameters.touchDeath_0_2      = parameters.touchDeath_0_2;
+        _parameters.touchDeath_0_3      = parameters.touchDeath_0_3;
+        _parameters.touchDeath_0_4      = parameters.touchDeath_0_4;        
+        _parameters.imageIndex_0        = parameters.imageIndex_0;       
+        _parameters.deathVisual_0_0     = parameters.deathVisual_0_0;
+        _parameters.deathVisual_0_1     = parameters.deathVisual_0_1;
+        _parameters.deathSound_0_0      = parameters.deathSound_0_0;
+        _parameters.deathSound_0_1      = parameters.deathSound_0_1;
+        
+        _parameters.radius_1            = parameters.radius_1;
+        _parameters.gravity_1           = parameters.gravity_1;
         _parameters.collision_1         = parameters.collision_1;
-        _parameters.friction_1             = parameters.friction_1;
-        _parameters.usePhysics_1         = parameters.usePhysics_1;
+        _parameters.friction_1          = parameters.friction_1;
+        _parameters.usePhysics_1        = parameters.usePhysics_1;
         _parameters.socialForce_1_0     = parameters.socialForce_1_0;
         _parameters.socialForce_1_1     = parameters.socialForce_1_1;
         _parameters.socialForce_1_2     = parameters.socialForce_1_2;
-        _parameters.touchDeath_1_0         = parameters.touchDeath_1_0;
-        _parameters.touchDeath_1_1         = parameters.touchDeath_1_1;
-        _parameters.touchDeath_1_2         = parameters.touchDeath_1_2;
-        _parameters.imageIndex_1        = parameters.imageIndex_1;
-        _parameters.deathEffect_1_0     = globalParameters.deathEffect_1_0;
-        _parameters.deathEffect_1_1     = globalParameters.deathEffect_1_1;
-        _parameters.deathEffect_1_2     = globalParameters.deathEffect_1_2;
+        _parameters.socialForce_1_3     = parameters.socialForce_1_3;
+        _parameters.socialForce_1_4     = parameters.socialForce_1_4;
+        _parameters.touchDeath_1_0      = parameters.touchDeath_1_0;
+        _parameters.touchDeath_1_1      = parameters.touchDeath_1_1;
+        _parameters.touchDeath_1_2      = parameters.touchDeath_1_2;
+        _parameters.touchDeath_1_3      = parameters.touchDeath_1_3;
+        _parameters.touchDeath_1_4      = parameters.touchDeath_1_4;        
+        _parameters.imageIndex_1        = parameters.imageIndex_1;       
+        _parameters.deathVisual_1_0     = parameters.deathVisual_1_0;
+        _parameters.deathVisual_1_1     = parameters.deathVisual_1_1;
+        _parameters.deathSound_1_0      = parameters.deathSound_1_0;
+        _parameters.deathSound_1_1      = parameters.deathSound_1_1;
 
-        _parameters.radius_2             = parameters.radius_2;
-        _parameters.gravity_2             = parameters.gravity_2;
+        _parameters.radius_2            = parameters.radius_2;
+        _parameters.gravity_2           = parameters.gravity_2;
         _parameters.collision_2         = parameters.collision_2;
-        _parameters.friction_2             = parameters.friction_2;
-        _parameters.usePhysics_2         = parameters.usePhysics_2;
+        _parameters.friction_2          = parameters.friction_2;
+        _parameters.usePhysics_2        = parameters.usePhysics_2;
         _parameters.socialForce_2_0     = parameters.socialForce_2_0;
         _parameters.socialForce_2_1     = parameters.socialForce_2_1;
         _parameters.socialForce_2_2     = parameters.socialForce_2_2;
-        _parameters.touchDeath_2_0         = parameters.touchDeath_2_0;
-        _parameters.touchDeath_2_1         = parameters.touchDeath_2_1;
-        _parameters.touchDeath_2_2         = parameters.touchDeath_2_2;
-        _parameters.imageIndex_2        = parameters.imageIndex_2;    
-        _parameters.deathEffect_2_0     = globalParameters.deathEffect_2_0;
-        _parameters.deathEffect_2_1     = globalParameters.deathEffect_2_1;
-        _parameters.deathEffect_2_2     = globalParameters.deathEffect_2_2;
+        _parameters.socialForce_2_3     = parameters.socialForce_2_3;
+        _parameters.socialForce_2_4     = parameters.socialForce_2_4;
+        _parameters.touchDeath_2_0      = parameters.touchDeath_2_0;
+        _parameters.touchDeath_2_1      = parameters.touchDeath_2_1;
+        _parameters.touchDeath_2_2      = parameters.touchDeath_2_2;
+        _parameters.touchDeath_2_3      = parameters.touchDeath_2_3;
+        _parameters.touchDeath_2_4      = parameters.touchDeath_2_4;        
+        _parameters.imageIndex_2        = parameters.imageIndex_2;       
+        _parameters.deathVisual_2_0     = parameters.deathVisual_2_0;
+        _parameters.deathVisual_2_1     = parameters.deathVisual_2_1;
+        _parameters.deathSound_2_0      = parameters.deathSound_2_0;
+        _parameters.deathSound_2_1      = parameters.deathSound_2_1;
+
+        _parameters.radius_3            = parameters.radius_3;
+        _parameters.gravity_3           = parameters.gravity_3;
+        _parameters.collision_3         = parameters.collision_3;
+        _parameters.friction_3          = parameters.friction_3;
+        _parameters.usePhysics_3        = parameters.usePhysics_3;
+        _parameters.socialForce_3_0     = parameters.socialForce_3_0;
+        _parameters.socialForce_3_1     = parameters.socialForce_3_1;
+        _parameters.socialForce_3_2     = parameters.socialForce_3_2;
+        _parameters.socialForce_3_3     = parameters.socialForce_3_3;
+        _parameters.socialForce_3_4     = parameters.socialForce_3_4;
+        _parameters.touchDeath_3_0      = parameters.touchDeath_3_0;
+        _parameters.touchDeath_3_1      = parameters.touchDeath_3_1;
+        _parameters.touchDeath_3_2      = parameters.touchDeath_3_2;
+        _parameters.touchDeath_3_3      = parameters.touchDeath_3_3;
+        _parameters.touchDeath_3_4      = parameters.touchDeath_3_4;        
+        _parameters.imageIndex_3        = parameters.imageIndex_3;       
+        _parameters.deathVisual_3_0     = parameters.deathVisual_3_0;
+        _parameters.deathVisual_3_1     = parameters.deathVisual_3_1;
+        _parameters.deathSound_3_0      = parameters.deathSound_3_0;
+        _parameters.deathSound_3_1      = parameters.deathSound_3_1;
+        
+        _parameters.radius_4            = parameters.radius_4;
+        _parameters.gravity_4           = parameters.gravity_4;
+        _parameters.collision_4         = parameters.collision_4;
+        _parameters.friction_4          = parameters.friction_4;
+        _parameters.usePhysics_4        = parameters.usePhysics_4;
+        _parameters.socialForce_4_0     = parameters.socialForce_4_0;
+        _parameters.socialForce_4_1     = parameters.socialForce_4_1;
+        _parameters.socialForce_4_2     = parameters.socialForce_4_2;
+        _parameters.socialForce_4_3     = parameters.socialForce_4_3;
+        _parameters.socialForce_4_4     = parameters.socialForce_4_4;
+        _parameters.touchDeath_4_0      = parameters.touchDeath_4_0;
+        _parameters.touchDeath_4_1      = parameters.touchDeath_4_1;
+        _parameters.touchDeath_4_2      = parameters.touchDeath_4_2;
+        _parameters.touchDeath_4_3      = parameters.touchDeath_4_3;
+        _parameters.touchDeath_4_4      = parameters.touchDeath_4_4;        
+        _parameters.imageIndex_4        = parameters.imageIndex_4;       
+        _parameters.deathVisual_4_0     = parameters.deathVisual_4_0;
+        _parameters.deathVisual_4_1     = parameters.deathVisual_4_1;
+        _parameters.deathSound_4_0      = parameters.deathSound_4_0;
+        _parameters.deathSound_4_1      = parameters.deathSound_4_1;
     }
     
     
@@ -350,16 +427,35 @@ function HackyBallsGUI()
                 _userInterface.setButtonActive( "img 6", false );
                 _userInterface.setButtonActive( "img 7", false );
                 _userInterface.setButtonActive( "img 8", false );
+                
+               _userInterface.setButtonActive( "move tool on",    false );
+               _userInterface.setButtonActive( "move tool off",   false );
+               _userInterface.setButtonActive( "fling tool on",   false );
+               _userInterface.setButtonActive( "fling tool off",  false );
+               _userInterface.setButtonActive( "create tool on",  false );
+               _userInterface.setButtonActive( "create tool off", false );
+               _userInterface.setButtonActive( "delete tool on",  false );
+               _userInterface.setButtonActive( "delete tool off", false );
             }
 
             else if ( _userInterface.buttonPressed( "bg 1"         ) ) { _parameters.backgroundImageIndex = 0; }
             else if ( _userInterface.buttonPressed( "bg 2"         ) ) { _parameters.backgroundImageIndex = 1; }
             else if ( _userInterface.buttonPressed( "bg 3"         ) ) { _parameters.backgroundImageIndex = 2; }
-            //else if ( _userInterface.buttonPressed( "bg 4"         ) ) { _parameters.backgroundImageIndex = 3; }
+
             else if ( _userInterface.buttonPressed( "species 1" ) ) { _selectedSpecies = 0; }
             else if ( _userInterface.buttonPressed( "species 2" ) ) { _selectedSpecies = 1; }
             else if ( _userInterface.buttonPressed( "species 3" ) ) { _selectedSpecies = 2; }
             
+            else if ( _userInterface.buttonPressed( "move tool on"    ) ) { _parameters.moveToolActive   = true;  }
+            else if ( _userInterface.buttonPressed( "fling tool on"   ) ) { _parameters.flingToolActive  = true;  }
+            else if ( _userInterface.buttonPressed( "create tool on"  ) ) { _parameters.createToolActive = true;  }
+            else if ( _userInterface.buttonPressed( "delete tool on"  ) ) { _parameters.deleteToolActive = true;  }
+            else if ( _userInterface.buttonPressed( "move tool off"   ) ) { _parameters.moveToolActive   = false; }
+            else if ( _userInterface.buttonPressed( "fling tool off"  ) ) { _parameters.flingToolActive  = false; }
+            else if ( _userInterface.buttonPressed( "create tool off" ) ) { _parameters.createToolActive = false; }
+            else if ( _userInterface.buttonPressed( "delete tool off" ) ) { _parameters.deleteToolActive = false; }
+             
+        
             if ( _selectedSpecies == 0 )
             {
                      if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_0 = false; } 
@@ -450,6 +546,15 @@ function HackyBallsGUI()
                 _userInterface.setButtonActive( "img 6", true );
                 _userInterface.setButtonActive( "img 7", true );
                 _userInterface.setButtonActive( "img 8", true );
+                
+               _userInterface.setButtonActive( "move tool on",    true );
+               _userInterface.setButtonActive( "move tool off",   true );
+               _userInterface.setButtonActive( "fling tool on",   true );
+               _userInterface.setButtonActive( "fling tool off",  true );
+               _userInterface.setButtonActive( "create tool on",  true );
+               _userInterface.setButtonActive( "create tool off", true );
+               _userInterface.setButtonActive( "delete tool on",  true );
+               _userInterface.setButtonActive( "delete tool off", true );
             }
         }        
         

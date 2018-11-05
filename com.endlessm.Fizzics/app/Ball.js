@@ -155,7 +155,7 @@ function Ball()
 
     //-------------------------------------------------------
     this.addVelocity   = function(v) { _velocity.add(v);    }
-    this.scaleVelocity = function(s) { _velocity.scale(s);    }
+    this.scaleVelocity = function(s) { _velocity.scale(s);  }
 
     //-------------------------
     this.setType = function(t) 

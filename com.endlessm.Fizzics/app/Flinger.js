@@ -19,8 +19,8 @@ var FLINGER_SPRING_FORCE    = 10.0;
 var FLINGER_FRICTION        = 20.0;
 var FLINGER_GRAVITY         = 200.0;
 var FLINGER_HOLD_FORCE      = 20.0;
-var FLINGER_HOLD_FRICTION   = 0.2;
-//var FLINGER_FLING_FORCE     = 40.0;
+var FLINGER_HOLD_FRICTION   = 10.0;
+var FLINGER_MIN_PULL_RATIO  = 0.7;
 var FLINGER_FLING_FORCE     = 8.0;
 var FLINGER_FLING_DURATION  = 30;
 var FLINGER_HANDLE_SIZE     = 19.0;
@@ -38,6 +38,7 @@ function Flinger()
     this.handleVelocity = new Vector2D();
     this.handleLength   = ZERO;
     this.image          = new Image();
+    this.readyToFling   = false;
     this.image.src      = "images/flinger.png";
 
 
@@ -105,8 +106,18 @@ function Flinger()
         return false;            
     }
     
+    //----------------------------------------
+    this.setReadyToFling = function( ready )
+    {
+        this.readyToFling = ready;
+    }
     
-
+    //---------------------------------
+    this.getReadyToFling = function()
+    {
+        return this.readyToFling;
+    }
+    
     //----------------------------------------------
     this.setHover = function( hover )
     {
@@ -125,7 +136,6 @@ function Flinger()
     this.render = function( ballPosition, radius )
     {            
         canvas.lineWidth = 4; 
-        canvas.strokeStyle = "rgba( 200, 230, 255, 0.3 )";
                 
         //var radius = _balls[ _flinger.ballIndex ].getRadius() * 1.5;
         var radius = radius * 1.5;
@@ -155,6 +165,15 @@ function Flinger()
         //-----------------------------------
         // show slingshot rubber band lines
         //-----------------------------------
+        var alpha = 0.2;
+        if ( this.readyToFling )
+        {
+            alpha = 0.6;
+        }
+
+        canvas.fillStyle   = "rgba( 255, 255, 255, " + alpha + " )";  
+        canvas.strokeStyle = "rgba( 200, 230, 255, " + alpha + " )";  
+        
         canvas.beginPath();
         canvas.moveTo
         ( 
@@ -183,12 +202,10 @@ function Flinger()
             this.position.x + yl, 
             this.position.y - xl
         );
-        
+    
         canvas.closePath();
         canvas.stroke();        
-        
-        canvas.fillStyle = "rgba( 255, 255, 255, 0.4 )";    
-
+                
         canvas.beginPath();
         canvas.arc
         ( 
@@ -208,6 +225,7 @@ function Flinger()
         );            
         canvas.fill();
         canvas.closePath();    
+    
         
         //-----------------------------------
         // show slingshot harness

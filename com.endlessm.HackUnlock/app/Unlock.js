@@ -88,6 +88,9 @@ function Unlock()
     var _amplitude              = ZERO;
     var _frequency              = ZERO;
     var _phase                  = ZERO;
+    var _renderedAmplitude      = ZERO;
+    var _renderedFrequency      = ZERO;
+    var _renderedPhase          = ZERO;
     var _soundClock             = 0;
     var _successClock           = 0;
     var _finishClock            = 0;
@@ -258,9 +261,37 @@ function Unlock()
         var frequencyDiff   = Math.abs( _frequency  - IDEAL_FREQUENCY   );
         var phaseDiff       = Math.abs( _phase      - IDEAL_PHASE       );
 
-        if (( amplitudeDiff < AMPLITUDE_BUFFER  )
-        &&  ( frequencyDiff < FREQUENCY_BUFFER  )
-        &&  ( phaseDiff     < PHASE_BUFFER      ))
+        var amplitudeSolved = ( amplitudeDiff < AMPLITUDE_BUFFER );
+        if ( amplitudeSolved )
+        {
+            _renderedAmplitude = IDEAL_AMPLITUDE;
+        }
+        else
+        {
+            _renderedAmplitude = _amplitude;
+        }
+
+        var frequencySolved = ( frequencyDiff < FREQUENCY_BUFFER );
+        if ( frequencySolved )
+        {
+            _renderedFrequency = IDEAL_FREQUENCY;
+        }
+        else
+        {
+            _renderedFrequency = _frequency;
+        }
+
+        var phaseSolved = ( phaseDiff < PHASE_BUFFER );
+        if ( phaseSolved )
+        {
+            _renderedPhase = IDEAL_PHASE;
+        }
+        else
+        {
+            _renderedPhase = _phase;
+        }
+
+        if ( amplitudeSolved && frequencySolved && phaseSolved )
         {
             if ( USING_SYNTHESIZER )
             {            
@@ -354,7 +385,7 @@ function Unlock()
         {                    
             var f = -ONE_HALF + i / SINE_WAVE_RES;            
             var x = canvasID.width * ONE_HALF + f * canvasID.width + SINE_WAVE_WIDTH / 2;
-            var y = SINE_WAVE_Y_POSITION + _amplitude * SINE_WAVE_AMP_SCALE * Math.sin( f * _frequency + _phase );
+            var y = SINE_WAVE_Y_POSITION + _renderedAmplitude * SINE_WAVE_AMP_SCALE * Math.sin( f * _renderedFrequency + _renderedPhase );
             
             if ( i == 0 )
             {

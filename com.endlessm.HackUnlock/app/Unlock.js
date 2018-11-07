@@ -72,7 +72,8 @@ function Unlock()
     var SINE_WAVE_WIDTH         = 15;
     var BASE_NOTE               = 44;
     var SINE_WAVE_FREQ_SCALE    = 0.4;
-    var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + 20;
+    var SINE_WAVE_Y_OFFSET      = 23;
+    var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
     var SINE_WAVE_AMP_SCALE     = 300;
     var FIRST_FLIP_SOUND        = new Audio( "sounds/first-flip.wav" ); 
     var SUCCESS_SOUND           = new Audio( "sounds/success.wav" ); 
@@ -101,7 +102,7 @@ function Unlock()
     {                        
         canvasID.width  = window.innerWidth;
         canvasID.height = window.innerHeight;
-        SINE_WAVE_Y_POSITION = canvasID.height * ONE_HALF + 20;
+        SINE_WAVE_Y_POSITION = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
 
         //-------------------------------------
         // configure parameters to start

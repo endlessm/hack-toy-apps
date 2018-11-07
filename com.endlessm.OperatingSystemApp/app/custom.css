@@ -28,3 +28,24 @@ div.clock > img.hand.shadow {
   left: 94px;
 }
 
+/* Animations */
+
+@keyframes reveal {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#lighting {
+  opacity: 0;
+  animation: reveal 1s ease-in 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes float {
+  from { top: 432px; }
+  to   { top: 440px; }
+}
+
+#OS_daemon_7 {
+  animation: float 1s ease-in infinite alternate;
+} 

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=OperatingSystemApp
+Name=System
 Type=Application
 Exec=com.endlessm.OperatingSystemApp
 StartupNotify=true

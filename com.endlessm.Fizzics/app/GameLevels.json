@@ -1,0 +1,95 @@
+{
+    "CroquetLevel":
+    {
+        "background"       : "2",
+        "moveToolActive"   : "false",
+        "flingToolActive"  : "true",
+        "createToolActive" : "false",
+        "deleteToolActive" : "false",
+        
+        "testSpecies"       : "0",
+        "collisionSpecies"  : "1",
+        "numCollisionsGoal" : "2",
+        "numCollisions"     : "0",
+        
+        "species":
+        [
+            { 
+                "ID"           : "0", 
+                "radius"       : "40.0", 
+                "gravity"      : "0.0", 
+                "collision"    : "0.9", 
+                "friction"     : "1.0",  
+                "physics"      : "true",  
+                "imageIndex"   : "6",
+                "socialForce0" : "0.0",
+                "socialForce1" : "0.0", 
+                "socialForce2" : "0.0", 
+                "socialForce3" : "0.0", 
+                "socialForce4" : "0.0",
+                "touchDeath0"  : "false",
+                "touchDeath1"  : "true",
+                "touchDeath2"  : "true",
+                "touchDeath3"  : "false",
+                "touchDeath4"  : "false",
+                "deathType"    : "0",
+                "deathVisual0" : "0",
+                "deathVisual1" : "0",
+                "deathSound0"  : "1",
+                "deathSound1"  : "0"
+            },
+            { 
+                "ID"           : "1", 
+                "radius"       : "60.0", 
+                "gravity"      : "0.0", 
+                "collision"    : "0.2", 
+                "friction"     : "0.05", 
+                "physics"      : "false", 
+                "imageIndex"   : "8", 
+                "socialForce0" : "0.0",
+                "socialForce1" : "0.0", 
+                "socialForce2" : "0.0", 
+                "socialForce3" : "0.0", 
+                "socialForce4" : "0.0",
+                "touchDeath0"  : "false",
+                "touchDeath1"  : "false",
+                "touchDeath2"  : "true",
+                "touchDeath3"  : "false",
+                "touchDeath4"  : "false",
+                "deathType"    : "0",
+                "deathVisual0" : "0",
+                "deathVisual1" : "0",
+                "deathSound0"  : "0",
+                "deathSound1"  : "0"
+            }
+        ],
+
+        "balls": 
+        [
+            { 
+                "ID"       : "0", 
+                "x"        : "1000", 
+                "y"        : "250", 
+                "species"  : "1"
+            },
+            { 
+                "ID"       : "1", 
+                "x"        : "400", 
+                "y"        : "400", 
+                "species"  : "0"
+            },
+            { 
+                "ID"       : "2", 
+                "x"        : "500", 
+                "y"        : "400", 
+                "species"  : "0"
+            }
+        ]
+    },
+    
+    
+    
+    "SpaceLevel":
+    {
+    }
+}

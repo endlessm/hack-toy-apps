@@ -3,20 +3,20 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var CROQUET_GAME =  0;
-var SPACE_GAME   =  1;
-var GAME_3       =  2;
-var GAME_4       =  3;
-var GAME_5       =  4;
-var GAME_6       =  5;
-var GAME_7       =  6;
-var GAME_8       =  7;
-var GAME_9       =  8;
-var GAME_10      =  9;
-var NUM_GAMES    = 10;
+var CROQUET_LEVEL =  0;
+var SPACE_LEVEL   =  1;
+var LEVEL_3       =  2;
+var LEVEL_4       =  3;
+var LEVEL_5       =  4;
+var LEVEL_6       =  5;
+var LEVEL_7       =  6;
+var LEVEL_8       =  7;
+var LEVEL_9       =  8;
+var LEVEL_10      =  9;
+var NUM_LEVELS    = 10;
 
 
-//------------------
+//--------------------------
 function Game()
 {    
     function Scoreboard()
@@ -31,8 +31,27 @@ function Game()
     var _level = 0;
     var _score = 0;
     var _scoreboard = new Scoreboard();
-  
-  
+    var _levelData = null;
+        
+    //----------------------------------------
+    this.setLevelData = function( levelData )
+    {                
+        _levelData = levelData;
+    }	
+
+
+    //-----------------------------------
+    this.getLevelDataReady = function()
+    {                
+        if ( _levelData == null )
+        {
+            return false;
+        }
+        
+        return true;
+    }	
+
+
     //----------------------------------------------------------------------------------
     this.setLevel = function( parent, levelID, collisionBalls, ballsWithSomeCollision )
     {                
@@ -49,78 +68,79 @@ function Game()
         //
         //----------------------------------------------------------------
         //----------------------------------------------------------------
-        if ( _level == CROQUET_GAME )
+        if ( _level == CROQUET_LEVEL )
         {
-            globalParameters.backgroundImageIndex = 2;
-
-            globalParameters.radius_0           = 40.0;
-            globalParameters.gravity_0          = 0.0;
-            globalParameters.collision_0        = 0.9;
-            globalParameters.friction_0         = 1.0;
-            globalParameters.usePhysics_0       = true;
-            globalParameters.imageIndex_0       = 6;
-            globalParameters.socialForce_0_0    = 0.0;
-            globalParameters.socialForce_0_1    = 0.0;
-            globalParameters.socialForce_0_2    = 0.0;
-            globalParameters.touchDeath_0_0     = false;
-            globalParameters.touchDeath_0_1     = true;
-            globalParameters.touchDeath_0_2     = true;
-            globalParameters.deathVisual_0_0    = 2;
-            globalParameters.deathVisual_0_1    = 0;
-            globalParameters.deathSound_0_0     = 2;
-            globalParameters.deathSound_0_1     = 0;
+            globalParameters.backgroundImageIndex = parseInt( _levelData.CroquetLevel.background );
             
+            globalParameters.usePhysics_0       =           ( _levelData.CroquetLevel.species[0].physics == "true" );
+            globalParameters.radius_0           = parseFloat( _levelData.CroquetLevel.species[0].radius       );
+            globalParameters.gravity_0          = parseFloat( _levelData.CroquetLevel.species[0].gravity      );
+            globalParameters.collision_0        = parseFloat( _levelData.CroquetLevel.species[0].collision    );
+            globalParameters.friction_0         = parseFloat( _levelData.CroquetLevel.species[0].friction     );
+            globalParameters.imageIndex_0       = parseInt  ( _levelData.CroquetLevel.species[0].imageIndex   );
+            globalParameters.socialForce_0_0    = parseFloat( _levelData.CroquetLevel.species[0].socialForce0 );
+            globalParameters.socialForce_0_1    = parseFloat( _levelData.CroquetLevel.species[0].socialForce1 );
+            globalParameters.socialForce_0_2    = parseFloat( _levelData.CroquetLevel.species[0].socialForce2 );
+            globalParameters.socialForce_0_3    = parseFloat( _levelData.CroquetLevel.species[0].socialForce3 );
+            globalParameters.socialForce_0_4    = parseFloat( _levelData.CroquetLevel.species[0].socialForce4 );
+            globalParameters.touchDeath_0_0     =           ( _levelData.CroquetLevel.species[0].touchDeath0 == "true" );
+            globalParameters.touchDeath_0_1     =           ( _levelData.CroquetLevel.species[0].touchDeath1 == "true" );
+            globalParameters.touchDeath_0_2     =           ( _levelData.CroquetLevel.species[0].touchDeath2 == "true" );
+            globalParameters.touchDeath_0_3     =           ( _levelData.CroquetLevel.species[0].touchDeath3 == "true" );
+            globalParameters.touchDeath_0_4     =           ( _levelData.CroquetLevel.species[0].touchDeath4 == "true" );
+            globalParameters.deathType_0        = parseInt  ( _levelData.CroquetLevel.species[0].deathType );
+            globalParameters.deathVisualGood_0  = parseInt  ( _levelData.CroquetLevel.species[0].deathVisual0 );
+            globalParameters.deathVisualBad_0   = parseInt  ( _levelData.CroquetLevel.species[0].deathVisual1 );
+            globalParameters.deathSoundGood_0   = parseInt  ( _levelData.CroquetLevel.species[0].deathSound0  );
+            globalParameters.deathSoundBad_0    = parseInt  ( _levelData.CroquetLevel.species[0].deathSound1  );
+             
             // parameters for species 1 balls
-            globalParameters.radius_1           = 60.0;
-            globalParameters.gravity_1          = 0.0;
-            globalParameters.collision_1        = 0.2;
-            globalParameters.friction_1         = 0.05;
-            globalParameters.usePhysics_1       = false;
-            globalParameters.imageIndex_1       = 8;
-            globalParameters.socialForce_1_0    =  0.0;
-            globalParameters.socialForce_1_1    =  0.0;
-            globalParameters.socialForce_1_2    =  0.0;
-            globalParameters.touchDeath_1_0     = false;
-            globalParameters.touchDeath_1_1     = false;
-            globalParameters.touchDeath_1_2     = false;
-            globalParameters.deathVisual_1_0    = 2;
-            globalParameters.deathVisual_1_1    = 0;
-            globalParameters.deathSound_1_0     = 2;
-            globalParameters.deathSound_1_1     = 0;
+            globalParameters.usePhysics_1       =           ( _levelData.CroquetLevel.species[1].physics == "true" );
+            globalParameters.radius_1           = parseFloat( _levelData.CroquetLevel.species[1].radius       );
+            globalParameters.gravity_1          = parseFloat( _levelData.CroquetLevel.species[1].gravity      );
+            globalParameters.collision_1        = parseFloat( _levelData.CroquetLevel.species[1].collision    );
+            globalParameters.friction_1         = parseFloat( _levelData.CroquetLevel.species[1].friction     );
+            globalParameters.imageIndex_1       = parseInt  ( _levelData.CroquetLevel.species[1].imageIndex   );
+            globalParameters.socialForce_1_0    = parseFloat( _levelData.CroquetLevel.species[1].socialForce0 );
+            globalParameters.socialForce_1_1    = parseFloat( _levelData.CroquetLevel.species[1].socialForce1 );
+            globalParameters.socialForce_1_2    = parseFloat( _levelData.CroquetLevel.species[1].socialForce2 );
+            globalParameters.socialForce_1_3    = parseFloat( _levelData.CroquetLevel.species[1].socialForce3 );
+            globalParameters.socialForce_1_4    = parseFloat( _levelData.CroquetLevel.species[1].socialForce4 );
+            globalParameters.touchDeath_1_0     =           ( _levelData.CroquetLevel.species[1].touchDeath0 == "true" );
+            globalParameters.touchDeath_1_1     =           ( _levelData.CroquetLevel.species[1].touchDeath1 == "true" );
+            globalParameters.touchDeath_1_2     =           ( _levelData.CroquetLevel.species[1].touchDeath2 == "true" );
+            globalParameters.touchDeath_1_3     =           ( _levelData.CroquetLevel.species[1].touchDeath3 == "true" );
+            globalParameters.touchDeath_1_4     =           ( _levelData.CroquetLevel.species[1].touchDeath4 == "true" );
+            globalParameters.deathType_1        = parseInt  ( _levelData.CroquetLevel.species[1].deathType );
+            globalParameters.deathVisualGood_1  = parseInt  ( _levelData.CroquetLevel.species[1].deathVisual0 );
+            globalParameters.deathVisualBad_1   = parseInt  ( _levelData.CroquetLevel.species[1].deathVisual1 );
+            globalParameters.deathSoundGood_1   = parseInt  ( _levelData.CroquetLevel.species[1].deathSound0  );
+            globalParameters.deathSoundBad_1    = parseInt  ( _levelData.CroquetLevel.species[1].deathSound1  );
 
-            // parameters for species 2 balls
-            globalParameters.radius_2             = 10.0;
-            globalParameters.gravity_2             = 0.0;
-            globalParameters.collision_2         = 0.0;
-            globalParameters.friction_2         = 0.0;
-            globalParameters.usePhysics_2         = false;
-            globalParameters.imageIndex_2        = 0;
-            globalParameters.socialForce_2_0     = 0.0;    
-            globalParameters.socialForce_2_1     = 0.0;
-            globalParameters.socialForce_2_2     = 0.0;    
-            globalParameters.touchDeath_2_0     = true;
-            globalParameters.touchDeath_2_1     = false;
-            globalParameters.touchDeath_2_2     = false;
-            globalParameters.deathVisual_2_0    = 0;
-            globalParameters.deathVisual_2_1    = 0;
-            globalParameters.deathSound_2_0     = 0;
-            globalParameters.deathSound_2_1     = 0;
-                    
-            parent.createBall( 1000, 250, 1 );                    
-            parent.createBall(  400, 400, 0 );        
-            parent.createBall(  500, 400, 0 );        
-
-            globalParameters.moveToolActive   = false;
-            globalParameters.flingToolActive  = true;
-            globalParameters.createToolActive = false;
-            globalParameters.deleteToolActive = false;
+            for (var b=0; b<_levelData.CroquetLevel.balls.length; b++ )
+            {
+                parent.createBall
+                ( 
+                    parseInt  ( _levelData.CroquetLevel.balls[b].x       ), 
+                    parseInt  ( _levelData.CroquetLevel.balls[b].y       ), 
+                    parseInt  ( _levelData.CroquetLevel.balls[b].species )
+                );         
+            }
+            
+            globalParameters.moveToolActive   = ( _levelData.CroquetLevel.moveToolActive   == "true" );
+            globalParameters.flingToolActive  = ( _levelData.CroquetLevel.flingToolActive  == "true" );
+            globalParameters.createToolActive = ( _levelData.CroquetLevel.createToolActive == "true" );
+            globalParameters.deleteToolActive = ( _levelData.CroquetLevel.deleteToolActive == "true" );
+            
             parent.selectTool( TOOL_FLING );    
             
-            gameState.testSpecies           = 0;
-            gameState.collisionSpecies      = 1;
-            gameState.numCollisionsGoal     = 2;
-            gameState.numCollisions         = 0;
+            gameState.testSpecies       = parseInt( _levelData.CroquetLevel.testSpecies       );
+            gameState.collisionSpecies  = parseInt( _levelData.CroquetLevel.collisionSpecies  );
+            gameState.numCollisionsGoal = parseInt( _levelData.CroquetLevel.numCollisionsGoal );
+            gameState.numCollisions     = parseInt( _levelData.CroquetLevel.numCollisions     );
         }
+        
+        
         //----------------------------------------------------------------
         //----------------------------------------------------------------
         //
@@ -128,7 +148,7 @@ function Game()
         //
         //----------------------------------------------------------------
         //----------------------------------------------------------------
-        else if ( _level == SPACE_GAME )
+        else if ( _level == SPACE_LEVEL )
         {
             globalParameters.backgroundImageIndex = 1;
 
@@ -218,7 +238,7 @@ function Game()
         //
         //----------------------------------------------------------------
         //----------------------------------------------------------------
-        else if ( _level == GAME_3 )
+        else if ( _level == LEVEL_3 )
         {
             globalParameters.backgroundImageIndex = 0;
 
@@ -339,7 +359,7 @@ function Game()
         //
         //----------------------------------------------------------------
         //----------------------------------------------------------------
-        else if ( _level == GAME_4 )
+        else if ( _level == LEVEL_4 )
         {
             globalParameters.backgroundImageIndex = 0;            
 
@@ -478,7 +498,7 @@ function Game()
         //
         //----------------------------------------------------------------
         //----------------------------------------------------------------
-        else if ( _level == GAME_10 )
+        else if ( _level == LEVEL_10 )
         {
             globalParameters.backgroundImageIndex = 0;
 
@@ -590,6 +610,13 @@ function Game()
     }
     
     
+    //---------------------------------
+    this.getNextLevel = function()
+    {           
+        return ( _level + 1 ) % NUM_LEVELS;
+    }
+    
+    
     //----------------------------------------------------------------------------
     this.createBallCircle = function( parent, x, y, ballType, radius, ballCount )
     {
@@ -641,7 +668,7 @@ function Game()
     {        
         if ( gameState.running )
         {
-            if ( _level == CROQUET_GAME )
+            if ( _level == CROQUET_LEVEL )
             {
                 _score = gameState.numCollisions;
 

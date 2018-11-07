@@ -10,6 +10,7 @@ var FLINGER_STATE_NULL      = -1;
 var FLINGER_STATE_MOVING    =  0;
 var FLINGER_STATE_WAITING   =  1;
 var FLINGER_STATE_PULLING   =  2;
+//var FLINGER_STATE_READY_TO_FLING =  2;
 var FLINGER_STATE_FLINGING  =  3;
 
 //---------------------------------

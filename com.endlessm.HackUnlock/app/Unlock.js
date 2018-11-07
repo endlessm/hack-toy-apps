@@ -19,7 +19,7 @@ var MODE_VIDEO_PLAYED   = 5;
 var globalParameters = 
 {
     minAmplitude    : 0.0,
-    maxAmplitude    : 0.7,
+    maxAmplitude    : 1.4,
     minFrequency    : 0.0,
     maxFrequency    : 50.0,
     minPhase        : -3.0,

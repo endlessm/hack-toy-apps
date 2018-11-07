@@ -75,6 +75,7 @@ function Unlock()
     var SINE_WAVE_Y_OFFSET      = 23;
     var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
     var SINE_WAVE_AMP_SCALE     = 300;
+    var SUCCESS_SOUND_FADE_MS   = 200;
     var FIRST_FLIP_SOUND        = new Audio( "sounds/first-flip.wav" ); 
     var SUCCESS_SOUND           = new Audio( "sounds/success.wav" ); 
     
@@ -95,7 +96,9 @@ function Unlock()
     var _soundClock             = 0;
     var _successClock           = 0;
     var _finishClock            = 0;
+    var _fadeOutTime            = ZERO;
     var _video                  = null;
+    var _soundPlayed            = false;
 
     //---------------------------
     this.initialize = function()
@@ -179,6 +182,8 @@ function Unlock()
         }
         else if ( globalParameters.mode == MODE_SUCCESS )
         {
+            this.updateSolvingPuzzle();
+
             if ( USING_SYNTHESIZER )
             {
                 _synthesizer.turnOffAllNotes();
@@ -229,6 +234,50 @@ function Unlock()
             globalParameters.mode = MODE_VIDEO_PLAYED;
         });
         _video.play();
+    }
+
+
+    //-------------------------------------
+    this.fadeOutSuccessSound = function()
+    {
+        _soundPlayed = false;
+
+        if ( SUCCESS_SOUND.paused )
+        {
+            return;
+        }
+
+        if (_fadeOutTime == 0)
+        {
+            _fadeOutTime = (new Date).getTime();
+        }
+
+        // Do a 200ms fade out
+        var curTime = (new Date).getTime();
+        var volume = Math.max( 0, (SUCCESS_SOUND_FADE_MS - (curTime - _fadeOutTime)) / SUCCESS_SOUND_FADE_MS );
+
+        if ( volume > 0 )
+        {
+            SUCCESS_SOUND.volume = volume;
+        }
+        else
+        {
+            SUCCESS_SOUND.pause();
+            SUCCESS_SOUND.currentTime = 0;
+            _fadeOutTime = 0;
+        }
+    }
+
+
+    //-------------------------------------
+    this.playSuccessSound = function()
+    {
+        if ( !_soundPlayed )
+        {
+            SUCCESS_SOUND.volume = 1;
+            SUCCESS_SOUND.play();
+            _soundPlayed = true;
+        }
     }
 
 
@@ -301,7 +350,12 @@ function Unlock()
             }
 
             globalParameters.mode = MODE_SUCCESS;
-            SUCCESS_SOUND.play();
+            this.playSuccessSound();
+        }
+        else
+        {
+            globalParameters.mode = MODE_SOLVING_PUZZLE;
+            this.fadeOutSuccessSound();
         }
     }
     

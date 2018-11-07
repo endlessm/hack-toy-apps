@@ -33,9 +33,8 @@ function clock_init() {
     clock._second = clock.querySelector('#second');
     clock._sShadow = clock.querySelector('#second-shadow');
 
+    clock.style.display = 'block';
+
     requestAnimationFrame(clock_tick);
 }
-
-/* Start clock */
-clock_init();
 

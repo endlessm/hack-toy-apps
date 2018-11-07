@@ -7,6 +7,7 @@
   </head>
 
   <body>
+    <img src="images/background.png"/>
 
     <div id="OS_daemon_4"
          class="Animation"
@@ -44,7 +45,7 @@
          data-frames="[672, 96, 96, 96, 96, 480, 96, 96, 96, 96, 96, 384, 96, 96, 96, 96, 96]">
     </div>
 
-    <div id="rtc" class="clock" style="left:856px; top: 180px;">
+    <div id="rtc" class="clock" style="left:856px; top: 180px; display: none;">
       <img src="images/clock/background.png"/>
       <img id="hour-shadow" class="hand shadow" src="images/clock/hour-shadow.png"/>
       <img id="hour" class="hand" src="images/clock/hour.png"/>
@@ -83,9 +84,28 @@
 
     <img id="lighting" src="images/lighting.png" />
 
-    <script type = "text/javascript" src = "animation.js"></script>
-    <script type = "text/javascript" src = "clock.js"></script>
-    <script type = "text/javascript" src = "flip.js"></script>
+    <script type="text/javascript" src="animation.js"></script>
+    <script type="text/javascript" src="clock.js"></script>
+    <script type="text/javascript" src="flip.js"></script>
+
+    <script type="text/javascript">
+
+window.addEventListener("load", function(event) {
+
+  /* Start clock */
+  clock_init();
+
+  /* Bootstrap animations */
+  animation_bootstrap(() => {
+    /* Reveal lighting layer */
+    document.getElementById('lighting').classList.add('reveal');
+
+    /* Tell ToyApp we just finished loading everything */
+    ToyApp.loadNotify();
+  });
+});
+
+  </script>
   </body>
 </html>
 

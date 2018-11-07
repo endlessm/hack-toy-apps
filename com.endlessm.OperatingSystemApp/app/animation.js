@@ -26,9 +26,10 @@ function step(timestamp) {
     requestAnimationFrame(step);
 }
 
-function animation_bootstrap()
+function animation_bootstrap(finishCallback)
 {
     var elements = document.querySelectorAll( "div.Animation" );
+    var images_needed = 0, images_loaded = 0;
 
     /* Initialize all animation */
     elements.forEach(function(element) {
@@ -42,6 +43,15 @@ function animation_bootstrap()
             img.style.visibility = i === 1 ? 'visible' : 'hidden';
 
             element.appendChild(img);
+
+            images_needed++;
+            img.addEventListener("load", function() {
+                images_loaded++;
+
+                 /* Notify ToyApp we just finished loading everything */
+                if (images_needed === images_loaded)
+                    finishCallback();
+            });
         }
 
         element._currentFrame = element.firstElementChild;
@@ -51,7 +61,4 @@ function animation_bootstrap()
 
     requestAnimationFrame(step);
 }
-
-/* Bootstrap animations */
-animation_bootstrap();
 

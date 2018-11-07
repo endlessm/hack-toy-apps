@@ -6,7 +6,6 @@ div.Animation > img {
 body {
   margin: 0px;
   overflow: hidden;
-  background: url('images/background.png') no-repeat;
   position: absolute;
   top: -38px;
 }
@@ -37,7 +36,7 @@ div.clock > img.hand.shadow {
   to   { opacity: 1; }
 }
 
-#lighting {
+.reveal {
   opacity: 0;
   animation: reveal 1s ease-in 1;
   animation-fill-mode: forwards;

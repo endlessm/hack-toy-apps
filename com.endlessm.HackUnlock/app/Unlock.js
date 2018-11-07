@@ -63,8 +63,8 @@ function Unlock()
     var IDEAL_PHASE         = -1.525;
 
     var AMPLITUDE_BUFFER    = 0.1;
-    var FREQUENCY_BUFFER    = 0.5;
-    var PHASE_BUFFER        = 0.2;
+    var FREQUENCY_BUFFER    = 3.5;
+    var PHASE_BUFFER        = 0.4;
 
     var SUCCESS_DURATION        = 30;
     var FINISH_DURATION         = 50;

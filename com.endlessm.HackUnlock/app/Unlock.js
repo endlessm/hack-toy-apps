@@ -68,7 +68,7 @@ function Unlock()
 
     var SUCCESS_DURATION        = 30;
     var FINISH_DURATION         = 50;
-    var SINE_WAVE_RES           = 100;
+    var SINE_WAVE_RES           = 300;
     var SINE_WAVE_WIDTH         = 15;
     var BASE_NOTE               = 44;
     var SINE_WAVE_FREQ_SCALE    = 0.4;

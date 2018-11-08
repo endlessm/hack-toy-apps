@@ -76,17 +76,11 @@ function Unlock()
     var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
     var SINE_WAVE_AMP_SCALE     = 300;
     var SUCCESS_SOUND_FADE_MS   = 200;
-    var FIRST_FLIP_SOUND        = new Audio( "sounds/first-flip.wav" ); 
     var SUCCESS_SOUND           = new Audio( "sounds/success.wav" ); 
     
     var _synthesizer            = new Synthesizer();
     var _glowImage              = new Image();
     var _testGUI                = new UnlockTestGUI();
-    var _mousePosition          = new Vector2D();
-    var _prevMousePosition      = new Vector2D();
-    var _mouseVelocity          = new Vector2D();
-    var _vector                 = new Vector2D();
-    var _startTime              = ZERO;
     var _amplitude              = ZERO;
     var _frequency              = ZERO;
     var _phase                  = ZERO;
@@ -123,10 +117,6 @@ function Unlock()
         {
             _testGUI.initialize( globalParameters );
         }
-        //----------------------------
-        // get start time
-        //----------------------------
-        _startTime = (new Date).getTime();
 
         //--------------------------------------
         // load background and glow images
@@ -466,7 +456,6 @@ function Unlock()
         }
         
         this.applyParameters();                
-        this.updateMouse( x, y );
     }
 
 
@@ -483,8 +472,6 @@ function Unlock()
                 this.applyParameters();
             }
         }
-
-        this.updateMouse( x, y );
     }
     
 
@@ -496,24 +483,9 @@ function Unlock()
         {
             _testGUI.setMouseUp( x, y );
         }
-        
-        this.updateMouse( x, y );        
     }
 
 
-    //---------------------------------
-    this.updateMouse = function( x, y )
-    {
-        _prevMousePosition.x = _mousePosition.x;
-        _prevMousePosition.y = _mousePosition.y;
-
-        _mousePosition.x = x;
-        _mousePosition.y = y;
-
-        _mouseVelocity.x = _mousePosition.x - _prevMousePosition.x;
-        _mouseVelocity.y = _mousePosition.y - _prevMousePosition.y;
-    }
-    
     //---------------------------------
     this.applyParameters = function()
     {    

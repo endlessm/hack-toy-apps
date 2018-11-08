@@ -319,17 +319,20 @@ function Unlock()
             //-------------------------------------------
             // show composite sine wave
             //-------------------------------------------
+            var sinePath = this.createSineWavePath();
+
+            canvas.lineJoin = "round";
             canvas.lineWidth = SINE_WAVE_WIDTH;
-            canvas.strokeStyle = "rgba( 255, 100, 100, 0.3 )";    
-            this.showSineWave();
+            canvas.strokeStyle = "rgba( 255, 100, 100, 0.3 )";
+            canvas.stroke(sinePath);
 
             canvas.lineWidth = Math.floor(SINE_WAVE_WIDTH / 2);
             canvas.strokeStyle = "rgba( 255, 255, 100, 0.3 )";    
-            this.showSineWave();
+            canvas.stroke(sinePath);
 
             canvas.lineWidth = Math.floor(SINE_WAVE_WIDTH / 5);
             canvas.strokeStyle = "rgba( 255, 255, 255, 0.3 )";    
-            this.showSineWave();  
+            canvas.stroke(sinePath);
         }
 
         //-------------------------
@@ -342,14 +345,12 @@ function Unlock()
     }
     
     
-    
     //-------------------------
-    this.showSineWave = function()
+    this.createSineWavePath = function()
     {
-        canvas.lineJoin = "round";
-        canvas.beginPath();
-        
-        for (var i=0; i<SINE_WAVE_RES; i++)
+        var path = new Path2D();
+
+        for ( var i = 0; i < SINE_WAVE_RES; i++ )
         {                    
             var f = -ONE_HALF + i / SINE_WAVE_RES;            
             var x = canvasID.width * ONE_HALF + f * canvasID.width + SINE_WAVE_WIDTH / 2;
@@ -357,16 +358,15 @@ function Unlock()
             
             if ( i == 0 )
             {
-                canvas.moveTo( x, y );            
+                path.moveTo( x, y );
             }
             else
             {                
-                canvas.lineTo( x, y );
+                path.lineTo( x, y );
             }        
         }
-        
-        canvas.stroke();    
-        canvas.closePath();
+
+        return path;
     }
 
 

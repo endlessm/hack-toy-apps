@@ -266,10 +266,10 @@ function HackyBallsGUI()
         _parameters.touchDeath_0_3      = parameters.touchDeath_0_3;
         _parameters.touchDeath_0_4      = parameters.touchDeath_0_4;        
         _parameters.imageIndex_0        = parameters.imageIndex_0;       
-        _parameters.deathVisual_0_0     = parameters.deathVisual_0_0;
-        _parameters.deathVisual_0_1     = parameters.deathVisual_0_1;
-        _parameters.deathSound_0_0      = parameters.deathSound_0_0;
-        _parameters.deathSound_0_1      = parameters.deathSound_0_1;
+        _parameters.deathVisualGood_0   = parameters.deathVisualGood_0;
+        _parameters.deathVisualBad_0    = parameters.deathVisualBad_0;
+        _parameters.deathSoundGood_0      = parameters.deathSoundGood_0;
+        _parameters.deathSoundBad_0      = parameters.deathSoundBad_0;
         
         _parameters.radius_1            = parameters.radius_1;
         _parameters.gravity_1           = parameters.gravity_1;
@@ -287,10 +287,10 @@ function HackyBallsGUI()
         _parameters.touchDeath_1_3      = parameters.touchDeath_1_3;
         _parameters.touchDeath_1_4      = parameters.touchDeath_1_4;        
         _parameters.imageIndex_1        = parameters.imageIndex_1;       
-        _parameters.deathVisual_1_0     = parameters.deathVisual_1_0;
-        _parameters.deathVisual_1_1     = parameters.deathVisual_1_1;
-        _parameters.deathSound_1_0      = parameters.deathSound_1_0;
-        _parameters.deathSound_1_1      = parameters.deathSound_1_1;
+        _parameters.deathVisualGood_1     = parameters.deathVisualGood_1;
+        _parameters.deathVisualBad_1     = parameters.deathVisualBad_1;
+        _parameters.deathSoundGood_1      = parameters.deathSoundGood_1;
+        _parameters.deathSoundBad_1      = parameters.deathSoundBad_1;
 
         _parameters.radius_2            = parameters.radius_2;
         _parameters.gravity_2           = parameters.gravity_2;
@@ -308,10 +308,10 @@ function HackyBallsGUI()
         _parameters.touchDeath_2_3      = parameters.touchDeath_2_3;
         _parameters.touchDeath_2_4      = parameters.touchDeath_2_4;        
         _parameters.imageIndex_2        = parameters.imageIndex_2;       
-        _parameters.deathVisual_2_0     = parameters.deathVisual_2_0;
-        _parameters.deathVisual_2_1     = parameters.deathVisual_2_1;
-        _parameters.deathSound_2_0      = parameters.deathSound_2_0;
-        _parameters.deathSound_2_1      = parameters.deathSound_2_1;
+        _parameters.deathVisualGood_2     = parameters.deathVisualGood_2;
+        _parameters.deathVisualBad_2     = parameters.deathVisualBad_2;
+        _parameters.deathSoundGood_2      = parameters.deathSoundGood_2;
+        _parameters.deathSoundBad_2      = parameters.deathSoundBad_2;
 
         _parameters.radius_3            = parameters.radius_3;
         _parameters.gravity_3           = parameters.gravity_3;
@@ -329,10 +329,10 @@ function HackyBallsGUI()
         _parameters.touchDeath_3_3      = parameters.touchDeath_3_3;
         _parameters.touchDeath_3_4      = parameters.touchDeath_3_4;        
         _parameters.imageIndex_3        = parameters.imageIndex_3;       
-        _parameters.deathVisual_3_0     = parameters.deathVisual_3_0;
-        _parameters.deathVisual_3_1     = parameters.deathVisual_3_1;
-        _parameters.deathSound_3_0      = parameters.deathSound_3_0;
-        _parameters.deathSound_3_1      = parameters.deathSound_3_1;
+        _parameters.deathVisualGood_3     = parameters.deathVisualGood_3;
+        _parameters.deathVisualBad_3     = parameters.deathVisualBad_3;
+        _parameters.deathSoundGood_3      = parameters.deathSoundGood_3;
+        _parameters.deathSoundBad_3      = parameters.deathSoundBad_3;
         
         _parameters.radius_4            = parameters.radius_4;
         _parameters.gravity_4           = parameters.gravity_4;
@@ -350,10 +350,10 @@ function HackyBallsGUI()
         _parameters.touchDeath_4_3      = parameters.touchDeath_4_3;
         _parameters.touchDeath_4_4      = parameters.touchDeath_4_4;        
         _parameters.imageIndex_4        = parameters.imageIndex_4;       
-        _parameters.deathVisual_4_0     = parameters.deathVisual_4_0;
-        _parameters.deathVisual_4_1     = parameters.deathVisual_4_1;
-        _parameters.deathSound_4_0      = parameters.deathSound_4_0;
-        _parameters.deathSound_4_1      = parameters.deathSound_4_1;
+        _parameters.deathVisualGood_4     = parameters.deathVisualGood_4;
+        _parameters.deathVisualBad_4     = parameters.deathVisualBad_4;
+        _parameters.deathSoundGood_4      = parameters.deathSoundGood_4;
+        _parameters.deathSoundBad_4      = parameters.deathSoundBad_4;
     }
     
     

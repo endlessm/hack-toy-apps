@@ -5,6 +5,7 @@ var canvas = canvasID.getContext( '2d' );
 "use strict";
 
 var USING_TEST_GUI = false;
+var SHOW_LEVEL_TOOLS = false;
 
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
@@ -78,11 +79,12 @@ var globalParameters =
     touchDeath_0_2  : false,
     touchDeath_0_3  : false,
     touchDeath_0_4  : false,
-    deathVisual_0_0 : 0,
-    deathVisual_0_1 : 0,
-    deathSound_0_0  : 0,
-    deathSound_0_1  : 0,    
-    imageIndex_0    : 0,
+    deathType_0       : 0,
+    deathVisualGood_0 : 0,
+    deathVisualBad_0  : 0,
+    deathSoundGood_0  : 0,
+    deathSoundBad_0   : 0,    
+    imageIndex_0      : 0,
 
     // parameters for species 1 balls
     radius_1        : ZERO,
@@ -100,11 +102,12 @@ var globalParameters =
     touchDeath_1_2  : false,
     touchDeath_1_3  : false,
     touchDeath_1_4  : false,
-    deathVisual_1_0 : 0,
-    deathVisual_1_1 : 0,
-    deathSound_1_0  : 0,
-    deathSound_1_1  : 0,
-    imageIndex_1    : 0,
+    deathType_1       : 0,
+    deathVisualGood_1 : 0,
+    deathVisualBad_1  : 0,
+    deathSoundGood_1  : 0,
+    deathSoundBad_1   : 0,
+    imageIndex_1      : 0,
 
     //------------------------------------
     // parameters for species 2 balls
@@ -124,11 +127,12 @@ var globalParameters =
     touchDeath_2_2  : false,
     touchDeath_2_3  : false,
     touchDeath_2_4  : false,
-    deathVisual_2_0 : 0,
-    deathVisual_2_1 : 0,
-    deathSound_2_0  : 0,
-    deathSound_2_1  : 0,
-    imageIndex_2    : 0,
+    deathType_2       : 0,
+    deathVisualGood_2 : 0,
+    deathVisualBad_2  : 0,
+    deathSoundGood_2  : 0,
+    deathSoundBad_2   : 0,
+    imageIndex_2      : 0,
 
     //------------------------------------
     // parameters for species 3 balls
@@ -148,11 +152,12 @@ var globalParameters =
     touchDeath_3_2  : false,
     touchDeath_3_3  : false,
     touchDeath_3_4  : false,
-    deathVisual_3_0 : 0,
-    deathVisual_3_1 : 0,
-    deathSound_3_0  : 0,
-    deathSound_3_1  : 0,
-    imageIndex_3    : 0,
+    deathType_3       : 0,
+    deathVisualGood_3 : 0,
+    deathVisualBad_3  : 0,
+    deathSoundGood_3  : 0,
+    deathSoundBad_3   : 0,
+    imageIndex_3      : 0,
 
     //------------------------------------
     // parameters for species 4 balls
@@ -172,11 +177,12 @@ var globalParameters =
     touchDeath_4_2  : false,
     touchDeath_4_3  : false,
     touchDeath_4_4  : false,
-    deathVisual_4_0 : 0,
-    deathVisual_4_1 : 0,
-    deathSound_4_0  : 0,
-    deathSound_4_1  : 0,
-    imageIndex_4    : 0
+    deathType_4       : 0,
+    deathVisualGood_4 : 0,
+    deathVisualBad_4  : 0,
+    deathSoundGood_4  : 0,
+    deathSoundBad_4   : 0,
+    imageIndex_4      : 0
 }
 
 
@@ -209,41 +215,41 @@ function HackyBalls()
     var COLLISION_DISTANCE_FUDGE = 10;
     var MAX_COLLISION_BALLS      = 10;
     
-    var TOOL_TRASH_SOUND = new Audio( "sounds/Tool_Trash.wav"        ); 
-    var TOOL_GRAB_SOUND  = new Audio( "sounds/Tool_Grab.wav"         ); 
-    var TOO_MANY_SOUND   = new Audio( "sounds/too-many.wav"          ); 
-    var FLING_SOUND      = new Audio( "sounds/Slingshot_Release.wav" ); 
-    var MOVE_FLING_SOUND = new Audio( "sounds/Slingshot_Grab.wav"    ); 
+    var TOOL_TRASH_SOUND   = new Audio( "sounds/Tool_Trash.wav"        ); 
+    var TOOL_GRAB_SOUND    = new Audio( "sounds/Tool_Grab.wav"         ); 
+    var TOO_MANY_SOUND     = new Audio( "sounds/too-many.wav"          ); 
+    var FLING_SOUND        = new Audio( "sounds/Slingshot_Release.wav" ); 
+    var MOVE_FLING_SOUND   = new Audio( "sounds/Slingshot_Grab.wav"    ); 
 
-    var DEATH_AUDIO_0_0 = new Audio( "sounds/Death-0-0.wav" ); 
-    var DEATH_AUDIO_0_1 = new Audio( "sounds/Death-0-1.wav" ); 
-    var DEATH_AUDIO_0_2 = new Audio( "sounds/Death-0-2.wav" ); 
-    var DEATH_AUDIO_0_3 = new Audio( "sounds/Death-0-3.wav" ); 
+    var DEATH_AUDIO_GOOD_0 = new Audio( "sounds/Death-Good-0.wav" ); 
+    var DEATH_AUDIO_GOOD_1 = new Audio( "sounds/Death-Good-1.wav" ); 
+    var DEATH_AUDIO_GOOD_2 = new Audio( "sounds/Death-Good-2.wav" ); 
+    var DEATH_AUDIO_GOOD_3 = new Audio( "sounds/Death-Good-3.wav" ); 
 
-    var DEATH_AUDIO_1_0 = new Audio( "sounds/Death-1-0.wav" ); 
-    var DEATH_AUDIO_1_1 = new Audio( "sounds/Death-1-1.wav" ); 
-    var DEATH_AUDIO_1_2 = new Audio( "sounds/Death-1-2.wav" ); 
-    var DEATH_AUDIO_1_3 = new Audio( "sounds/Death-1-3.wav" ); 
+    var DEATH_AUDIO_BAD_0  = new Audio( "sounds/Death-Bad-0.wav" ); 
+    var DEATH_AUDIO_BAD_1  = new Audio( "sounds/Death-Bad-1.wav" ); 
+    var DEATH_AUDIO_BAD_2  = new Audio( "sounds/Death-Bad-2.wav" ); 
+    var DEATH_AUDIO_BAD_3  = new Audio( "sounds/Death-Bad-3.wav" ); 
 
     //--------------------
     function Species()
     {    
-        this.gravity      = ZERO;
-        this.radius       = ZERO;
-        this.friction     = ZERO;
-        this.collision    = ZERO;
-        this.usePhysics   = false;
-        this.imageID      = 0;
-        this.createSound  = null; 
-        this.successSound = null; 
-        this.toolSound    = null; 
-        this.deleteSound  = null; 
-        this.forces       = new Array( NUM_BALL_SPECIES );
-        this.touchDeath   = new Array( NUM_BALL_SPECIES );
-        this.deathVisual0 = 0;
-        this.deathVisual1 = 0;
-        this.deathSound0  = 0;
-        this.deathSound1  = 0;
+        this.gravity         = ZERO;
+        this.radius          = ZERO;
+        this.friction        = ZERO;
+        this.collision       = ZERO;
+        this.usePhysics      = false;
+        this.imageID         = 0;
+        this.createSound     = null; 
+        this.successSound    = null; 
+        this.toolSound       = null; 
+        this.deleteSound     = null; 
+        this.forces          = new Array( NUM_BALL_SPECIES );
+        this.touchDeath      = new Array( NUM_BALL_SPECIES );
+        this.deathVisualGood = 0;
+        this.deathVisualBad  = 0;
+        this.deathSoundGood  = 0;
+        this.deathSoundBad   = 0;
 
         for (var s=0; s<NUM_BALL_SPECIES; s++)
         {    
@@ -319,11 +325,38 @@ function HackyBalls()
     var _speciesButtonImages    = new SpeciesButtonImages();
     var _ballsWithSomeCollision = new Array( MAX_BALLS );
     var _game                   = new Game();
+    var _initializeFirstLevel   = false;
     
+    //------------------------------------------------------------------------- 
+    // NOTE: The json-reading scheme is not fully figured out yet! 
+    //
+    // This function is required for getting the
+    // json data for game levels loaded into the game 
+    //------------------------------------------------------------------------- 
+    this.jsonFileLoaded = function(event)
+    {
+        _game.setLevelData( event.target.response );
+        _initializeFirstLevel = true;
+        
+        //this starts the animation running...
+        window.requestAnimationFrame( this.update.bind(this) );
+    }
+
 
     //--------------------------
     this.initialize = function()
-    {                
+    {    
+        //----------------------------------------------------------------------- 
+        // NOTE: The json-reading scheme is not fully figured out yet! 
+        //
+        // This is for requesting to load the json file for loading game levels
+        //-----------------------------------------------------------------------
+        var request = new XMLHttpRequest();
+        request.open( 'GET', 'GameLevels.json', true );
+        request.responseType = 'json';
+        request.send( null );
+        request.addEventListener( 'load', this.jsonFileLoaded.bind(this) );
+        
         //-----------------------------------
 		// Set canvas size
         //-----------------------------------
@@ -340,7 +373,7 @@ function HackyBalls()
         {
             _species[i] = new Species();
         }
-        
+
         //-------------------------------------------------------------------------
         // set up the sounds associated with each species...  
         //-------------------------------------------------------------------------
@@ -467,6 +500,14 @@ function HackyBalls()
         _toolButtons[ TOOL_RESET ].image.src = "images/reset-tool.png";;
         _toolButtons[ TOOL_RESET ].visible   = true;
         
+        if ( !SHOW_LEVEL_TOOLS )
+        {
+            _toolButtons[ TOOL_LEVEL_1 ].visible = false;
+            _toolButtons[ TOOL_LEVEL_2 ].visible = false;
+            _toolButtons[ TOOL_LEVEL_3 ].visible = false;
+            _toolButtons[ TOOL_LEVEL_4 ].visible = false;
+        }
+        
         //-----------------------------------------------------------------------------
         // turn this on only after creating the initial balls, because some browsers
         // don't want to have sounds played until the user has done some interaction. 
@@ -480,7 +521,13 @@ function HackyBalls()
         _deathAnimation.clock     = 0;
         _deathAnimation.radius    = ZERO;
         _deathAnimation.duration  = 20;
-        _deathAnimation.image.src = "images/death-0.png";    //default
+        _deathAnimation.image.src = "images/death-good-0.png";    //default
+                
+        //------------------------------------------------------------------------
+        // NOTE: The json-reading scheme is not fully figured out yet! 
+        // This part of the code was commented-out as part of the current scheme. 
+        // I want to leave this commented-out code here until we are certain.
+        //------------------------------------------------------------------------
                 
         //------------------------------------------------------------------------
         // start up the timer
@@ -488,14 +535,10 @@ function HackyBalls()
         //this.timer = setTimeout( "hackyBalls.update()", MILLISECONDS_PER_UPDATE );    
         
         // this forces the frame rate to be same as browser        
-        window.requestAnimationFrame( this.update.bind(this) ); 
-        
-        //---------------------------------
-        // set to first game level
-        //---------------------------------
-        this.setGameLevel( CROQUET_GAME );
-    }
+        //window.requestAnimationFrame( this.update.bind(this) ); 
 
+    }
+    
 
 
     //------------------------------------------
@@ -504,7 +547,7 @@ function HackyBalls()
         if ( _numBalls < MAX_BALLS )
         {
             this.playSound( _species[ species ].createSound );
-
+            
             //---------------------------------------------------------------------------
             // jitter discourages balls from being created at the exact same position
             // as other balls due to the user rapidly clicking to add in one place
@@ -543,11 +586,23 @@ function HackyBalls()
     //-----------------------
     this.update = function()
     {       
+        //----------------------------------------------------------------------------------------
+        // NOTE: The json-reading scheme is not fully figured out yet! 
+        //
+        // As soon as the level data have been loaded, set start up the first level...
+        //----------------------------------------------------------------------------------------
+        if ( _initializeFirstLevel )
+        {
+            this.setGameLevel( CROQUET_LEVEL );
+            _initializeFirstLevel = false;
+        }
+    
+        // Noel - please add a comment here...
         if ( globalParameters.preset != 0 )
         {
             this.setGameLevel( globalParameters.preset - 1 );
         }
-
+        
         //------------------------------------
         // this gets called all the time to 
         // catch any changes from the UI
@@ -558,6 +613,15 @@ function HackyBalls()
         // update game logic
         //-----------------------
         _game.update( _collisionBalls, _ballsWithSomeCollision, _numBalls, _balls );
+        
+        if ( gameState.success )
+        {
+            _toolButtons[ TOOL_RESET ].image.src = "images/next-level.png"; 
+        }
+        else
+        {
+            _toolButtons[ TOOL_RESET ].image.src = "images/reset-tool.png"; 
+        }
         
         //----------------------------------------------------
         // get seconds since started, and derive deltaTime...
@@ -603,17 +667,140 @@ function HackyBalls()
     } 
 
 
+
+
+
     //------------------------------------------
     this.updateBall = function( b, deltaTime )
     {
-        //-----------------------------------------
+        //-----------------------------
         // basic physics update
-        //-----------------------------------------
+        //-----------------------------
         _balls[b].update( deltaTime );
 
         //-------------------------------------
         // update interactions with flinger
         //-------------------------------------
+        this.updateBallInteractionsWithFlinger( b, deltaTime );
+        
+        //-----------------------------
+        // ball-to-ball interactions
+        //-----------------------------
+        for (var o=0; o<_numBalls; o++)
+        {    
+            if ( b != o )
+            {
+                _vector.setToDifference( _balls[b].getPosition(), _balls[o].getPosition() );
+
+                var distance = _vector.getMagnitude();
+
+                if ( distance < INTERACTION_RADIUS )
+                {
+                    if ( distance > ZERO )
+                    {
+                        var bSpecies = _balls[b].getType();
+                        var oSpecies = _balls[o].getType();
+
+                        //-----------------------------
+                        // attractions and repulsions
+                        //-----------------------------
+                        var force = new Vector2D();
+                        force.setToScaled( _vector, ONE / distance );
+                        force.scale( _species[ bSpecies ].forces[ oSpecies ] * deltaTime );
+                        _balls[b].addVelocity( force );
+                        
+                        //-----------------------------------------------------------------------------------------------------
+                        // collisions
+                        //-----------------------------------------------------------------------------------------------------
+                        var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) - COLLISION_DISTANCE_FUDGE;
+
+                        if ( distance < collisionDistance )
+                        {
+                            //-------------------------------------------------------------
+                            // if we are running a game and collecting collision info...    
+                            //-------------------------------------------------------------
+                            if ( gameState.running )
+                            {           
+                                //---------------------------------------------
+                                // accumulate collisions that adhere to the 
+                                // spcification in game state for testSpecies
+                                //---------------------------------------------
+                                if ( bSpecies == gameState.testSpecies )
+                                {
+                                    if ( oSpecies == gameState.collisionSpecies )
+                                    {
+                                        gameState.numCollisions ++;
+                                    }
+                                }
+                                                
+                                //---------------------------------------------
+                                // accumulate collisions that adhere to the 
+                                // spcification in game state for testBall
+                                //---------------------------------------------
+                                if ( b == gameState.testBall )
+                                {
+                                    if ( oSpecies == gameState.collisionSpecies )
+                                    {
+                                        var alreadyExistingBallIndex = NULL_BALL;
+                                        var slot = 0;
+                                        for (var c=0; c<gameState.numCollisionsGoal; c++)
+                                        {
+                                            if ( _collisionBalls[c] == NULL_BALL )
+                                            {
+                                                slot = c;
+                                            }
+                                            else if ( _collisionBalls[c] == o )
+                                            {
+                                                alreadyExistingBallIndex = o;
+                                            }                                            
+                                        }
+                                        
+                                        if ( alreadyExistingBallIndex == NULL_BALL )
+                                        {
+                                            _collisionBalls[ slot ] = o;
+                                        }
+                                    }
+                                }
+                                
+								_ballsWithSomeCollision[b] = true;
+                            }
+
+                            if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
+                            {
+                                this.killBallFromCollision(b);
+                            }
+                            else
+                            {
+                                //--------------------------------------------                    
+                                // apply collision force         
+                                //--------------------------------------------                    
+                                var f = ONE - ( distance / collisionDistance );
+
+                                var v1 = new Vector2D();
+                                var v2 = new Vector2D();
+
+                                v1.set( _vector );
+                                v2.set( _vector );
+
+                                v1.scale(  f );
+                                v2.scale( -f );
+
+                                _balls[b].addCollisionForce( v1 );
+                                _balls[o].addCollisionForce( v2 );
+                            }                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    //----------------------------------------------------------------
+    this.updateBallInteractionsWithFlinger = function( b, deltaTime )
+    {    
         if ( _flinger.ballIndex == b )
         {
             if ( _flinger.state == FLINGER_STATE_MOVING )
@@ -723,178 +910,76 @@ function HackyBalls()
                     _flinger.state = FLINGER_STATE_WAITING;
                 }
             }
-        }
-
-        //-----------------------------
-        // ball-to-ball interactions
-        //-----------------------------
-        for (var o=0; o<_numBalls; o++)
-        {    
-            if ( b != o )
-            {
-                _vector.setToDifference( _balls[b].getPosition(), _balls[o].getPosition() );
-
-                var distance = _vector.getMagnitude();
-
-                if ( distance < INTERACTION_RADIUS )
-                {
-                    if ( distance > ZERO )
-                    {
-                        var bSpecies = _balls[b].getType();
-                        var oSpecies = _balls[o].getType();
-
-                        //-----------------------------
-                        // attractions and repulsions
-                        //-----------------------------
-                        var force = new Vector2D();
-                        force.setToScaled( _vector, ONE / distance );
-                        force.scale( _species[ bSpecies ].forces[ oSpecies ] * deltaTime );
-                        _balls[b].addVelocity( force );
-                        
-                        //-----------------------------------------------------------------------------------------------------
-                        // collisions
-                        //-----------------------------------------------------------------------------------------------------
-                        var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) - COLLISION_DISTANCE_FUDGE;
-
-                        if ( distance < collisionDistance )
-                        {
-                            //-------------------------------------------------------------
-                            // if we are running a game and collecting collision info...    
-                            //-------------------------------------------------------------
-                            if ( gameState.running )
-                            {           
-                                //---------------------------------------------
-                                // accumulate collisions that adhere to the 
-                                // spcification in game state for testSpecies
-                                //---------------------------------------------
-                                if ( bSpecies == gameState.testSpecies )
-                                {
-                                    if ( oSpecies == gameState.collisionSpecies )
-                                    {
-                                        gameState.numCollisions ++;
-                                    }
-                                }
-                                                
-                                //---------------------------------------------
-                                // accumulate collisions that adhere to the 
-                                // spcification in game state for testBall
-                                //---------------------------------------------
-                                if ( b == gameState.testBall )
-                                {
-                                    if ( oSpecies == gameState.collisionSpecies )
-                                    {
-                                        var alreadyExistingBallIndex = NULL_BALL;
-                                        var slot = 0;
-                                        for (var c=0; c<gameState.numCollisionsGoal; c++)
-                                        {
-                                            if ( _collisionBalls[c] == NULL_BALL )
-                                            {
-                                                slot = c;
-                                            }
-                                            else if ( _collisionBalls[c] == o )
-                                            {
-                                                alreadyExistingBallIndex = o;
-                                            }                                            
-                                        }
-                                        
-                                        if ( alreadyExistingBallIndex == NULL_BALL )
-                                        {
-                                            _collisionBalls[ slot ] = o;
-                                        }
-                                    }
-                                }
-                                
-								_ballsWithSomeCollision[b] = true;
-                            }
-
-                            if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
-                            {
-                                this.killBallFromCollision( b, oSpecies );  
-                            }
-                            else
-                            {
-                                //--------------------------------------------                    
-                                // apply collision force         
-                                //--------------------------------------------                    
-                                var f = ONE - ( distance / collisionDistance );
-
-                                var v1 = new Vector2D();
-                                var v2 = new Vector2D();
-
-                                v1.set( _vector );
-                                v2.set( _vector );
-
-                                v1.scale(  f );
-                                v2.scale( -f );
-
-                                _balls[b].addCollisionForce( v1 );
-                                _balls[o].addCollisionForce( v2 );
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        }    
     }
+    
+    
+    
 
-    
-    
-    //-----------------------------------------------------------
-    this.killBallFromCollision = function( b, otherBallSpecies )
+    //---------------------------------------
+    this.killBallFromCollision = function(b)
     {    
         var deathImage  = new Image();
-        var deathSound  = DEATH_AUDIO_0_0;
+        var deathSound  = DEATH_AUDIO_GOOD_0;//default
         var ballSpecies = _balls[b].getType();
         
-        deathImage.src = "images/death-0.png";    
-        
-             if ( _species[ ballSpecies ].deathVisual0 == 0 ) { deathImage.src = "images/death-0.png"; }
-        else if ( _species[ ballSpecies ].deathVisual0 == 1 ) { deathImage.src = "images/death-1.png"; }
-        else if ( _species[ ballSpecies ].deathVisual0 == 2 ) { deathImage.src = "images/death-2.png"; }
-        else if ( _species[ ballSpecies ].deathVisual0 == 3 ) { deathImage.src = "images/death-3.png"; }
+        deathImage.src = "images/death-good-0.png"; //default
 
-             if ( _species[ ballSpecies ].deathVisual1 == 0 ) { deathImage.src = "images/death-0.png"; }
-        else if ( _species[ ballSpecies ].deathVisual1 == 1 ) { deathImage.src = "images/death-1.png"; }
-        else if ( _species[ ballSpecies ].deathVisual1 == 2 ) { deathImage.src = "images/death-2.png"; }
-        else if ( _species[ ballSpecies ].deathVisual1 == 3 ) { deathImage.src = "images/death-3.png"; }
+        if ( _species[ ballSpecies ].deathType == 0 ) // good
+        {
+                 if ( _species[ ballSpecies ].deathVisualGood == 0 ) { deathImage.src = "images/death-good-0.png"; }
+            else if ( _species[ ballSpecies ].deathVisualGood == 1 ) { deathImage.src = "images/death-good-1.png"; }
+            else if ( _species[ ballSpecies ].deathVisualGood == 2 ) { deathImage.src = "images/death-good-2.png"; }
+            else if ( _species[ ballSpecies ].deathVisualGood == 3 ) { deathImage.src = "images/death-good-3.png"; }
 
-             if ( _species[ ballSpecies ].deathSound0  == 0 ) { deathSound = DEATH_AUDIO_0_0; }
-        else if ( _species[ ballSpecies ].deathSound0  == 1 ) { deathSound = DEATH_AUDIO_0_1; }
-        else if ( _species[ ballSpecies ].deathSound0  == 2 ) { deathSound = DEATH_AUDIO_0_2; }
-        else if ( _species[ ballSpecies ].deathSound0  == 3 ) { deathSound = DEATH_AUDIO_0_3; }
+                 if ( _species[ ballSpecies ].deathSoundGood  == 0 ) { deathSound = DEATH_AUDIO_GOOD_0; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 1 ) { deathSound = DEATH_AUDIO_GOOD_1; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 2 ) { deathSound = DEATH_AUDIO_GOOD_2; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 3 ) { deathSound = DEATH_AUDIO_GOOD_3; }
+        }
+        else if ( _species[ ballSpecies ].deathType == 1 ) // bad
+        {
+                 if ( _species[ ballSpecies ].deathVisualBad  == 0 ) { deathImage.src = "images/death-bad-0.png"; }
+            else if ( _species[ ballSpecies ].deathVisualBad  == 1 ) { deathImage.src = "images/death-bad-1.png"; }
+            else if ( _species[ ballSpecies ].deathVisualBad  == 2 ) { deathImage.src = "images/death-bad-2.png"; }
+            else if ( _species[ ballSpecies ].deathVisualBad  == 3 ) { deathImage.src = "images/death-bad-3.png"; }
 
-             if ( _species[ ballSpecies ].deathSound1  == 0 ) { deathSound = DEATH_AUDIO_1_0; }
-        else if ( _species[ ballSpecies ].deathSound1  == 1 ) { deathSound = DEATH_AUDIO_1_1; }
-        else if ( _species[ ballSpecies ].deathSound1  == 2 ) { deathSound = DEATH_AUDIO_1_2; }
-        else if ( _species[ ballSpecies ].deathSound1  == 3 ) { deathSound = DEATH_AUDIO_1_3; }
+                 if ( _species[ ballSpecies ].deathSoundBad   == 0 ) { deathSound = DEATH_AUDIO_BAD_0; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 1 ) { deathSound = DEATH_AUDIO_BAD_1; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 2 ) { deathSound = DEATH_AUDIO_BAD_2; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = DEATH_AUDIO_BAD_3; }
+        }
         
         this.deleteBall( b, deathImage, deathSound );    
     }    
     
     
     
-    //----------------------------------------------------------
+    
+    //---------------------------------------------------------
     this.deleteBall = function( b, deleteImage, deleteSound )
     {    
         this.playBallDeathEffect( b, deleteImage, deleteSound );
+
+        if ( _grabbedBall == b )
+        {
+            _grabbedBall = NULL_BALL;
+        }
 
         //---------------------------------------------------------
         // copy the data from the last ball in the array to the
         // ball just deleted so the array remains contiguous.
         //---------------------------------------------------------
-        
-//YO! -- I think there is a scary bug associated with this code...must fix        
-        
         var r = _numBalls - 1;
-        _balls[b].setPosition       ( _balls[r].getPosition     () );
-        _balls[b].setVelocity       ( _balls[r].getVelocity     () );
-        _balls[b].setType           ( _balls[r].getType         () );
-        _balls[b].setRadius         ( _balls[r].getRadius       () );
-        _balls[b].setGravity        ( _balls[r].getGravity      () );
-        _balls[b].setAirFriction    ( _balls[r].getAirFriction  () );
-        _balls[b].setCollision      ( _balls[r].getCollision    () );
-        _balls[b].setUsingPhysics   ( _balls[r].getUsingPhysics () );
-
+        _balls[b].setPosition     ( _balls[r].getPosition     () );
+        _balls[b].setVelocity     ( _balls[r].getVelocity     () );
+        _balls[b].setType         ( _balls[r].getType         () );
+        _balls[b].setRadius       ( _balls[r].getRadius       () );
+        _balls[b].setGravity      ( _balls[r].getGravity      () );
+        _balls[b].setAirFriction  ( _balls[r].getAirFriction  () );
+        _balls[b].setCollision    ( _balls[r].getCollision    () );
+        _balls[b].setUsingPhysics ( _balls[r].getUsingPhysics () );
+        
         _numBalls --;
         
         //---------------------------------------------------------
@@ -903,12 +988,11 @@ function HackyBalls()
         if ( b == _flinger.ballIndex )
         {
              _flinger.cancel();
-        }    
+        }            
     }
-    
-    
 
-    //-----------------------------------------------------------------
+    
+    //---------------------------------------------------------------
     this.playBallDeathEffect = function( b, deathImage, deathSound )
     {    
         _deathAnimation.position.setXY( _balls[b].getPosition().x, _balls[b].getPosition().y )
@@ -917,8 +1001,10 @@ function HackyBalls()
         _deathAnimation.radius = _balls[b].getRadius();        
         _deathAnimation.image = deathImage;    
 
-        this.playSound( deathSound );
-    }
+        this.playSound( deathSound );        
+    }    
+
+
 
 
 		
@@ -1061,13 +1147,24 @@ function HackyBalls()
                     {
                         _toolButtons[ TOOL_SPECIES ].visible = true;
                     }
-
-                    else if ( t == TOOL_LEVEL_1 ) { this.setGameLevel( CROQUET_GAME ); }
-                    else if ( t == TOOL_LEVEL_2 ) { this.setGameLevel( SPACE_GAME   ); }
-                    else if ( t == TOOL_LEVEL_3 ) { this.setGameLevel( GAME_3       ); }
-                    else if ( t == TOOL_LEVEL_4 ) { this.setGameLevel( GAME_4       ); } 
-                    else if ( t == TOOL_RESET   ) { this.setGameLevel( _game.getCurrentLevel() ); _toolButtons[ TOOL_RESET ].image.src = "images/reset-tool.png"; } 
-                    else if ( t == TOOL_SPECIES )
+                         if ( t == TOOL_LEVEL_1 ) { this.setGameLevel( CROQUET_LEVEL ); }
+                    else if ( t == TOOL_LEVEL_2 ) { this.setGameLevel( SPACE_LEVEL   ); }
+                    else if ( t == TOOL_LEVEL_3 ) { this.setGameLevel( LEVEL_3       ); }
+                    else if ( t == TOOL_LEVEL_4 ) { this.setGameLevel( LEVEL_4       ); }                     
+                    else 
+                    if ( t == TOOL_RESET ) 
+                    {
+                        if ( gameState.success )
+                        {
+                            this.setGameLevel( _game.getNextLevel() ); 
+                        }
+                        else
+                        {
+                            this.setGameLevel( _game.getCurrentLevel() ); 
+                        }
+                    } 
+ 
+                    if ( t == TOOL_SPECIES )
                     {
                         var h = ( y - _toolButtons[t].position.y ) / _toolButtons[t].height;
                         _selectedSpecies = Math.floor( h * NUM_BALL_SPECIES );                    
@@ -1296,115 +1393,115 @@ function HackyBalls()
 		 */
 		canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')";
                 
-        _species[0].gravity        = globalParameters.gravity_0;
-        _species[0].radius         = globalParameters.radius_0;
-        _species[0].friction       = globalParameters.friction_0;
-        _species[0].collision      = globalParameters.collision_0;
-        _species[0].usePhysics     = globalParameters.usePhysics_0;
-        _species[0].imageID        = globalParameters.imageIndex_0;
-        _species[0].forces     [0] = globalParameters.socialForce_0_0;                
-        _species[0].forces     [1] = globalParameters.socialForce_0_1;
-        _species[0].forces     [2] = globalParameters.socialForce_0_2;    
-        _species[0].forces     [3] = globalParameters.socialForce_0_3;    
-        _species[0].forces     [4] = globalParameters.socialForce_0_4;    
-        _species[0].touchDeath [0] = globalParameters.touchDeath_0_0;                
-        _species[0].touchDeath [1] = globalParameters.touchDeath_0_1;
-        _species[0].touchDeath [2] = globalParameters.touchDeath_0_2;    
-        _species[0].touchDeath [3] = globalParameters.touchDeath_0_3;    
-        _species[0].touchDeath [4] = globalParameters.touchDeath_0_4;  
-        _species[0].deathVisual0   = globalParameters.deathVisual_0_0;                
-        _species[0].deathVisual1   = globalParameters.deathVisual_0_1;                
-        _species[0].deathSound0    = globalParameters.deathSound_0_0;                
-        _species[0].deathSound1    = globalParameters.deathSound_0_1;                
+        _species[0].gravity         = globalParameters.gravity_0;
+        _species[0].radius          = globalParameters.radius_0;
+        _species[0].friction        = globalParameters.friction_0;
+        _species[0].collision       = globalParameters.collision_0;
+        _species[0].usePhysics      = globalParameters.usePhysics_0;
+        _species[0].imageID         = globalParameters.imageIndex_0;
+        _species[0].forces     [0]  = globalParameters.socialForce_0_0;                
+        _species[0].forces     [1]  = globalParameters.socialForce_0_1;
+        _species[0].forces     [2]  = globalParameters.socialForce_0_2;    
+        _species[0].forces     [3]  = globalParameters.socialForce_0_3;    
+        _species[0].forces     [4]  = globalParameters.socialForce_0_4;    
+        _species[0].touchDeath [0]  = globalParameters.touchDeath_0_0;                
+        _species[0].touchDeath [1]  = globalParameters.touchDeath_0_1;
+        _species[0].touchDeath [2]  = globalParameters.touchDeath_0_2;    
+        _species[0].touchDeath [3]  = globalParameters.touchDeath_0_3;    
+        _species[0].touchDeath [4]  = globalParameters.touchDeath_0_4;    
+        _species[0].deathType       = globalParameters.deathType_0;         
+        _species[0].deathVisualGood = globalParameters.deathVisualGood_0;                
+        _species[0].deathVisualBad  = globalParameters.deathVisualBad_0;                
+        _species[0].deathSoundGood  = globalParameters.deathSoundGood_0;                
+        _species[0].deathSoundBad   = globalParameters.deathSoundBad_0;                
         
+        _species[1].gravity         = globalParameters.gravity_1;
+        _species[1].radius          = globalParameters.radius_1;
+        _species[1].friction        = globalParameters.friction_1;
+        _species[1].collision       = globalParameters.collision_1;
+        _species[1].usePhysics      = globalParameters.usePhysics_1;
+        _species[1].imageID         = globalParameters.imageIndex_1;
+        _species[1].forces     [0]  = globalParameters.socialForce_1_0;                
+        _species[1].forces     [1]  = globalParameters.socialForce_1_1;
+        _species[1].forces     [2]  = globalParameters.socialForce_1_2;    
+        _species[1].forces     [3]  = globalParameters.socialForce_1_3;    
+        _species[1].forces     [4]  = globalParameters.socialForce_1_4;    
+        _species[1].touchDeath [0]  = globalParameters.touchDeath_1_0;                
+        _species[1].touchDeath [1]  = globalParameters.touchDeath_1_1;
+        _species[1].touchDeath [2]  = globalParameters.touchDeath_1_2;    
+        _species[1].touchDeath [3]  = globalParameters.touchDeath_1_3;    
+        _species[1].touchDeath [4]  = globalParameters.touchDeath_1_4;    
+        _species[1].deathType       = globalParameters.deathType_1;         
+        _species[1].deathVisualGood = globalParameters.deathVisualGood_1;                
+        _species[1].deathVisualBad  = globalParameters.deathVisualBad_1;                
+        _species[1].deathSoundGood  = globalParameters.deathSoundGood_1;                
+        _species[1].deathSoundBad   = globalParameters.deathSoundBad_1;                
+
+        _species[2].gravity         = globalParameters.gravity_2;
+        _species[2].radius          = globalParameters.radius_2;
+        _species[2].friction        = globalParameters.friction_2;
+        _species[2].collision       = globalParameters.collision_2;
+        _species[2].usePhysics      = globalParameters.usePhysics_2;
+        _species[2].imageID         = globalParameters.imageIndex_2;
+        _species[2].forces     [0]  = globalParameters.socialForce_2_0;                
+        _species[2].forces     [1]  = globalParameters.socialForce_2_1;
+        _species[2].forces     [2]  = globalParameters.socialForce_2_2;    
+        _species[2].forces     [3]  = globalParameters.socialForce_2_3;    
+        _species[2].forces     [4]  = globalParameters.socialForce_2_4;    
+        _species[2].touchDeath [0]  = globalParameters.touchDeath_2_0;                
+        _species[2].touchDeath [1]  = globalParameters.touchDeath_2_1;
+        _species[2].touchDeath [2]  = globalParameters.touchDeath_2_2;    
+        _species[2].touchDeath [3]  = globalParameters.touchDeath_2_3;    
+        _species[2].touchDeath [4]  = globalParameters.touchDeath_2_4;  
+        _species[2].deathType       = globalParameters.deathType_2;         
+        _species[2].deathVisualGood = globalParameters.deathVisualGood_2;                
+        _species[2].deathVisualBad  = globalParameters.deathVisualBad_2;                
+        _species[2].deathSoundGood  = globalParameters.deathSoundGood_2;                
+        _species[2].deathSoundBad   = globalParameters.deathSoundBad_2;                
+
+        _species[3].gravity         = globalParameters.gravity_3;
+        _species[3].radius          = globalParameters.radius_3;
+        _species[3].friction        = globalParameters.friction_3;
+        _species[3].collision       = globalParameters.collision_3;
+        _species[3].usePhysics      = globalParameters.usePhysics_3;
+        _species[3].imageID         = globalParameters.imageIndex_3;
+        _species[3].forces     [0]  = globalParameters.socialForce_3_0;                
+        _species[3].forces     [1]  = globalParameters.socialForce_3_1;
+        _species[3].forces     [2]  = globalParameters.socialForce_3_2;    
+        _species[3].forces     [3]  = globalParameters.socialForce_3_3;    
+        _species[3].forces     [4]  = globalParameters.socialForce_3_4;    
+        _species[3].touchDeath [0]  = globalParameters.touchDeath_3_0;                
+        _species[3].touchDeath [1]  = globalParameters.touchDeath_3_1;
+        _species[3].touchDeath [2]  = globalParameters.touchDeath_3_2;    
+        _species[3].touchDeath [3]  = globalParameters.touchDeath_3_3;    
+        _species[3].touchDeath [4]  = globalParameters.touchDeath_3_4; 
+        _species[3].deathType       = globalParameters.deathType_3;         
+        _species[3].deathVisualGood = globalParameters.deathVisualGood_3;                
+        _species[3].deathVisualBad  = globalParameters.deathVisualBad_3;                
+        _species[3].deathSoundGood  = globalParameters.deathSoundGood_3;                
+        _species[3].deathSoundBad   = globalParameters.deathSoundBad_3;                
         
-        
-        _species[1].gravity        = globalParameters.gravity_1;
-        _species[1].radius         = globalParameters.radius_1;
-        _species[1].friction       = globalParameters.friction_1;
-        _species[1].collision      = globalParameters.collision_1;
-        _species[1].usePhysics     = globalParameters.usePhysics_1;
-        _species[1].imageID        = globalParameters.imageIndex_1;
-        _species[1].forces     [0] = globalParameters.socialForce_1_0;                
-        _species[1].forces     [1] = globalParameters.socialForce_1_1;
-        _species[1].forces     [2] = globalParameters.socialForce_1_2;    
-        _species[1].forces     [3] = globalParameters.socialForce_1_3;    
-        _species[1].forces     [4] = globalParameters.socialForce_1_4;    
-        _species[1].touchDeath [0] = globalParameters.touchDeath_1_0;                
-        _species[1].touchDeath [1] = globalParameters.touchDeath_1_1;
-        _species[1].touchDeath [2] = globalParameters.touchDeath_1_2;    
-        _species[1].touchDeath [3] = globalParameters.touchDeath_1_3;    
-        _species[1].touchDeath [4] = globalParameters.touchDeath_1_4;    
-        _species[1].deathVisual0   = globalParameters.deathVisual_1_0;                
-        _species[1].deathVisual1   = globalParameters.deathVisual_1_1;                
-        _species[1].deathSound0    = globalParameters.deathSound_1_0;                
-        _species[1].deathSound1    = globalParameters.deathSound_1_1;                
-
-
-        _species[2].gravity        = globalParameters.gravity_2;
-        _species[2].radius         = globalParameters.radius_2;
-        _species[2].friction       = globalParameters.friction_2;
-        _species[2].collision      = globalParameters.collision_2;
-        _species[2].usePhysics     = globalParameters.usePhysics_2;
-        _species[2].imageID        = globalParameters.imageIndex_2;
-        _species[2].forces     [0] = globalParameters.socialForce_2_0;                
-        _species[2].forces     [1] = globalParameters.socialForce_2_1;
-        _species[2].forces     [2] = globalParameters.socialForce_2_2;    
-        _species[2].forces     [3] = globalParameters.socialForce_2_3;    
-        _species[2].forces     [4] = globalParameters.socialForce_2_4;    
-        _species[2].touchDeath [0] = globalParameters.touchDeath_2_0;                
-        _species[2].touchDeath [1] = globalParameters.touchDeath_2_1;
-        _species[2].touchDeath [2] = globalParameters.touchDeath_2_2;    
-        _species[2].touchDeath [3] = globalParameters.touchDeath_2_3;    
-        _species[2].touchDeath [4] = globalParameters.touchDeath_2_4;  
-        _species[2].deathVisual0   = globalParameters.deathVisual_2_0;                
-        _species[2].deathVisual1   = globalParameters.deathVisual_2_1;                
-        _species[2].deathSound0    = globalParameters.deathSound_2_0;                
-        _species[2].deathSound1    = globalParameters.deathSound_2_1;                
-
-
-        _species[3].gravity        = globalParameters.gravity_3;
-        _species[3].radius         = globalParameters.radius_3;
-        _species[3].friction       = globalParameters.friction_3;
-        _species[3].collision      = globalParameters.collision_3;
-        _species[3].usePhysics     = globalParameters.usePhysics_3;
-        _species[3].imageID        = globalParameters.imageIndex_3;
-        _species[3].forces     [0] = globalParameters.socialForce_3_0;                
-        _species[3].forces     [1] = globalParameters.socialForce_3_1;
-        _species[3].forces     [2] = globalParameters.socialForce_3_2;    
-        _species[3].forces     [3] = globalParameters.socialForce_3_3;    
-        _species[3].forces     [4] = globalParameters.socialForce_3_4;    
-        _species[3].touchDeath [0] = globalParameters.touchDeath_3_0;                
-        _species[3].touchDeath [1] = globalParameters.touchDeath_3_1;
-        _species[3].touchDeath [2] = globalParameters.touchDeath_3_2;    
-        _species[3].touchDeath [3] = globalParameters.touchDeath_3_3;    
-        _species[3].touchDeath [4] = globalParameters.touchDeath_3_4; 
-        _species[3].deathVisual0   = globalParameters.deathVisual_3_0;                
-        _species[3].deathVisual1   = globalParameters.deathVisual_3_1;                
-        _species[3].deathSound0    = globalParameters.deathSound_3_0;                
-        _species[3].deathSound1    = globalParameters.deathSound_3_1;                
-
-        
-        _species[4].gravity        = globalParameters.gravity_4;
-        _species[4].radius         = globalParameters.radius_4;
-        _species[4].friction       = globalParameters.friction_4;
-        _species[4].collision      = globalParameters.collision_4;
-        _species[4].usePhysics     = globalParameters.usePhysics_4;
-        _species[4].imageID        = globalParameters.imageIndex_4;
-        _species[4].forces     [0] = globalParameters.socialForce_4_0;                
-        _species[4].forces     [1] = globalParameters.socialForce_4_1;
-        _species[4].forces     [2] = globalParameters.socialForce_4_2;    
-        _species[4].forces     [3] = globalParameters.socialForce_4_3;    
-        _species[4].forces     [4] = globalParameters.socialForce_4_4;    
-        _species[4].touchDeath [0] = globalParameters.touchDeath_4_0;                
-        _species[4].touchDeath [1] = globalParameters.touchDeath_4_1;
-        _species[4].touchDeath [2] = globalParameters.touchDeath_4_2;    
-        _species[4].touchDeath [3] = globalParameters.touchDeath_4_3;    
-        _species[4].touchDeath [4] = globalParameters.touchDeath_4_4;  
-        _species[4].deathVisual0   = globalParameters.deathVisual_4_0;                
-        _species[4].deathVisual1   = globalParameters.deathVisual_4_1;                
-        _species[4].deathSound0    = globalParameters.deathSound_4_0;                
-        _species[4].deathSound1    = globalParameters.deathSound_4_1;                
+        _species[4].gravity         = globalParameters.gravity_4;
+        _species[4].radius          = globalParameters.radius_4;
+        _species[4].friction        = globalParameters.friction_4;
+        _species[4].collision       = globalParameters.collision_4;
+        _species[4].usePhysics      = globalParameters.usePhysics_4;
+        _species[4].imageID         = globalParameters.imageIndex_4;
+        _species[4].forces     [0]  = globalParameters.socialForce_4_0;                
+        _species[4].forces     [1]  = globalParameters.socialForce_4_1;
+        _species[4].forces     [2]  = globalParameters.socialForce_4_2;    
+        _species[4].forces     [3]  = globalParameters.socialForce_4_3;    
+        _species[4].forces     [4]  = globalParameters.socialForce_4_4;    
+        _species[4].touchDeath [0]  = globalParameters.touchDeath_4_0;                
+        _species[4].touchDeath [1]  = globalParameters.touchDeath_4_1;
+        _species[4].touchDeath [2]  = globalParameters.touchDeath_4_2;    
+        _species[4].touchDeath [3]  = globalParameters.touchDeath_4_3;    
+        _species[4].touchDeath [4]  = globalParameters.touchDeath_4_4;  
+        _species[4].deathType       = globalParameters.deathType_4;         
+        _species[4].deathVisualGood = globalParameters.deathVisualGood_4;                
+        _species[4].deathVisualBad  = globalParameters.deathVisualBad_4;                
+        _species[4].deathSoundGood  = globalParameters.deathSoundGood_4;                
+        _species[4].deathSoundBad   = globalParameters.deathSoundBad_4;                
 
         for (var b=0; b<_numBalls; b++)
         {
@@ -1424,6 +1521,7 @@ function HackyBalls()
         _toolButtons[ TOOL_CREATE   ].visible = globalParameters.createToolActive;
         _toolButtons[ TOOL_DELETE   ].visible = globalParameters.deleteToolActive;
     }
+    
     
     
     

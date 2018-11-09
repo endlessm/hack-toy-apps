@@ -333,15 +333,14 @@ function HackyBalls()
     // This function is required for getting the
     // json data for game levels loaded into the game 
     //------------------------------------------------------------------------- 
-    var that = this;
-    this.jsonFileLoaded = function()
-    {                
-        _game.setLevelData( this.response );
+    this.jsonFileLoaded = function(event)
+    {
+        _game.setLevelData( event.target.response );
         _initializeFirstLevel = true;
         
         //this starts the animation running...
-        window.requestAnimationFrame( that.update.bind(that) ); 
-      }
+        window.requestAnimationFrame( this.update.bind(this) );
+    }
 
 
     //--------------------------
@@ -353,10 +352,10 @@ function HackyBalls()
         // This is for requesting to load the json file for loading game levels
         //-----------------------------------------------------------------------
         var request = new XMLHttpRequest();
-        request.open( "GET", "GameLevels.json", true );
+        request.open( 'GET', 'GameLevels.json', true );
         request.responseType = 'json';
         request.send( null );
-        request.addEventListener( 'load', this.jsonFileLoaded );
+        request.addEventListener( 'load', this.jsonFileLoaded.bind(this) );
         
         //-----------------------------------
 		// Set canvas size

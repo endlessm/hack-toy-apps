@@ -11,53 +11,109 @@ from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import WebKit2
 
+WebKit2.Settings.__gtype__
+WebKit2.WebView.__gtype__
+
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
+@Gtk.Template(filename=os.path.join(SCRIPT_PATH, 'app.ui'))
+class ToyAppWindow(Gtk.ApplicationWindow):
+    __gtype_name__ = "ToyAppWindow"
 
-class View(WebKit2.WebView):
+    stack = Gtk.Template.Child()
+    splash = Gtk.Template.Child()
+    view = Gtk.Template.Child()
+    settings = Gtk.Template.Child()
 
-    def __init__(self):
-        WebKit2.WebView.__init__(self)
-        settings = self.get_settings()
-        settings.set_enable_webgl(True)
-        settings.set_enable_accelerated_2d_canvas(True)
-        settings.set_allow_universal_access_from_file_urls(True)
-        settings.set_enable_write_console_messages_to_stdout(True)
-        settings.set_enable_webaudio(True)
+    def __init__(self, application, metadata):
+        super(ToyAppWindow, self).__init__()
+
+        app_id = application.get_application_id()
+        app_info = Gio.DesktopAppInfo.new(app_id + '.desktop')
+        decorated = metadata.get('decorated', True)
+        use_load_notify = metadata.get('use-load-notify', False)
+
+        self.set_application(application)
+        self.set_title(app_info.get_name())
+        self.set_decorated(decorated)
+        self.maximize()
+
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):
-            settings.set_enable_developer_extras(True)
-        self.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
-        self.set_name('view')
+            self.settings.set_enable_developer_extras(True)
 
+        self._setup_splash(app_id)
+
+        # Check if toy app will notify us manually when it finished loading
+        # otherwise we fallback to load-changed signal
+        if use_load_notify:
+            self._setup_js()
+            manager.connect('script-message-received::ToyAppLoadNotify', self._on_load_notify)
+        else:
+            self.view.connect('load-changed', self._on_view_load_changed)
+
+        # Disable right click context menu!
+        self.view.connect('context-menu', Gtk.true)
+
+        # Finally load html app index
+        self.view.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
+
+    def _setup_js(self):
+        manager = self.view.get_user_content_manager()
+
+        # Register message hanlders
+        manager.register_script_message_handler("ToyAppLoadNotify")
+
+        # Inject custom JS on every page
+        manager.add_script(
+            WebKit2.UserScript.new(
+                open(os.path.join(SCRIPT_PATH, 'app.js'), 'r').read(),
+                WebKit2.UserContentInjectedFrames.TOP_FRAME,
+                WebKit2.UserScriptInjectionTime.START,
+                None,
+                None
+            )
+        )
+
+    def _setup_splash(self, app_id):
+        # Check if we can use the splash screen as a temporary background while
+        # the webview loads
+        splash = Gio.File.new_for_path('/app/share/eos-shell-content/splash/%s.jpg' % app_id)
+
+        if splash.query_exists():
+            provider = Gtk.CssProvider()
+            provider.load_from_data(bytes(
+                """
+toy-app-window > stack > frame {
+    background: white, url('%s') no-repeat center;
+}
+                """ % splash.get_path(), 'UTF8'))
+            Gtk.StyleContext.add_provider_for_screen(
+                Gdk.Screen.get_default(),
+                provider,
+                Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            )
+            self.stack.set_visible_child(self.splash)
+        else:
+            self.stack.set_visible_child(self.view)
+
+    def _view_show(self):
+        self.stack.set_visible_child(self.view)
+
+    def _on_load_notify(self, manager, result):
+        self._view_show()
+
+    def _on_view_load_changed(self, view, event):
+        if event == WebKit2.LoadEvent.FINISHED:
+            self._view_show()
+
+
+ToyAppWindow.set_css_name('toy-app-window')
 
 class Application(Gtk.Application):
 
     def __init__(self, application_id):
         super().__init__(application_id=application_id)
         self._window = None
-
-    def _get_app_name(self):
-        info = Gio.DesktopAppInfo.new(self.get_application_id() + '.desktop')
-        return info.get_name()
-
-    def _setup_ui(self):
-        builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(SCRIPT_PATH, 'app.ui'))
-
-        self._view = View()
-        self._view.props.expand = True
-
-        container = builder.get_object('game_container')
-        container.add(self._view)
-
-        self._window = builder.get_object('app_window')
-        self._window.connect('destroy', self._window_destroy_cb)
-        self._window.set_application(self)
-        self._window.set_title(self._get_app_name())
-        self._window.maximize()
-        self._window.show_all()
-
-        self._window.set_decorated(self._metadata.get('decorated', True))
 
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
@@ -70,7 +126,7 @@ class Application(Gtk.Application):
         self.add_action(quit)
 
     def _flip_action_activated_cb(self, action, param):
-        self._view.run_javascript('if(typeof flip !== "undefined"){flip();}');
+        self._window.view.run_javascript('if(typeof flip !== "undefined"){flip();}');
 
     def _quit_action_activated_cb(self, action, param):
         self.quit()
@@ -98,7 +154,9 @@ class Application(Gtk.Application):
 
     def do_activate(self):
         if not self._window:
-            self._setup_ui()
+            self._window = ToyAppWindow(self, self._metadata)
+            self._window.connect('destroy', self._window_destroy_cb)
+            self._window.show_all()
         self._window.present()
 
 

@@ -151,6 +151,7 @@ function Unlock()
     this.setBackground = function(background)
     {
         canvasID.style.backgroundImage = `url('${background}')`;
+        canvasID.style.backgroundSize = '100% 100%';
     }
 
 

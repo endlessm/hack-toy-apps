@@ -10,7 +10,8 @@ fi
 
 APP_ID=$1
 REPO=${REPO:-repo}
+GIT_CLONE_BRANCH=${GIT_CLONE_BRANCH:-HEAD}
 
-./generate_manifest $APP_ID
+./generate_manifest --git-branch=${GIT_CLONE_BRANCH} $APP_ID
 flatpak-builder build --ccache $APP_ID.json --repo=${REPO}
 flatpak build-bundle ${REPO} $APP_ID.flatpak $APP_ID

@@ -15,6 +15,9 @@ var LEVEL_9       =  8;
 var LEVEL_10      =  9;
 var NUM_LEVELS    = 10;
 
+var QUEST_FIZZICS1 =  10;
+var QUEST_FIZZICS2 =  11;
+
 
 //--------------------------
 function Game()
@@ -479,7 +482,6 @@ function Game()
             parent.selectTool( FLING_MOVE );  
         }
         
-	// QUEST: Hacky Balls 0
         //----------------------------------------------------------------
         //----------------------------------------------------------------
         //
@@ -580,6 +582,178 @@ function Game()
             this.createBallCircle( parent, 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
         }
         
+        else if ( _level == QUEST_FIZZICS1 )
+        {
+            globalParameters.backgroundImageIndex = 0;
+
+            globalParameters.radius_0       = 30.0;
+            globalParameters.gravity_0      = 100.0;
+            globalParameters.collision_0        = 0.2;
+            globalParameters.friction_0         = 1.0;
+            globalParameters.usePhysics_0       = true;
+            globalParameters.imageIndex_0       = 0;
+            globalParameters.socialForce_0_0    = 0.0;
+            globalParameters.socialForce_0_1    = 0.0;
+            globalParameters.socialForce_0_2    = 0.0;
+            globalParameters.touchDeath_0_0     = false;
+            globalParameters.touchDeath_0_1     = false;
+            globalParameters.touchDeath_0_2     = false;
+            globalParameters.deathEffect_0_0    = 0;
+            globalParameters.deathEffect_0_1    = 0;
+            globalParameters.deathEffect_0_2    = 0;
+
+            // parameters for species 1 balls
+            globalParameters.radius_1       = 70.0;
+            globalParameters.gravity_1      = 100.0;
+            globalParameters.collision_1        = 0.2;
+            globalParameters.friction_1         = 1.0;
+            globalParameters.usePhysics_1       = true;
+            globalParameters.imageIndex_1       = 1;
+            globalParameters.socialForce_1_0    = 0.0;
+            globalParameters.socialForce_1_1    = 0.0;
+            globalParameters.socialForce_1_2    = 0.0;
+            globalParameters.touchDeath_1_0     = false;
+            globalParameters.touchDeath_1_1     = false;
+            globalParameters.touchDeath_1_2     = false;
+            globalParameters.deathEffect_1_0    = 0;
+            globalParameters.deathEffect_1_1    = 0;
+            globalParameters.deathEffect_1_2    = 0;
+
+            // parameters for species 2 balls
+            globalParameters.radius_2       = 10.0;
+            globalParameters.gravity_2      = 100.0;
+            globalParameters.collision_2        = 0.2;
+            globalParameters.friction_2         = 1.0;
+            globalParameters.usePhysics_2       = true;
+            globalParameters.imageIndex_2       = 2;
+            globalParameters.socialForce_2_0    = 0.0;
+            globalParameters.socialForce_2_1    = 0.0;
+            globalParameters.socialForce_2_2    = 0.0;
+            globalParameters.touchDeath_2_0     = false;
+            globalParameters.touchDeath_2_1     = false;
+            globalParameters.touchDeath_2_2     = false;
+            globalParameters.deathEffect_2_0    = 0;
+            globalParameters.deathEffect_2_1    = 0;
+            globalParameters.deathEffect_2_2    = 0;
+            
+            // parameters for species 3 balls
+            globalParameters.radius_3             = 30.0;
+            globalParameters.gravity_3             = 0.0;
+            globalParameters.collision_3         = 0.2;
+            globalParameters.friction_3         = 2.0;
+            globalParameters.usePhysics_3         = true;
+            globalParameters.imageIndex_3        = 1;
+            globalParameters.socialForce_3_0     = -10.0;
+            globalParameters.socialForce_3_1     =  0.0;
+            globalParameters.socialForce_3_2     =  0.0;
+            globalParameters.touchDeath_3_0     = false;
+            globalParameters.touchDeath_3_1     = false;
+            globalParameters.touchDeath_3_2     = false;
+            globalParameters.deathEffect_3_0     = 2;
+            globalParameters.deathEffect_3_1     = 2;
+            globalParameters.deathEffect_3_2    = 2;
+                    
+            // parameters for species 4 balls
+            globalParameters.radius_4             = 30.0;
+            globalParameters.gravity_4             = 0.0;
+            globalParameters.collision_4         = 0.2;
+            globalParameters.friction_4         = 2.0;
+            globalParameters.usePhysics_4         = true;
+            globalParameters.imageIndex_4        = 0;
+            globalParameters.socialForce_4_0     = -10.0;
+            globalParameters.socialForce_4_1     =  0.0;
+            globalParameters.socialForce_4_2     =  0.0;
+            globalParameters.touchDeath_4_0     = false;
+            globalParameters.touchDeath_4_1     = false;
+            globalParameters.touchDeath_4_2     = false;
+            globalParameters.deathEffect_4_0     = 2;
+            globalParameters.deathEffect_4_1     = 2;
+            globalParameters.deathEffect_4_2    = 2;
+            
+        
+            var r = 300;
+            this.createBallCircle( parent, 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
+
+            var period = 50; // how many time steps are used to run this test?
+            this.initializeGameState( period, 0, 0, collisionBalls, ballsWithSomeCollision  );
+        }
+
+        else if ( _level == QUEST_FIZZICS2 )
+        {
+            globalParameters.backgroundImageIndex = 0;
+
+            globalParameters.radius_0           = 30.0;
+            globalParameters.gravity_0          = 100.0;
+            globalParameters.collision_0        = 0.2;
+            globalParameters.friction_0         = 1.0;
+            globalParameters.usePhysics_0       = true;
+            globalParameters.imageIndex_0       = 0;
+            globalParameters.socialForce_0_0    = 0.0;
+            globalParameters.socialForce_0_1    = 0.0;
+            globalParameters.socialForce_0_2    = 0.0;
+            globalParameters.touchDeath_0_0     = false;
+            globalParameters.touchDeath_0_1     = false;
+            globalParameters.touchDeath_0_2     = false;
+            globalParameters.deathEffect_0_0    = 0;
+            globalParameters.deathEffect_0_1    = 0;
+            globalParameters.deathEffect_0_2    = 0;
+
+            // parameters for species 1 balls
+            globalParameters.radius_1           = 50.0;
+            globalParameters.gravity_1          = 100.0;
+            globalParameters.collision_1        = 0.2;
+            globalParameters.friction_1         = 1.0;
+            globalParameters.usePhysics_1       = true;
+            globalParameters.imageIndex_1       = 1;
+            globalParameters.socialForce_1_0    =  0.0;
+            globalParameters.socialForce_1_1    =  0.0;
+            globalParameters.socialForce_1_2    =  0.0;
+            globalParameters.touchDeath_1_0     = false;
+            globalParameters.touchDeath_1_1     = false;
+            globalParameters.touchDeath_1_2     = false;
+            globalParameters.deathEffect_1_0    = 0;
+            globalParameters.deathEffect_1_1    = 0;
+            globalParameters.deathEffect_1_2    = 0;
+
+            // parameters for species 2 balls
+            globalParameters.radius_2           = 10.0;
+            globalParameters.gravity_2          = 0.0;
+            globalParameters.collision_2        = 0.0;
+            globalParameters.friction_2         = 0.0;
+            globalParameters.usePhysics_2       = false;
+            globalParameters.imageIndex_2       = 0;
+            globalParameters.socialForce_2_0    = 0.0;
+            globalParameters.socialForce_2_1    = 0.0;
+            globalParameters.socialForce_2_2    = 0.0;
+            globalParameters.touchDeath_2_0     = false;
+            globalParameters.touchDeath_2_1     = false;
+            globalParameters.touchDeath_2_2     = false;
+            globalParameters.deathEffect_2_0    = 0;
+            globalParameters.deathEffect_2_1    = 0;
+            globalParameters.deathEffect_2_2    = 0;
+                    
+            posX = 1200;
+            parent.createBall( posX, WINDOW_HEIGHT * ONE_HALF, 1 );
+            
+            var num = 10;
+            for (var i=0; i<num; i++)
+            {
+                var a = ( i / num ) * PI2;
+                var r = 150.0 + 130.0 * Math.random();
+                var x = posX + r * Math.sin(a);
+                var y = WINDOW_HEIGHT * ONE_HALF + r * Math.cos(a);
+                parent.createBall( x, y, 0 );
+            }
+
+            //------------------------------------------------------------------------
+            // set up the game state to detect collisions between species...
+            //------------------------------------------------------------------------
+            var period = 5;             // how many time steps are used to run this test?   
+            var collisionSpecies = 0;   // which species of balls do we care about for collisions?
+            var numCollisionsGoal = 10;     // how many unique balls do we want to test for collisions?
+            this.initializeGameState( period, collisionSpecies, numCollisionsGoal, collisionBalls, ballsWithSomeCollision );
+        }
+
         //------------------------------------------------------------------------------
         // set up scoreboard
         //------------------------------------------------------------------------------
@@ -588,9 +762,7 @@ function Game()
         _scoreboard.x      = canvasID.width * ONE_HALF - _scoreboard.width * ONE_HALF
         _scoreboard.y      = 40;
         _scoreboard.image.src = "images/scoreboard.png";
-    }        
-    
-    
+    }
   
     //---------------------------------
     this.getCurrentLevel = function()

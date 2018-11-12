@@ -597,10 +597,11 @@ function HackyBalls()
             _initializeFirstLevel = false;
         }
     
-        // Noel - please add a comment here...
+        // The Clubhouse requested a particular level. Set it and then reset the variable so we don't do it again.
         if ( globalParameters.preset != 0 )
         {
             this.setGameLevel( globalParameters.preset - 1 );
+            globalParameters.preset = 0;
         }
         
         //------------------------------------

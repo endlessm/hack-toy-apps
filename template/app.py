@@ -11,6 +11,8 @@ from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import WebKit2
 
+import soundserver
+
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
 
@@ -32,6 +34,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         app_info = Gio.DesktopAppInfo.new(app_id + '.desktop')
         decorated = metadata.get('decorated', True)
         use_load_notify = metadata.get('use-load-notify', False)
+
+        self._sounds = soundserver.HackSoundServer()
 
         self.set_application(application)
         self.set_title(app_info.get_name())
@@ -60,6 +64,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         # Register message hanlders
         manager.register_script_message_handler("ToyAppLoadNotify")
+        manager.register_script_message_handler('playSound')
+        manager.register_script_message_handler('playSoundAsync')
+        manager.register_script_message_handler('stopSound')
 
         # Inject custom JS on every page
         manager.add_script(
@@ -74,6 +81,12 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         manager.connect('script-message-received::ToyAppLoadNotify',
                         self._on_load_notify)
+        manager.connect('script-message-received::playSound',
+                        self._on_play_sound)
+        manager.connect('script-message-received::playSoundAsync',
+                        self._on_play_sound_async)
+        manager.connect('script-message-received::stopSound',
+                        self._on_stop_sound)
 
     def _setup_splash(self, app_id):
         # Check if we can use the splash screen as a temporary background while
@@ -107,8 +120,37 @@ toy-app-window > stack > frame {
         if event == WebKit2.LoadEvent.FINISHED:
             self._view_show()
 
+    def _on_play_sound(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_string():
+            raise ValueError('arg should be string')
+        self._sounds.play(val.to_string())
 
-ToyAppWindow.set_css_name('toy-app-window')
+    def _on_play_sound_async(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_array():
+            raise ValueError('value should be array')
+        idval = val.object_get_property_at_index(0)
+        if not idval.is_string():
+            raise ValueError('first arg should be string')
+        cbval = val.object_get_property_at_index(1)
+        if not cbval.is_string():
+            raise ValueError('second arg should be string')
+        self._sounds.play(idval.to_string(), user_data=cbval.to_string(),
+                          result_handler=self._on_play_sound_finish)
+
+    def _on_play_sound_finish(self, proxy, result, cbcode):
+        if isinstance(result, Exception):
+            self.run_javascript('({})(null, {});'.format(cbcode, str(result)))
+        else:
+            self.run_javascript('({})("{}");'.format(cbcode, result))
+
+    def _on_stop_sound(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_string():
+            raise ValueError('arg should be string')
+        self._sounds.stop(val.to_string())
+
 
 class Application(Gtk.Application):
 

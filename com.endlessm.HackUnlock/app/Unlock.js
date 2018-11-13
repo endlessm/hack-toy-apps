@@ -40,6 +40,8 @@ function flip()
 {
     if ( globalParameters.mode === MODE_FIRST_SCREEN )
     {
+        Sounds.stop('HackUnlock/ambient/front');
+        Sounds.playLoop('HackUnlock/ambient/back');
         globalParameters.mode = MODE_SOLVING_PUZZLE;
     }
     else if ( globalParameters.mode === MODE_SUCCESS )
@@ -49,6 +51,8 @@ function flip()
     }
     else if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
     {
+        Sounds.stop('HackUnlock/ambient/back');
+        Sounds.playLoop('HackUnlock/ambient/front');
         globalParameters.mode = MODE_FIRST_SCREEN;
     }
 }
@@ -142,6 +146,7 @@ function Unlock()
         window.requestAnimationFrame( this.update.bind(this) );
 
         Sounds.play('HackUnlock/landing');
+        Sounds.playLoop('HackUnlock/ambient/front');
     }
 
 
@@ -298,6 +303,7 @@ function Unlock()
 
             globalParameters.mode = MODE_SUCCESS;
             if (!_solutionSoundPlayed) {
+                Sounds.stop('HackUnlock/ambient/back');
                 Sounds.play('HackUnlock/solution');
                 _solutionSoundPlayed = true;
             }
@@ -305,7 +311,10 @@ function Unlock()
         else
         {
             globalParameters.mode = MODE_SOLVING_PUZZLE;
-            _solutionSoundPlayed = false;
+            if (_solutionSoundPlayed) {
+                _solutionSoundPlayed = false;
+                Sounds.playLoop('HackUnlock/ambient/back');
+            }
         }
     }
     

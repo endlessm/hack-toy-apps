@@ -946,7 +946,7 @@ function Game()
     //--------------------------------------
     this.isQuest1GoalReached = function()
     {
-        if (globalParameters.type2BallCount != 1)
+        if (globalParameters.type1BallCount != 1)
             return false;
     
         if ( gameState.numCollisions >= gameState.numCollisionsGoal )

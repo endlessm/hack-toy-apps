@@ -45,14 +45,14 @@ class HackSoundServer(GObject.GObject):
         Returns:
             str: The uuid of the new played sound.
         """
-        return self._play(sound_event_id, async=False)
+        return self._play(sound_event_id, asynch=False)
 
-    def _play(self, sound_event_id, async=True, result_handler=None,
+    def _play(self, sound_event_id, asynch=True, result_handler=None,
               user_data=None):
         if result_handler is None:
             result_handler = self.__black_hole
         try:
-            if async:
+            if asynch:
                 self._proxy.PlaySound("(s)", sound_event_id,
                                       result_handler=result_handler,
                                       user_data=user_data)

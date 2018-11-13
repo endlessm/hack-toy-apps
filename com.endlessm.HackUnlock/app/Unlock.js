@@ -141,6 +141,8 @@ function Unlock()
         // start up the timer
         //--------------------------------------------------------------------
         window.requestAnimationFrame( this.update.bind(this) );
+
+        Sounds.play('HackUnlock/landing');
     }
 
 

@@ -11,12 +11,11 @@ window.Sounds = {
         window.webkit.messageHandlers.playSound.postMessage(id);
     },
 
-    playAsync(id, cb) {
-        cbcode = cb.toString();
-        window.webkit.messageHandlers.playSoundAsync.postMessage([id, cbcode]);
+    playLoop(id) {
+        window.webkit.messageHandlers.playSoundAsync.postMessage(id);
     },
 
-    stop(uuid) {
-        window.webkit.messageHandlers.stopSound.postMessage(uuid);
+    stop(id) {
+        window.webkit.messageHandlers.stopSound.postMessage(id);
     },
 };

@@ -36,6 +36,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         use_load_notify = metadata.get('use-load-notify', False)
 
         self._sounds = soundserver.HackSoundServer()
+        self._played_async_sounds = {}
 
         self.set_application(application)
         self.set_title(app_info.get_name())
@@ -128,28 +129,21 @@ toy-app-window > stack > frame {
 
     def _on_play_sound_async(self, manager, result):
         val = result.get_js_value()
-        if not val.is_array():
-            raise ValueError('value should be array')
-        idval = val.object_get_property_at_index(0)
-        if not idval.is_string():
-            raise ValueError('first arg should be string')
-        cbval = val.object_get_property_at_index(1)
-        if not cbval.is_string():
-            raise ValueError('second arg should be string')
-        self._sounds.play(idval.to_string(), user_data=cbval.to_string(),
+        if not val.is_string():
+            raise ValueError('arg should be string')
+        self._sounds.play(val.to_string(), user_data=val.to_string(),
                           result_handler=self._on_play_sound_finish)
 
-    def _on_play_sound_finish(self, proxy, result, cbcode):
+    def _on_play_sound_finish(self, proxy, result, sound_id):
         if isinstance(result, Exception):
-            self.run_javascript('({})(null, {});'.format(cbcode, str(result)))
-        else:
-            self.run_javascript('({})("{}");'.format(cbcode, result))
+            raise result
+        self._played_async_sounds[sound_id] = result
 
     def _on_stop_sound(self, manager, result):
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        self._sounds.stop(val.to_string())
+        self._sounds.stop(self._played_async_sounds[val.to_string()])
 
 
 class Application(Gtk.Application):

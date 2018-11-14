@@ -7,4 +7,4 @@ StartupNotify=true
 Icon=com.endlessm.OperatingSystemApp
 Categories=Game;
 X-Endless-LaunchMaximized=true
-X-Endless-SplashBackground=com.endlessm.OperatingSystemApp.png
+X-Endless-SplashBackground=com.endlessm.OperatingSystemApp.jpg

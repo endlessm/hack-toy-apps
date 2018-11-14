@@ -7,5 +7,5 @@ StartupNotify=true
 Icon=com.endlessm.Fizzics
 Categories=Game;
 X-Endless-LaunchMaximized=true
-X-Endless-SplashBackground=com.endlessm.Fizzics.png
+X-Endless-SplashBackground=com.endlessm.Fizzics.jpg
 X-Endless-HackShader=fizzics

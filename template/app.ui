@@ -2,27 +2,58 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkApplicationWindow" id="app_window">
-    <property name="name">app_window</property>
+  <requires lib="webkit2gtk" version="2.12"/>
+  <object class="WebKitSettings" id="settings">
+    <property name="enable_webaudio">True</property>
+    <property name="enable_webgl">True</property>
+    <property name="enable_accelerated_2d_canvas">True</property>
+    <property name="enable_write_console_messages_to_stdout">True</property>
+    <property name="allow_file_access_from_file_urls">True</property>
+    <property name="allow_universal_access_from_file_urls">True</property>
+  </object>
+  <template class="ToyAppWindow" parent="GtkApplicationWindow">
     <property name="can_focus">False</property>
-    <child type="titlebar">
+    <child>
       <placeholder/>
     </child>
     <child>
-      <object class="GtkBox" id="game_container">
+      <object class="GtkStack" id="stack">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
+        <property name="transition_type">crossfade</property>
         <child>
-          <placeholder/>
+          <object class="GtkFrame" id="splash">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child type="label_item">
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="name">page0</property>
+            <property name="title" translatable="yes">page0</property>
+          </packing>
         </child>
         <child>
-          <placeholder/>
-        </child>
-        <child>
-          <placeholder/>
+          <object class="WebKitWebView" id="view">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="settings">settings</property>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="name">view</property>
+            <property name="position">1</property>
+          </packing>
         </child>
       </object>
     </child>
-  </object>
+  </template>
 </interface>

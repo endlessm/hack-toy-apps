@@ -33,9 +33,9 @@ install_data(
 )
 
 install_data(
-    join_paths(app_id, 'data', 'splashscreen.png'),
+    join_paths(app_id, 'data', 'splashscreen.jpg'),
     install_dir: 'share/eos-shell-content/splash',
-    rename: app_id + '.png'
+    rename: app_id + '.jpg'
 )
 
 if app_id == 'com.endlessm.HackUnlock'

@@ -40,14 +40,19 @@ function flip()
 {
     if ( globalParameters.mode === MODE_FIRST_SCREEN )
     {
+        Sounds.stop('HackUnlock/ambient/front');
+        Sounds.playLoop('HackUnlock/ambient/back');
         globalParameters.mode = MODE_SOLVING_PUZZLE;
     }
     else if ( globalParameters.mode === MODE_SUCCESS )
     {
+        Sounds.play('HackUnlock/success');
         globalParameters.mode = MODE_FINISHED;
     }
     else if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
     {
+        Sounds.stop('HackUnlock/ambient/back');
+        Sounds.playLoop('HackUnlock/ambient/front');
         globalParameters.mode = MODE_FIRST_SCREEN;
     }
 }
@@ -75,9 +80,7 @@ function Unlock()
     var SINE_WAVE_Y_OFFSET      = 23;
     var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
     var SINE_WAVE_AMP_SCALE     = 300;
-    var SUCCESS_SOUND_FADE_MS   = 200;
-    var SUCCESS_SOUND           = new Audio( "sounds/success.wav" ); 
-    
+
     var _synthesizer            = new Synthesizer();
     var _glowImage              = new Image();
     var _testGUI                = new UnlockTestGUI();
@@ -92,7 +95,7 @@ function Unlock()
     var _finishClock            = 0;
     var _fadeOutTime            = ZERO;
     var _video                  = null;
-    var _soundPlayed            = false;
+    var _solutionSoundPlayed    = false;
 
     //---------------------------
     this.initialize = function()
@@ -141,6 +144,9 @@ function Unlock()
         // start up the timer
         //--------------------------------------------------------------------
         window.requestAnimationFrame( this.update.bind(this) );
+
+        Sounds.play('HackUnlock/landing');
+        Sounds.playLoop('HackUnlock/ambient/front');
     }
 
 
@@ -227,51 +233,6 @@ function Unlock()
         _video.play();
     }
 
-
-    //-------------------------------------
-    this.fadeOutSuccessSound = function()
-    {
-        _soundPlayed = false;
-
-        if ( SUCCESS_SOUND.paused )
-        {
-            return;
-        }
-
-        if (_fadeOutTime == 0)
-        {
-            _fadeOutTime = (new Date).getTime();
-        }
-
-        // Do a 200ms fade out
-        var curTime = (new Date).getTime();
-        var volume = Math.max( 0, (SUCCESS_SOUND_FADE_MS - (curTime - _fadeOutTime)) / SUCCESS_SOUND_FADE_MS );
-
-        if ( volume > 0 )
-        {
-            SUCCESS_SOUND.volume = volume;
-        }
-        else
-        {
-            SUCCESS_SOUND.pause();
-            SUCCESS_SOUND.currentTime = 0;
-            _fadeOutTime = 0;
-        }
-    }
-
-
-    //-------------------------------------
-    this.playSuccessSound = function()
-    {
-        if ( !_soundPlayed )
-        {
-            SUCCESS_SOUND.volume = 1;
-            SUCCESS_SOUND.play();
-            _soundPlayed = true;
-        }
-    }
-
-
     //-------------------------------------
     this.updateSolvingPuzzle = function()
     {
@@ -341,12 +302,19 @@ function Unlock()
             }
 
             globalParameters.mode = MODE_SUCCESS;
-            this.playSuccessSound();
+            if (!_solutionSoundPlayed) {
+                Sounds.stop('HackUnlock/ambient/back');
+                Sounds.play('HackUnlock/solution');
+                _solutionSoundPlayed = true;
+            }
         }
         else
         {
             globalParameters.mode = MODE_SOLVING_PUZZLE;
-            this.fadeOutSuccessSound();
+            if (_solutionSoundPlayed) {
+                _solutionSoundPlayed = false;
+                Sounds.playLoop('HackUnlock/ambient/back');
+            }
         }
     }
     
@@ -494,6 +462,14 @@ function Unlock()
         _phase         = globalParameters.phase;    
     }
 
+    // React to the window changing size (happens at least once on startup)
+    window.addEventListener("resize", function () {
+        // Resize canvas
+        canvasID.width = window.innerWidth;
+        canvasID.height = window.innerHeight;
+        SINE_WAVE_Y_POSITION = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
+    });
+
     //---------------------
     // start this puppy!
     //---------------------
@@ -503,15 +479,6 @@ function Unlock()
 
 
 var unlock = new Unlock();
-
-
-window.addEventListener("resize", function () {
-     // Resize canvas
-    canvasID.width = window.innerWidth; 
-    canvasID.height = window.innerHeight;
-    
-    SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + 20;
-});
 
 //--------------------------------
 document.onmousedown = function(e) 

@@ -11,6 +11,8 @@ from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import WebKit2
 
+import soundserver
+
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
 
@@ -33,6 +35,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         decorated = metadata.get('decorated', True)
         use_load_notify = metadata.get('use-load-notify', False)
 
+        self._sounds = soundserver.HackSoundServer()
+        self._played_async_sounds = {}
+
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
@@ -42,13 +47,11 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             self.settings.set_enable_developer_extras(True)
 
         self._setup_splash(app_id)
+        self._setup_js()
 
         # Check if toy app will notify us manually when it finished loading
         # otherwise we fallback to load-changed signal
-        if use_load_notify:
-            self._setup_js()
-            manager.connect('script-message-received::ToyAppLoadNotify', self._on_load_notify)
-        else:
+        if not use_load_notify:
             self.view.connect('load-changed', self._on_view_load_changed)
 
         # Disable right click context menu!
@@ -62,6 +65,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         # Register message hanlders
         manager.register_script_message_handler("ToyAppLoadNotify")
+        manager.register_script_message_handler('playSound')
+        manager.register_script_message_handler('playSoundAsync')
+        manager.register_script_message_handler('stopSound')
 
         # Inject custom JS on every page
         manager.add_script(
@@ -73,6 +79,15 @@ class ToyAppWindow(Gtk.ApplicationWindow):
                 None
             )
         )
+
+        manager.connect('script-message-received::ToyAppLoadNotify',
+                        self._on_load_notify)
+        manager.connect('script-message-received::playSound',
+                        self._on_play_sound)
+        manager.connect('script-message-received::playSoundAsync',
+                        self._on_play_sound_async)
+        manager.connect('script-message-received::stopSound',
+                        self._on_stop_sound)
 
     def _setup_splash(self, app_id):
         # Check if we can use the splash screen as a temporary background while
@@ -106,8 +121,30 @@ toy-app-window > stack > frame {
         if event == WebKit2.LoadEvent.FINISHED:
             self._view_show()
 
+    def _on_play_sound(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_string():
+            raise ValueError('arg should be string')
+        self._sounds.play(val.to_string())
 
-ToyAppWindow.set_css_name('toy-app-window')
+    def _on_play_sound_async(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_string():
+            raise ValueError('arg should be string')
+        self._sounds.play(val.to_string(), user_data=val.to_string(),
+                          result_handler=self._on_play_sound_finish)
+
+    def _on_play_sound_finish(self, proxy, result, sound_id):
+        if isinstance(result, Exception):
+            raise result
+        self._played_async_sounds[sound_id] = result
+
+    def _on_stop_sound(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_string():
+            raise ValueError('arg should be string')
+        self._sounds.stop(self._played_async_sounds[val.to_string()])
+
 
 class Application(Gtk.Application):
 

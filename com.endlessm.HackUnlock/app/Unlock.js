@@ -494,6 +494,14 @@ function Unlock()
         _phase         = globalParameters.phase;    
     }
 
+    // React to the window changing size (happens at least once on startup)
+    window.addEventListener("resize", function () {
+        // Resize canvas
+        canvasID.width = window.innerWidth;
+        canvasID.height = window.innerHeight;
+        SINE_WAVE_Y_POSITION = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
+    });
+
     //---------------------
     // start this puppy!
     //---------------------
@@ -503,15 +511,6 @@ function Unlock()
 
 
 var unlock = new Unlock();
-
-
-window.addEventListener("resize", function () {
-     // Resize canvas
-    canvasID.width = window.innerWidth; 
-    canvasID.height = window.innerHeight;
-    
-    SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + 20;
-});
 
 //--------------------------------
 document.onmousedown = function(e) 

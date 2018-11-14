@@ -47,7 +47,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         # otherwise we fallback to load-changed signal
         if use_load_notify:
             self._setup_js()
-            manager.connect('script-message-received::ToyAppLoadNotify', self._on_load_notify)
         else:
             self.view.connect('load-changed', self._on_view_load_changed)
 
@@ -73,6 +72,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
                 None
             )
         )
+
+        manager.connect('script-message-received::ToyAppLoadNotify',
+                        self._on_load_notify)
 
     def _setup_splash(self, app_id):
         # Check if we can use the splash screen as a temporary background while

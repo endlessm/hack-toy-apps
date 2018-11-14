@@ -163,11 +163,11 @@ function Unlock()
     {
         if ( globalParameters.mode == MODE_SUCCESS )
         {
-            _successClock ++;
+            _successClock = Math.min( _successClock + 1, SUCCESS_DURATION );
         }
         else
         {
-            _successClock = 0;
+            _successClock = Math.max( _successClock - 1, 0 );
         }
 
         if ( globalParameters.mode == MODE_FINISHED )
@@ -372,13 +372,12 @@ function Unlock()
             //-------------------------------------------
             // show success effect
             //-------------------------------------------
-            if ( globalParameters.mode == MODE_SUCCESS )
-            {
-                var f = _successClock / SUCCESS_DURATION;
-                canvas.globalAlpha = f;        
-                canvas.drawImage( _glowImage, 0, 0, canvasID.width, canvasID.height );        
-                canvas.globalAlpha = 1.0;        
-            }    
+            var f = _successClock / SUCCESS_DURATION;
+            if ( f > 0 ) {
+                canvas.globalAlpha = f;
+                canvas.drawImage( _glowImage, 0, 0, canvasID.width, canvasID.height );
+                canvas.globalAlpha = 1.0;
+            }
 
             //-------------------------------------------
             // show composite sine wave

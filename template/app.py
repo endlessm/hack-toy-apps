@@ -42,12 +42,11 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             self.settings.set_enable_developer_extras(True)
 
         self._setup_splash(app_id)
+        self._setup_js()
 
         # Check if toy app will notify us manually when it finished loading
         # otherwise we fallback to load-changed signal
-        if use_load_notify:
-            self._setup_js()
-        else:
+        if not use_load_notify:
             self.view.connect('load-changed', self._on_view_load_changed)
 
         # Disable right click context menu!

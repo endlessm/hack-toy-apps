@@ -45,6 +45,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):
             self.settings.set_enable_developer_extras(True)
+        else:
+            # menu should only be visible when using the inspector
+            self.view.connect('context-menu', self._on_context_menu)
 
         self._setup_splash(app_id)
         self._setup_js()
@@ -53,9 +56,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         # otherwise we fallback to load-changed signal
         if not use_load_notify:
             self.view.connect('load-changed', self._on_view_load_changed)
-
-        # Disable right click context menu!
-        self.view.connect('context-menu', Gtk.true)
 
         # Finally load html app index
         self.view.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
@@ -113,6 +113,9 @@ toy-app-window > stack > frame {
 
     def _view_show(self):
         self.stack.set_visible_child(self.view)
+
+    def _on_context_menu(self, webview, context, event, hit):
+        return Gtk.true()
 
     def _on_load_notify(self, manager, result):
         self._view_show()

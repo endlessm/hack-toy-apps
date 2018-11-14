@@ -162,12 +162,19 @@ class Application(Gtk.Application):
         flip.connect('activate', self._flip_action_activated_cb)
         self.add_action(flip)
 
+        reset = Gio.SimpleAction(name='reset', parameter_type=None)
+        reset.connect('activate', self._reset_action_activated_cb)
+        self.add_action(reset)
+
         quit = Gio.SimpleAction(name='quit')
         quit.connect('activate', self._quit_action_activated_cb)
         self.add_action(quit)
 
     def _flip_action_activated_cb(self, action, param):
         self._window.view.run_javascript('if(typeof flip !== "undefined"){flip();}');
+
+    def _reset_action_activated_cb(self, action, param):
+        self._window.view.run_javascript('if(typeof reset !== "undefined"){reset();}')
 
     def _quit_action_activated_cb(self, action, param):
         self.quit()

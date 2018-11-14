@@ -158,6 +158,33 @@ function Unlock()
     }
 
 
+    //-----------------------------
+    this.updateClocks = function()
+    {
+        if ( globalParameters.mode == MODE_SUCCESS )
+        {
+            _successClock ++;
+        }
+        else
+        {
+            _successClock = 0;
+        }
+
+        if ( globalParameters.mode == MODE_FINISHED )
+        {
+            _finishClock ++;
+
+            if ( _finishClock > FINISH_DURATION )
+            {
+                globalParameters.mode = MODE_VIDEO_PLAYBACK;
+            }
+        }
+        else
+        {
+            _finishClock = 0;
+        }
+    }
+
     //------------------------
     this.update = function()
     {    
@@ -165,7 +192,7 @@ function Unlock()
         // this gets called all the time to catch any changes
         //-----------------------------------------------------
         this.applyParameters();
-                
+
         //---------------------------
         // update solving puzzle...
         //---------------------------
@@ -185,24 +212,17 @@ function Unlock()
             {
                 _synthesizer.turnOffAllNotes();
             }
-            
-            _successClock ++;
         }
         else if ( globalParameters.mode == MODE_FINISHED )
         {
             this.setBackground("images/gate.png");
-
-            _finishClock ++;
-
-            if ( _finishClock > FINISH_DURATION )
-            {
-                globalParameters.mode = MODE_VIDEO_PLAYBACK;
-            }
         }
         else if ( globalParameters.mode == MODE_VIDEO_PLAYBACK )
         {
             this.ensureVideoPlayback();
         }
+
+        this.updateClocks();
         
         //---------------------------
         // render everything...

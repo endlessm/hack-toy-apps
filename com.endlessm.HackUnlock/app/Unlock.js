@@ -355,7 +355,6 @@ function Unlock()
             if ( globalParameters.mode == MODE_SUCCESS )
             {
                 var f = _successClock / SUCCESS_DURATION;
-                //var wave = ONE_HALF - ONE_HALF * Math.cos( f * PI2 );
                 canvas.globalAlpha = f;        
                 canvas.drawImage( _glowImage, 0, 0, canvasID.width, canvasID.height );        
                 canvas.globalAlpha = 1.0;        

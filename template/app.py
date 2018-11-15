@@ -148,6 +148,7 @@ toy-app-window > stack > frame {
             raise ValueError('arg should be string')
         self._sounds.stop(self._played_async_sounds[val.to_string()])
 
+ToyAppWindow.set_css_name('toy-app-window')
 
 class Application(Gtk.Application):
 

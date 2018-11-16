@@ -1,13 +1,12 @@
 import logging
 from gi.repository import Gio
 from gi.repository import GLib
-from gi.repository import GObject
 
 
 _logger = logging.getLogger(__name__)
 
 
-class HackSoundServer(GObject.GObject):
+class HackSoundServer:
 
     _proxy = None
 

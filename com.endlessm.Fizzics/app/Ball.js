@@ -4,9 +4,6 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var WALL_SOUND = new Audio( "sounds/wall-bump.wav" ); 
-var WALL_SOUND_THRESHOLD = 1.5;
-
 var ImageCache = {};
 
 //---------------
@@ -91,7 +88,6 @@ function Ball()
 
             if ( _velocity.x > ZERO ) 
             { 
-                //if ( _velocity.x > WALL_SOUND_THRESHOLD ) { WALL_SOUND.play(); }         
                 _velocity.x *= -ONE; 
             } 
         }
@@ -101,7 +97,6 @@ function Ball()
 
             if ( _velocity.x < ZERO ) 
             { 
-                //if ( _velocity.x < -WALL_SOUND_THRESHOLD ) { WALL_SOUND.play(); }        
                 _velocity.x *= -ONE; 
             } 
         }
@@ -112,7 +107,6 @@ function Ball()
 
             if ( _velocity.y > ZERO ) 
             { 
-                //if ( _velocity.y > WALL_SOUND_THRESHOLD ) { WALL_SOUND.play(); }         
                 _velocity.y *= -ONE; 
             } 
         }
@@ -122,7 +116,6 @@ function Ball()
 
             if ( _velocity.y < ZERO ) 
             { 
-                //if ( _velocity.y < -WALL_SOUND_THRESHOLD ) { WALL_SOUND.play(); }
                 _velocity.y *= -ONE; 
             } 
         }

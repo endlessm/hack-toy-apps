@@ -11,7 +11,7 @@ from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import WebKit2
 
-import soundserver
+from soundserver import HackSoundServer
 
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
@@ -35,7 +35,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         decorated = metadata.get('decorated', True)
         use_load_notify = metadata.get('use-load-notify', False)
 
-        self._sounds = soundserver.HackSoundServer()
         self._played_async_sounds = {}
 
         self.set_application(application)
@@ -128,14 +127,14 @@ toy-app-window > stack > frame {
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        self._sounds.play(val.to_string())
+        HackSoundServer.play(val.to_string())
 
     def _on_play_sound_async(self, manager, result):
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        self._sounds.play(val.to_string(), user_data=val.to_string(),
-                          result_handler=self._on_play_sound_finish)
+        HackSoundServer.play(val.to_string(), user_data=val.to_string(),
+                             result_handler=self._on_play_sound_finish)
 
     def _on_play_sound_finish(self, proxy, result, sound_id):
         if isinstance(result, Exception):
@@ -146,7 +145,7 @@ toy-app-window > stack > frame {
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        self._sounds.stop(self._played_async_sounds[val.to_string()])
+        HackSoundServer.stop(self._played_async_sounds[val.to_string()])
 
 ToyAppWindow.set_css_name('toy-app-window')
 

@@ -1,24 +1,17 @@
 import logging
 from gi.repository import Gio
 from gi.repository import GLib
-from gi.repository import GObject
 
 
 _logger = logging.getLogger(__name__)
 
 
-class HackSoundServer(GObject.GObject):
-    def __init__(self):
-        self._proxy = \
-            Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
-                                           0,
-                                           None,
-                                           'com.endlessm.HackSoundServer',
-                                           '/com/endlessm/HackSoundServer',
-                                           'com.endlessm.HackSoundServer',
-                                           None)
+class HackSoundServer:
 
-    def play(self, sound_event_id, result_handler=None, user_data=None):
+    _proxy = None
+
+    @classmethod
+    def play(class_, sound_event_id, result_handler=None, user_data=None):
         """
         Plays a sound asynchronously.
         By default, it "fires and forgets": no return value.
@@ -32,10 +25,11 @@ class HackSoundServer(GObject.GObject):
                 proxy_object, result and user_data.
             data: The user data passed to the result_handler function.
         """
-        self._play(sound_event_id, result_handler=result_handler,
-                   user_data=user_data)
+        class_._play(sound_event_id, result_handler=result_handler,
+                     user_data=user_data)
 
-    def play_sync(self, sound_event_id):
+    @classmethod
+    def play_sync(class_, sound_event_id):
         """
         Plays a sound synchronously.
 
@@ -45,28 +39,29 @@ class HackSoundServer(GObject.GObject):
         Returns:
             str: The uuid of the new played sound.
         """
-        return self._play(sound_event_id, asynch=False)
+        return class_._play(sound_event_id, async=False)
 
-    def _play(self, sound_event_id, asynch=True, result_handler=None,
-              user_data=None):
+    @classmethod
+    def _play(class_, sound_event_id, async=True, result_handler=None, user_data=None):
         if result_handler is None:
-            result_handler = self.__black_hole
+            result_handler = class_._black_hole
         try:
-            if asynch:
-                self._proxy.PlaySound("(s)", sound_event_id,
-                                      result_handler=result_handler,
-                                      user_data=user_data)
+            if async:
+                class_.get_proxy().PlaySound("(s)", sound_event_id,
+                                             result_handler=result_handler,
+                                             user_data=user_data)
             else:
-                return self._proxy.PlaySound("(s)", sound_event_id)
+                return class_.get_proxy().PlaySound("(s)", sound_event_id)
         except GLib.Error as err:
             _logger.error("Error playing sound '%s'" % sound_event_id)
 
-    def stop(self, uuid, result_handler=None, user_data=None):
+    @classmethod
+    def stop(class_, uuid, result_handler=None, user_data=None):
         """
         Stops a sound asynchronously.
 
         Args:
-            sound_event_id (str): The sound event id to play.
+            uuid (str): The sound uuid to stop playing.
 
         Optional keyword arguments:
             result_handler: A function that is invoked when the async call
@@ -75,13 +70,25 @@ class HackSoundServer(GObject.GObject):
             data: The user data passed to the result_handler function.
         """
         if result_handler is None:
-            result_handler = self.__black_hole
+            result_handler = class_._black_hole
         try:
-            self._proxy.StopSound("(s)", uuid, result_handler=result_handler,
-                                  user_data=user_data)
+            class_.get_proxy().StopSound("(s)", uuid, result_handler=result_handler,
+                                         user_data=user_data)
         except GLib.Error as err:
             _logger.error("Error stopping sound '%s'" % uuid)
 
     @classmethod
-    def __black_hole(cls, proxy, result, user_data=None):
+    def _black_hole(_class, _proxy, _result, user_data=None):
         pass
+
+    @classmethod
+    def get_proxy(class_):
+        if not class_._proxy:
+            class_._proxy = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                                           0,
+                                                           None,
+                                                           'com.endlessm.HackSoundServer',
+                                                           '/com/endlessm/HackSoundServer',
+                                                           'com.endlessm.HackSoundServer',
+                                                           None)
+        return class_._proxy

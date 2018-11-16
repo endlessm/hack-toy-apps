@@ -39,14 +39,15 @@ class HackSoundServer:
         Returns:
             str: The uuid of the new played sound.
         """
-        return class_._play(sound_event_id, async=False)
+        return class_._play(sound_event_id, asynch=False)
 
     @classmethod
-    def _play(class_, sound_event_id, async=True, result_handler=None, user_data=None):
+    def _play(class_, sound_event_id, asynch=True, result_handler=None,
+              user_data=None):
         if result_handler is None:
             result_handler = class_._black_hole
         try:
-            if async:
+            if asynch:
                 class_.get_proxy().PlaySound("(s)", sound_event_id,
                                              result_handler=result_handler,
                                              user_data=user_data)
@@ -72,7 +73,8 @@ class HackSoundServer:
         if result_handler is None:
             result_handler = class_._black_hole
         try:
-            class_.get_proxy().StopSound("(s)", uuid, result_handler=result_handler,
+            class_.get_proxy().StopSound("(s)", uuid,
+                                         result_handler=result_handler,
                                          user_data=user_data)
         except GLib.Error as err:
             _logger.error("Error stopping sound '%s'" % uuid)
@@ -84,11 +86,8 @@ class HackSoundServer:
     @classmethod
     def get_proxy(class_):
         if not class_._proxy:
-            class_._proxy = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
-                                                           0,
-                                                           None,
-                                                           'com.endlessm.HackSoundServer',
-                                                           '/com/endlessm/HackSoundServer',
-                                                           'com.endlessm.HackSoundServer',
-                                                           None)
+            class_._proxy = Gio.DBusProxy.new_for_bus_sync(
+                Gio.BusType.SESSION, 0, None, 'com.endlessm.HackSoundServer',
+                '/com/endlessm/HackSoundServer',
+                'com.endlessm.HackSoundServer', None)
         return class_._proxy

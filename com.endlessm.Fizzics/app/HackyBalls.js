@@ -1107,9 +1107,12 @@ function HackyBalls()
             canvas.drawImage( _speciesSelectImage, _toolButtons[t].position.x + rm, _toolButtons[t].position.y + rm + rr * _selectedSpecies, rr, rr );
         }
     } 
-    
-    
 
+    //------------------------
+    this.reset = function()
+    {
+        this.setGameLevel( _game.getCurrentLevel() );
+    }
 
     //--------------------------------
     this.mouseDown = function( x, y )
@@ -1161,7 +1164,7 @@ function HackyBalls()
                         }
                         else
                         {
-                            this.setGameLevel( _game.getCurrentLevel() ); 
+                            this.reset();
                         }
                     } 
  
@@ -1584,6 +1587,12 @@ document.onkeydown = function(e)
 
 /* Declare main object */
 var hackyBalls = new HackyBalls();
+
+/* globally accessible reset */
+function reset()
+{
+    hackyBalls.reset();
+}
 
 window.addEventListener("resize", function () {
 

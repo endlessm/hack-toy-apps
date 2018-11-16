@@ -1,26 +1,12 @@
-﻿var canvasID = document.getElementById( 'canvas' );
+var canvasID = document.getElementById( 'canvas' );
 var canvas = canvasID.getContext( '2d' );
-
 
 "use strict";
 
 var USING_TEST_GUI = false;
-var SHOW_LEVEL_TOOLS = false;
 
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
-
-var TOOL_MOVE      =  0;
-var TOOL_FLING     =  1;
-var TOOL_CREATE    =  2;
-var TOOL_DELETE    =  3;
-var TOOL_SPECIES   =  4;
-var TOOL_LEVEL_1   =  5;
-var TOOL_LEVEL_2   =  6;
-var TOOL_LEVEL_3   =  7;
-var TOOL_LEVEL_4   =  8;
-var TOOL_RESET     =  9;
-var NUM_TOOLS      = 10;
 
 var NULL_BALL = -1;
 var MAX_BALLS = 100;
@@ -56,12 +42,14 @@ var globalParameters =
 
     // Communication with Clubhouse
     preset          : 0,
-    quest0Success	: false,
+    quest0Success   : false,
     quest1Success   : false,
-    quest2Success	: false,
+    quest2Success   : false,
     type0BallCount  : 0,
     type1BallCount  : 0,
     type2BallCount  : 0,
+    score           : 0,
+    currentLevel    : 0,
 
     // parameters for species 0 balls
     radius_0        : ZERO,
@@ -74,12 +62,11 @@ var globalParameters =
     socialForce_0_2 : ZERO,
     socialForce_0_3 : ZERO,
     socialForce_0_4 : ZERO,
-    touchDeath_0_0  : false,
-    touchDeath_0_1  : false,
-    touchDeath_0_2  : false,
-    touchDeath_0_3  : false,
-    touchDeath_0_4  : false,
-    deathType_0       : 0,
+    touchDeath_0_0  : 0,
+    touchDeath_0_1  : 0,
+    touchDeath_0_2  : 0,
+    touchDeath_0_3  : 0,
+    touchDeath_0_4  : 0,
     deathVisualGood_0 : 0,
     deathVisualBad_0  : 0,
     deathSoundGood_0  : 0,
@@ -97,12 +84,11 @@ var globalParameters =
     socialForce_1_2 : ZERO,
     socialForce_1_3 : ZERO,
     socialForce_1_4 : ZERO,
-    touchDeath_1_0  : false,
-    touchDeath_1_1  : false,
-    touchDeath_1_2  : false,
-    touchDeath_1_3  : false,
-    touchDeath_1_4  : false,
-    deathType_1       : 0,
+    touchDeath_1_0  : 0,
+    touchDeath_1_1  : 0,
+    touchDeath_1_2  : 0,
+    touchDeath_1_3  : 0,
+    touchDeath_1_4  : 0,
     deathVisualGood_1 : 0,
     deathVisualBad_1  : 0,
     deathSoundGood_1  : 0,
@@ -122,12 +108,11 @@ var globalParameters =
     socialForce_2_2 : ZERO,
     socialForce_2_3 : ZERO,
     socialForce_2_4 : ZERO,
-    touchDeath_2_0  : false,
-    touchDeath_2_1  : false,
-    touchDeath_2_2  : false,
-    touchDeath_2_3  : false,
-    touchDeath_2_4  : false,
-    deathType_2       : 0,
+    touchDeath_2_0  : 0,
+    touchDeath_2_1  : 0,
+    touchDeath_2_2  : 0,
+    touchDeath_2_3  : 0,
+    touchDeath_2_4  : 0,
     deathVisualGood_2 : 0,
     deathVisualBad_2  : 0,
     deathSoundGood_2  : 0,
@@ -147,12 +132,11 @@ var globalParameters =
     socialForce_3_2 : ZERO,
     socialForce_3_3 : ZERO,
     socialForce_3_4 : ZERO,
-    touchDeath_3_0  : false,
-    touchDeath_3_1  : false,
-    touchDeath_3_2  : false,
-    touchDeath_3_3  : false,
-    touchDeath_3_4  : false,
-    deathType_3       : 0,
+    touchDeath_3_0  : 0,
+    touchDeath_3_1  : 0,
+    touchDeath_3_2  : 0,
+    touchDeath_3_3  : 0,
+    touchDeath_3_4  : 0,
     deathVisualGood_3 : 0,
     deathVisualBad_3  : 0,
     deathSoundGood_3  : 0,
@@ -172,20 +156,17 @@ var globalParameters =
     socialForce_4_2 : ZERO,
     socialForce_4_3 : ZERO,
     socialForce_4_4 : ZERO,
-    touchDeath_4_0  : false,
-    touchDeath_4_1  : false,
-    touchDeath_4_2  : false,
-    touchDeath_4_3  : false,
-    touchDeath_4_4  : false,
-    deathType_4       : 0,
+    touchDeath_4_0  : 0,
+    touchDeath_4_1  : 0,
+    touchDeath_4_2  : 0,
+    touchDeath_4_3  : 0,
+    touchDeath_4_4  : 0,
     deathVisualGood_4 : 0,
     deathVisualBad_4  : 0,
     deathSoundGood_4  : 0,
     deathSoundBad_4   : 0,
     imageIndex_4      : 0
 }
-
-
 
 //-----------------------------------------------------------------------------
 // The object gameState contains all the dynamic data pertaining to gameplay. 
@@ -205,7 +186,6 @@ var gameState =
     success             : false
 }
 
-
 //----------------------
 function HackyBalls()
 {    
@@ -214,22 +194,6 @@ function HackyBalls()
     var MILLISECONDS_PER_UPDATE  = 10;
     var COLLISION_DISTANCE_FUDGE = 10;
     var MAX_COLLISION_BALLS      = 10;
-    
-    var TOOL_TRASH_SOUND   = new Audio( "sounds/Tool_Trash.wav"        ); 
-    var TOOL_GRAB_SOUND    = new Audio( "sounds/Tool_Grab.wav"         ); 
-    var TOO_MANY_SOUND     = new Audio( "sounds/too-many.wav"          ); 
-    var FLING_SOUND        = new Audio( "sounds/Slingshot_Release.wav" ); 
-    var MOVE_FLING_SOUND   = new Audio( "sounds/Slingshot_Grab.wav"    ); 
-
-    var DEATH_AUDIO_GOOD_0 = new Audio( "sounds/Death-Good-0.wav" ); 
-    var DEATH_AUDIO_GOOD_1 = new Audio( "sounds/Death-Good-1.wav" ); 
-    var DEATH_AUDIO_GOOD_2 = new Audio( "sounds/Death-Good-2.wav" ); 
-    var DEATH_AUDIO_GOOD_3 = new Audio( "sounds/Death-Good-3.wav" ); 
-
-    var DEATH_AUDIO_BAD_0  = new Audio( "sounds/Death-Bad-0.wav" ); 
-    var DEATH_AUDIO_BAD_1  = new Audio( "sounds/Death-Bad-1.wav" ); 
-    var DEATH_AUDIO_BAD_2  = new Audio( "sounds/Death-Bad-2.wav" ); 
-    var DEATH_AUDIO_BAD_3  = new Audio( "sounds/Death-Bad-3.wav" ); 
 
     //--------------------
     function Species()
@@ -244,6 +208,7 @@ function HackyBalls()
         this.successSound    = null; 
         this.toolSound       = null; 
         this.deleteSound     = null; 
+        this.flySound        = null; 
         this.forces          = new Array( NUM_BALL_SPECIES );
         this.touchDeath      = new Array( NUM_BALL_SPECIES );
         this.deathVisualGood = 0;
@@ -254,22 +219,9 @@ function HackyBalls()
         for (var s=0; s<NUM_BALL_SPECIES; s++)
         {    
             this.forces     [s] = ZERO;                
-            this.touchDeath [s] = false;                
+            this.touchDeath [s] = 0;                
         }
     }
-    
-
-    //-----------------------------
-    function SpeciesButtonImages()
-    {    
-        this.ballImage = new Array( NUM_BALL_SPECIES );
-        
-        for (var s=0; s<NUM_BALL_SPECIES; s++)
-        {
-            this.ballImage[s] = new Image();
-        }
-    }
-    
 
     //-------------------------
     function DeathAnimation()
@@ -279,17 +231,6 @@ function HackyBalls()
         this.clock    = 0;
         this.radius   = ZERO;
         this.duration = 20;
-    }
-
-    //--------------------
-    function ToolButton()
-    {    
-        this.visible   = false;
-        this.position  = new Vector2D();
-        this.width     = ZERO;
-        this.height    = ZERO;
-        this.image     = new Image();
-        this.imagePath = "";
     }
     
     //-------------------------------
@@ -302,7 +243,6 @@ function HackyBalls()
     var _background             = new Image();
     var _success                = new Image();
     var _balls                  = new Array();
-    var _toolButtons            = new Array( NUM_TOOLS );
     var _deathAnimation         = new DeathAnimation();
     var _numBalls               = 0;
     var _hackyBallsGUI          = new HackyBallsGUI();
@@ -318,14 +258,21 @@ function HackyBalls()
     var _mouseVelocity          = new Vector2D();
     var _vector                 = new Vector2D();
     var _startTime              = ZERO;
-    var _useAudio               = false;
     var _deleteImage            = new Image();
-    var _speciesSelectImage     = new Image();
     var _collisionBalls         = new Array( MAX_COLLISION_BALLS );
-    var _speciesButtonImages    = new SpeciesButtonImages();
     var _ballsWithSomeCollision = new Array( MAX_BALLS );
     var _game                   = new Game();
     var _initializeFirstLevel   = false;
+    var _tools                  = new Tools();
+    var _devMode                = false;
+    var _savedBalls             = null;
+    var _numSavedBalls          = 0;
+    var _levelLoading           = false;
+    
+    //---------------------------------------
+    // this is a wrapper for the Sounds API
+    //---------------------------------------
+    var Sounds = new TEMPSoundAPI();
     
     //------------------------------------------------------------------------- 
     // NOTE: The json-reading scheme is not fully figured out yet! 
@@ -358,13 +305,13 @@ function HackyBalls()
         request.addEventListener( 'load', this.jsonFileLoaded.bind(this) );
         
         //-----------------------------------
-		// Set canvas size
+        // Set canvas size
         //-----------------------------------
-		canvasID.width  = window.innerWidth;
-		canvasID.height = window.innerHeight;
+        canvasID.width  = window.innerWidth;
+        canvasID.height = window.innerHeight;
 
-		_rightWall  = canvasID.width;
-		_bottomWall = canvasID.height;
+        _rightWall  = canvasID.width;
+        _bottomWall = canvasID.height;
 
         //--------------------------------------
         // create species array  
@@ -374,33 +321,44 @@ function HackyBalls()
             _species[i] = new Species();
         }
 
-        //-------------------------------------------------------------------------
+        //-----------------------------------------------------
         // set up the sounds associated with each species...  
-        //-------------------------------------------------------------------------
-        _species[0].createSound  = new Audio( "sounds/CreateBall_Species1.wav"  ); 
-        _species[1].createSound  = new Audio( "sounds/CreateBall_Species2.wav"  ); 
-        _species[2].createSound  = new Audio( "sounds/CreateBall_Species3.wav"  ); 
-        _species[3].createSound  = new Audio( "sounds/CreateBall_Species4.wav"  ); 
-        _species[4].createSound  = new Audio( "sounds/CreateBall_Species5.wav"  ); 
+        //-----------------------------------------------------
+        _species[0].createSound  = "create0";
+        _species[1].createSound  = "create1"; 
+        _species[2].createSound  = "create2"; 
+        _species[3].createSound  = "create3"; 
+        _species[4].createSound  = "create4"; 
 
-        _species[0].deleteSound  = new Audio( "sounds/Delete_Species1.wav"      ); 
-        _species[1].deleteSound  = new Audio( "sounds/Delete_Species2.wav"      ); 
-        _species[2].deleteSound  = new Audio( "sounds/Delete_Species3.wav"      ); 
-        _species[3].deleteSound  = new Audio( "sounds/Delete_Species4.wav"      ); 
-        _species[4].deleteSound  = new Audio( "sounds/Delete_Species5.wav"      ); 
+        _species[0].deleteSound  = "delete0";
+        _species[1].deleteSound  = "delete1"; 
+        _species[2].deleteSound  = "delete2"; 
+        _species[3].deleteSound  = "delete3"; 
+        _species[4].deleteSound  = "delete4"; 
 
-        _species[0].successSound = new Audio( "sounds/Success_Species1.wav"     ); 
-        _species[1].successSound = new Audio( "sounds/Success_Species2.wav"     ); 
-        _species[2].successSound = new Audio( "sounds/Success_Species3.wav"     ); 
-        _species[3].successSound = new Audio( "sounds/Success_Species4.wav"     ); 
-        _species[4].successSound = new Audio( "sounds/Success_Species5.wav"     ); 
+        _species[0].flySound     = "fly0";
+        _species[1].flySound     = "fly1"; 
+        _species[2].flySound     = "fly2"; 
+        _species[3].flySound     = "fly3"; 
+        _species[4].flySound     = "fly4"; 
 
-        _species[0].toolSound    = new Audio( "sounds/Tool_Species1.wav"        ); 
-        _species[1].toolSound    = new Audio( "sounds/Tool_Species2.wav"        ); 
-        _species[2].toolSound    = new Audio( "sounds/Tool_Species3.wav"        ); 
-        _species[3].toolSound    = new Audio( "sounds/Tool_Species4.wav"        ); 
-        _species[4].toolSound    = new Audio( "sounds/Tool_Species5.wav"        ); 
+        _species[0].successSound = "success0";
+        _species[1].successSound = "success1"; 
+        _species[2].successSound = "success2"; 
+        _species[3].successSound = "success3"; 
+        _species[4].successSound = "success4"; 
 
+        _species[0].toolSound    = "tool0"; 
+        _species[1].toolSound    = "tool1"; 
+        _species[2].toolSound    = "tool2"; 
+        _species[3].toolSound    = "tool3"; 
+        _species[4].toolSound    = "tool4"; 
+                
+        _species[0].score = 0;
+        _species[1].score = 0;
+        _species[2].score = 0;
+        _species[3].score = 0;
+        _species[4].score = -2;        
         
         //--------------------------------------
         // create balls array  
@@ -410,13 +368,6 @@ function HackyBalls()
             _balls[b] = new Ball();
         }
         
-        //--------------------------------------
-        // create tool buttons array  
-        //--------------------------------------
-        for (var t=0; t<NUM_TOOLS; t++)
-        {
-            _toolButtons[t] = new ToolButton();
-        }
         
         //--------------------------------------
         // initialize collision ball array  
@@ -426,7 +377,6 @@ function HackyBalls()
             _collisionBalls[c] = NULL_BALL;
         }
 
-        
         //----------------------------
         // get start time
         //----------------------------
@@ -435,9 +385,8 @@ function HackyBalls()
         //--------------------------------------
         // load images
         //--------------------------------------
-    	canvasID.style.backgroundImage = "url('images/background-0.png')";
+        canvasID.style.backgroundImage = "url('images/background-0.png')";
         _deleteImage.src = "images/delete-ball.png";    
-        _speciesSelectImage.src = "images/species-selection.png";    
 
         //---------------------------------------------
         // initialize user interface with parameters
@@ -448,92 +397,25 @@ function HackyBalls()
         }
 
         //------------------------------------
-        // create tools
+        // initialize tools
         //------------------------------------
-        var size = 50.0;
-        for (var t=0; t<NUM_TOOLS; t++)
-        {
-            _toolButtons[t].visible = true;
-            _toolButtons[t].width  = 50.0;
-            _toolButtons[t].height = 50.0;
-            _toolButtons[t].image.src = "images/move-tool.png";
-        }
-        
-        var left = 20.0;
-        var top  = 40.0;
-        var ys   = 55.0;
-        var yy   = 0;
-        
-        _toolButtons[ TOOL_MOVE     ].position.setXY( left, top +  yy * ys ); yy++;
-        _toolButtons[ TOOL_FLING    ].position.setXY( left, top +  yy * ys ); yy++;
-        _toolButtons[ TOOL_CREATE   ].position.setXY( left, top +  yy * ys ); yy++;
-        _toolButtons[ TOOL_DELETE   ].position.setXY( left, top +  yy * ys ); yy++;
-        
-        yy = 9;
-        _toolButtons[ TOOL_LEVEL_1 ].position.setXY( left, top +  yy * ys ); yy++;
-        _toolButtons[ TOOL_LEVEL_2 ].position.setXY( left, top +  yy * ys ); yy++;
-        _toolButtons[ TOOL_LEVEL_3 ].position.setXY( left, top +  yy * ys ); yy++;
-        _toolButtons[ TOOL_LEVEL_4 ].position.setXY( left, top +  yy * ys ); yy++;
-        
-        _toolButtons[ TOOL_MOVE    ].image.src = "images/move-tool.png";
-        _toolButtons[ TOOL_FLING   ].image.src = "images/fling-tool.png";
-        _toolButtons[ TOOL_CREATE  ].image.src = "images/create-tool.png";
-        _toolButtons[ TOOL_DELETE  ].image.src = "images/delete-tool.png";
-        _toolButtons[ TOOL_LEVEL_1 ].image.src = "images/level-1-tool.png";
-        _toolButtons[ TOOL_LEVEL_2 ].image.src = "images/level-2-tool.png";
-        _toolButtons[ TOOL_LEVEL_3 ].image.src = "images/level-3-tool.png";
-        _toolButtons[ TOOL_LEVEL_4 ].image.src = "images/level-4-tool.png";
-
-        _toolButtons[ TOOL_SPECIES  ].position.setXY( left + size + 3, _toolButtons[ TOOL_CREATE ].position.y );
-        _toolButtons[ TOOL_SPECIES  ].height = size * 4.2;
-        _toolButtons[ TOOL_SPECIES  ].image.src = "images/species-panel.png";
-        _toolButtons[ TOOL_SPECIES  ].visible = false;
-        
-        globalParameters.moveToolActive    = true;
-        globalParameters.flingToolActive   = true;
-        globalParameters.createToolActive  = true;
-        globalParameters.deleteToolActive  = true;
-        
-        _toolButtons[ TOOL_RESET ].position.setXY( canvasID.width - 300, canvasID.height - 100  );
-        _toolButtons[ TOOL_RESET ].width     = 100;
-        _toolButtons[ TOOL_RESET ].height    = 50;
-        _toolButtons[ TOOL_RESET ].image.src = "images/reset-tool.png";;
-        _toolButtons[ TOOL_RESET ].visible   = true;
-        
-        if ( !SHOW_LEVEL_TOOLS )
-        {
-            _toolButtons[ TOOL_LEVEL_1 ].visible = false;
-            _toolButtons[ TOOL_LEVEL_2 ].visible = false;
-            _toolButtons[ TOOL_LEVEL_3 ].visible = false;
-            _toolButtons[ TOOL_LEVEL_4 ].visible = false;
-        }
-        
-        //-----------------------------------------------------------------------------
-        // turn this on only after creating the initial balls, because some browsers
-        // don't want to have sounds played until the user has done some interaction. 
-        //-----------------------------------------------------------------------------
-        _useAudio = true;        
-        
+        _tools.initialize();
+        _tools.setNumSpecies( NUM_BALL_SPECIES );
+                 
         //---------------------------------
         // set up death animation
         //---------------------------------
         _deathAnimation.position.clear()
-        _deathAnimation.clock     = 0;
+        _deathAnimation.clock     = 100; // So we don't play the animation in the corner
         _deathAnimation.radius    = ZERO;
         _deathAnimation.duration  = 20;
-        _deathAnimation.image.src = "images/death-good-0.png";    //default
+        _deathAnimation.image.src = "images/death-0.png";    //default
                 
         //------------------------------------------------------------------------
         // NOTE: The json-reading scheme is not fully figured out yet! 
         // This part of the code was commented-out as part of the current scheme. 
         // I want to leave this commented-out code here until we are certain.
-        //------------------------------------------------------------------------
-                
-        //------------------------------------------------------------------------
-        // start up the timer
-        //------------------------------------------------------------------------
-        //this.timer = setTimeout( "hackyBalls.update()", MILLISECONDS_PER_UPDATE );    
-        
+        //------------------------------------------------------------------------        
         // this forces the frame rate to be same as browser        
         //window.requestAnimationFrame( this.update.bind(this) ); 
 
@@ -546,7 +428,10 @@ function HackyBalls()
     {    
         if ( _numBalls < MAX_BALLS )
         {
-            this.playSound( _species[ species ].createSound );
+            if (!_levelLoading)
+            {
+                Sounds.play( _species[ species ].createSound );
+            }
             
             //---------------------------------------------------------------------------
             // jitter discourages balls from being created at the exact same position
@@ -577,7 +462,7 @@ function HackyBalls()
         }
         else
         {
-            this.playSound( TOO_MANY_SOUND );
+            Sounds.play( "tooManyBalls" );
         }
     }
     
@@ -586,14 +471,14 @@ function HackyBalls()
     //-----------------------
     this.update = function()
     {       
-        //----------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------
         // NOTE: The json-reading scheme is not fully figured out yet! 
         //
         // As soon as the level data have been loaded, set start up the first level...
-        //----------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------
         if ( _initializeFirstLevel )
         {
-            this.setGameLevel( CROQUET_LEVEL );
+            this.setGameLevel( 0 );
             _initializeFirstLevel = false;
         }
     
@@ -615,15 +500,6 @@ function HackyBalls()
         //-----------------------
         _game.update( _collisionBalls, _ballsWithSomeCollision, _numBalls, _balls );
         
-        if ( gameState.success )
-        {
-            _toolButtons[ TOOL_RESET ].image.src = "images/next-level.png"; 
-        }
-        else
-        {
-            _toolButtons[ TOOL_RESET ].image.src = "images/reset-tool.png"; 
-        }
-        
         //----------------------------------------------------
         // get seconds since started, and derive deltaTime...
         //----------------------------------------------------
@@ -639,12 +515,20 @@ function HackyBalls()
             if ( _grabbedBall == b )
             {
                 _balls[b].grab( _mousePosition );
+                
+                if ( this._devMode )
+                {
+                    _balls[b].setPosition( _mousePosition );
+                }
             }
-
+            
             //-----------------------------
             // basic ball physics update
             //-----------------------------
-            this.updateBall( b, deltaTime );
+            if ( !this._devMode )
+            {
+                this.updateBall( b, deltaTime );
+            }
         }
         
         //-----------------------------
@@ -655,7 +539,7 @@ function HackyBalls()
         {
             _flinger.update( deltaTime );
         }
-            
+
         //---------------------------
         // render everything...
         //---------------------------
@@ -689,113 +573,119 @@ function HackyBalls()
         //-----------------------------
         for (var o=0; o<_numBalls; o++)
         {    
-            if ( b != o )
+            //--------------------------------------------------------------
+            // balls in flingers don't participate in these interactions
+            //--------------------------------------------------------------
+            if (( _flinger.ballIndex != b )
+            &&  ( _flinger.ballIndex != o ))
             {
-                _vector.setToDifference( _balls[b].getPosition(), _balls[o].getPosition() );
-
-                var distance = _vector.getMagnitude();
-
-                if ( distance < INTERACTION_RADIUS )
+                if ( b != o )
                 {
-                    if ( distance > ZERO )
+                    _vector.setToDifference( _balls[b].getPosition(), _balls[o].getPosition() );
+
+                    var distance = _vector.getMagnitude();
+
+                    if ( distance < INTERACTION_RADIUS )
                     {
-                        var bSpecies = _balls[b].getType();
-                        var oSpecies = _balls[o].getType();
-
-                        //-----------------------------
-                        // attractions and repulsions
-                        //-----------------------------
-                        var force = new Vector2D();
-                        force.setToScaled( _vector, ONE / distance );
-                        force.scale( _species[ bSpecies ].forces[ oSpecies ] * deltaTime );
-                        _balls[b].addVelocity( force );
-                        
-                        //-----------------------------------------------------------------------------------------------------
-                        // collisions
-                        //-----------------------------------------------------------------------------------------------------
-                        var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) - COLLISION_DISTANCE_FUDGE;
-
-                        if ( distance < collisionDistance )
+                        if ( distance > ZERO )
                         {
-                            //-------------------------------------------------------------
-                            // if we are running a game and collecting collision info...    
-                            //-------------------------------------------------------------
-                            if ( gameState.running )
-                            {           
-                                //---------------------------------------------
-                                // accumulate collisions that adhere to the 
-                                // spcification in game state for testSpecies
-                                //---------------------------------------------
-                                if ( bSpecies == gameState.testSpecies )
-                                {
-                                    if ( oSpecies == gameState.collisionSpecies )
+                            var bSpecies = _balls[b].getType();
+                            var oSpecies = _balls[o].getType();
+
+                            //-----------------------------
+                            // attractions and repulsions
+                            //-----------------------------
+                            var force = new Vector2D();
+                            force.setToScaled( _vector, -ONE / distance );
+                            force.scale( _species[ bSpecies ].forces[ oSpecies ] * deltaTime );
+                            _balls[b].addVelocity( force );
+                        
+                            //-----------------------------------------------------------------------------------------------------
+                            // collisions
+                            //-----------------------------------------------------------------------------------------------------
+                            var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) - COLLISION_DISTANCE_FUDGE;
+
+                            if ( distance < collisionDistance )
+                            {
+                                //-------------------------------------------------------------
+                                // if we are running a game and collecting collision info...    
+                                //-------------------------------------------------------------
+                                if ( gameState.running )
+                                {           
+                                    //---------------------------------------------
+                                    // accumulate collisions that adhere to the 
+                                    // spcification in game state for testSpecies
+                                    //---------------------------------------------
+                                    if ( bSpecies == gameState.testSpecies )
                                     {
-                                        gameState.numCollisions ++;
+                                        if ( oSpecies == gameState.collisionSpecies )
+                                        {
+                                            gameState.numCollisions ++;
+                                        }
                                     }
-                                }
                                                 
-                                //---------------------------------------------
-                                // accumulate collisions that adhere to the 
-                                // spcification in game state for testBall
-                                //---------------------------------------------
-                                if ( b == gameState.testBall )
-                                {
-                                    if ( oSpecies == gameState.collisionSpecies )
+                                    //---------------------------------------------
+                                    // accumulate collisions that adhere to the 
+                                    // spcification in game state for testBall
+                                    //---------------------------------------------
+                                    if ( b == gameState.testBall )
                                     {
-                                        var alreadyExistingBallIndex = NULL_BALL;
-                                        var slot = 0;
-                                        for (var c=0; c<gameState.numCollisionsGoal; c++)
+                                        if ( oSpecies == gameState.collisionSpecies )
                                         {
-                                            if ( _collisionBalls[c] == NULL_BALL )
+                                            var alreadyExistingBallIndex = NULL_BALL;
+                                            var slot = 0;
+                                            for (var c=0; c<gameState.numCollisionsGoal; c++)
                                             {
-                                                slot = c;
+                                                if ( _collisionBalls[c] == NULL_BALL )
+                                                {
+                                                    slot = c;
+                                                }
+                                                else if ( _collisionBalls[c] == o )
+                                                {
+                                                    alreadyExistingBallIndex = o;
+                                                }                                            
                                             }
-                                            else if ( _collisionBalls[c] == o )
-                                            {
-                                                alreadyExistingBallIndex = o;
-                                            }                                            
-                                        }
                                         
-                                        if ( alreadyExistingBallIndex == NULL_BALL )
-                                        {
-                                            _collisionBalls[ slot ] = o;
+                                            if ( alreadyExistingBallIndex == NULL_BALL )
+                                            {
+                                                _collisionBalls[ slot ] = o;
+                                            }
                                         }
                                     }
-                                }
                                 
-								_ballsWithSomeCollision[b] = true;
+                                    _ballsWithSomeCollision[b] = true;
+                                }
+
+                                if ( _species[ bSpecies ].touchDeath[ oSpecies ] != 0 ) // if ball dies upon collision
+                                {
+                                    this.killBallFromCollision( b, _species[ bSpecies ].touchDeath[ oSpecies ] );
+                                }
+                                else
+                                {                            
+                                    //--------------------------------------------                    
+                                    // apply collision force         
+                                    //--------------------------------------------                    
+                                    var f = ONE - ( distance / collisionDistance );
+
+                                    var v1 = new Vector2D();
+                                    var v2 = new Vector2D();
+
+                                    v1.set( _vector );
+                                    v2.set( _vector );
+
+                                    v1.scale(  f );
+                                    v2.scale( -f );
+
+                                    _balls[b].addCollisionForce( v1 );
+                                    _balls[o].addCollisionForce( v2 );
+                                }                            
                             }
-
-                            if ( _species[ bSpecies ].touchDeath[ oSpecies ] )
-                            {
-                                this.killBallFromCollision(b);
-                            }
-                            else
-                            {
-                                //--------------------------------------------                    
-                                // apply collision force         
-                                //--------------------------------------------                    
-                                var f = ONE - ( distance / collisionDistance );
-
-                                var v1 = new Vector2D();
-                                var v2 = new Vector2D();
-
-                                v1.set( _vector );
-                                v2.set( _vector );
-
-                                v1.scale(  f );
-                                v2.scale( -f );
-
-                                _balls[b].addCollisionForce( v1 );
-                                _balls[o].addCollisionForce( v2 );
-                            }                            
                         }
                     }
                 }
             }
         }
     }
-    
     
     
     
@@ -806,6 +696,9 @@ function HackyBalls()
         {
             if ( _flinger.state == FLINGER_STATE_MOVING )
             {
+                _flinger.state = FLINGER_STATE_WAITING;
+
+                /*
                 _flinger.position.x = _balls[b].getPosition().x;
                 _flinger.position.y = _balls[b].getPosition().y;
             
@@ -825,6 +718,7 @@ function HackyBalls()
                 {
                     _balls[b].scaleVelocity( ZERO );   
                 }                
+                */
             }
             else if ( _flinger.state == FLINGER_STATE_WAITING )
             {
@@ -846,7 +740,7 @@ function HackyBalls()
                 }                
             }
             else if ( _flinger.state == FLINGER_STATE_PULLING )
-            {
+            {    
                 var xx = _flinger.position.x - _flinger.handlePosition.x;
                 var yy = _flinger.position.y - _flinger.handlePosition.y;
                 var length = Math.sqrt( xx*xx + yy*yy );
@@ -856,7 +750,7 @@ function HackyBalls()
                     xx /= length;
                     yy /= length;
                 }
-                        
+                
                 _balls[b].scaleVelocity( ZERO );
                 
                 var pullPosition = new Vector2D();
@@ -890,8 +784,12 @@ function HackyBalls()
                     var force = new Vector2D();
                     force.setToScaled( offset, FLINGER_FLING_FORCE * deltaTime );
                 
-                    this.playSound( FLING_SOUND );
-    
+                    Sounds.stop( "pullFling" );
+                    Sounds.play( "fling" );
+                    Sounds.playLoop( _species[ _balls[b].getType() ].flySound );
+                     
+                     _flinger.ballIndex = NULL_BALL;
+
                     _balls[b].addVelocity( force );
 
                     var friction = FLINGER_HOLD_FRICTION * deltaTime;        
@@ -917,40 +815,37 @@ function HackyBalls()
     
     
 
-    //---------------------------------------
-    this.killBallFromCollision = function(b)
+    //-----------------------------------------------------
+    this.killBallFromCollision = function( b, deathType )
     {    
         var deathImage  = new Image();
-        var deathSound  = DEATH_AUDIO_GOOD_0;//default
+        var deathSound  = "death0";//default
         var ballSpecies = _balls[b].getType();
         
-        deathImage.src = "images/death-good-0.png"; //default
+        deathImage.src = "images/death-0.png"; //default
 
-        if ( _species[ ballSpecies ].deathType == 0 ) // good
+        if ( deathType == 1 ) // good
         {
-                 if ( _species[ ballSpecies ].deathVisualGood == 0 ) { deathImage.src = "images/death-good-0.png"; }
-            else if ( _species[ ballSpecies ].deathVisualGood == 1 ) { deathImage.src = "images/death-good-1.png"; }
-            else if ( _species[ ballSpecies ].deathVisualGood == 2 ) { deathImage.src = "images/death-good-2.png"; }
-            else if ( _species[ ballSpecies ].deathVisualGood == 3 ) { deathImage.src = "images/death-good-3.png"; }
-
-                 if ( _species[ ballSpecies ].deathSoundGood  == 0 ) { deathSound = DEATH_AUDIO_GOOD_0; }
-            else if ( _species[ ballSpecies ].deathSoundGood  == 1 ) { deathSound = DEATH_AUDIO_GOOD_1; }
-            else if ( _species[ ballSpecies ].deathSoundGood  == 2 ) { deathSound = DEATH_AUDIO_GOOD_2; }
-            else if ( _species[ ballSpecies ].deathSoundGood  == 3 ) { deathSound = DEATH_AUDIO_GOOD_3; }
+            deathImage.src = "images/death-" + _species[ ballSpecies ].deathVisualGood + ".png";
+            
+                 if ( _species[ ballSpecies ].deathSoundGood  == 0 ) { deathSound = "death0"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 1 ) { deathSound = "death1"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 2 ) { deathSound = "death2"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 3 ) { deathSound = "death3"; }
         }
-        else if ( _species[ ballSpecies ].deathType == 1 ) // bad
+        else if ( deathType == 2 ) // bad
         {
-                 if ( _species[ ballSpecies ].deathVisualBad  == 0 ) { deathImage.src = "images/death-bad-0.png"; }
-            else if ( _species[ ballSpecies ].deathVisualBad  == 1 ) { deathImage.src = "images/death-bad-1.png"; }
-            else if ( _species[ ballSpecies ].deathVisualBad  == 2 ) { deathImage.src = "images/death-bad-2.png"; }
-            else if ( _species[ ballSpecies ].deathVisualBad  == 3 ) { deathImage.src = "images/death-bad-3.png"; }
+            deathImage.src = "images/death-" + _species[ ballSpecies ].deathVisualBad + ".png";
 
-                 if ( _species[ ballSpecies ].deathSoundBad   == 0 ) { deathSound = DEATH_AUDIO_BAD_0; }
-            else if ( _species[ ballSpecies ].deathSoundBad   == 1 ) { deathSound = DEATH_AUDIO_BAD_1; }
-            else if ( _species[ ballSpecies ].deathSoundBad   == 2 ) { deathSound = DEATH_AUDIO_BAD_2; }
-            else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = DEATH_AUDIO_BAD_3; }
+                 if ( _species[ ballSpecies ].deathSoundBad   == 0 ) { deathSound = "death0"; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 1 ) { deathSound = "death1"; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 2 ) { deathSound = "death2"; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = "death3"; }
         }
         
+        _game.addScore( _species[ ballSpecies ].score );
+        if (ballSpecies == 0 && deathType == 2)
+            _game.setBallDied();
         this.deleteBall( b, deathImage, deathSound );    
     }    
     
@@ -992,7 +887,6 @@ function HackyBalls()
         }            
     }
 
-    
     //---------------------------------------------------------------
     this.playBallDeathEffect = function( b, deathImage, deathSound )
     {    
@@ -1002,21 +896,19 @@ function HackyBalls()
         _deathAnimation.radius = _balls[b].getRadius();        
         _deathAnimation.image = deathImage;    
 
-        this.playSound( deathSound );        
+        Sounds.play( deathSound );   
     }    
 
 
-
-
-		
+        
     //------------------------
     this.render = function()
     {    
         //-------------------------------------------
-		// clear background
+        // clear background
         //-------------------------------------------
-	canvas.clearRect(0, 0, canvasID.width, canvasID.height);
-		
+        canvas.clearRect(0, 0, canvasID.width, canvasID.height);
+        
         //-----------------------------------------
         // show animation from balls being killed
         //-----------------------------------------
@@ -1028,7 +920,7 @@ function HackyBalls()
             
             var r = _deathAnimation.radius + 40.0 + 40.0 * wave; 
 
-	    canvas.drawImageCached
+            canvas.drawImageCached
             ( 
                 _deathAnimation.image, 
                 _deathAnimation.position.x - r * ONE_HALF,
@@ -1046,38 +938,23 @@ function HackyBalls()
             _balls[b].render();
         }
        
-
         //-----------------------
         // show the flinger
         //-----------------------
         if ( _flinger.state != FLINGER_STATE_NULL )
         {        
             _flinger.render( _balls[ _flinger.ballIndex ].getPosition(), _balls[ _flinger.ballIndex ].getRadius() );
-        }        
-        
-        
+        }     
+           
+        //------------------------------------------
+        // render game data (level, score, etc)
+        //------------------------------------------
+        _game.render();
+
         //-------------------------
         // show tools
         //-------------------------
-        for (var t=0; t<NUM_TOOLS; t++)
-        {
-            if ( _toolButtons[t].visible )
-            {
-		canvas.drawImageCached
-                ( 
-                    _toolButtons[t].image, 
-                    _toolButtons[t].position.x, 
-                    _toolButtons[t].position.y, 
-                    _toolButtons[t].width, 
-                    _toolButtons[t].height 
-                );
-                
-                if ( t == TOOL_SPECIES )
-                {
-                    this.showSpeciesButtonImages(t);
-                }
-            }
-        }
+        _tools.render();
         
         //-------------------------
         // show user interface
@@ -1087,32 +964,14 @@ function HackyBalls()
             _hackyBallsGUI.render();
         }
         
-        //------------------------------------------
-        // render game data (level, score, etc)
-        //------------------------------------------
-        _game.render();
     }
-    
-
-    //---------------------------------
-    this.showSpeciesButtonImages = function(t)
-    {                                    
-        var rm = _toolButtons[t].width * 0.1;
-        var rr = _toolButtons[t].width * 0.8;
-
-        for (var s=0; s<NUM_BALL_SPECIES; s++)
-        {
-            _speciesButtonImages.ballImage[s].src = "images/ball-" + _species[s].imageID + ".png"    
-            canvas.drawImage( _speciesButtonImages.ballImage[s], _toolButtons[t].position.x + rm, _toolButtons[t].position.y + rm + rr * s, rr, rr );
-            canvas.drawImage( _speciesSelectImage, _toolButtons[t].position.x + rm, _toolButtons[t].position.y + rm + rr * _selectedSpecies, rr, rr );
-        }
-    } 
 
     //------------------------
     this.reset = function()
     {
         this.setGameLevel( _game.getCurrentLevel() );
     }
+
 
     //--------------------------------
     this.mouseDown = function( x, y )
@@ -1130,59 +989,36 @@ function HackyBalls()
         //--------------------------
         this.updateMouse( x, y );
         
+        //---------------------------------------------------------------------------
+        // send mouse click to the game and ask if it is ready for the next level
+        //---------------------------------------------------------------------------
+        if ( _game.okayToChooseNextLevel( x, y ) )
+        {
+            this.setGameLevel( _game.getNextLevel() ); 
+        }
+            
         //--------------------------
         // detect selecting a tool
         //--------------------------
-        var buttonSelected = false;
-
-        for (var t=0; t<NUM_TOOLS; t++)
+        var selectedTool = _tools.mouseClick( x, y );
+        
+        if ( selectedTool != -1 )
         {
-            if (( x > _toolButtons[t].position.x )
-            &&  ( x < _toolButtons[t].position.x + _toolButtons[t].width )
-            &&  ( y > _toolButtons[t].position.y )
-            &&  ( y < _toolButtons[t].position.y + _toolButtons[t].height ))
-            {
-                if ( _toolButtons[t].visible )
-                {
-                    this.selectTool(t);
-                    buttonSelected = true;
-            
-                    if ( t == TOOL_CREATE )
-                    {
-                        _toolButtons[ TOOL_SPECIES ].visible = true;
-                    }
-                         if ( t == TOOL_LEVEL_1 ) { this.setGameLevel( CROQUET_LEVEL ); }
-                    else if ( t == TOOL_LEVEL_2 ) { this.setGameLevel( SPACE_LEVEL   ); }
-                    else if ( t == TOOL_LEVEL_3 ) { this.setGameLevel( LEVEL_3       ); }
-                    else if ( t == TOOL_LEVEL_4 ) { this.setGameLevel( LEVEL_4       ); }                     
-                    else 
-                    if ( t == TOOL_RESET ) 
-                    {
-                        if ( gameState.success )
-                        {
-                            this.setGameLevel( _game.getNextLevel() ); 
-                        }
-                        else
-                        {
-                            this.reset();
-                        }
-                    } 
- 
-                    if ( t == TOOL_SPECIES )
-                    {
-                        var h = ( y - _toolButtons[t].position.y ) / _toolButtons[t].height;
-                        _selectedSpecies = Math.floor( h * NUM_BALL_SPECIES );                    
-                        _toolButtons[ TOOL_SPECIES ].image.src = "images/species-panel.png";                        
-                        this.playSound( _species[ _selectedSpecies ].toolSound ); 
-                    }
-                    else if ( t != TOOL_SPECIES )
-                    {
-                        _toolButtons[ TOOL_SPECIES ].visible = false;
-                    }
-                }
-            }
-        }
+            _flinger.cancel();  
 
+            _currentTool = selectedTool;   
+                    
+                 if ( _currentTool == TOOL_MOVE    ) { Sounds.play( "grab"  ); }
+            else if ( _currentTool == TOOL_FLING   ) { Sounds.play( "grab"  ); }
+            else if ( _currentTool == TOOL_CREATE  ) { Sounds.play( "grab"  ); }
+            else if ( _currentTool == TOOL_DELETE  ) { Sounds.play( "trash" ); }
+            else if ( _currentTool == TOOL_RESET   ) { this.reset();           }     
+            else if ( _currentTool == TOOL_SPECIES )
+            {
+                _selectedSpecies = _tools.getSelectedSpecies();
+                Sounds.play( _species[ _selectedSpecies ].toolSound );
+            }
+        }        
         
         //----------------------------------
         // detect selecting flinger handle
@@ -1194,61 +1030,62 @@ function HackyBalls()
             {
                 flingerSelected = true;
                 _flinger.state = FLINGER_STATE_PULLING;
+                Sounds.playLoop( "pullFling" );
             }
         }
-
-        if (( !buttonSelected )
-        &&  ( !flingerSelected )) 
+        
+        if (( _currentTool == TOOL_SPECIES )
+        &&  ( selectedTool == -1 ))
         {
-            if (( _currentTool == TOOL_CREATE )
-            ||  ( _currentTool == TOOL_SPECIES  ))
+            this.createBall( x, y, _selectedSpecies );
+        }
+        else
+        {
+            //-------------------------------
+            // detect grabbing a ball
+            //-------------------------------
+            for (var b=0; b<_numBalls; b++)
             {
-                this.createBall( x, y, _selectedSpecies );
-            }
-            else
-            {
-                //-------------------------------
-                // detect grabbing a ball
-                //-------------------------------
-                for (var b=0; b<_numBalls; b++)
-                {
-                    _vector.set( _balls[b].getPosition() );
-                    var r = _balls[b].getRadius();
+                _vector.set( _balls[b].getPosition() );
+                var r = _balls[b].getRadius();
 
-                    if (( x > _vector.x - r )
-                    &&  ( x < _vector.x + r )
-                    &&  ( y > _vector.y - r )
-                    &&  ( y < _vector.y + r ))
-                    {
-                        if ( _currentTool == TOOL_DELETE )
+                if (( x > _vector.x - r )
+                &&  ( x < _vector.x + r )
+                &&  ( y > _vector.y - r )
+                &&  ( y < _vector.y + r ))
+                {
+                    if ( _currentTool == TOOL_DELETE )
+                    {                    
+                        this.deleteBall( b, _deleteImage, _species[ _balls[b].getType() ].deleteSound );
+                    }
+                    else 
+                    {                            
+                        if ( _currentTool == TOOL_FLING )
                         {
-                            this.deleteBall( b, _deleteImage, _species[ _balls[b].getType() ].deleteSound );
-                        }
-                        else 
-                        {                            
-                            if ( _currentTool == TOOL_FLING )
+                            if ( _species[ _balls[b].getType() ].usePhysics )
                             {
-                                if ( _species[ _balls[b].getType() ].usePhysics )
-                                {
-                                    this.putBallInFlinger(b);
-                                }
+                                this.putBallInFlinger(b);
                             }
-                            
-                            _grabbedBall  = b;
+                        }
+                        
+                        if (( _species[ _balls[b].getType() ].usePhysics &&  
+                            ( _flinger.state != FLINGER_STATE_MOVING )) || this._devMode)
+                        {
+                            _grabbedBall = b;
                         }
                     }
                 }
             }
         }
     }
-
-
+    
 
 
     //------------------------------------
     this.setGameLevel = function( level )
     {
-        _numBalls = 0; 
+        _levelLoading = true;
+        _numBalls = 0;
         _game.setLevel( this, level, _collisionBalls, _ballsWithSomeCollision ); 
         
         if ( USING_TEST_GUI ) 
@@ -1258,37 +1095,40 @@ function HackyBalls()
         
         _flinger.cancel(); 
         _grabbedBall = NULL_BALL;
+
+        globalParameters.moveToolActive = false;
+        globalParameters.createToolActive = false;
+        globalParameters.deleteToolActive = false;
+        globalParameters.flingToolActive = true;
+        _tools.select(TOOL_FLING);
+        _currentTool = TOOL_FLING;
+
+        _levelLoading = false;
     }
 
 
     //---------------------------------
     this.putBallInFlinger = function(b)
     {
-        this.playSound( MOVE_FLING_SOUND );         
+        Sounds.play( "moveFling" );
+            
         _flinger.setBall( b, _balls[b].getPosition(), _balls[b].getRadius() );
+        
+        var jolt = new Vector2D();
+        jolt.setXY
+        ( 
+            -FLINGER_INITIAL_JOLT * ONE_HALF + Math.random() * FLINGER_INITIAL_JOLT,
+            -FLINGER_INITIAL_JOLT * ONE_HALF + Math.random() * FLINGER_INITIAL_JOLT
+        );
+        
+        _balls[b].setVelocity( jolt );
     }
 
 
     //-----------------------------
     this.selectTool = function(t)
     {
-        _currentTool = t;        
-        _flinger.cancel();
-
-        _toolButtons[ TOOL_MOVE     ].image.src = "images/move-tool.png";
-        _toolButtons[ TOOL_FLING    ].image.src = "images/fling-tool.png";
-        _toolButtons[ TOOL_CREATE   ].image.src = "images/create-tool.png";
-        _toolButtons[ TOOL_DELETE   ].image.src = "images/delete-tool.png";
-
-             if ( t == TOOL_MOVE   ) { _toolButtons[t].image.src = "images/move-tool-selected.png";     document.body.style.cursor = "grab";        this.playSound( TOOL_GRAB_SOUND  ); }
-        else if ( t == TOOL_FLING  ) { _toolButtons[t].image.src = "images/fling-tool-selected.png";    document.body.style.cursor = "move";        this.playSound( TOOL_GRAB_SOUND  ); }
-        else if ( t == TOOL_CREATE ) { _toolButtons[t].image.src = "images/create-tool-selected.png";   document.body.style.cursor = "crosshair";   this.playSound( TOOL_GRAB_SOUND  ); }
-        else if ( t == TOOL_DELETE ) { _toolButtons[t].image.src = "images/delete-tool-selected.png";   document.body.style.cursor = "not-allowed"; this.playSound( TOOL_TRASH_SOUND ); }
-        
-        if ( t != TOOL_SPECIES )
-        {
-            _toolButtons[ TOOL_SPECIES  ].visible = false;
-        }
+        _tools.select(t);
     }
 
 
@@ -1302,7 +1142,6 @@ function HackyBalls()
                 _hackyBallsGUI.setMouseMove( x, y );
             }
         }
-
 
         if ( _flinger.state == FLINGER_STATE_WAITING )
         {
@@ -1341,6 +1180,7 @@ function HackyBalls()
         else if ( _flinger.state == FLINGER_STATE_PULLING )
         {
             _flinger.state = FLINGER_STATE_FLINGING;
+            _game.addScore(1);    
         }
         
         for (var b=0; b<_numBalls; b++)
@@ -1377,7 +1217,12 @@ function HackyBalls()
     {    
         if ( _flinger.ballIndex != NULL_BALL )
         {
-            this.deleteBall( _flinger.ballIndex, _deleteImage );
+            this.deleteBall( _flinger.ballIndex, _deleteImage, _species[ _balls[ _flinger.ballIndex ].getType() ].deleteSound );
+        }
+
+        if ( _grabbedBall != NULL_BALL )
+        {
+            this.deleteBall( _grabbedBall, _deleteImage, _species[ _balls[ _grabbedBall ].getType() ].deleteSound );
         }
     }
     
@@ -1388,14 +1233,127 @@ function HackyBalls()
     }
     
 
+    this.toggleDevMode = function()
+    {
+        this._devMode = !this._devMode;
+        if (this._devMode)
+        {
+            console.log("DEV MODE ACTIVE");
+            globalParameters.moveToolActive = true;
+            globalParameters.createToolActive = true;
+            globalParameters.deleteToolActive = true;
+            globalParameters.flingToolActive = false;
+            _tools.select(TOOL_MOVE);
+            _currentTool = TOOL_MOVE;
+        }
+        else
+        {
+            console.log("Game mode");
+            globalParameters.moveToolActive = false;
+            globalParameters.createToolActive = false;
+            globalParameters.deleteToolActive = false;
+            globalParameters.flingToolActive = true;
+            _tools.select(TOOL_FLING);
+            _currentTool = TOOL_FLING;
+
+            for (var i=0; i<_numBalls; i++)
+            {
+                _balls[i].setVelocity(new Vector2D(0,0));
+            }
+        }
+    }
+
+    this.printLevel = function()
+    {
+        if (!this._devMode)
+            return;
+
+        console.log("Saving level");
+        out = '\n{\n';
+        out += '\t"ID": "X",\n';
+        out += '\t"background": "2",\n';
+
+        out += '\t"balls":\n';
+        out += '\t[\n';
+        for (var b=0; b<_numBalls; b++)
+        {
+            out += '\t\t{\n';
+            out += '\t\t\t"ID" : "' + b + '",\n';
+            var p = _balls[b].getPosition();
+            out += '\t\t\t"x" : "' + p.x + '",\n';
+            out += '\t\t\t"y" : "' + p.y + '",\n';
+            out += '\t\t\t"species" : "' + _balls[b].getType() + '"\n';
+            if (b == _numBalls-1)
+                out += '\t\t}\n';
+            else
+                out += '\t\t},\n';
+        }        
+        out += '\t]\n';
+
+        out += '}\n';
+        console.log(out);
+
+        //_savedBalls = _balls.slice();
+
+        _savedBalls = new Array();
+        _numSavedBalls = _numBalls;
+        for (var i=0; i<_numBalls; i++ )
+        {
+            var info = {};
+            var pos = _balls[i].getPosition(); 
+            info.x = pos.x;
+            info.y = pos.y;
+            info.species = _balls[i].getType();
+            _savedBalls.push(info);
+        }
+    }
+
+    this.restoreLevel = function()
+    {
+        if (!this._devMode)
+            return;
+
+        console.log("Restoring level");
+        //_balls = _savedBalls.slice();
+        _numBalls = 0;
+        for (var i=0; i<_savedBalls.length; i++ )
+        {  
+            this.createBall(_savedBalls[i].x, _savedBalls[i].y, _savedBalls[i].species);
+        }
+    }    
+
+
+    this.nextLevel = function()
+    {
+        if (!this._devMode)
+            return;
+        this.setGameLevel( _game.getNextLevel() );
+        globalParameters.moveToolActive = true;
+        globalParameters.createToolActive = true;
+        globalParameters.deleteToolActive = true;
+        globalParameters.flingToolActive = false;
+    }
+
+    this.prevLevel = function()
+    {
+        if (!this._devMode)
+            return;
+        this.setGameLevel( _game.getPrevLevel() );
+        globalParameters.moveToolActive = true;
+        globalParameters.createToolActive = true;
+        globalParameters.deleteToolActive = true;
+        globalParameters.flingToolActive = false;
+    }
+
+
     //---------------------------------
     this.applyParameters = function()
     {    
-		/* NOTE: set background on DOM element instead of drawing it on the canvas to avoid
-		 * performance issues with webkit2gtk, since its canvas implementation scales images
-		 * in software.
-		 */
-		canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')";
+        /* NOTE: set background on DOM element instead of drawing it on the canvas to avoid
+         * performance issues with webkit2gtk, since its canvas implementation scales images
+         * in software.
+         */
+        canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')";
                 
         _species[0].gravity         = globalParameters.gravity_0;
         _species[0].radius          = globalParameters.radius_0;
@@ -1412,8 +1370,7 @@ function HackyBalls()
         _species[0].touchDeath [1]  = globalParameters.touchDeath_0_1;
         _species[0].touchDeath [2]  = globalParameters.touchDeath_0_2;    
         _species[0].touchDeath [3]  = globalParameters.touchDeath_0_3;    
-        _species[0].touchDeath [4]  = globalParameters.touchDeath_0_4;    
-        _species[0].deathType       = globalParameters.deathType_0;         
+        _species[0].touchDeath [4]  = globalParameters.touchDeath_0_4;            
         _species[0].deathVisualGood = globalParameters.deathVisualGood_0;                
         _species[0].deathVisualBad  = globalParameters.deathVisualBad_0;                
         _species[0].deathSoundGood  = globalParameters.deathSoundGood_0;                
@@ -1434,8 +1391,7 @@ function HackyBalls()
         _species[1].touchDeath [1]  = globalParameters.touchDeath_1_1;
         _species[1].touchDeath [2]  = globalParameters.touchDeath_1_2;    
         _species[1].touchDeath [3]  = globalParameters.touchDeath_1_3;    
-        _species[1].touchDeath [4]  = globalParameters.touchDeath_1_4;    
-        _species[1].deathType       = globalParameters.deathType_1;         
+        _species[1].touchDeath [4]  = globalParameters.touchDeath_1_4;           
         _species[1].deathVisualGood = globalParameters.deathVisualGood_1;                
         _species[1].deathVisualBad  = globalParameters.deathVisualBad_1;                
         _species[1].deathSoundGood  = globalParameters.deathSoundGood_1;                
@@ -1456,8 +1412,7 @@ function HackyBalls()
         _species[2].touchDeath [1]  = globalParameters.touchDeath_2_1;
         _species[2].touchDeath [2]  = globalParameters.touchDeath_2_2;    
         _species[2].touchDeath [3]  = globalParameters.touchDeath_2_3;    
-        _species[2].touchDeath [4]  = globalParameters.touchDeath_2_4;  
-        _species[2].deathType       = globalParameters.deathType_2;         
+        _species[2].touchDeath [4]  = globalParameters.touchDeath_2_4;         
         _species[2].deathVisualGood = globalParameters.deathVisualGood_2;                
         _species[2].deathVisualBad  = globalParameters.deathVisualBad_2;                
         _species[2].deathSoundGood  = globalParameters.deathSoundGood_2;                
@@ -1478,8 +1433,7 @@ function HackyBalls()
         _species[3].touchDeath [1]  = globalParameters.touchDeath_3_1;
         _species[3].touchDeath [2]  = globalParameters.touchDeath_3_2;    
         _species[3].touchDeath [3]  = globalParameters.touchDeath_3_3;    
-        _species[3].touchDeath [4]  = globalParameters.touchDeath_3_4; 
-        _species[3].deathType       = globalParameters.deathType_3;         
+        _species[3].touchDeath [4]  = globalParameters.touchDeath_3_4;        
         _species[3].deathVisualGood = globalParameters.deathVisualGood_3;                
         _species[3].deathVisualBad  = globalParameters.deathVisualBad_3;                
         _species[3].deathSoundGood  = globalParameters.deathSoundGood_3;                
@@ -1500,8 +1454,7 @@ function HackyBalls()
         _species[4].touchDeath [1]  = globalParameters.touchDeath_4_1;
         _species[4].touchDeath [2]  = globalParameters.touchDeath_4_2;    
         _species[4].touchDeath [3]  = globalParameters.touchDeath_4_3;    
-        _species[4].touchDeath [4]  = globalParameters.touchDeath_4_4;  
-        _species[4].deathType       = globalParameters.deathType_4;         
+        _species[4].touchDeath [4]  = globalParameters.touchDeath_4_4;         
         _species[4].deathVisualGood = globalParameters.deathVisualGood_4;                
         _species[4].deathVisualBad  = globalParameters.deathVisualBad_4;                
         _species[4].deathSoundGood  = globalParameters.deathSoundGood_4;                
@@ -1519,33 +1472,18 @@ function HackyBalls()
                 _balls[b].setUsingPhysics ( _species[s].usePhysics );     
             }
         }
-    
-        _toolButtons[ TOOL_MOVE     ].visible = globalParameters.moveToolActive;
-        _toolButtons[ TOOL_FLING    ].visible = globalParameters.flingToolActive;
-        _toolButtons[ TOOL_CREATE   ].visible = globalParameters.createToolActive;
-        _toolButtons[ TOOL_DELETE   ].visible = globalParameters.deleteToolActive;
+        
+        _tools.applyParameters();
     }
     
     
-    
-    
-    //----------------------------------
-    this.playSound = function( sound )
-    {
-        if ( _useAudio ) 
-        {
-            sound.pause();
-            sound.currentTime = 0; 
-            sound.play(); 
-        }
-    }
-
+    //---------------------------------------------------
     this.setWalls = function( left, bottom, right, top )
     {
-	    _leftWall 	= left;
-        _rightWall 	= right;
+        _leftWall   = left;
+        _rightWall  = right;
         _bottomWall = bottom;
-        _topWall	= top;
+        _topWall    = top;
 
         for (var i=0; i<_numBalls; i++)
         {
@@ -1583,10 +1521,22 @@ document.onkeydown = function(e)
 {
     if ( e.keyCode === 32 ) { hackyBalls.spaceKeyPressed();  }
     if ( e.keyCode ===  8 ) { hackyBalls.deleteKeyPressed(); }
+
+    // Ctrl + Sift + D: Toggle developer mode
+    if (e.keyCode == 68 && e.ctrlKey && e.shiftKey) { hackyBalls.toggleDevMode(); }
+    // Ctrl - S: Save level
+    if (e.keyCode == 83 && e.ctrlKey) { hackyBalls.printLevel(); }
+    // Ctrl - R: Restore saved level
+    if (e.keyCode == 82 && e.ctrlKey) { hackyBalls.restoreLevel(); }
+    // Ctrl - N: Next level
+    if (e.keyCode == 78 && e.ctrlKey) { hackyBalls.nextLevel(); }
+    // Ctrl - P: Prev level
+    if (e.keyCode == 80 && e.ctrlKey) { hackyBalls.prevLevel(); }
 }
 
 /* Declare main object */
 var hackyBalls = new HackyBalls();
+
 
 /* globally accessible reset */
 function reset()

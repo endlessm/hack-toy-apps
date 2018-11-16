@@ -23,10 +23,10 @@ var FLINGER_HOLD_FRICTION   = 10.0;
 var FLINGER_MIN_PULL_RATIO  = 0.7;
 var FLINGER_FLING_FORCE     = 8.0;
 var FLINGER_FLING_DURATION  = 30;
-var FLINGER_HANDLE_SIZE     = 19.0;
+var FLINGER_HANDLE_SIZE     = 30.0;
 var FLINGER_SIZE            = 50.0;
-var FLINGER_MIN_RADIUS      = 60.0;
-
+var FLINGER_MIN_RADIUS      = 40.0;
+var FLINGER_INITIAL_JOLT    = 4.0;
 
 //------------------
 function Flinger()
@@ -89,8 +89,6 @@ function Flinger()
         this.handlePosition.add( this.handleVelocity );
     }   
     
-
-
     
     //----------------------------------------------
     this.positionOverHandle = function( position )
@@ -135,10 +133,15 @@ function Flinger()
     //------------------------------------------
     this.render = function( ballPosition, radius )
     {            
-        canvas.lineWidth = 4; 
+        canvas.lineWidth = 4;         
                 
         //var radius = _balls[ _flinger.ballIndex ].getRadius() * 1.5;
         var radius = radius * 1.5;
+        
+        if ( radius < FLINGER_MIN_RADIUS ) 
+        {
+            radius = FLINGER_MIN_RADIUS;
+        }
                     
         var xx = this.handlePosition.x - ballPosition.x;
         var yy = this.handlePosition.y - ballPosition.y;    
@@ -237,10 +240,6 @@ function Flinger()
         );
         
         var flingerRadius = radius * 2.0;
-        //if ( flingerRadius < FLINGER_MIN_RADIUS ) 
-        //{
-        //    flingerRadius = FLINGER_MIN_RADIUS;
-        //}
     
         var angle = -Math.PI * ONE_HALF + Math.atan2( yy, xx ); 
         canvas.rotate( angle );    

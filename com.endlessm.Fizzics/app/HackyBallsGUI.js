@@ -450,6 +450,7 @@ function HackyBallsGUI()
             else if ( _userInterface.buttonPressed( "fling tool on"   ) ) { _parameters.flingToolActive  = true;  }
             else if ( _userInterface.buttonPressed( "create tool on"  ) ) { _parameters.createToolActive = true;  }
             else if ( _userInterface.buttonPressed( "delete tool on"  ) ) { _parameters.deleteToolActive = true;  }
+            
             else if ( _userInterface.buttonPressed( "move tool off"   ) ) { _parameters.moveToolActive   = false; }
             else if ( _userInterface.buttonPressed( "fling tool off"  ) ) { _parameters.flingToolActive  = false; }
             else if ( _userInterface.buttonPressed( "create tool off" ) ) { _parameters.createToolActive = false; }
@@ -458,8 +459,8 @@ function HackyBallsGUI()
         
             if ( _selectedSpecies == 0 )
             {
-                     if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_0 = false; } 
-                else if ( _userInterface.buttonPressed( "unfreeze"  ) ) { _parameters.usePhysics_0 = true;  } 
+                     if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_0 = false;    } 
+                else if ( _userInterface.buttonPressed( "unfreeze"   ) ) { _parameters.usePhysics_0 = true;     } 
                 else if ( _userInterface.buttonPressed( "img 0"      ) ) { _parameters.imageIndex_0 = 0;        } 
                 else if ( _userInterface.buttonPressed( "img 1"      ) ) { _parameters.imageIndex_0 = 1;        } 
                 else if ( _userInterface.buttonPressed( "img 2"      ) ) { _parameters.imageIndex_0 = 2;        } 
@@ -472,8 +473,8 @@ function HackyBallsGUI()
             }
             if ( _selectedSpecies == 1 )
             {
-                     if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_1 = false; } 
-                else if ( _userInterface.buttonPressed( "unfreeze"  ) ) { _parameters.usePhysics_1 = true;  } 
+                     if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_1 = false;    } 
+                else if ( _userInterface.buttonPressed( "unfreeze"   ) ) { _parameters.usePhysics_1 = true;     } 
                 else if ( _userInterface.buttonPressed( "img 0"      ) ) { _parameters.imageIndex_1 = 0;        } 
                 else if ( _userInterface.buttonPressed( "img 1"      ) ) { _parameters.imageIndex_1 = 1;        } 
                 else if ( _userInterface.buttonPressed( "img 2"      ) ) { _parameters.imageIndex_1 = 2;        } 
@@ -486,8 +487,8 @@ function HackyBallsGUI()
             }
             if ( _selectedSpecies == 2 )
             {
-                     if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_2 = false; } 
-                else if ( _userInterface.buttonPressed( "unfreeze"  ) ) { _parameters.usePhysics_2 = true;  } 
+                     if ( _userInterface.buttonPressed( "freeze"     ) ) { _parameters.usePhysics_2 = false;    } 
+                else if ( _userInterface.buttonPressed( "unfreeze"   ) ) { _parameters.usePhysics_2 = true;     } 
                 else if ( _userInterface.buttonPressed( "img 0"      ) ) { _parameters.imageIndex_2 = 0;        } 
                 else if ( _userInterface.buttonPressed( "img 1"      ) ) { _parameters.imageIndex_2 = 1;        } 
                 else if ( _userInterface.buttonPressed( "img 2"      ) ) { _parameters.imageIndex_2 = 2;        } 

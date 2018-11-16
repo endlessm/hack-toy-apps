@@ -62,7 +62,7 @@ class HackSoundServer(GObject.GObject):
         Stops a sound asynchronously.
 
         Args:
-            sound_event_id (str): The sound event id to play.
+            uuid (str): The sound uuid to stop playing.
 
         Optional keyword arguments:
             result_handler: A function that is invoked when the async call

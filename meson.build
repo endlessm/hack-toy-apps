@@ -46,7 +46,7 @@ if app_id == 'com.endlessm.HackUnlock'
     )
 endif
 
-if app_id == 'com.endlessm.HackUnlock' or app_id == 'com.endlessm.OperatingSystemApp'
+if app_id == 'com.endlessm.Fizzics' or app_id == 'com.endlessm.HackUnlock' or app_id == 'com.endlessm.OperatingSystemApp'
     install_data(
         join_paths(app_id, 'data', 'metadata.json'),
         install_dir: 'share/toy'

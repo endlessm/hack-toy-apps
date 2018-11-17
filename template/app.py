@@ -22,7 +22,7 @@ SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 class ToyAppWindow(Gtk.ApplicationWindow):
     __gtype_name__ = "ToyAppWindow"
 
-    stack = Gtk.Template.Child()
+    revealer = Gtk.Template.Child()
     splash = Gtk.Template.Child()
     view = Gtk.Template.Child()
     settings = Gtk.Template.Child()
@@ -97,7 +97,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             provider = Gtk.CssProvider()
             provider.load_from_data(bytes(
                 """
-toy-app-window > stack > frame {
+toy-app-window > overlay > revealer > frame {
     background: white, url('%s') no-repeat center;
 }
                 """ % splash.get_path(), 'UTF8'))
@@ -106,12 +106,18 @@ toy-app-window > stack > frame {
                 provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
-            self.stack.set_visible_child(self.splash)
+            self.revealer.set_reveal_child(True)
         else:
-            self.stack.set_visible_child(self.view)
+            self.revealer.hide()
 
     def _view_show(self):
-        self.stack.set_visible_child(self.view)
+        self.revealer.connect('notify::child-revealed', self._on_child_revealed)
+        self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
+        self.revealer.set_reveal_child(False)
+
+    def _on_child_revealed(self, revealer, pspec):
+        if not self.revealer.get_child_revealed():
+            self.revealer.destroy()
 
     def _on_context_menu(self, webview, context, event, hit):
         return Gtk.true()

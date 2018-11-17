@@ -385,7 +385,7 @@ function HackyBalls()
         //--------------------------------------
         // load images
         //--------------------------------------
-        canvasID.style.backgroundImage = "url('images/background-0.png')";
+        canvasID.style.backgroundImage = "url('images/background-2.png')";
         _deleteImage.src = "images/delete-ball.png";    
 
         //---------------------------------------------
@@ -480,6 +480,12 @@ function HackyBalls()
         {
             this.setGameLevel( 0 );
             _initializeFirstLevel = false;
+
+            // Tell ToyApp we just finished loading everything
+            if (ToyApp)
+            {
+                ToyApp.loadNotify();
+            }
         }
     
         // The Clubhouse requested a particular level. Set it and then reset the variable so we don't do it again.

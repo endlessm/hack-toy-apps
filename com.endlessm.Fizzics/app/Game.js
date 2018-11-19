@@ -27,16 +27,11 @@ function Game()
     var _ballDied      = false;
     var _levelboard    = new InfoPanel();
     var _scoreboard    = new InfoPanel();
-    //var _flingboard    = new InfoPanel();
+    var _flingboard    = new InfoPanel();
     var _successScreen = new InfoPanel();
     var _levelData     = null;
     var _sucessBall    = new Image();
     
-    this.addScore = function( delta )
-    {
-        _score += delta;
-    }
-
     this.setBallDied = function()
     {
         _ballDied = true;
@@ -71,6 +66,7 @@ function Game()
         _ballDied = false;
         
         gameState.numFlings = 0;
+        gameState.numBonus  = 0;
         gameState.running   = true; 
         gameState.success   = false; 
         
@@ -256,23 +252,22 @@ function Game()
         //------------------------------------------------------------------------------
         _levelboard.width  = 120;
         _levelboard.height = 40;
-        _levelboard.x      = canvasID.width * ONE_HALF - _levelboard.width/2;
+        _levelboard.x      = canvasID.width * ONE_HALF - 1.5*_levelboard.width;
         _levelboard.y      = 0;
         _levelboard.image.src = "images/levelboard.png";
 
+        _flingboard.width  = 120;
+        _flingboard.height = 40;
+        _flingboard.x      = _levelboard.x + _levelboard.width;
+        _flingboard.y      = _scoreboard.y;
+        _flingboard.image.src = "images/flingboard.png";
+
         _scoreboard.width  = 120;
         _scoreboard.height = 40;
-        _scoreboard.x      = _levelboard.x + _levelboard.width;
+        _scoreboard.x      = _flingboard.x + _flingboard.width;
         _scoreboard.y      = 0;
         _scoreboard.image.src = "images/scoreboard.png";
 
-        /*
-        _flingboard.width  = 120;
-        _flingboard.height = 40;
-        _flingboard.x      = _scoreboard.x + _scoreboard.width;
-        _flingboard.y      = _scoreboard.y;
-        _flingboard.image.src = "images/flingboard.png";
-        */
         _successScreen.width  = 818 * 0.5;
         _successScreen.height = 1024 * 0.5;
         _successScreen.x      = canvasID.width  * ONE_HALF - _successScreen.width  * ONE_HALF;
@@ -573,6 +568,7 @@ function Game()
         gameState.clock               = 0;
         gameState.numCollisions       = 0;
         gameState.numFlings           = 0;
+        gameState.numBonus            = 0;
         gameState.totalCollisionCount = 0;
 
         globalParameters.quest0Success = false;
@@ -636,6 +632,7 @@ function Game()
                 {   
                     gameState.running = false;
                     gameState.success = true;
+                    globalParameters.levelSuccess = true;
                     //_scoreboard.image.src = "images/scoreboard-win.png";
                 }
             }
@@ -747,7 +744,7 @@ function Game()
         
         canvas.font = "17px Arial";
         var l = _level+1;
-        canvas.fillText( "Level " + l.toString(), _levelboard.x + 15, _levelboard.y + 25 );
+        canvas.fillText( "LEVEL " + l.toString(), _levelboard.x + 15, _levelboard.y + 25 );
 
         //--------------------------------------
         // render scoreboard
@@ -761,10 +758,9 @@ function Game()
             _scoreboard.height
         );
         
-        canvas.font = "14px Arial"; canvas.fillText( "score", _scoreboard.x + 20, _scoreboard.y + 25 );
-        canvas.font = "20px Arial"; canvas.fillText( _score.toString(), _scoreboard.x + 70, _scoreboard.y + 25 );
+        canvas.font = "14px Arial"; canvas.fillText( "BONUS", _scoreboard.x + 20, _scoreboard.y + 25 );
+        canvas.font = "20px Arial"; canvas.fillText( gameState.numBonus.toString(), _scoreboard.x + 75, _scoreboard.y + 25 );
         
-        /*
         //--------------------------------------
         // render flingboard
         //--------------------------------------
@@ -776,9 +772,9 @@ function Game()
             _flingboard.width, 
             _flingboard.height
         );
-        canvas.font = "14px Arial"; canvas.fillText( "flings", _flingboard.x + 20, _flingboard.y + 25 );
-        canvas.font = "20px Arial"; canvas.fillText( gameState.numFlings.toString(), _flingboard.x + 70, _flingboard.y + 25 );
-        */
+        canvas.font = "14px Arial"; canvas.fillText( "FLINGS", _flingboard.x + 20, _flingboard.y + 25 );
+        canvas.font = "20px Arial"; canvas.fillText( gameState.numFlings.toString(), _flingboard.x + 75, _flingboard.y + 25 );
+
         //--------------------------------------
         // render success screen
         //--------------------------------------

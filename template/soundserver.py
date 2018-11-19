@@ -54,7 +54,7 @@ class HackSoundServer:
             else:
                 return class_.get_proxy().PlaySound("(s)", sound_event_id)
         except GLib.Error as err:
-            _logger.error("Error playing sound '%s'" % sound_event_id)
+            _logger.error("Error playing sound '%s': %s", sound_event_id, err.message)
 
     @classmethod
     def stop(class_, uuid, result_handler=None, user_data=None):
@@ -77,7 +77,7 @@ class HackSoundServer:
                                          result_handler=result_handler,
                                          user_data=user_data)
         except GLib.Error as err:
-            _logger.error("Error stopping sound '%s'" % uuid)
+            _logger.error("Error stopping sound '%s': %s", uuid, err.message)
 
     @classmethod
     def _black_hole(_class, _proxy, _result, user_data=None):

@@ -498,9 +498,9 @@ function HackyBalls()
             _initializeFirstLevel = false;
 
             // Tell ToyApp we just finished loading everything
-            if (ToyApp)
+            if (window.ToyApp)
             {
-                ToyApp.loadNotify();
+                window.ToyApp.loadNotify();
             }
         }
     

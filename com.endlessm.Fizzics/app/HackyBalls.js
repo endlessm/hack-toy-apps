@@ -50,6 +50,8 @@ var globalParameters =
     type2BallCount  : 0,
     score           : 0,
     currentLevel    : 0,
+    flipped         : false,
+    levelSuccess    : false,
 
     // parameters for species 0 balls
     radius_0        : ZERO,
@@ -183,7 +185,14 @@ var gameState =
     numCollisionsGoal   : 0,
     numCollisions       : 0,
     totalCollisionCount : 0,
+    numFlings           : 0,
+    numBonus            : 0,
     success             : false
+}
+
+function flip()
+{
+    globalParameters.flipped = true;
 }
 
 //----------------------
@@ -203,6 +212,7 @@ function HackyBalls()
         this.friction        = ZERO;
         this.collision       = ZERO;
         this.usePhysics      = false;
+        this.flingable       = false;
         this.imageID         = 0;
         this.createSound     = null; 
         this.successSound    = null; 
@@ -354,11 +364,17 @@ function HackyBalls()
         _species[3].toolSound    = "tool3"; 
         _species[4].toolSound    = "tool4"; 
                 
+        _species[0].flingable = true;
+        _species[1].flingable = false;
+        _species[2].flingable = false;
+        _species[3].flingable = false;
+        _species[4].flingable = true;        
+
         _species[0].score = 0;
         _species[1].score = 0;
         _species[2].score = 0;
         _species[3].score = 0;
-        _species[4].score = -2;        
+        _species[4].score = 2;        
         
         //--------------------------------------
         // create balls array  
@@ -849,7 +865,7 @@ function HackyBalls()
             else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = "death3"; }
         }
         
-        _game.addScore( _species[ ballSpecies ].score );
+        gameState.numBonus = _species[ ballSpecies ].score;
         if (ballSpecies == 0 && deathType == 2)
             _game.setBallDied();
         this.deleteBall( b, deathImage, deathSound );    
@@ -1068,13 +1084,13 @@ function HackyBalls()
                     {                            
                         if ( _currentTool == TOOL_FLING )
                         {
-                            if ( _species[ _balls[b].getType() ].usePhysics )
+                            if ( _species[ _balls[b].getType() ].flingable && _species[ _balls[b].getType() ].usePhysics)
                             {
                                 this.putBallInFlinger(b);
                             }
                         }
                         
-                        if (( _species[ _balls[b].getType() ].usePhysics &&  
+                        else if (( _species[ _balls[b].getType() ].usePhysics &&  
                             ( _flinger.state != FLINGER_STATE_MOVING )) || this._devMode)
                         {
                             _grabbedBall = b;
@@ -1090,6 +1106,7 @@ function HackyBalls()
     //------------------------------------
     this.setGameLevel = function( level )
     {
+        globalParameters.levelSuccess = false;
         _levelLoading = true;
         _numBalls = 0;
         _game.setLevel( this, level, _collisionBalls, _ballsWithSomeCollision ); 
@@ -1186,7 +1203,8 @@ function HackyBalls()
         else if ( _flinger.state == FLINGER_STATE_PULLING )
         {
             _flinger.state = FLINGER_STATE_FLINGING;
-            _game.addScore(1);    
+            gameState.numFlings++;
+
         }
         
         for (var b=0; b<_numBalls; b++)

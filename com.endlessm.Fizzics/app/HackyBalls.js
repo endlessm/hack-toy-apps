@@ -5,8 +5,8 @@ var canvas = canvasID.getContext( '2d' );
 
 var USING_TEST_GUI = false;
 
-var WINDOW_WIDTH  = canvasID.width;
-var WINDOW_HEIGHT = canvasID.height;
+var WINDOW_WIDTH  = 1920;
+var WINDOW_HEIGHT = 1004;
 
 var NULL_BALL = -1;
 var MAX_BALLS = 100;
@@ -317,8 +317,8 @@ function HackyBalls()
         //-----------------------------------
         // Set canvas size
         //-----------------------------------
-        canvasID.width  = window.innerWidth;
-        canvasID.height = window.innerHeight;
+        canvasID.width  = WINDOW_WIDTH;
+        canvasID.height = WINDOW_HEIGHT;
 
         _rightWall  = canvasID.width;
         _bottomWall = canvasID.height;
@@ -1567,13 +1567,3 @@ function reset()
 {
     hackyBalls.reset();
 }
-
-window.addEventListener("resize", function () {
-
-    // Resize canvas
-    canvasID.width = window.innerWidth;
-    canvasID.height = window.innerHeight;
-
-    // Update balls walls
-    hackyBalls.setWalls ( ZERO, canvasID.height, canvasID.width, ZERO );
-});

@@ -7,9 +7,9 @@
     <category>Game</category>
   </categories>
   <name>Fizzics</name>
-  <summary>Fizzics</summary>
+  <summary>Learn to design your own game</summary>
 
-  <description><p>Fizzics</p></description>
+  <description><p>Fizzics lets you design the rules and elements of the game. Every feature of the game is flexible! You can change the game attributes such as background, ball size, gravity, and bounce. You can even change the sound and visual effects! It’s the first step in learning to create your own game.</p></description>
 
   <screenshots>
     <screenshot>

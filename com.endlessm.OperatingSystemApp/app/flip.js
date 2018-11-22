@@ -1,6 +1,7 @@
 var globalParameters = 
 {
-    flipped         : false
+    flipped         : false,
+    clicked         : false
 }
 
 
@@ -11,4 +12,9 @@ var globalParameters =
 function flip()
 {
     globalParameters.flipped = !globalParameters.flipped;
+}
+
+document.onmousedown = function(e)
+{
+    globalParameters.clicked = !globalParameters.clicked;
 }

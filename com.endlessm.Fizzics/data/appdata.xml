@@ -13,12 +13,12 @@
 
   <screenshots>
     <screenshot>
-      <image type="source">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.Fizzics/data/screenshot1-C.png</image>
+      <image type="source">https://d3lapyynmdp1i9.cloudfront.net/screenshots/com.endlessm.Fizzics/C/com.endlessm.Fizzics-screenshot1.png</image>
     </screenshot>
   </screenshots>
 
   <metadata>
-    <value key="GnomeSoftware::popular-background">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.Fizzics/data/thumbnail.png</value>
+    <value key="GnomeSoftware::popular-background">https://d3lapyynmdp1i9.cloudfront.net/thumbnails/com.endlessm.Fizzics/com.endlessm.Fizzics-thumb.png</value>
   </metadata>
 
   <url type="homepage">http://www.endlessm.com</url>

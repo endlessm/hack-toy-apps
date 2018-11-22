@@ -13,12 +13,12 @@
 
   <screenshots>
     <screenshot>
-      <image type="source">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.OperatingSystemApp/data/screenshot1-C.jpg</image>
+      <image type="source">https://d3lapyynmdp1i9.cloudfront.net/screenshots/com.endlessm.OperatingSystemApp/C/com.endlessm.OperatingSystemApp-screenshot1.png</image>
     </screenshot>
   </screenshots>
 
   <metadata>
-    <value key="GnomeSoftware::popular-background">https://raw.githubusercontent.com/endlessm/hack-toy-apps/master/com.endlessm.OperatingSystemApp/data/thumbnail.png</value>
+    <value key="GnomeSoftware::popular-background">https://d3lapyynmdp1i9.cloudfront.net/thumbnails/com.endlessm.OperatingSystemApp/com.endlessm.OperatingSystemApp-thumb.png</value>
   </metadata>
 
   <url type="homepage">http://www.endlessm.com</url>

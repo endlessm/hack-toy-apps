@@ -7,10 +7,9 @@ var canvas = canvasID.getContext( '2d' );
 // flinger states
 //---------------------------------
 var FLINGER_STATE_NULL      = -1;
-var FLINGER_STATE_MOVING    =  0;
-var FLINGER_STATE_WAITING   =  1;
-var FLINGER_STATE_PULLING   =  2;
-var FLINGER_STATE_FLINGING  =  3;
+var FLINGER_STATE_WAITING   =  0;
+var FLINGER_STATE_PULLING   =  1;
+var FLINGER_STATE_FLINGING  =  2;
 
 //---------------------------------
 // flinger constants
@@ -19,84 +18,234 @@ var FLINGER_SPRING_FORCE    = 10.0;
 var FLINGER_FRICTION        = 20.0;
 var FLINGER_GRAVITY         = 200.0;
 var FLINGER_HOLD_FORCE      = 20.0;
-var FLINGER_HOLD_FRICTION   = 10.0;
 var FLINGER_MIN_PULL_RATIO  = 0.7;
-var FLINGER_FLING_FORCE     = 8.0;
+var FLINGER_FLING_FORCE     = 0.15;
 var FLINGER_FLING_DURATION  = 30;
 var FLINGER_HANDLE_SIZE     = 30.0;
 var FLINGER_SIZE            = 50.0;
-var FLINGER_MIN_RADIUS      = 40.0;
-var FLINGER_INITIAL_JOLT    = 4.0;
+var FLINGER_MIN_RADIUS      = 50.0;
+var FLINGER_INITIAL_JOLT    = 6.0;
 
 //------------------
 function Flinger()
 {        
-    this.state          = FLINGER_STATE_NULL;
-    this.ballIndex      = -1;
-    this.position       = new Vector2D();
-    this.handlePosition = new Vector2D();
-    this.handleVelocity = new Vector2D();
-    this.handleLength   = ZERO;
-    this.image          = new Image();
-    this.readyToFling   = false;
-    this.image.src      = "images/flinger.png";
+    var _position       = new Vector2D();
+    var _handlePosition = new Vector2D();
+    var _handleVelocity = new Vector2D();
+    var _pullPosition   = new Vector2D();
+    var _handleLength   = ZERO;
+    var _deltaTime      = ZERO;
+    var _radius         = ZERO;
+    var _image          = new Image();
+    var _ballIndex      = NULL_BALL;
+    var _state          = FLINGER_STATE_NULL;
+    var _readyToFling   = false;
+    var _flingingBall   = NULL_BALL;
+
+    
+    _image.src = "images/flinger.png";
 
 
     //--------------------------------------------------------------
     this.setBall = function( ballIndex, ballPosition, ballRadius )
     {
-        this.handleLength       = ballRadius + 4.0;    
-        this.state              = FLINGER_STATE_MOVING;
-        this.ballIndex          = ballIndex;
-        this.position.x         = ballPosition.x;
-        this.position.y         = ballPosition.y;
-        this.handlePosition.x   = this.position.x;
-        this.handlePosition.y   = this.position.y + this.handleLength;
-        this.handleVelocity.clear();
+        _handleLength       = ballRadius + 4.0;    
+        _state              = FLINGER_STATE_WAITING;
+        _ballIndex          = ballIndex;
+        _position.x         = ballPosition.x;
+        _position.y         = ballPosition.y;
+        _radius             = ballRadius;
+        
+        _handlePosition.x   = _position.x;
+        _handlePosition.y   = _position.y + _handleLength;
+        _handleVelocity.clear();
     }
     
     
     //---------------------------------
     this.update = function( deltaTime )
     {    
-        var xx = this.handlePosition.x - this.position.x;
-        var yy = this.handlePosition.y - this.position.y;
+        _deltaTime = deltaTime;
+    
+        var xx = _handlePosition.x - _position.x;
+        var yy = _handlePosition.y - _position.y;
 
         var currentLength = Math.sqrt( xx*xx + yy*yy );
         if ( currentLength > ZERO )
         {
-            var springForce = ( this.handleLength - currentLength ) * FLINGER_SPRING_FORCE * deltaTime;
+            var springForce = ( _handleLength - currentLength ) * FLINGER_SPRING_FORCE * _deltaTime;
             
             xx /= currentLength;
             yy /= currentLength;
         
-            this.handleVelocity.x += xx * springForce;    
-            this.handleVelocity.y += yy * springForce;                    
+            _handleVelocity.x += xx * springForce;    
+            _handleVelocity.y += yy * springForce;                    
         }
 
-        this.handleVelocity.addY( FLINGER_GRAVITY * deltaTime );
+        _handleVelocity.addY( FLINGER_GRAVITY * _deltaTime );
         
-        var friction = FLINGER_FRICTION * deltaTime;
+        var friction = FLINGER_FRICTION * _deltaTime;
         if ( friction < ONE )
         {
-            this.handleVelocity.scale( ONE - friction );            
+            _handleVelocity.scale( ONE - friction );            
         }
         else
         {
-            this.handleVelocity.clear();            
+            _handleVelocity.clear();            
         }
         
-        this.handlePosition.add( this.handleVelocity );
+        _handlePosition.add( _handleVelocity );
     }   
     
+    
+    
+    
+    
+    //--------------------------------------------------------------------------
+    this.updateInteractionsWithBall = function( ballPosition, mousePosition )
+    {
+        resultingBallForce = new Vector2D();
+
+        //-------------------------------------------------
+        // waiting
+        //-------------------------------------------------
+        if ( _state == FLINGER_STATE_WAITING )
+        {
+            if ( this.positionOverHandle( mousePosition ) )
+            {
+                _image.src = "images/flinger-hover.png";
+            }
+            else
+            {
+                _image.src = "images/flinger.png";
+            }
+        
+            var force = new Vector2D();
+
+            force.setToDifference( _position, ballPosition );
+            force.scale( FLINGER_HOLD_FORCE * _deltaTime );
+            resultingBallForce = force;
+        }
+        //-------------------------------------------------
+        // pulling
+        //-------------------------------------------------
+        else if ( _state == FLINGER_STATE_PULLING )
+        {    
+            _handlePosition.x = mousePosition.x;
+            _handlePosition.y = mousePosition.y;                
+             
+            var xx = _position.x - _handlePosition.x;
+            var yy = _position.y - _handlePosition.y;
+            
+            var length = Math.sqrt( xx*xx + yy*yy );
+                            
+            if ( length > ZERO )
+            {
+                xx /= length;
+                yy /= length;
+            }
+            
+            resultingBallForce.scale( ZERO );
+            
+            _pullPosition.setXY
+            (
+                _handlePosition.x + xx * _handleLength,
+                _handlePosition.y + yy * _handleLength
+            );
+  
+            var offset = new Vector2D();
+            offset.setToDifference( _position, ballPosition );
+
+            if ( offset.getMagnitude() > _radius * FLINGER_MIN_PULL_RATIO )
+            {                
+                _readyToFling = true;
+            }
+            else
+            {                
+                _readyToFling = false;
+            }
+        }
+        //-------------------------------------------------
+        // flinging
+        //-------------------------------------------------
+        else if ( _state == FLINGER_STATE_FLINGING )
+        {
+            if ( _readyToFling )
+            {                
+                var offset = new Vector2D();
+                offset.setToDifference( _position, ballPosition );
+            
+                var force = new Vector2D();
+                force.setToScaled( offset, FLINGER_FLING_FORCE );
+                 _ballIndex = NULL_BALL;
+
+                resultingBallForce.add( force );
+                _state = FLINGER_STATE_NULL;
+            }
+            else
+            {
+                _state = FLINGER_STATE_WAITING;
+            }
+        }    
+        
+        return resultingBallForce;
+    }
+
+
+    
+    //----------------------
+    this.fling = function()
+    {
+        _state = FLINGER_STATE_FLINGING;
+        _flingingBall = _ballIndex;
+    }
+    
+    
+    //------------------------------------------------------
+    this.getFlingingBallPastFlinger = function( ballPosition )
+    {
+        var flingerAxis = new Vector2D();
+        flingerAxis.setToDifference( _pullPosition, _position );
+        
+        var ballToFlingerEnd = new Vector2D();
+        ballToFlingerEnd.setToDifference( ballPosition, _position );
+        
+        var dot = flingerAxis.dotWith( ballToFlingerEnd );
+  
+        return ( dot < 0 );
+    }
+    
+    
+    
+    //-----------------------------
+    this.finishFling = function()
+    {
+        _flingingBall = NULL_BALL;
+    }
+    
+    
+    //------------------------------
+    this.getFlingingBall = function()
+    {
+        return _flingingBall;
+    }
+    
+    
+    
+    //--------------------------------
+    this.getPullPosition = function()
+    {
+        return _pullPosition;
+    }
+
     
     //----------------------------------------------
     this.positionOverHandle = function( position )
     {
-        if (( position.x > this.handlePosition.x - FLINGER_HANDLE_SIZE )
-        &&  ( position.x < this.handlePosition.x + FLINGER_HANDLE_SIZE )
-        &&  ( position.y > this.handlePosition.y - FLINGER_HANDLE_SIZE )
-        &&  ( position.y < this.handlePosition.y + FLINGER_HANDLE_SIZE ))
+        if (( position.x > _handlePosition.x - FLINGER_HANDLE_SIZE )
+        &&  ( position.x < _handlePosition.x + FLINGER_HANDLE_SIZE )
+        &&  ( position.y > _handlePosition.y - FLINGER_HANDLE_SIZE )
+        &&  ( position.y < _handlePosition.y + FLINGER_HANDLE_SIZE ))
         {
             return true;
         }
@@ -104,47 +253,42 @@ function Flinger()
         return false;            
     }
     
-    //----------------------------------------
-    this.setReadyToFling = function( ready )
-    {
-        this.readyToFling = ready;
-    }
     
     //---------------------------------
     this.getReadyToFling = function()
     {
-        return this.readyToFling;
+        return _readyToFling;
     }
     
-    //----------------------------------------------
+    //---------------------------------
     this.setHover = function( hover )
     {
         if ( hover )
         {
-            this.image.src = "images/flinger-hover.png";
+            _image.src = "images/flinger-hover.png";
         }
         else
         {
-            this.image.src = "images/flinger.png";
+            _image.src = "images/flinger.png";
         }    
     }
     
     
-    //------------------------------------------
-    this.render = function( ballPosition, radius )
+    //-------------------------------------
+    this.render = function( ballPosition )
     {            
+        canvas.save();
         canvas.lineWidth = 4;         
                 
-        //var radius = _balls[ _flinger.ballIndex ].getRadius() * 1.5;
-        var radius = radius * 1.5;
+        var radius = _radius * 1.5;
         
         if ( radius < FLINGER_MIN_RADIUS ) 
         {
             radius = FLINGER_MIN_RADIUS;
         }
                     
-        var xx = this.handlePosition.x - ballPosition.x;
-        var yy = this.handlePosition.y - ballPosition.y;    
+        var xx = _handlePosition.x - ballPosition.x;
+        var yy = _handlePosition.y - ballPosition.y;    
         
         var d = Math.sqrt( xx*xx + yy*yy );        
                     
@@ -169,7 +313,7 @@ function Flinger()
         // show slingshot rubber band lines
         //-----------------------------------
         var alpha = 0.2;
-        if ( this.readyToFling )
+        if ( _readyToFling )
         {
             alpha = 0.6;
         }
@@ -186,8 +330,8 @@ function Flinger()
 
         canvas.lineTo
         ( 
-            this.position.x - yl, 
-            this.position.y + xl
+            _position.x - yl, 
+            _position.y + xl
         );
 
         canvas.closePath();
@@ -202,8 +346,8 @@ function Flinger()
 
         canvas.lineTo
         ( 
-            this.position.x + yl, 
-            this.position.y - xl
+            _position.x + yl, 
+            _position.y - xl
         );
     
         canvas.closePath();
@@ -212,8 +356,8 @@ function Flinger()
         canvas.beginPath();
         canvas.arc
         ( 
-            this.position.x - yl, 
-            this.position.y + xl,
+            _position.x - yl, 
+            _position.y + xl,
             5.0, 0, PI2, false 
         );            
         canvas.fill();
@@ -222,14 +366,32 @@ function Flinger()
         canvas.beginPath();
         canvas.arc
         ( 
-            this.position.x + yl, 
-            this.position.y - xl,
+            _position.x + yl, 
+            _position.y - xl,
             5.0, 0, PI2, false 
         );            
         canvas.fill();
         canvas.closePath();    
-    
         
+        //-----------------------------------------------------------
+        // show translucent region within flinger pull area
+        //-----------------------------------------------------------
+        if ( _readyToFling )
+        {        
+            var midX = ( ballPosition.x - yl + ballPosition.x + yl + _position.x - yl + _position.x + yl ) / 4;
+            var midY = ( ballPosition.y - xl + ballPosition.y + xl + _position.y - xl + _position.y + xl ) / 4;
+            
+            canvas.fillStyle = "rgba( 255, 255, 255, 0.1 )"
+            canvas.beginPath();
+            canvas.moveTo( ballPosition.x - yl, ballPosition.y + xl );
+            canvas.lineTo( ballPosition.x + yl, ballPosition.y - xl );
+            canvas.lineTo( _position.x    + yl, _position.y    - xl );
+            canvas.lineTo( midX, midY );
+            canvas.lineTo( _position.x    - yl, _position.y    + xl );
+            canvas.closePath();
+            canvas.fill();    
+        }
+                
         //-----------------------------------
         // show slingshot harness
         //-----------------------------------
@@ -244,15 +406,36 @@ function Flinger()
         var angle = -Math.PI * ONE_HALF + Math.atan2( yy, xx ); 
         canvas.rotate( angle );    
         canvas.scale( flingerRadius, flingerRadius );
-        canvas.drawImage( this.image, ZERO, ZERO, ONE, ONE );
-        canvas.resetTransform();
+        canvas.drawImage( _image, ZERO, ZERO, ONE, ONE );
+        canvas.restore();
     }    
 
     //-----------------------
     this.cancel = function()
     {    
-        this.ballIndex  = -1;
-        this.state      = FLINGER_STATE_NULL;
+        _ballIndex = NULL_BALL;
+        _readyToFling = false;
+        _state = FLINGER_STATE_NULL;
+    }
+    
+    
+    //-----------------------------
+    this.getBallIndex = function()
+    {    
+        return _ballIndex;
+    }
+    
+    //-------------------------------
+    this.setState = function(state )
+    {    
+        _state = state;
+    }
+    
+    
+    //--------------------------
+    this.getState = function()
+    {    
+        return _state;
     }
 }
 

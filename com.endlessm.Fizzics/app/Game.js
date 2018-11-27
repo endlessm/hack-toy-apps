@@ -8,9 +8,21 @@ var QUEST_FIZZICS1 =  10;
 var QUEST_FIZZICS2 =  11;
 
 
+var GAME_ACTION_NULL        = -1;
+var GAME_ACTION_RESET_LEVEL =  0;
+var GAME_ACTION_NEXT_LEVEL  =  1;
+var GAME_ACTION_PREV_LEVEL  =  2;
+
+
 //--------------------------
 function Game()
 {    
+    
+    //---------------------------------------
+    // this is a wrapper for the Sounds API
+    //---------------------------------------
+    var Sounds = new TEMPSoundAPI();
+
     var SUCCESS_BALL_RADIUS = 100.0;
     
     function InfoPanel()
@@ -22,15 +34,18 @@ function Game()
         this.y      = 0;
     }
     
-    var _level         = 0;
-    var _score         = 0;
-    var _ballDied      = false;
-    var _levelboard    = new InfoPanel();
-    var _scoreboard    = new InfoPanel();
-    var _flingboard    = new InfoPanel();
-    var _successScreen = new InfoPanel();
-    var _levelData     = null;
-    var _sucessBall    = new Image();
+    var _level          = 0;
+    var _score          = 0;
+    var _ballDied       = false;
+    var _levelboard     = new InfoPanel();
+    var _previousButton = new InfoPanel();
+    var _resetButton    = new InfoPanel();
+    var _nextButton     = new InfoPanel();
+    var _scoreboard     = new InfoPanel();
+    var _flingboard     = new InfoPanel();
+    var _successScreen  = new InfoPanel();
+    var _levelData      = null;
+    var _sucessBall     = new Image();
     
     this.setBallDied = function()
     {
@@ -43,19 +58,48 @@ function Game()
         _levelData = levelData;
     }	
 
-
-    //--------------------------------------------
-    this.okayToChooseNextLevel = function( x, y )
+    
+    //-------------------------------------------
+    this.getMouseDownAction = function( x, y )
     {
+        var action = GAME_ACTION_NULL;
+        
         if (( x > _successScreen.x )
         &&  ( x < _successScreen.x + _successScreen.width )
         &&  ( y > _successScreen.y )
         &&  ( y < _successScreen.y + _successScreen.height ))
         {
-            return gameState.success;
-        }    
-    
-        return false;
+            if ( gameState.success )
+            {
+                action = GAME_ACTION_NEXT_LEVEL;
+            }    
+        }
+        
+        if (( x > _resetButton.x )
+        &&  ( x < _resetButton.x + _resetButton.width )
+        &&  ( y > _resetButton.y )
+        &&  ( y < _resetButton.y + _resetButton.height ))
+        {
+            action = GAME_ACTION_RESET_LEVEL;   
+        }
+        
+        if (( x > _previousButton.x )
+        &&  ( x < _previousButton.x + _previousButton.width )
+        &&  ( y > _previousButton.y )
+        &&  ( y < _previousButton.y + _previousButton.height ))
+        {
+            action = GAME_ACTION_PREV_LEVEL;    
+        }
+        
+        if (( x > _nextButton.x )
+        &&  ( x < _nextButton.x + _nextButton.width )
+        &&  ( y > _nextButton.y )
+        &&  ( y < _nextButton.y + _nextButton.height ))
+        {
+            action = GAME_ACTION_NEXT_LEVEL;    
+        }
+        
+        return action;
     }
     
     //----------------------------------------------------------------------------------
@@ -248,13 +292,34 @@ function Game()
         }
 
         //------------------------------------------------------------------------------
-        // set up levelboard, scoreboard and flingboard
+        // set up levelboard, scoreboard, flingboard, buttons, etc.
         //------------------------------------------------------------------------------
         _levelboard.width  = 120;
         _levelboard.height = 40;
         _levelboard.x      = canvasID.width * ONE_HALF - 1.5*_levelboard.width;
         _levelboard.y      = 0;
         _levelboard.image.src = "images/levelboard.png";
+
+        _resetButton.width  = 40;
+        _resetButton.height = 40;
+        _resetButton.x      = _levelboard.x - _resetButton.width;
+        _resetButton.y      = 0;
+        _resetButton.image.src = "images/reset-button.png";
+
+        // Commented out the buttons until we implement the logic of not going past the furthest level
+        /*
+        _previousButton.width  = 60;
+        _previousButton.height = 40;
+        _previousButton.x      = _levelboard.x;
+        _previousButton.y      = _levelboard.y + _levelboard.height;
+        _previousButton.image.src = "images/previous-level.png";
+
+        _nextButton.width  = 60;
+        _nextButton.height = 40;
+        _nextButton.x      = _levelboard.x + _levelboard.width * ONE_HALF;
+        _nextButton.y      = _levelboard.y + _levelboard.height;
+        _nextButton.image.src = "images/next-level.png";
+        */
 
         _flingboard.width  = 120;
         _flingboard.height = 40;
@@ -398,7 +463,7 @@ function Game()
         {
             // TODO: Check for level.preset later
             globalParameters.usePhysics_0       = true;
-            globalParameters.radius_0           = 40;
+            globalParameters.radius_0           = 50;
             globalParameters.gravity_0          = 0.0
             globalParameters.collision_0        = 0.9;
             globalParameters.friction_0         = 0.5;
@@ -439,7 +504,7 @@ function Game()
             globalParameters.deathSoundGood_1   = 0;
             globalParameters.deathSoundBad_1    = 0;
 
-            globalParameters.usePhysics_2       = true;
+            globalParameters.usePhysics_2       = false;
             globalParameters.radius_2           = 60;
             globalParameters.gravity_2          = 0.0
             globalParameters.collision_2        = 0.5;
@@ -482,7 +547,7 @@ function Game()
             globalParameters.deathSoundBad_3    = 0;
 
             globalParameters.usePhysics_4       = true;
-            globalParameters.radius_4           = 25;
+            globalParameters.radius_4           = 35;
             globalParameters.gravity_4          = 0.0
             globalParameters.collision_4        = 0.2;
             globalParameters.friction_4         = 0.4;
@@ -536,10 +601,9 @@ function Game()
     //------------------------------
     this.getPrevLevel = function()
     {           
-        var levelIndex = _level - 1;
-        if (levelIndex < 0)
-            levelIndex += _levelData.levels.length;
-        return levelIndex;
+        if (_level == 0)
+            return 0;
+        return _level - 1;
     }
     
     //----------------------------------------------------------------------------
@@ -566,6 +630,7 @@ function Game()
         gameState.numCollisionsGoal   = numCollisionsGoal;
         gameState.running             = true;
         gameState.clock               = 0;
+        gameState.timeInLevel         = 0.0;
         gameState.numCollisions       = 0;
         gameState.numFlings           = 0;
         gameState.numBonus            = 0;
@@ -593,8 +658,10 @@ function Game()
     
     
     //--------------------------------------------------------------------------------
-    this.update = function( collisionBalls, ballsWithSomeCollision, numBalls, balls )
+    this.update = function( dt, collisionBalls, ballsWithSomeCollision, numBalls, balls )
     {        
+        gameState.timeInLevel += dt;
+
         if ( gameState.running )
         {
             var type0BallCount = 0;
@@ -633,6 +700,10 @@ function Game()
                     gameState.running = false;
                     gameState.success = true;
                     globalParameters.levelSuccess = true;
+                    
+                    // to do: this needs to be determined by which species the sound is associated with.
+                    Sounds.play( "fizzics/success1" );                    
+                    
                     //_scoreboard.image.src = "images/scoreboard-win.png";
                 }
             }
@@ -699,6 +770,10 @@ function Game()
     //--------------------------------------
     this.isQuest0GoalReached = function()
     {
+        // Don't accept the goal met before 5 seconds are up so things get a chance to settle down
+        if (gameState.timeInLevel < 5)
+            return false;
+
         if (globalParameters.type1BallCount < 20)
             return false;
 
@@ -745,6 +820,42 @@ function Game()
         canvas.font = "17px Arial";
         var l = _level+1;
         canvas.fillText( "LEVEL " + l.toString(), _levelboard.x + 15, _levelboard.y + 25 );
+
+        //--------------------------------------
+        // render reset button
+        //--------------------------------------
+        canvas.drawImage
+        ( 
+            _resetButton.image, 
+            _resetButton.x,
+            _resetButton.y, 
+            _resetButton.width, 
+            _resetButton.height
+        );
+
+        //--------------------------------------
+        // render previous button
+        //--------------------------------------
+        canvas.drawImage
+        ( 
+            _previousButton.image, 
+            _previousButton.x,
+            _previousButton.y, 
+            _previousButton.width, 
+            _previousButton.height
+        );
+
+        //--------------------------------------
+        // render next button
+        //--------------------------------------
+        canvas.drawImage
+        ( 
+            _nextButton.image, 
+            _nextButton.x,
+            _nextButton.y, 
+            _nextButton.width, 
+            _nextButton.height
+        );
 
         //--------------------------------------
         // render scoreboard

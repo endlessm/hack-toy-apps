@@ -3,19 +3,12 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var TOOL_FLING     =  0;
-var TOOL_MOVE      =  1;
-var TOOL_CREATE    =  2;
-var TOOL_DELETE    =  3;
-var TOOL_SPECIES   =  4;
-var TOOL_LEVEL_1   =  5;
-var TOOL_LEVEL_2   =  6;
-var TOOL_LEVEL_3   =  7;
-var TOOL_LEVEL_4   =  8;
-var TOOL_RESET     =  9;
-var NUM_TOOLS      = 10;
-
-var SHOW_LEVEL_TOOLS = false;
+var TOOL_FLING   = 0;
+var TOOL_MOVE    = 1;
+var TOOL_CREATE  = 2;
+var TOOL_DELETE  = 3;
+var TOOL_SPECIES = 4;
+var NUM_TOOLS    = 5;
 
 //------------------
 function Tools()
@@ -76,22 +69,7 @@ function Tools()
         this.buttons[ TOOL_MOVE     ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
         this.buttons[ TOOL_CREATE   ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
         this.buttons[ TOOL_DELETE   ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
-    
-        yy += 5;
-        this.buttons[ TOOL_LEVEL_1 ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
-        this.buttons[ TOOL_LEVEL_2 ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
-        this.buttons[ TOOL_LEVEL_3 ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
-        this.buttons[ TOOL_LEVEL_4 ].position.setXY( left, top +  yy * buttonYSpacing ); yy++;
-    
-        this.buttons[ TOOL_MOVE    ].image.src = "images/move-tool.png";
-        this.buttons[ TOOL_FLING   ].image.src = "images/fling-tool.png";
-        this.buttons[ TOOL_CREATE  ].image.src = "images/create-tool.png";
-        this.buttons[ TOOL_DELETE  ].image.src = "images/delete-tool.png";
-        this.buttons[ TOOL_LEVEL_1 ].image.src = "images/level-1-tool.png";
-        this.buttons[ TOOL_LEVEL_2 ].image.src = "images/level-2-tool.png";
-        this.buttons[ TOOL_LEVEL_3 ].image.src = "images/level-3-tool.png";
-        this.buttons[ TOOL_LEVEL_4 ].image.src = "images/level-4-tool.png";
-
+         
         this.buttons[ TOOL_SPECIES  ].position.setXY( left + buttonSize + speciesButtonMargin, this.buttons[ TOOL_CREATE ].position.y );
         this.buttons[ TOOL_SPECIES  ].height = speciesToolHeight;
         this.buttons[ TOOL_SPECIES  ].image.src = "images/tool-panel-background.png";
@@ -101,22 +79,7 @@ function Tools()
         globalParameters.flingToolActive   = true;
         globalParameters.createToolActive  = true;
         globalParameters.deleteToolActive  = true;
-    
-        this.buttons[ TOOL_RESET ].position.setXY( resetX, resetY );
-        this.buttons[ TOOL_RESET ].width     = resetWidth;
-        this.buttons[ TOOL_RESET ].height    = resetHeight;
-        this.buttons[ TOOL_RESET ].image.src = "images/reset-tool.png";;
-        this.buttons[ TOOL_RESET ].visible   = true;
-    
-        if ( !SHOW_LEVEL_TOOLS )
-        {
-            this.buttons[ TOOL_LEVEL_1 ].visible = false;
-            this.buttons[ TOOL_LEVEL_2 ].visible = false;
-            this.buttons[ TOOL_LEVEL_3 ].visible = false;
-            this.buttons[ TOOL_LEVEL_4 ].visible = false;
-        }        
-    }
-    
+     }
     
     //------------------------------------------
     this.setNumSpecies = function( numSpecies )
@@ -128,7 +91,6 @@ function Tools()
             this.speciesImages[s] = new Image();
         }
     }
-    
 
     //-----------------------------
     this.select = function(t)
@@ -198,14 +160,12 @@ function Tools()
         this.buttons[ TOOL_DELETE   ].visible = globalParameters.deleteToolActive;
     }
     
-
     //------------------------------------
     this.getSelectedSpecies = function()
     {            
         return this.selectedSpecies;
     }
     
-
     //--------------------------
     this.render = function()
     {            

@@ -106,4 +106,17 @@ function Vector2D()
         var yy = this.y - position.y;
         return Math.sqrt( xx * xx + yy * yy );
     }
+
+	//---------------------------------
+	this.dotWith = function( vector )
+	{
+		var dot = 
+		this.x * vector.x + 
+		this.y * vector.y;		
+		
+		return dot;
+	} 
+    
+    
+    
 }

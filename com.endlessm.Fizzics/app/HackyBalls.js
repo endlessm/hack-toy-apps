@@ -5,11 +5,14 @@ var canvas = canvasID.getContext( '2d' );
 
 var USING_TEST_GUI = false;
 
-var WINDOW_WIDTH  = 1920;
-var WINDOW_HEIGHT = 1004;
+var WINDOW_WIDTH  = canvasID.width;
+var WINDOW_HEIGHT = canvasID.height;
 
 var NULL_BALL = -1;
 var MAX_BALLS = 100;
+
+var SCREEN_WIDTH = 1920;
+var SCREEN_HEIGHT = 1040;
 
 
 //---------------------------------------------------------
@@ -170,6 +173,9 @@ var globalParameters =
     imageIndex_4      : 0
 }
 
+
+
+
 //-----------------------------------------------------------------------------
 // The object gameState contains all the dynamic data pertaining to gameplay. 
 // This includes the species-to-species collisions per gameSate period
@@ -178,6 +184,7 @@ var gameState =
 {
     running             : false,
     clock               : 0,
+    timeInLevel         : 0.0,
     period              : 0,
     testBall            : 0,
     testSpecies         : 0,
@@ -198,11 +205,12 @@ function flip()
 //----------------------
 function HackyBalls()
 {    
-    var NUM_BALL_SPECIES         = 5;
-    var INTERACTION_RADIUS       = 200.0;
-    var MILLISECONDS_PER_UPDATE  = 10;
-    var COLLISION_DISTANCE_FUDGE = 10;
-    var MAX_COLLISION_BALLS      = 10;
+    var NUM_BALL_SPECIES          = 5;
+    var INTERACTION_RADIUS        = 200.0;
+    var MILLISECONDS_PER_UPDATE   = 10;
+    var COLLISION_DISTANCE_FUDGE  = 10;
+    var MAX_COLLISION_BALLS       = 10;
+    var MIN_COLLISION_SOUND_SPEED = 3.0;
 
     //--------------------
     function Species()
@@ -250,9 +258,11 @@ function HackyBalls()
     var _prevSeconds            = ZERO;
     var _flinger                = new Flinger();
     var _species                = new Array( NUM_BALL_SPECIES );
-    var _background             = new Image();
+    var _backgroundImage        = new Image();
+    var _backgroundImageIndex   = -1;
     var _success                = new Image();
     var _balls                  = new Array();
+    var _activeBalls            = new Array();
     var _deathAnimation         = new DeathAnimation();
     var _numBalls               = 0;
     var _hackyBallsGUI          = new HackyBallsGUI();
@@ -260,6 +270,7 @@ function HackyBalls()
     var _topWall                = ZERO;
     var _bottomWall             = WINDOW_HEIGHT;
     var _rightWall              = WINDOW_WIDTH;
+    var _worldToWindowScale     = 1.0;
     var _grabbedBall            = NULL_BALL;
     var _selectedSpecies        = 0;
     var _currentTool            = TOOL_FLING;
@@ -279,9 +290,9 @@ function HackyBalls()
     var _numSavedBalls          = 0;
     var _levelLoading           = false;
     
-    //---------------------------------------
-    // this is a wrapper for the Sounds API
-    //---------------------------------------
+    //----------------------------------------------------------------------------------------
+    // this is a wrapper for the Sounds API. It must be commented-out before using the API.
+    //----------------------------------------------------------------------------------------
     var Sounds = new TEMPSoundAPI();
     
     //------------------------------------------------------------------------- 
@@ -297,6 +308,24 @@ function HackyBalls()
         
         //this starts the animation running...
         window.requestAnimationFrame( this.update.bind(this) );
+    }
+
+
+    //-------------------------------------------------
+    this.updateBackgroundImage = function( imageIndex )
+    {        
+        if ( _backgroundImageIndex != imageIndex )
+        {
+            /*
+            if ( _backgroundImageIndex == 0 ) { Sounds.stop( "background1" ); Sounds.play( "fizzics/background1" ); }
+            if ( _backgroundImageIndex == 1 ) { Sounds.stop( "background2" ); Sounds.play( "fizzics/background2" ); }
+            if ( _backgroundImageIndex == 2 ) { Sounds.stop( "background3" ); Sounds.play( "fizzics/background3" ); }
+            */
+            
+            _backgroundImageIndex = imageIndex;
+            
+            canvasID.style.backgroundImage = "url('images/background-" + _backgroundImageIndex + ".png')";
+        }
     }
 
 
@@ -317,8 +346,8 @@ function HackyBalls()
         //-----------------------------------
         // Set canvas size
         //-----------------------------------
-        canvasID.width  = WINDOW_WIDTH;
-        canvasID.height = WINDOW_HEIGHT;
+        canvasID.width  = window.innerWidth;
+        canvasID.height = window.innerHeight;
 
         _rightWall  = canvasID.width;
         _bottomWall = canvasID.height;
@@ -334,35 +363,35 @@ function HackyBalls()
         //-----------------------------------------------------
         // set up the sounds associated with each species...  
         //-----------------------------------------------------
-        _species[0].createSound  = "create0";
-        _species[1].createSound  = "create1"; 
-        _species[2].createSound  = "create2"; 
-        _species[3].createSound  = "create3"; 
-        _species[4].createSound  = "create4"; 
+        _species[0].createSound  = "fizzics/create0";
+        _species[1].createSound  = "fizzics/create1"; 
+        _species[2].createSound  = "fizzics/create2"; 
+        _species[3].createSound  = "fizzics/create3"; 
+        _species[4].createSound  = "fizzics/create4"; 
 
-        _species[0].deleteSound  = "delete0";
-        _species[1].deleteSound  = "delete1"; 
-        _species[2].deleteSound  = "delete2"; 
-        _species[3].deleteSound  = "delete3"; 
-        _species[4].deleteSound  = "delete4"; 
+        _species[0].deleteSound  = "fizzics/delete0";
+        _species[1].deleteSound  = "fizzics/delete1"; 
+        _species[2].deleteSound  = "fizzics/delete2"; 
+        _species[3].deleteSound  = "fizzics/delete3"; 
+        _species[4].deleteSound  = "fizzics/delete4"; 
 
-        _species[0].flySound     = "fly0";
-        _species[1].flySound     = "fly1"; 
-        _species[2].flySound     = "fly2"; 
-        _species[3].flySound     = "fly3"; 
-        _species[4].flySound     = "fly4"; 
+        _species[0].flySound     = "fizzics/fly0";
+        _species[1].flySound     = "fizzics/fly1"; 
+        _species[2].flySound     = "fizzics/fly2"; 
+        _species[3].flySound     = "fizzics/fly3"; 
+        _species[4].flySound     = "fizzics/fly4"; 
 
-        _species[0].successSound = "success0";
-        _species[1].successSound = "success1"; 
-        _species[2].successSound = "success2"; 
-        _species[3].successSound = "success3"; 
-        _species[4].successSound = "success4"; 
+        _species[0].successSound = "fizzics/success0";
+        _species[1].successSound = "fizzics/success1"; 
+        _species[2].successSound = "fizzics/success2"; 
+        _species[3].successSound = "fizzics/success3"; 
+        _species[4].successSound = "fizzics/success4"; 
 
-        _species[0].toolSound    = "tool0"; 
-        _species[1].toolSound    = "tool1"; 
-        _species[2].toolSound    = "tool2"; 
-        _species[3].toolSound    = "tool3"; 
-        _species[4].toolSound    = "tool4"; 
+        _species[0].toolSound    = "fizzics/tool0"; 
+        _species[1].toolSound    = "fizzics/tool1"; 
+        _species[2].toolSound    = "fizzics/tool2"; 
+        _species[3].toolSound    = "fizzics/tool3"; 
+        _species[4].toolSound    = "fizzics/tool4"; 
                 
         _species[0].flingable = true;
         _species[1].flingable = false;
@@ -382,8 +411,8 @@ function HackyBalls()
         for (var b=0; b<MAX_BALLS; b++) 
         {
             _balls[b] = new Ball();
+            _activeBalls[b] = false;
         }
-        
         
         //--------------------------------------
         // initialize collision ball array  
@@ -401,8 +430,7 @@ function HackyBalls()
         //--------------------------------------
         // load images
         //--------------------------------------
-        canvasID.style.backgroundImage = "url('images/background-2.png')";
-        _deleteImage.src = "images/delete-ball.png";    
+        _deleteImage.src = "images/delete-ball.png";
 
         //---------------------------------------------
         // initialize user interface with parameters
@@ -434,7 +462,6 @@ function HackyBalls()
         //------------------------------------------------------------------------        
         // this forces the frame rate to be same as browser        
         //window.requestAnimationFrame( this.update.bind(this) ); 
-
     }
     
 
@@ -442,7 +469,9 @@ function HackyBalls()
     //------------------------------------------
     this.createBall = function( x, y, species )
     {    
-        if ( _numBalls < MAX_BALLS )
+        var newBallIndex = this.getNewBallIndex();
+        
+        if ( newBallIndex != NULL_BALL )
         {
             if (!_levelLoading)
             {
@@ -456,33 +485,51 @@ function HackyBalls()
             var jitter = 0.1;
             x += (-jitter * ONE_HALF + Math.random() * jitter );
             y += (-jitter * ONE_HALF + Math.random() * jitter );
+                        
+            _activeBalls[ newBallIndex ] = true;
         
-            _balls[ _numBalls ].setWalls( _leftWall, _bottomWall, _rightWall, _topWall );
+            _balls[ newBallIndex ].setWalls( _leftWall, _bottomWall, _rightWall, _topWall );
 
             var position = new Vector2D();
             var velocity = new Vector2D();
             position.setXY( x, y );
             velocity.clear();
 
-            _balls[ _numBalls ].setType         ( species  );
-            _balls[ _numBalls ].setPosition     ( position );
-            _balls[ _numBalls ].setVelocity     ( velocity );
-            _balls[ _numBalls ].setGravity      ( _species[ species ].gravity    );
-            _balls[ _numBalls ].setRadius       ( _species[ species ].radius     );
-            _balls[ _numBalls ].setCollision    ( _species[ species ].collision  );     
-            _balls[ _numBalls ].setAirFriction  ( _species[ species ].friction   );
-            _balls[ _numBalls ].setImageID      ( _species[ species ].imageID    );
-            _balls[ _numBalls ].setUsingPhysics ( _species[ species ].usePhysics );     
+            _balls[ newBallIndex ].setType         ( species  );
+            _balls[ newBallIndex ].setPosition     ( position );
+            _balls[ newBallIndex ].setVelocity     ( velocity );
+            _balls[ newBallIndex ].setGravity      ( _species[ species ].gravity    );
+            _balls[ newBallIndex ].setRadius       ( _species[ species ].radius     );
+            _balls[ newBallIndex ].setCollision    ( _species[ species ].collision  );     
+            _balls[ newBallIndex ].setAirFriction  ( _species[ species ].friction   );
+            _balls[ newBallIndex ].setImageID      ( _species[ species ].imageID    );
+            _balls[ newBallIndex ].setUsingPhysics ( _species[ species ].usePhysics );     
 
             _numBalls ++;
-        }
-        else
-        {
-            Sounds.play( "tooManyBalls" );
         }
     }
     
 
+
+
+    //-------------------------------
+    this.getNewBallIndex = function()
+    {    
+        var newBallIndex = NULL_BALL;
+
+        if ( _numBalls < MAX_BALLS )
+        {
+            newBallIndex = _numBalls
+        }
+        else
+        {
+            Sounds.play( "fizzics/tooManyBalls" );
+        }
+        
+        return newBallIndex;        
+    }
+    
+    
 
     //-----------------------
     this.update = function()
@@ -517,11 +564,6 @@ function HackyBalls()
         //------------------------------------
         this.applyParameters();
         
-        //-----------------------
-        // update game logic
-        //-----------------------
-        _game.update( _collisionBalls, _ballsWithSomeCollision, _numBalls, _balls );
-        
         //----------------------------------------------------
         // get seconds since started, and derive deltaTime...
         //----------------------------------------------------
@@ -529,6 +571,11 @@ function HackyBalls()
         _seconds = ( (new Date).getTime() - _startTime ) / MILLISECONDS_PER_SECOND;
         var deltaTime = _seconds - _prevSeconds;
 
+        //-----------------------
+        // update game logic
+        //-----------------------
+        _game.update( deltaTime, _collisionBalls, _ballsWithSomeCollision, _numBalls, _balls );
+        
         //-----------------------------
         // loop through all balls
         //-----------------------------
@@ -556,8 +603,8 @@ function HackyBalls()
         //-----------------------------
         // update flinger
         //-----------------------------
-        if (( _flinger.state != FLINGER_STATE_NULL )
-        &&  ( _flinger.state != FLINGER_STATE_PULLING ))
+        if (( _flinger.getState() != FLINGER_STATE_NULL )
+        &&  ( _flinger.getState() != FLINGER_STATE_PULLING ))
         {
             _flinger.update( deltaTime );
         }
@@ -575,8 +622,6 @@ function HackyBalls()
 
 
 
-
-
     //------------------------------------------
     this.updateBall = function( b, deltaTime )
     {
@@ -588,18 +633,57 @@ function HackyBalls()
         //-------------------------------------
         // update interactions with flinger
         //-------------------------------------
-        this.updateBallInteractionsWithFlinger( b, deltaTime );
+        if ( _flinger.getBallIndex() == b )
+        {
+            var ballForce = _flinger.updateInteractionsWithBall( _balls[b].getPosition(), _mousePosition );
+            
+            _balls[b].addVelocity( ballForce );
+            
+            if ( _flinger.getState() == FLINGER_STATE_PULLING )
+            {
+                _balls[b].setPosition( _flinger.getPullPosition() );
+            }
+            else if ( _flinger.getState() == FLINGER_STATE_WAITING )
+            {
+                _balls[b].scaleVelocity( 0.9 );
+            }
+        } 
+                
+        //-------------------------------------------------
+        // check to make sure the flinging ball is finished 
+        // passing through the flinger pull path
+        //-------------------------------------------------      
+        if ( b == _flinger.getFlingingBall() )
+        {
+            if ( _flinger.getFlingingBallPastFlinger( _balls[b].getPosition() ) )
+            {
+                _flinger.finishFling();
+            }
+        }
         
-        //-----------------------------
+        //-----------------------------------------------
         // ball-to-ball interactions
-        //-----------------------------
+        //-----------------------------------------------        
+        this.updateBallToBallCollisions( b, deltaTime );
+    }
+    
+    
+    
+    
+    
+
+    //---------------------------------------------------------
+    this.updateBallToBallCollisions = function( b, deltaTime )
+    {    
         for (var o=0; o<_numBalls; o++)
         {    
-            //--------------------------------------------------------------
+            //------------------------------------------------------------
             // balls in flingers don't participate in these interactions
-            //--------------------------------------------------------------
-            if (( _flinger.ballIndex != b )
-            &&  ( _flinger.ballIndex != o ))
+            //------------------------------------------------------------
+            if (( b != _flinger.getBallIndex() )
+            &&  ( o != _flinger.getBallIndex() )
+            &&  ( b != _flinger.getFlingingBall() ) 
+            &&  ( o != _flinger.getFlingingBall() ))
             {
                 if ( b != o )
                 {
@@ -682,11 +766,11 @@ function HackyBalls()
                                 {
                                     this.killBallFromCollision( b, _species[ bSpecies ].touchDeath[ oSpecies ] );
                                 }
-                                else
+                                else if ( _species[ oSpecies ].touchDeath[ bSpecies ] == 0 ) // if other ball doesn't die upon collision
                                 {                            
                                     //--------------------------------------------                    
                                     // apply collision force         
-                                    //--------------------------------------------                    
+                                    //--------------------------------------------  
                                     var f = ONE - ( distance / collisionDistance );
 
                                     var v1 = new Vector2D();
@@ -700,142 +784,32 @@ function HackyBalls()
 
                                     _balls[b].addCollisionForce( v1 );
                                     _balls[o].addCollisionForce( v2 );
+
+                                    if (( _species[ _balls[b].getType() ].usePhysics )
+                                    ||  ( _species[ _balls[o].getType() ].usePhysics ))
+                                    {
+                                        var speed_b = _balls[b].getVelocity().getMagnitude();
+                                        var speed_o = _balls[o].getVelocity().getMagnitude();
+                                     
+                                        if ( speed_b + speed_o > MIN_COLLISION_SOUND_SPEED ) 
+                                        {     
+                                            // This was making the Fizzics2 quest unplayable. 
+                                            // Need to check that we don't have more than X sounds playing     
+                                            //Sounds.stop( "fizzics/collision" );
+                                            //Sounds.play( "fizzics/collision" );
+                                        }
+                                    }
                                 }                            
                             }
                         }
                     }
                 }
             }
-        }
-    }
-    
-    
-    
-    //----------------------------------------------------------------
-    this.updateBallInteractionsWithFlinger = function( b, deltaTime )
-    {    
-        if ( _flinger.ballIndex == b )
-        {
-            if ( _flinger.state == FLINGER_STATE_MOVING )
-            {
-                _flinger.state = FLINGER_STATE_WAITING;
-
-                /*
-                _flinger.position.x = _balls[b].getPosition().x;
-                _flinger.position.y = _balls[b].getPosition().y;
-            
-                var force = new Vector2D();
-
-                force.setToDifference( _flinger.position, _balls[b].getPosition() );
-                force.scale( FLINGER_HOLD_FORCE * deltaTime );
-
-                _balls[b].addVelocity( force );            
-                
-                var friction = FLINGER_HOLD_FRICTION * deltaTime;        
-                if ( friction < ONE )
-                {
-                    _balls[b].scaleVelocity( ONE - friction );   
-                }
-                else
-                {
-                    _balls[b].scaleVelocity( ZERO );   
-                }                
-                */
-            }
-            else if ( _flinger.state == FLINGER_STATE_WAITING )
-            {
-                var force = new Vector2D();
-
-                force.setToDifference( _flinger.position, _balls[b].getPosition() );
-                force.scale( FLINGER_HOLD_FORCE * deltaTime );
-
-                _balls[b].addVelocity( force );
-            
-                var friction = FLINGER_HOLD_FRICTION * deltaTime;        
-                if ( friction < ONE )
-                {
-                    _balls[b].scaleVelocity( ONE - friction );   
-                }
-                else
-                {
-                    _balls[b].scaleVelocity( ZERO );   
-                }                
-            }
-            else if ( _flinger.state == FLINGER_STATE_PULLING )
-            {    
-                var xx = _flinger.position.x - _flinger.handlePosition.x;
-                var yy = _flinger.position.y - _flinger.handlePosition.y;
-                var length = Math.sqrt( xx*xx + yy*yy );
-                                
-                if ( length > ZERO )
-                {
-                    xx /= length;
-                    yy /= length;
-                }
-                
-                _balls[b].scaleVelocity( ZERO );
-                
-                var pullPosition = new Vector2D();
-                pullPosition.setXY
-                (
-                    _flinger.handlePosition.x + xx * _flinger.handleLength,
-                    _flinger.handlePosition.y + yy * _flinger.handleLength
-                );
-                
-                _balls[b].setPosition( pullPosition );
-                
-                var offset = new Vector2D();
-                offset.setToDifference( _flinger.position, _balls[b].getPosition() );
-
-                if ( offset.getMagnitude() > _balls[b].getRadius() * FLINGER_MIN_PULL_RATIO )
-                {                
-                    _flinger.setReadyToFling( true );
-                }
-                else
-                {                
-                    _flinger.setReadyToFling( false );
-                }
-            }
-            else if ( _flinger.state == FLINGER_STATE_FLINGING )
-            {
-                if ( _flinger.getReadyToFling() )
-                {                
-                    var offset = new Vector2D();
-                    offset.setToDifference( _flinger.position, _balls[b].getPosition() );
-                
-                    var force = new Vector2D();
-                    force.setToScaled( offset, FLINGER_FLING_FORCE * deltaTime );
-                
-                    Sounds.stop( "pullFling" );
-                    Sounds.play( "fling" );
-                    Sounds.playLoop( _species[ _balls[b].getType() ].flySound );
-                     
-                     _flinger.ballIndex = NULL_BALL;
-
-                    _balls[b].addVelocity( force );
-
-                    var friction = FLINGER_HOLD_FRICTION * deltaTime;        
-                    if ( friction < ONE )
-                    {
-                        _balls[b].scaleVelocity( ONE - friction );   
-                    }
-                    else
-                    {
-                        _balls[b].scaleVelocity( ZERO );   
-                    }                
-
-                    _flinger.state = FLINGER_STATE_NULL;
-                }
-                else
-                {
-                    _flinger.state = FLINGER_STATE_WAITING;
-                }
-            }
         }    
     }
-    
-    
-    
+
+
+
 
     //-----------------------------------------------------
     this.killBallFromCollision = function( b, deathType )
@@ -867,7 +841,10 @@ function HackyBalls()
         
         gameState.numBonus = _species[ ballSpecies ].score;
         if (ballSpecies == 0 && deathType == 2)
+        {
             _game.setBallDied();
+        }
+        
         this.deleteBall( b, deathImage, deathSound );    
     }    
     
@@ -898,16 +875,19 @@ function HackyBalls()
         _balls[b].setCollision    ( _balls[r].getCollision    () );
         _balls[b].setUsingPhysics ( _balls[r].getUsingPhysics () );
         
+        _balls[b].setImageID( _species[ _balls[b].getType() ].imageID );    
+
         _numBalls --;
         
         //---------------------------------------------------------
         // if this ball has the flinger on it, kill the flinger
         //--------------------------------------------------------
-        if ( b == _flinger.ballIndex )
+        if ( b == _flinger.getBallIndex() )
         {
              _flinger.cancel();
         }            
     }
+
 
     //---------------------------------------------------------------
     this.playBallDeathEffect = function( b, deathImage, deathSound )
@@ -918,6 +898,7 @@ function HackyBalls()
         _deathAnimation.radius = _balls[b].getRadius();        
         _deathAnimation.image = deathImage;    
 
+        Sounds.stop( deathSound );   
         Sounds.play( deathSound );   
     }    
 
@@ -925,12 +906,22 @@ function HackyBalls()
         
     //------------------------
     this.render = function()
-    {    
+    {   
         //-------------------------------------------
         // clear background
         //-------------------------------------------
-        canvas.clearRect(0, 0, canvasID.width, canvasID.height);
+        canvas.clearRect( 0, 0, canvasID.width, canvasID.height );
+
+        //-------------------------------------------------------------------
+        // save canvas transform before applying the following scaling...
+        //-------------------------------------------------------------------
+        canvas.save();
         
+        //-------------------------------------------------------
+        // scale background to the window size
+        //-------------------------------------------------------
+        canvas.scale( _worldToWindowScale,_worldToWindowScale );
+
         //-----------------------------------------
         // show animation from balls being killed
         //-----------------------------------------
@@ -963,11 +954,15 @@ function HackyBalls()
         //-----------------------
         // show the flinger
         //-----------------------
-        if ( _flinger.state != FLINGER_STATE_NULL )
+        if ( _flinger.getState() != FLINGER_STATE_NULL )
         {        
-            _flinger.render( _balls[ _flinger.ballIndex ].getPosition(), _balls[ _flinger.ballIndex ].getRadius() );
+            var b = _flinger.getBallIndex();
+            _flinger.render( _balls[b].getPosition() );
+            
+            //draw this ball (again) to make sure it appears on top of everything else. 
+            _balls[b].render();            
         }     
-           
+        
         //------------------------------------------
         // render game data (level, score, etc)
         //------------------------------------------
@@ -985,7 +980,11 @@ function HackyBalls()
         {
             _hackyBallsGUI.render();
         }
-        
+         
+        //---------------------------------------
+        // restore canvas to default transform
+        //---------------------------------------
+        canvas.restore()
     }
 
     //------------------------
@@ -996,8 +995,11 @@ function HackyBalls()
 
 
     //--------------------------------
-    this.mouseDown = function( x, y )
+    this.mouseDown = function( sx, sy )
     {
+        x = sx / _worldToWindowScale;
+        y = sy / _worldToWindowScale;
+        
         if ( USING_TEST_GUI )
         {
             if ( _grabbedBall == NULL_BALL )
@@ -1011,96 +1013,156 @@ function HackyBalls()
         //--------------------------
         this.updateMouse( x, y );
         
-        //---------------------------------------------------------------------------
-        // send mouse click to the game and ask if it is ready for the next level
-        //---------------------------------------------------------------------------
-        if ( _game.okayToChooseNextLevel( x, y ) )
-        {
-            this.setGameLevel( _game.getNextLevel() ); 
-        }
-            
+        //--------------------------------------------------
+        // send mouse click to the game and get the result
+        //--------------------------------------------------
+        var gameAction = _game.getMouseDownAction( x, y );
+        if ( gameAction == GAME_ACTION_NEXT_LEVEL  ) { this.setGameLevel( _game.getNextLevel() ); Sounds.play( "fizzics/buttonClick" ); }
+        if ( gameAction == GAME_ACTION_PREV_LEVEL  ) { this.setGameLevel( _game.getPrevLevel() ); Sounds.play( "fizzics/buttonClick" ); }
+        if ( gameAction == GAME_ACTION_RESET_LEVEL ) { this.reset(); Sounds.play( "fizzics/buttonClick" ); }
+        
         //--------------------------
         // detect selecting a tool
         //--------------------------
         var selectedTool = _tools.mouseClick( x, y );
+                
+        var cancelFlinger = true;
+        var cancelGrab = false;
         
         if ( selectedTool != -1 )
         {
-            _flinger.cancel();  
-
             _currentTool = selectedTool;   
                     
-                 if ( _currentTool == TOOL_MOVE    ) { Sounds.play( "grab"  ); }
-            else if ( _currentTool == TOOL_FLING   ) { Sounds.play( "grab"  ); }
-            else if ( _currentTool == TOOL_CREATE  ) { Sounds.play( "grab"  ); }
-            else if ( _currentTool == TOOL_DELETE  ) { Sounds.play( "trash" ); }
-            else if ( _currentTool == TOOL_RESET   ) { this.reset();           }     
+                 if ( _currentTool == TOOL_MOVE    ) { Sounds.play( "fizzics/moveTool"   ); }
+            else if ( _currentTool == TOOL_FLING   ) { Sounds.play( "fizzics/flingTool"  ); }
+            else if ( _currentTool == TOOL_CREATE  ) { Sounds.play( "fizzics/createTool" ); }
+            else if ( _currentTool == TOOL_DELETE  ) { Sounds.play( "fizzics/trashTool"  ); }
             else if ( _currentTool == TOOL_SPECIES )
             {
                 _selectedSpecies = _tools.getSelectedSpecies();
                 Sounds.play( _species[ _selectedSpecies ].toolSound );
             }
-        }        
-        
-        //----------------------------------
-        // detect selecting flinger handle
-        //----------------------------------
-        var flingerSelected = false;
-        if ( _flinger.state == FLINGER_STATE_WAITING )
+        }  
+
+
+        if ( _flinger.positionOverHandle( _mousePosition ) )
         {
-            if ( _flinger.positionOverHandle( _mousePosition ) )
+            if ( _flinger.getState() == FLINGER_STATE_WAITING )
             {
-                flingerSelected = true;
-                _flinger.state = FLINGER_STATE_PULLING;
-                Sounds.playLoop( "pullFling" );
+                _flinger.setState( FLINGER_STATE_PULLING );
+                Sounds.playLoop( "fizzics/pullFling" );
+                cancelFlinger = false;
+                cancelGrab = true;
             }
+            
+            // unfinished (unsuccessful) attempt at making "sticky grab" for flinger...
+            /*
+            else if ( _flinger.getState() == FLINGER_STATE_PULLING )        
+            {
+                if ( _flinger.getReadyToFling() )
+                {
+                    cancelFlinger = false;
+                    _flinger.fling();
+                
+                    gameState.numFlings++;
+                    Sounds.stop( "pullFling" );
+                    Sounds.play( "fling" );
+                    Sounds.playLoop( _species[ _balls[ _flinger.getFlingingBall() ].getType() ].flySound );            
+                }
+            }
+            */
         }
         
-        if (( _currentTool == TOOL_SPECIES )
-        &&  ( selectedTool == -1 ))
+        
+        var canCreateBall = false;
+        if ( selectedTool == -1 )
+        {
+            if (( _currentTool == TOOL_SPECIES )
+            ||  ( _currentTool == TOOL_CREATE  ))
+            {
+                canCreateBall = true;
+            }
+        }
+         
+        if ( canCreateBall )
         {
             this.createBall( x, y, _selectedSpecies );
         }
         else
-        {
-            //-------------------------------
-            // detect grabbing a ball
-            //-------------------------------
-            for (var b=0; b<_numBalls; b++)
+        {        
+            if ( !cancelGrab )
             {
-                _vector.set( _balls[b].getPosition() );
-                var r = _balls[b].getRadius();
-
-                if (( x > _vector.x - r )
-                &&  ( x < _vector.x + r )
-                &&  ( y > _vector.y - r )
-                &&  ( y < _vector.y + r ))
+                //-----------------------------------------------
+                // detect actions that involve selecting a ball
+                //-----------------------------------------------
+                for (var b=0; b<_numBalls; b++)
                 {
-                    if ( _currentTool == TOOL_DELETE )
-                    {                    
-                        this.deleteBall( b, _deleteImage, _species[ _balls[b].getType() ].deleteSound );
-                    }
-                    else 
-                    {                            
-                        if ( _currentTool == TOOL_FLING )
-                        {
-                            if ( _species[ _balls[b].getType() ].flingable && _species[ _balls[b].getType() ].usePhysics)
-                            {
-                                this.putBallInFlinger(b);
-                            }
+                    _vector.set( _balls[b].getPosition() );
+                    var r = _balls[b].getRadius();
+
+                    if (( x > _vector.x - r )
+                    &&  ( x < _vector.x + r )
+                    &&  ( y > _vector.y - r )
+                    &&  ( y < _vector.y + r ))
+                    {
+                        if ( _currentTool == TOOL_DELETE )
+                        {                    
+                            this.deleteBall( b, _deleteImage, _species[ _balls[b].getType() ].deleteSound );
                         }
-                        
-                        else if (( _species[ _balls[b].getType() ].usePhysics &&  
-                            ( _flinger.state != FLINGER_STATE_MOVING )) || this._devMode)
-                        {
-                            _grabbedBall = b;
+                        else 
+                        {                            
+                            if ( _currentTool == TOOL_FLING )
+                            {
+                                if ( _species[ _balls[b].getType() ].flingable && _species[ _balls[b].getType() ].usePhysics )
+                                {
+                                    this.putBallInFlinger(b);
+                                    cancelFlinger = false;
+                                }
+                            }
+
+                            else if (( _species[ _balls[b].getType() ].usePhysics ) || ( this._devMode ))
+                            {
+                                _grabbedBall = b;      
+                                this.playSpeciesSelectSound( _balls[b].getType() );   
+                            }
+                            
+                            if ( !_species[ _balls[b].getType() ].usePhysics )
+                            {
+                                //Sounds.stop( "noGrab" );
+                                var soundID = Sounds.play( "fizzics/noGrab" );
+                            }
                         }
                     }
                 }
+            }        
+        }
+        
+        if ( cancelFlinger )
+        {
+            if ( _flinger.getBallIndex() != NULL_BALL )
+            {
+                Sounds.play( "fizzics/unGrab" );
+                var stop = new Vector2D();
+                _balls[ _flinger.getBallIndex() ].setVelocity( stop );
             }
+
+            _flinger.cancel();
         }
     }
     
+    
+    //-------------------------------------------------
+    this.playSpeciesSelectSound = function( species )
+    {        
+        var soundNamePrefix = "fizzics/select" + ( species + 1 );
+                   
+        var r = Math.floor( Math.random() * 3 );     
+        
+             if ( r == 0 ) { Sounds.play( soundNamePrefix + "a" ); }
+        else if ( r == 1 ) { Sounds.play( soundNamePrefix + "b" ); }
+        else if ( r == 2 ) { Sounds.play( soundNamePrefix + "c" ); }
+    }
+
 
 
     //------------------------------------
@@ -1127,13 +1189,17 @@ function HackyBalls()
         _currentTool = TOOL_FLING;
 
         _levelLoading = false;
+
+        _startTime = (new Date).getTime();
+        _prevSeconds = 0;
+        _seconds = 0;
     }
 
 
     //---------------------------------
     this.putBallInFlinger = function(b)
     {
-        Sounds.play( "moveFling" );
+        Sounds.play( "fizzics/moveFling" );
             
         _flinger.setBall( b, _balls[b].getPosition(), _balls[b].getRadius() );
         
@@ -1156,8 +1222,10 @@ function HackyBalls()
 
 
     //--------------------------------
-    this.mouseMove = function( x, y )
+    this.mouseMove = function( sx, sy )
     {
+        x = sx / _worldToWindowScale;
+        y = sy / _worldToWindowScale;
         if ( _grabbedBall == NULL_BALL )
         {
             if ( USING_TEST_GUI )
@@ -1165,46 +1233,34 @@ function HackyBalls()
                 _hackyBallsGUI.setMouseMove( x, y );
             }
         }
-
-        if ( _flinger.state == FLINGER_STATE_WAITING )
-        {
-            if ( _flinger.positionOverHandle( _mousePosition ) )
-            {
-                _flinger.setHover( true );
-            }
-            else
-            {
-                _flinger.setHover( false );
-            }
-        }
-        else if ( _flinger.state == FLINGER_STATE_PULLING )
-        {
-            _flinger.handlePosition.x = x;
-            _flinger.handlePosition.y = y;
-        }
-
+        
         this.updateMouse( x, y );
     }
     
 
 
     //------------------------------
-    this.mouseUp = function( x, y )
+    this.mouseUp = function( sx, sy )
     {    
+        x = sx / _worldToWindowScale;
+        y = sy / _worldToWindowScale;
+        
         if ( USING_TEST_GUI )
         {
             _hackyBallsGUI.setMouseUp( x, y );
         }
-        
-        if ( _flinger.state == FLINGER_STATE_MOVING )
-        {
-            _flinger.state = FLINGER_STATE_WAITING;
-        }        
-        else if ( _flinger.state == FLINGER_STATE_PULLING )
-        {
-            _flinger.state = FLINGER_STATE_FLINGING;
-            gameState.numFlings++;
-
+         
+        if ( _flinger.getState() == FLINGER_STATE_PULLING )
+        {            
+            if ( _flinger.getReadyToFling() )
+            {
+                _flinger.fling();
+                
+                gameState.numFlings++;
+                Sounds.stop( "fizzics/pullFling" );
+                Sounds.play( "fizzics/fling" );
+                Sounds.playLoop( _species[ _balls[ _flinger.getFlingingBall() ].getType() ].flySound );
+            }
         }
         
         for (var b=0; b<_numBalls; b++)
@@ -1239,9 +1295,9 @@ function HackyBalls()
     //---------------------------------
     this.deleteKeyPressed = function()
     {    
-        if ( _flinger.ballIndex != NULL_BALL )
+        if ( _flinger.getBallIndex() != NULL_BALL )
         {
-            this.deleteBall( _flinger.ballIndex, _deleteImage, _species[ _balls[ _flinger.ballIndex ].getType() ].deleteSound );
+            this.deleteBall( _flinger.getBallIndex(), _deleteImage, _species[ _balls[ _flinger.getBallIndex() ].getType() ].deleteSound );
         }
 
         if ( _grabbedBall != NULL_BALL )
@@ -1317,8 +1373,6 @@ function HackyBalls()
         out += '}\n';
         console.log(out);
 
-        //_savedBalls = _balls.slice();
-
         _savedBalls = new Array();
         _numSavedBalls = _numBalls;
         for (var i=0; i<_numBalls; i++ )
@@ -1338,7 +1392,6 @@ function HackyBalls()
             return;
 
         console.log("Restoring level");
-        //_balls = _savedBalls.slice();
         _numBalls = 0;
         for (var i=0; i<_savedBalls.length; i++ )
         {  
@@ -1350,7 +1403,10 @@ function HackyBalls()
     this.nextLevel = function()
     {
         if (!this._devMode)
+        {
             return;
+        }
+        
         this.setGameLevel( _game.getNextLevel() );
         globalParameters.moveToolActive = true;
         globalParameters.createToolActive = true;
@@ -1361,7 +1417,10 @@ function HackyBalls()
     this.prevLevel = function()
     {
         if (!this._devMode)
+        {
             return;
+        }
+        
         this.setGameLevel( _game.getPrevLevel() );
         globalParameters.moveToolActive = true;
         globalParameters.createToolActive = true;
@@ -1377,8 +1436,8 @@ function HackyBalls()
          * performance issues with webkit2gtk, since its canvas implementation scales images
          * in software.
          */
-        canvasID.style.backgroundImage = "url('images/background-" + globalParameters.backgroundImageIndex + ".png')";
-                
+        this.updateBackgroundImage( globalParameters.backgroundImageIndex );
+
         _species[0].gravity         = globalParameters.gravity_0;
         _species[0].radius          = globalParameters.radius_0;
         _species[0].friction        = globalParameters.friction_0;
@@ -1502,17 +1561,24 @@ function HackyBalls()
     
     
     //---------------------------------------------------
-    this.setWalls = function( left, bottom, right, top )
+    this.onWindowResize = function( width, height )
     {
-        _leftWall   = left;
-        _rightWall  = right;
-        _bottomWall = bottom;
-        _topWall    = top;
-
-        for (var i=0; i<_numBalls; i++)
+        var ratio = width / height;
+        var screenRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
+        
+        if ( ratio >= screenRatio )
         {
-            _balls[i].setWalls( left, bottom, right, top );
+            _worldToWindowScale = height / SCREEN_HEIGHT;
         }
+        else
+        {
+            _worldToWindowScale = width / SCREEN_WIDTH;
+        }
+        
+        //JuanPablo, can this be set to only display in the correct width and height?         
+        canvasID.style.backgroundImage = "url('images/background-" + _backgroundImageIndex + ".png')";  
+        canvasID.style.backgroundSize = width + "px " + height + "px";        
+        canvasID.style.backgroundRepeat = "no-repeat";
     }
     
     //---------------------
@@ -1567,3 +1633,13 @@ function reset()
 {
     hackyBalls.reset();
 }
+
+window.addEventListener("resize", function () {
+
+    // Resize canvas
+    canvasID.width  = window.innerWidth;
+    canvasID.height = window.innerHeight;
+
+    // Update balls walls
+    hackyBalls.onWindowResize ( canvasID.width, canvasID.height );
+});

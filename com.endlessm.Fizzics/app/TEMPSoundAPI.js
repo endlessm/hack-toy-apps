@@ -2,16 +2,25 @@
 //---------------------------
 function TEMPSoundAPI()
 {
+    var background1  = new Audio( "sounds/BG_1.wav"                 ); 
+    var background2  = new Audio( "sounds/BG_2.wav"                 ); 
+    var background3  = new Audio( "sounds/BG_3.wav"                 ); 
     var moveFling    = new Audio( "sounds/Slingshot_Grab.wav"       ); 
+    var unGrab       = new Audio( "sounds/Slingshot_Ungrab.wav"     ); 
     var pullFling    = new Audio( "sounds/Slingshot_Pull_Loop.wav"  );
     var fling        = new Audio( "sounds/Slingshot_Release.wav"    ); 
-    var tooManyBalls = new Audio( "sounds/too-many.wav"             ); 
-    var trash        = new Audio( "sounds/Tool_Trash.wav"           ); 
-    var grab         = new Audio( "sounds/Tool_Grab.wav"            ); 
-    var death0       = new Audio( "sounds/Death-0.wav"              ); 
-    var death1       = new Audio( "sounds/Death-1.wav"              ); 
-    var death2       = new Audio( "sounds/Death-2.wav"              ); 
-    var death3       = new Audio( "sounds/Death-3.wav"              ); 
+    var tooManyBalls = new Audio( "sounds/Too_Many_Balls.wav"       ); 
+    var trashTool    = new Audio( "sounds/Tool_Trash.wav"           ); 
+    var moveTool     = new Audio( "sounds/Tool_Move.wav"            ); 
+    var createTool   = new Audio( "sounds/Tool_Create.wav"          ); 
+    var flingTool    = new Audio( "sounds/Tool_Fling.wav"           ); 
+    var noGrab       = new Audio( "sounds/Cannot_Grab.wav"          ); 
+    var collision    = new Audio( "sounds/Collision.wav"            ); 
+    var buttonClick  = new Audio( "sounds/ButtonClick.wav"          ); 
+    var death0       = new Audio( "sounds/Death_1.wav"              ); 
+    var death1       = new Audio( "sounds/Death_2.wav"              ); 
+    var death2       = new Audio( "sounds/Death_3.wav"              ); 
+    var death3       = new Audio( "sounds/Death_4.wav"              ); 
     var create0      = new Audio( "sounds/CreateBall_Species1.wav"  ); 
     var create1      = new Audio( "sounds/CreateBall_Species2.wav"  ); 
     var create2      = new Audio( "sounds/CreateBall_Species3.wav"  ); 
@@ -22,11 +31,11 @@ function TEMPSoundAPI()
     var fly2         = new Audio( "sounds/Fly_Species3.wav"         ); 
     var fly3         = new Audio( "sounds/Fly_Species4.wav"         ); 
     var fly4         = new Audio( "sounds/Fly_Species5.wav"         ); 
-    var delete0      = new Audio( "sounds/Delete_Species1.wav"      ); 
-    var delete1      = new Audio( "sounds/Delete_Species2.wav"      ); 
-    var delete2      = new Audio( "sounds/Delete_Species3.wav"      ); 
-    var delete3      = new Audio( "sounds/Delete_Species4.wav"      ); 
-    var delete4      = new Audio( "sounds/Delete_Species5.wav"      ); 
+    var delete0      = new Audio( "sounds/Death_Species1.wav"       ); 
+    var delete1      = new Audio( "sounds/Death_Species2.wav"       ); 
+    var delete2      = new Audio( "sounds/Death_Species3.wav"       ); 
+    var delete3      = new Audio( "sounds/Death_Species4.wav"       ); 
+    var delete4      = new Audio( "sounds/Death_Species5.wav"       ); 
     var success0     = new Audio( "sounds/Success_Species1.wav"     ); 
     var success1     = new Audio( "sounds/Success_Species2.wav"     ); 
     var success2     = new Audio( "sounds/Success_Species3.wav"     ); 
@@ -37,6 +46,21 @@ function TEMPSoundAPI()
     var tool2        = new Audio( "sounds/Tool_Species3.wav"        ); 
     var tool3        = new Audio( "sounds/Tool_Species4.wav"        ); 
     var tool4        = new Audio( "sounds/Tool_Species5.wav"        ); 
+    var select1a     = new Audio( "sounds/Select_Species1_a.wav"    ); 
+    var select1b     = new Audio( "sounds/Select_Species1_b.wav"    ); 
+    var select1c     = new Audio( "sounds/Select_Species1_c.wav"    ); 
+    var select2a     = new Audio( "sounds/Select_Species2_a.wav"    ); 
+    var select2b     = new Audio( "sounds/Select_Species2_b.wav"    ); 
+    var select2c     = new Audio( "sounds/Select_Species2_c.wav"    ); 
+    var select3a     = new Audio( "sounds/Select_Species3_a.wav"    ); 
+    var select3b     = new Audio( "sounds/Select_Species3_b.wav"    ); 
+    var select3c     = new Audio( "sounds/Select_Species3_c.wav"    ); 
+    var select4a     = new Audio( "sounds/Select_Species4_a.wav"    ); 
+    var select4b     = new Audio( "sounds/Select_Species4_b.wav"    ); 
+    var select4c     = new Audio( "sounds/Select_Species4_c.wav"    ); 
+    var select5a     = new Audio( "sounds/Select_Species5_a.wav"    ); 
+    var select5b     = new Audio( "sounds/Select_Species5_b.wav"    ); 
+    var select5c     = new Audio( "sounds/Select_Species5_c.wav"    ); 
     
     //-------------------------------
     this.playLoop = function( name )
@@ -47,7 +71,10 @@ function TEMPSoundAPI()
     //----------------------------
     this.play = function( name )
     {    
-        var soundID = this.getID( name );
+        var truncatedName = name.replace( "fizzics/", "" );
+        //console.log( truncatedName );
+        
+        var soundID = this.getID( truncatedName );
         soundID.pause();
         soundID.currentTime = 0; 
         soundID.play(); 
@@ -56,7 +83,10 @@ function TEMPSoundAPI()
     //-------------------------------
     this.stop = function( name )
     {    
-        var soundID = this.getID( name );
+        var truncatedName = name.replace( "fizzics/", "" );
+        //console.log( truncatedName );
+    
+        var soundID = this.getID( truncatedName );
         soundID.pause();
         soundID.currentTime = 0; 
     }
@@ -64,45 +94,7 @@ function TEMPSoundAPI()
     //----------------------------
     this.getID = function( name )
     {        
-        var ID = moveFling;
-        
-             if ( name == "moveFling"    ) { ID = moveFling;    }
-        else if ( name == "pullFling"    ) { ID = pullFling;    }
-        else if ( name == "fling"        ) { ID = fling;        }
-        else if ( name == "tooManyBalls" ) { ID = tooManyBalls; }
-        else if ( name == "trash"        ) { ID = trash;        }
-        else if ( name == "grab"         ) { ID = grab;         }
-        else if ( name == "death0"       ) { ID = death0;       }
-        else if ( name == "death1"       ) { ID = death1;       }
-        else if ( name == "death2"       ) { ID = death2;       }
-        else if ( name == "death3"       ) { ID = death3;       }
-        else if ( name == "death4"       ) { ID = death4;       }
-        else if ( name == "create0"      ) { ID = create0;      }
-        else if ( name == "create1"      ) { ID = create1;      }
-        else if ( name == "create2"      ) { ID = create2;      }
-        else if ( name == "create3"      ) { ID = create3;      }
-        else if ( name == "create4"      ) { ID = create4;      }
-        else if ( name == "fly0"         ) { ID = fly0;         }
-        else if ( name == "fly1"         ) { ID = fly1;         }
-        else if ( name == "fly2"         ) { ID = fly2;         }
-        else if ( name == "fly3"         ) { ID = fly3;         }
-        else if ( name == "fly4"         ) { ID = fly4;         }
-        else if ( name == "delete0"      ) { ID = delete0;      }
-        else if ( name == "delete1"      ) { ID = delete1;      }
-        else if ( name == "delete2"      ) { ID = delete2;      }
-        else if ( name == "delete3"      ) { ID = delete3;      }
-        else if ( name == "delete4"      ) { ID = delete4;      }
-        else if ( name == "success0"     ) { ID = delete0;      }
-        else if ( name == "success1"     ) { ID = delete1;      }
-        else if ( name == "success2"     ) { ID = delete2;      }
-        else if ( name == "success3"     ) { ID = delete3;      }
-        else if ( name == "success4"     ) { ID = delete4;      }
-        else if ( name == "tool0"        ) { ID = tool0;        }
-        else if ( name == "tool1"        ) { ID = tool1;        }
-        else if ( name == "tool2"        ) { ID = tool2;        }
-        else if ( name == "tool3"        ) { ID = tool3;        }
-        else if ( name == "tool4"        ) { ID = tool4;        }   
-         
-        return ID;
+        return eval( name );
     }
 }
+

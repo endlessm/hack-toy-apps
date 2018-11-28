@@ -373,6 +373,7 @@ function Flinger()
         canvas.fill();
         canvas.closePath();    
         
+        /*
         //-----------------------------------------------------------
         // show translucent region within flinger pull area
         //-----------------------------------------------------------
@@ -391,7 +392,8 @@ function Flinger()
             canvas.closePath();
             canvas.fill();    
         }
-                
+        */
+        
         //-----------------------------------
         // show slingshot harness
         //-----------------------------------

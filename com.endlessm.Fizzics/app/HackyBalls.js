@@ -262,7 +262,6 @@ function HackyBalls()
     var _backgroundImageIndex   = -1;
     var _success                = new Image();
     var _balls                  = new Array();
-    var _activeBalls            = new Array();
     var _deathAnimation         = new DeathAnimation();
     var _numBalls               = 0;
     var _hackyBallsGUI          = new HackyBallsGUI();
@@ -411,7 +410,6 @@ function HackyBalls()
         for (var b=0; b<MAX_BALLS; b++) 
         {
             _balls[b] = new Ball();
-            _activeBalls[b] = false;
         }
         
         //--------------------------------------
@@ -469,9 +467,7 @@ function HackyBalls()
     //------------------------------------------
     this.createBall = function( x, y, species )
     {    
-        var newBallIndex = this.getNewBallIndex();
-        
-        if ( newBallIndex != NULL_BALL )
+        if ( _numBalls < MAX_BALLS )
         {
             if (!_levelLoading)
             {
@@ -485,51 +481,35 @@ function HackyBalls()
             var jitter = 0.1;
             x += (-jitter * ONE_HALF + Math.random() * jitter );
             y += (-jitter * ONE_HALF + Math.random() * jitter );
-                        
-            _activeBalls[ newBallIndex ] = true;
-        
-            _balls[ newBallIndex ].setWalls( _leftWall, _bottomWall, _rightWall, _topWall );
+                                
+            _balls[ _numBalls ].setWalls( _leftWall, _bottomWall, _rightWall, _topWall );
 
             var position = new Vector2D();
             var velocity = new Vector2D();
             position.setXY( x, y );
             velocity.clear();
 
-            _balls[ newBallIndex ].setType         ( species  );
-            _balls[ newBallIndex ].setPosition     ( position );
-            _balls[ newBallIndex ].setVelocity     ( velocity );
-            _balls[ newBallIndex ].setGravity      ( _species[ species ].gravity    );
-            _balls[ newBallIndex ].setRadius       ( _species[ species ].radius     );
-            _balls[ newBallIndex ].setCollision    ( _species[ species ].collision  );     
-            _balls[ newBallIndex ].setAirFriction  ( _species[ species ].friction   );
-            _balls[ newBallIndex ].setImageID      ( _species[ species ].imageID    );
-            _balls[ newBallIndex ].setUsingPhysics ( _species[ species ].usePhysics );     
+            _balls[ _numBalls ].setType         ( species  );
+            _balls[ _numBalls ].setPosition     ( position );
+            _balls[ _numBalls ].setVelocity     ( velocity );
+            _balls[ _numBalls ].setGravity      ( _species[ species ].gravity    );
+            _balls[ _numBalls ].setRadius       ( _species[ species ].radius     );
+            _balls[ _numBalls ].setCollision    ( _species[ species ].collision  );     
+            _balls[ _numBalls ].setAirFriction  ( _species[ species ].friction   );
+            _balls[ _numBalls ].setImageID      ( _species[ species ].imageID    );
+            _balls[ _numBalls ].setUsingPhysics ( _species[ species ].usePhysics );     
 
             _numBalls ++;
-        }
-    }
-    
-
-
-
-    //-------------------------------
-    this.getNewBallIndex = function()
-    {    
-        var newBallIndex = NULL_BALL;
-
-        if ( _numBalls < MAX_BALLS )
-        {
-            newBallIndex = _numBalls
         }
         else
         {
             Sounds.play( "fizzics/tooManyBalls" );
-        }
-        
-        return newBallIndex;        
+        }        
     }
     
-    
+
+
+
 
     //-----------------------
     this.update = function()
@@ -839,7 +819,7 @@ function HackyBalls()
             else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = "death3"; }
         }
         
-        gameState.numBonus = _species[ ballSpecies ].score;
+        gameState.numBonus += _species[ ballSpecies ].score;
         if (ballSpecies == 0 && deathType == 2)
         {
             _game.setBallDied();
@@ -1053,24 +1033,25 @@ function HackyBalls()
                 Sounds.playLoop( "fizzics/pullFling" );
                 cancelFlinger = false;
                 cancelGrab = true;
-            }
-            
-            // unfinished (unsuccessful) attempt at making "sticky grab" for flinger...
-            /*
+            }            
             else if ( _flinger.getState() == FLINGER_STATE_PULLING )        
             {
                 if ( _flinger.getReadyToFling() )
                 {
-                    cancelFlinger = false;
+                    //console.log( "now" );
+                    
+                    //cancelFlinger = true;
+
+                    /*
                     _flinger.fling();
                 
                     gameState.numFlings++;
                     Sounds.stop( "pullFling" );
                     Sounds.play( "fling" );
                     Sounds.playLoop( _species[ _balls[ _flinger.getFlingingBall() ].getType() ].flySound );            
+                    */
                 }
             }
-            */
         }
         
         
@@ -1110,7 +1091,7 @@ function HackyBalls()
                             this.deleteBall( b, _deleteImage, _species[ _balls[b].getType() ].deleteSound );
                         }
                         else 
-                        {                            
+                        {                                                 
                             if ( _currentTool == TOOL_FLING )
                             {
                                 if ( _species[ _balls[b].getType() ].flingable && _species[ _balls[b].getType() ].usePhysics )
@@ -1119,7 +1100,6 @@ function HackyBalls()
                                     cancelFlinger = false;
                                 }
                             }
-
                             else if (( _species[ _balls[b].getType() ].usePhysics ) || ( this._devMode ))
                             {
                                 _grabbedBall = b;      

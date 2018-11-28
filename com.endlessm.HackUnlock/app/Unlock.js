@@ -48,6 +48,10 @@ function flip()
     {
         Sounds.play('HackUnlock/success');
         globalParameters.mode = MODE_FINISHED;
+        if (window.ToyApp)
+        {
+            window.ToyApp.setHackable(false);
+        }
     }
     else if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
     {

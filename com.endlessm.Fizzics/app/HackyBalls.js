@@ -814,7 +814,7 @@ function HackyBalls()
     this.killBallFromCollision = function( b, deathType )
     {    
         var deathImage  = new Image();
-        var deathSound  = "death0";//default
+        var deathSound  = "fizzics/death0";//default
         var ballSpecies = _balls[b].getType();
         
         deathImage.src = "images/death-0.png"; //default
@@ -823,19 +823,19 @@ function HackyBalls()
         {
             deathImage.src = "images/death-" + _species[ ballSpecies ].deathVisualGood + ".png";
             
-                 if ( _species[ ballSpecies ].deathSoundGood  == 0 ) { deathSound = "death0"; }
-            else if ( _species[ ballSpecies ].deathSoundGood  == 1 ) { deathSound = "death1"; }
-            else if ( _species[ ballSpecies ].deathSoundGood  == 2 ) { deathSound = "death2"; }
-            else if ( _species[ ballSpecies ].deathSoundGood  == 3 ) { deathSound = "death3"; }
+                 if ( _species[ ballSpecies ].deathSoundGood  == 0 ) { deathSound = "fizzics/death0"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 1 ) { deathSound = "fizzics/death1"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 2 ) { deathSound = "fizzics/death2"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  == 3 ) { deathSound = "fizzics/death3"; }
         }
         else if ( deathType == 2 ) // bad
         {
             deathImage.src = "images/death-" + _species[ ballSpecies ].deathVisualBad + ".png";
 
-                 if ( _species[ ballSpecies ].deathSoundBad   == 0 ) { deathSound = "death0"; }
-            else if ( _species[ ballSpecies ].deathSoundBad   == 1 ) { deathSound = "death1"; }
-            else if ( _species[ ballSpecies ].deathSoundBad   == 2 ) { deathSound = "death2"; }
-            else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = "death3"; }
+                 if ( _species[ ballSpecies ].deathSoundBad   == 0 ) { deathSound = "fizzics/death0"; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 1 ) { deathSound = "fizzics/death1"; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 2 ) { deathSound = "fizzics/death2"; }
+            else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = "fizzics/death3"; }
         }
         
         gameState.numBonus += _species[ ballSpecies ].score;

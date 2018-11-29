@@ -18,6 +18,15 @@ WebKit2.WebView.__gtype__
 
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
+TOY_APP_IFACE = '''
+  <node>
+    <interface name='com.endlessm.Hackable'>
+      <property name="Hackable" type="b" access="read"/>
+    </interface>
+  </node>
+'''
+
+
 @Gtk.Template(filename=os.path.join(SCRIPT_PATH, 'app.ui'))
 class ToyAppWindow(Gtk.ApplicationWindow):
     __gtype_name__ = "ToyAppWindow"
@@ -64,6 +73,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         # Register message hanlders
         manager.register_script_message_handler("ToyAppLoadNotify")
+        manager.register_script_message_handler("ToyAppSetHackable")
         manager.register_script_message_handler('playSound')
         manager.register_script_message_handler('playSoundAsync')
         manager.register_script_message_handler('stopSound')
@@ -81,6 +91,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         manager.connect('script-message-received::ToyAppLoadNotify',
                         self._on_load_notify)
+        manager.connect('script-message-received::ToyAppSetHackable',
+                        self._on_set_hackable)
         manager.connect('script-message-received::playSound',
                         self._on_play_sound)
         manager.connect('script-message-received::playSoundAsync',
@@ -125,6 +137,10 @@ toy-app-window > overlay > revealer > frame {
     def _on_load_notify(self, manager, result):
         self._view_show()
 
+    def _on_set_hackable(self, manager, result):
+        val = result.get_js_value()
+        self.get_application().send_hackable(val.to_string() == 'true')
+
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:
             self._view_show()
@@ -160,6 +176,7 @@ class Application(Gtk.Application):
     def __init__(self, application_id):
         super().__init__(application_id=application_id)
         self._window = None
+        self._hackable = True
 
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
@@ -211,6 +228,34 @@ class Application(Gtk.Application):
             self._window.connect('destroy', self._window_destroy_cb)
             self._window.show_all()
         self._window.present()
+
+    def do_dbus_register(self, connection, path):
+        introspection_data = Gio.DBusNodeInfo.new_for_xml(TOY_APP_IFACE)
+        connection.register_object(path,
+                                   introspection_data.interfaces[0],
+                                   None,
+                                   self._on_get_property)
+        return Gtk.Application.do_dbus_register(self, connection, path)
+
+    def _on_get_property(self, connection, sender, object_path, interface, key):
+        if key == 'Hackable':
+            return GLib.Variant('b', self._hackable)
+        return None
+
+    def send_hackable(self, hackable):
+        if hackable == self._hackable:
+            return
+
+        self._hackable = hackable
+        changed_props = {'Hackable': GLib.Variant('b', self._hackable)}
+        variant = GLib.Variant.new_tuple(GLib.Variant('s', 'com.endlessm.Hackable'),
+                                         GLib.Variant('a{sv}', changed_props),
+                                         GLib.Variant('as', []))
+        self.get_dbus_connection().emit_signal(None,
+                                               self.get_dbus_object_path(),
+                                               'org.freedesktop.DBus.Properties',
+                                               'PropertiesChanged',
+                                               variant)
 
 
 if __name__ == "__main__":

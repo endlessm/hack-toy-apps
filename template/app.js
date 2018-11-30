@@ -15,6 +15,10 @@ window.Sounds = {
         window.webkit.messageHandlers.playSoundAsync.postMessage(id);
     },
 
+    updateSound(id, time_ms, props) {
+        window.webkit.messageHandlers.updateSound.postMessage([id, time_ms, props]);
+    },
+
     stop(id) {
         window.webkit.messageHandlers.stopSound.postMessage(id);
     },

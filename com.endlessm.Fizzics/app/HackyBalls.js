@@ -11,8 +11,9 @@ var WINDOW_HEIGHT = canvasID.height;
 
 var NULL_BALL = -1;
 var MAX_BALLS = 100;
+var DEATH_ANIMATION_RADUIS_SCALE = 120.0;
 
-var SCREEN_WIDTH = 1920;
+var SCREEN_WIDTH  = 1920;
 var SCREEN_HEIGHT = 1040;
 
 
@@ -450,7 +451,7 @@ function HackyBalls()
         _deathAnimation.position.clear()
         _deathAnimation.clock     = 100; // So we don't play the animation in the corner
         _deathAnimation.radius    = ZERO;
-        _deathAnimation.duration  = 20;
+        _deathAnimation.duration  = 0;
         _deathAnimation.image.src = "images/death-0.png";    //default
                 
         //------------------------------------------------------------------------
@@ -892,10 +893,10 @@ function HackyBalls()
     this.playBallDeathEffect = function( b, deathImage, deathSound )
     {    
         _deathAnimation.position.setXY( _balls[b].getPosition().x, _balls[b].getPosition().y )
-        _deathAnimation.clock = 0;
-        _deathAnimation.duration = 30;
-        _deathAnimation.radius = _balls[b].getRadius();        
-        _deathAnimation.image = deathImage;    
+        _deathAnimation.clock    = 0;
+        _deathAnimation.duration = 60;
+        _deathAnimation.radius   = _balls[b].getRadius();
+        _deathAnimation.image    = deathImage;
 
         Sounds.stop( deathSound );   
         Sounds.play( deathSound );   
@@ -928,19 +929,29 @@ function HackyBalls()
         {
             _deathAnimation.clock ++;
         
-            var wave = ONE_HALF - ONE_HALF * Math.cos( _deathAnimation.clock / _deathAnimation.duration * Math.PI );
-            
-            var r = _deathAnimation.radius + 40.0 + 40.0 * wave; 
+            var f = _deathAnimation.clock / _deathAnimation.duration;
+            var wave = ONE_HALF - ONE_HALF * Math.cos( f * Math.PI );
+            var size = _deathAnimation.radius + DEATH_ANIMATION_RADUIS_SCALE * wave;
+            var fadeTime = 0.6;
+
+            canvas.globalAlpha = ONE;
+
+            if ( f > fadeTime )
+            {
+                canvas.globalAlpha -= ( f - fadeTime ) / ( ONE - fadeTime );
+            }
 
             canvas.drawImageCached
             ( 
                 _deathAnimation.image, 
-                _deathAnimation.position.x - r * ONE_HALF,
-                _deathAnimation.position.y - r * ONE_HALF, 
-                r, 
-                r 
+                _deathAnimation.position.x - size * ONE_HALF,
+                _deathAnimation.position.y - size * ONE_HALF,
+                size,
+                size
             );
         }
+
+        canvas.globalAlpha = ONE;
 
         //------------------------------
         // show the balls

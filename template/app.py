@@ -76,6 +76,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager.register_script_message_handler("ToyAppSetHackable")
         manager.register_script_message_handler('playSound')
         manager.register_script_message_handler('playSoundAsync')
+        manager.register_script_message_handler('updateSound')
         manager.register_script_message_handler('stopSound')
 
         # Inject custom JS on every page
@@ -97,6 +98,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
                         self._on_play_sound)
         manager.connect('script-message-received::playSoundAsync',
                         self._on_play_sound_async)
+        manager.connect('script-message-received::updateSound',
+                        self._on_update_sound)
         manager.connect('script-message-received::stopSound',
                         self._on_stop_sound)
 
@@ -168,6 +171,40 @@ toy-app-window > overlay > revealer > frame {
         if not val.is_string():
             raise ValueError('arg should be string')
         HackSoundServer.stop(self._played_async_sounds[val.to_string()])
+
+    def _on_update_sound(self, manager, result):
+        val = result.get_js_value()
+        if (not val.is_array() or
+                val.object_get_property('length').to_int32() != 3):
+            raise ValueError('there should be 3 args')
+        id_val = val.object_get_property_at_index(0)
+        time_ms_val = val.object_get_property_at_index(1)
+        props_val = val.object_get_property_at_index(2)
+        if not id_val.is_string():
+            raise ValueError('first arg should be string')
+        if not time_ms_val.is_number():
+            raise ValueError('second arg should be number')
+        if not props_val.is_object():
+            raise ValueError('third arg should be dict')
+
+        props = {}
+        if props_val.object_has_property('volume'):
+            volume_val = props_val.object_get_property('volume')
+            if not volume_val.is_number():
+                raise ValueError('volume should be number')
+            props['volume'] = GLib.Variant('d', volume_val.to_double())
+        if props_val.object_has_property('rate'):
+            rate_val = props_val.object_get_property('rate')
+            if not rate_val.is_number():
+                raise ValueError('rate should be number')
+            props['rate'] = GLib.Variant('d', rate_val.to_double())
+
+        try:
+            uuid = self._played_async_sounds[id_val.to_string()]
+        except KeyError:
+            return  # sound did not exist, or already stopped
+        HackSoundServer.update_properties(uuid, time_ms_val.to_int32(), props)
+
 
 ToyAppWindow.set_css_name('toy-app-window')
 

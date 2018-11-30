@@ -42,6 +42,7 @@ function flip()
     {
         Sounds.stop('HackUnlock/ambient/front');
         Sounds.playLoop('HackUnlock/ambient/back');
+        Sounds.playLoop('HackUnlock/wave');
         globalParameters.mode = MODE_SOLVING_PUZZLE;
     }
     else if ( globalParameters.mode === MODE_SUCCESS )
@@ -56,9 +57,15 @@ function flip()
     else if ( globalParameters.mode === MODE_SOLVING_PUZZLE )
     {
         Sounds.stop('HackUnlock/ambient/back');
+        Sounds.stop('HackUnlock/wave');
         Sounds.playLoop('HackUnlock/ambient/front');
         globalParameters.mode = MODE_FIRST_SCREEN;
     }
+}
+
+function normalize(value, min, max, normalizedMin, normalizedMax) {
+    const unityValue = (value - min) / (max - min);
+    return unityValue * (normalizedMax - normalizedMin) + normalizedMin;
 }
 
 //----------------------
@@ -70,6 +77,12 @@ function Unlock()
     var IDEAL_AMPLITUDE     = 0.615;
     var IDEAL_FREQUENCY     = 12.1;
     var IDEAL_PHASE         = -1.525;
+
+    // Keep these in sync with hack-toolbox/HackUnlock/controlpanel.ui
+    var MIN_AMPLITUDE       = 0;
+    var MAX_AMPLITUDE       = 1.4;
+    var MIN_FREQUENCY       = 0;  // wat
+    var MAX_FREQUENCY       = 50;
 
     var AMPLITUDE_BUFFER    = 0.08;
     var FREQUENCY_BUFFER    = 1.50;
@@ -328,6 +341,7 @@ function Unlock()
             globalParameters.mode = MODE_SUCCESS;
             if (!_solutionSoundPlayed) {
                 Sounds.stop('HackUnlock/ambient/back');
+                Sounds.stop('HackUnlock/wave');
                 Sounds.play('HackUnlock/solution');
                 _solutionSoundPlayed = true;
             }
@@ -335,10 +349,17 @@ function Unlock()
         else
         {
             globalParameters.mode = MODE_SOLVING_PUZZLE;
+
             if (_solutionSoundPlayed) {
                 _solutionSoundPlayed = false;
                 Sounds.playLoop('HackUnlock/ambient/back');
+                Sounds.playLoop('HackUnlock/wave');
             }
+
+            Sounds.updateSound('HackUnlock/wave', 100, {
+                volume: normalize(_renderedAmplitude, MIN_AMPLITUDE, MAX_AMPLITUDE, 0.0, 1.0),
+                rate: normalize(_renderedFrequency, MIN_FREQUENCY, MAX_FREQUENCY, 0.5, 1.5),
+            });
         }
     }
     

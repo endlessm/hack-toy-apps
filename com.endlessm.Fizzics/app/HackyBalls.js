@@ -460,6 +460,11 @@ function HackyBalls()
         //------------------------------------------------------------------------        
         // this forces the frame rate to be same as browser        
         //window.requestAnimationFrame( this.update.bind(this) ); 
+
+        //--------------------------------
+        // Initialize the game UI...
+        //--------------------------------
+        _game.initializeUserInterface();
     }
     
 
@@ -521,7 +526,16 @@ function HackyBalls()
         //-----------------------------------------------------------------------------
         if ( _initializeFirstLevel )
         {
-            this.setGameLevel( 0 );
+            var levelIndex = 0;
+            if (localStorage.furthestLevel)
+            {
+                levelIndex = Number(localStorage.furthestLevel);
+                if (isNaN(levelIndex) || levelIndex < 0)
+                    levelIndex = 0;
+            }
+            else
+                localStorage.furthestLevel = 0;
+            this.setGameLevel( levelIndex );
             _initializeFirstLevel = false;
 
             // Tell ToyApp we just finished loading everything
@@ -534,7 +548,7 @@ function HackyBalls()
         // The Clubhouse requested a particular level. Set it and then reset the variable so we don't do it again.
         if ( globalParameters.preset != 0 )
         {
-            this.setGameLevel( globalParameters.preset - 1 );
+            this.setGameLevel( globalParameters.preset );
             globalParameters.preset = 0;
         }
         
@@ -968,11 +982,16 @@ function HackyBalls()
     }
 
     //------------------------
-    this.reset = function()
+    this.resetGlobalParams = function()
     {
-        this.setGameLevel( _game.getCurrentLevel() );
+        _game.setLevelGlobalParams(_game.getCurrentLevel());
     }
 
+    this.resetLevelOnly = function()
+    {
+        _numBalls = 0;
+        _game.setLevel( this, _game.getCurrentLevel(), _collisionBalls, _ballsWithSomeCollision ); 
+    }
 
     //--------------------------------
     this.mouseDown = function( sx, sy )
@@ -999,7 +1018,7 @@ function HackyBalls()
         var gameAction = _game.getMouseDownAction( x, y );
         if ( gameAction == GAME_ACTION_NEXT_LEVEL  ) { this.setGameLevel( _game.getNextLevel() ); Sounds.play( "fizzics/buttonClick" ); }
         if ( gameAction == GAME_ACTION_PREV_LEVEL  ) { this.setGameLevel( _game.getPrevLevel() ); Sounds.play( "fizzics/buttonClick" ); }
-        if ( gameAction == GAME_ACTION_RESET_LEVEL ) { this.reset(); Sounds.play( "fizzics/buttonClick" ); }
+        if ( gameAction == GAME_ACTION_RESET_LEVEL ) { this.resetLevelOnly(); Sounds.play( "fizzics/buttonClick" ); }
         
         //--------------------------
         // detect selecting a tool
@@ -1148,8 +1167,11 @@ function HackyBalls()
     //------------------------------------
     this.setGameLevel = function( level )
     {
+        localStorage.furthestLevel = Math.max(level, localStorage.furthestLevel);
+
         globalParameters.levelSuccess = false;
         _levelLoading = true;
+        _game.setLevelGlobalParams(level);
         _numBalls = 0;
         _game.setLevel( this, level, _collisionBalls, _ballsWithSomeCollision ); 
         
@@ -1173,6 +1195,14 @@ function HackyBalls()
         _startTime = (new Date).getTime();
         _prevSeconds = 0;
         _seconds = 0;
+
+        _game.setPreviousButtonEnabled(level > 0);
+        _game.setNextButtonEnabled(level < localStorage.furthestLevel);
+    }
+
+    this.setGameGlobalparams = function( level )
+    {
+        _game.setLevelGlobalParams( this, level ); 
     }
 
 
@@ -1206,6 +1236,9 @@ function HackyBalls()
     {
         x = sx / _worldToWindowScale;
         y = sy / _worldToWindowScale;
+        
+        var gameAction = _game.getMouseMoveAction( x, y );
+        
         if ( _grabbedBall == NULL_BALL )
         {
             if ( USING_TEST_GUI )
@@ -1611,7 +1644,7 @@ var hackyBalls = new HackyBalls();
 /* globally accessible reset */
 function reset()
 {
-    hackyBalls.reset();
+    hackyBalls.resetGlobalParams();
 }
 
 window.addEventListener("resize", function () {

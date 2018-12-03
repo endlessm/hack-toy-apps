@@ -1167,8 +1167,6 @@ function HackyBalls()
     //------------------------------------
     this.setGameLevel = function( level )
     {
-        localStorage.furthestLevel = Math.max(level, localStorage.furthestLevel);
-
         globalParameters.levelSuccess = false;
         _levelLoading = true;
         _game.setLevelGlobalParams(level);
@@ -1195,9 +1193,6 @@ function HackyBalls()
         _startTime = (new Date).getTime();
         _prevSeconds = 0;
         _seconds = 0;
-
-        _game.setPreviousButtonEnabled(level > 0);
-        _game.setNextButtonEnabled(level < localStorage.furthestLevel);
     }
 
     this.setGameGlobalparams = function( level )

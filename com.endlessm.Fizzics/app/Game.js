@@ -378,6 +378,11 @@ function Game()
         gameState.numCollisionsGoal = parseInt( level.numCollisionsGoal );
         gameState.numCollisions     = parseInt( level.numCollisions     );
     }
+
+    this.getLevelCount = function()
+    {
+        return _levelData.levels.length;
+    }
       
 
     this.setLevelGlobalParams = function( levelID )

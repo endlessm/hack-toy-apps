@@ -530,7 +530,7 @@ function HackyBalls()
             if (localStorage.furthestLevel)
             {
                 levelIndex = Number(localStorage.furthestLevel);
-                if (isNaN(levelIndex) || levelIndex < 0)
+                if (isNaN(levelIndex) || levelIndex < 0 || levelIndex > _game.getLevelCount() - 1)
                     levelIndex = 0;
             }
             else

@@ -374,7 +374,7 @@ function Game()
 
     this.setLevelGlobalParams = function( levelID )
     {                
-        if ( _level == QUEST_FIZZICS1 )
+        if ( levelID == QUEST_FIZZICS1 )
         {
             globalParameters.backgroundImageIndex = 0;
 
@@ -463,7 +463,7 @@ function Game()
             globalParameters.deathEffect_4_2    = 2;
         }
 
-        else if ( _level == QUEST_FIZZICS2 )
+        else if ( levelID == QUEST_FIZZICS2 )
         {
             globalParameters.backgroundImageIndex = 0;
 
@@ -520,7 +520,7 @@ function Game()
 
         else
         {
-            var level = _levelData.levels[_level];
+            var level = _levelData.levels[levelID];
 
             if (level.species)
             {

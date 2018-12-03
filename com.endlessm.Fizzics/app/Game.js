@@ -293,6 +293,9 @@ function Game()
     this.setLevel = function( parent, levelID, collisionBalls, ballsWithSomeCollision )
     {                
         _level = levelID;
+        if (_level < QUEST_FIZZICS1)
+            localStorage.furthestLevel = Math.max(_level, localStorage.furthestLevel);
+
         _score = 0;
         _ballDied = false;
         
@@ -306,6 +309,11 @@ function Game()
         {
             this.setPreviousButtonEnabled(false);
             this.setNextButtonEnabled(false);
+        }
+        else
+        {
+            this.setPreviousButtonEnabled(_level > 0);
+            this.setNextButtonEnabled(_level < localStorage.furthestLevel);
         }
 
         if (_level < _levelData.levels.length)
@@ -369,6 +377,11 @@ function Game()
         gameState.collisionSpecies  = parseInt( level.collisionSpecies  );
         gameState.numCollisionsGoal = parseInt( level.numCollisionsGoal );
         gameState.numCollisions     = parseInt( level.numCollisions     );
+    }
+
+    this.getLevelCount = function()
+    {
+        return _levelData.levels.length;
     }
       
 

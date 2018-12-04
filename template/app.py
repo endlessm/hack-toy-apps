@@ -170,7 +170,10 @@ toy-app-window > overlay > revealer > frame {
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        HackSoundServer.stop(self._played_async_sounds[val.to_string()])
+        uuid = self._played_async_sounds.get(val.to_string(), None)
+        if uuid is None:
+            return
+        HackSoundServer.stop(uuid)
 
     def _on_update_sound(self, manager, result):
         val = result.get_js_value()

@@ -4,6 +4,7 @@ var canvas = canvasID.getContext( '2d' );
 "use strict";
 
 var USING_TEST_GUI = false;
+var USING_FALLBACK_SOUNDS = false;
 
 var WINDOW_WIDTH  = canvasID.width;
 var WINDOW_HEIGHT = canvasID.height;
@@ -250,6 +251,9 @@ function HackyBalls()
         this.radius   = ZERO;
         this.duration = 20;
     }
+
+    if (USING_FALLBACK_SOUNDS)
+        window.Sounds = new FallbackSoundAPI();
     
     //-------------------------------
     // variables
@@ -288,12 +292,7 @@ function HackyBalls()
     var _savedBalls             = null;
     var _numSavedBalls          = 0;
     var _levelLoading           = false;
-    
-    //----------------------------------------------------------------------------------------
-    // this is a wrapper for the Sounds API. It must be commented-out before using the API.
-    //----------------------------------------------------------------------------------------
-    var Sounds = new FallbackSoundAPI();
-    
+
     //------------------------------------------------------------------------- 
     // NOTE: The json-reading scheme is not fully figured out yet! 
     //

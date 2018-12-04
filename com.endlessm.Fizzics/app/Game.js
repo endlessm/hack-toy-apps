@@ -19,12 +19,7 @@ var GAME_ACTION_PREV_LEVEL  =  2;
 
 //--------------------------
 function Game()
-{    
-    //---------------------------------------
-    // this is a wrapper for the Sounds API
-    //---------------------------------------
-    var Sounds = new FallbackSoundAPI();
-
+{
     var SUCCESS_BALL_RADIUS = 100.0;
     
     function UIElement()

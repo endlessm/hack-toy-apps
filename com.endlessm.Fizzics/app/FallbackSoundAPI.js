@@ -1,6 +1,6 @@
 
 //---------------------------
-function TEMPSoundAPI()
+function FallbackSoundAPI()
 {
     var background1  = new Audio( "sounds/BG_1.wav"                 ); 
     var background2  = new Audio( "sounds/BG_2.wav"                 ); 

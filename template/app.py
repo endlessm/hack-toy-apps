@@ -45,6 +45,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         use_load_notify = metadata.get('use-load-notify', False)
 
         self._played_async_sounds = {}
+        self.connect('destroy', self._on_destroy)
 
         self.set_application(application)
         self.set_title(app_info.get_name())
@@ -67,6 +68,10 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         # Finally load html app index
         self.view.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
+
+    def _on_destroy(self, window):
+        for sound_id in self._played_async_sounds:
+            HackSoundServer.stop(self._played_async_sounds[sound_id])
 
     def _setup_js(self):
         manager = self.view.get_user_content_manager()
@@ -170,7 +175,11 @@ toy-app-window > overlay > revealer > frame {
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        HackSoundServer.stop(self._played_async_sounds[val.to_string()])
+        uuid = self._played_async_sounds.get(val.to_string(), None)
+        if uuid is None:
+            return
+        HackSoundServer.stop(uuid)
+        del self._played_async_sounds[val.to_string()]
 
     def _on_update_sound(self, manager, result):
         val = result.get_js_value()

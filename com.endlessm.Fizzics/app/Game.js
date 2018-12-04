@@ -23,7 +23,7 @@ function Game()
     //---------------------------------------
     // this is a wrapper for the Sounds API
     //---------------------------------------
-    var Sounds = new TEMPSoundAPI();
+    var Sounds = new FallbackSoundAPI();
 
     var SUCCESS_BALL_RADIUS = 100.0;
     

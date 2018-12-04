@@ -292,7 +292,7 @@ function HackyBalls()
     //----------------------------------------------------------------------------------------
     // this is a wrapper for the Sounds API. It must be commented-out before using the API.
     //----------------------------------------------------------------------------------------
-    var Sounds = new TEMPSoundAPI();
+    var Sounds = new FallbackSoundAPI();
     
     //------------------------------------------------------------------------- 
     // NOTE: The json-reading scheme is not fully figured out yet! 

@@ -8,10 +8,18 @@ install_subdir(
     strip_directory: true
 )
 
+excluded_from_app = []
+if app_id == 'com.endlessm.Fizzics'
+  excluded_from_app = [
+      'sounds',
+  ]
+endif
+
 install_subdir(
     join_paths(app_id, 'app'),
     install_dir: 'share/toy/app',
-    strip_directory: true
+    strip_directory: true,
+    exclude_directories: excluded_from_app
 )
 
 install_data(

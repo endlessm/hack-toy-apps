@@ -1150,6 +1150,7 @@ function HackyBalls()
             }
 
             _flinger.cancel();
+            Sounds.stop( "fizzics/pullFling" );
         }
     }
     

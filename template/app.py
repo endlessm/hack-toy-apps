@@ -169,6 +169,10 @@ toy-app-window > overlay > revealer > frame {
     def _on_play_sound_finish(self, proxy, result, sound_id):
         if isinstance(result, Exception):
             raise result
+        # be sure to stop the previous one so we don't lose track of it
+        uuid = self._played_async_sounds.get(sound_id, None)
+        if uuid is not None:
+            HackSoundServer.stop(uuid)
         self._played_async_sounds[sound_id] = result
 
     def _on_stop_sound(self, manager, result):

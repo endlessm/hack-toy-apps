@@ -1170,7 +1170,7 @@ function Game()
             ( 
                 _sucessBall, 
                 canvasID.width  * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF,
-                canvasID.height * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF - 40,
+                canvasID.height * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF - 120,
                 SUCCESS_BALL_RADIUS, 
                 SUCCESS_BALL_RADIUS
             );            

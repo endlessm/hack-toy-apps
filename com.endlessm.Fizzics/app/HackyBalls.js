@@ -56,6 +56,7 @@ var globalParameters =
     currentLevel    : 0,
     flipped         : false,
     levelSuccess    : false,
+    ballDied        : false,
 
     // parameters for species 0 balls
     radius_0        : ZERO,
@@ -993,6 +994,8 @@ function HackyBalls()
 
     this.resetLevelOnly = function()
     {
+        globalParameters.levelSuccess = false;
+        globalParameters.ballDied = false;
         _numBalls = 0;
         _game.setLevel( this, _game.getCurrentLevel(), _collisionBalls, _ballsWithSomeCollision ); 
     }
@@ -1173,6 +1176,7 @@ function HackyBalls()
     this.setGameLevel = function( level )
     {
         globalParameters.levelSuccess = false;
+        globalParameters.ballDied = false;
         _levelLoading = true;
         _game.setLevelGlobalParams(level);
         _numBalls = 0;

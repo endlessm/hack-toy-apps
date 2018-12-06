@@ -49,6 +49,7 @@ function Game()
     this.setBallDied = function()
     {
         _ballDied = true;
+        globalParameters.ballDied = true;
     }
 
     //----------------------------------------

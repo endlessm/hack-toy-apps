@@ -1070,9 +1070,31 @@ function Game()
             levelString = "Ꮘො";
         canvas.fillText( "Level " + levelString, _levelboard.x + _levelboard.width * 0.25, _levelboard.y + _levelboard.height * FONT_Y_SCALE );
 
-        //--------------------------------------
+        //------------------------------------------------------------
+        // if ballDied is true, then make the reset button flash
+        //------------------------------------------------------------
+        if ( _ballDied )
+        {
+            var period = 500;
+            var timer = (new Date).getTime() % period;
+
+            if ( timer > ( period * ONE_HALF) )
+            {
+                _resetButton.image.src = "images/reset_hover.png";
+            }
+            else
+            {
+                _resetButton.image.src = "images/reset_enabled.png";
+            }
+        }
+        else
+        {
+            this.setResetButtonEnabled(_resetButton.enabled);   
+        }
+
+        //------------------------
         // render reset button
-        //--------------------------------------
+        //------------------------
         canvas.drawImage
         ( 
             _resetButton.image, 

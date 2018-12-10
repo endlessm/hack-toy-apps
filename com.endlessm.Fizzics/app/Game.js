@@ -876,7 +876,7 @@ function Game()
         gameState.numCollisions       = 0;
         gameState.numFlings           = 0;
         gameState.numBonus            = 0;
-        gameState.totalCollisionCount = 0;
+        gameState.someCollisionsInPeriod = false;
 
         globalParameters.quest0Success = false;
         globalParameters.quest1Success = false;
@@ -964,14 +964,16 @@ function Game()
                         gameState.numCollisions ++;
                     }
                 }
-
-                gameState.totalCollisionCount = 0;
             
-                for (var i=0; i<MAX_BALLS; i++)
-                {	
-                    if ( ballsWithSomeCollision[i])
+                if (!gameState.someCollisionsInPeriod)
+                {
+                    for (var i=0; i<MAX_BALLS; i++)
                     {
-                        gameState.totalCollisionCount++;
+                        if ( ballsWithSomeCollision[i])
+                        {
+                            gameState.someCollisionsInPeriod = true;
+                            break;
+                        }
                     }
                 }
 
@@ -990,6 +992,7 @@ function Game()
                 {
                     gameState.clock = 0;
                     gameState.numCollisions    = 0;    
+                    gameState.someCollisionsInPeriod = false;
                 
                     for (var c=0; c<gameState.numCollisionsGoal; c++)
                     {                            
@@ -1016,12 +1019,15 @@ function Game()
         if (gameState.timeInLevel < 5)
             return false;
 
+        if (gameState.clock < gameState.period-1)
+            return false;
+
         if (globalParameters.type1BallCount < 20)
             return false;
 
-        if ( gameState.totalCollisionCount > 0 )
+        if ( gameState.someCollisionsInPeriod )
         {
-            //console.log( "Collisions " + gameState.totalCollisionCount);
+            //console.log( "Some collisions");
             return false;
         }
 

@@ -193,7 +193,7 @@ var gameState =
     collisionSpecies    : 0,
     numCollisionsGoal   : 0,
     numCollisions       : 0,
-    totalCollisionCount : 0,
+    someCollisionsInPeriod : false,
     numFlings           : 0,
     numBonus            : 0,
     success             : false

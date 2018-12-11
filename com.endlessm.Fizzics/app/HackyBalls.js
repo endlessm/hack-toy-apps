@@ -1126,13 +1126,12 @@ function HackyBalls()
                                     cancelFlinger = false;
                                 }
                             }
-                            else if (( _species[ _balls[b].getType() ].usePhysics ) || ( this._devMode ))
+                            else if ( _currentTool == TOOL_MOVE )
                             {
                                 _grabbedBall = b;      
                                 this.playSpeciesSelectSound( _balls[b].getType() );   
                             }
-                            
-                            if ( !_species[ _balls[b].getType() ].usePhysics )
+                            else if ( !_species[ _balls[b].getType() ].usePhysics )
                             {
                                 //Sounds.stop( "noGrab" );
                                 var soundID = Sounds.play( "fizzics/noGrab" );

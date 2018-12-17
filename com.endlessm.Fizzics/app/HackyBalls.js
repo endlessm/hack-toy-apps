@@ -172,7 +172,23 @@ var globalParameters =
     deathVisualBad_4  : 0,
     deathSoundGood_4  : 0,
     deathSoundBad_4   : 0,
-    imageIndex_4      : 0
+    imageIndex_4      : 0,
+
+    //-------------------------------------------------------------------------
+    // HackToolBox uses this variable to know when there was a change to reset
+    // the codeview.
+    //
+    // When you press the reset button in the HackToolBox, it sends a dbus
+    // message to query for the current state of *some* registered attributes
+    // from 'globalParameters'. This is performed by the ClippyWrapper from
+    // HackToolBox. The ClippyWrapper then updates its internal properties, and
+    // the codeview gets notified evertime a property has changed. However,
+    // without this variable that changes its state to true only when the
+    // mentioned dbus message has been set, ClippyWrapper could not detect for
+    // changes. For this reason, we use the 'reset' variable as a dummy variable
+    // that tell us if this dbus method has been invoked.
+    //-------------------------------------------------------------------------
+    reset           : false
 }
 
 
@@ -1647,6 +1663,7 @@ var hackyBalls = new HackyBalls();
 /* globally accessible reset */
 function reset()
 {
+    globalParameters.reset = true;
     hackyBalls.resetGlobalParams();
 }
 

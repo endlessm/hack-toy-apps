@@ -902,6 +902,7 @@ function Game()
     //--------------------------------------------------------------------------------
     this.update = function( dt, collisionBalls, ballsWithSomeCollision, numBalls, balls )
     {        
+        globalParameters.reset = false;
         gameState.timeInLevel += dt;
 
         if ( gameState.running )

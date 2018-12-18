@@ -7,7 +7,7 @@ var canvas = canvasID.getContext( '2d' );
 var QUEST_FIZZICS1 =  1000;
 var QUEST_FIZZICS2 =  1001;
 
-var FONT_SIZE_SCALE = 0.5;
+var FONT_SIZE_SCALE = 0.45;
 var FONT_Y_SCALE    = 0.65;
 var UI_SCALE        = 0.4;
 
@@ -244,8 +244,8 @@ function Game()
         _scoreboard.x = _levelboard.x + _levelboard.width;
         _flingboard.x = _scoreboard.x + _scoreboard.width;
 
-        _previousButton.x = _levelboard.x + _levelboard.width * 0.03;
-        _resetButton.x    = _levelboard.x + _levelboard.width * 0.6;
+        _previousButton.x = _levelboard.x + _levelboard.width * 0.02;
+        _resetButton.x    = _levelboard.x + _levelboard.width * 0.65;
         _nextButton.x     = _levelboard.x + _levelboard.width * 0.8;
         
         _levelboard.y = top;
@@ -1074,7 +1074,7 @@ function Game()
         var levelString = _level+1;
         if (_level >= QUEST_FIZZICS1)
             levelString = "Ꮘො";
-        canvas.fillText( "Level " + levelString, _levelboard.x + _levelboard.width * 0.25, _levelboard.y + _levelboard.height * FONT_Y_SCALE );
+        canvas.fillText( "Level " + levelString, _levelboard.x + _levelboard.width * 0.23, _levelboard.y + _levelboard.height * FONT_Y_SCALE );
 
         //------------------------------------------------------------
         // if ballDied is true, then make the reset button flash

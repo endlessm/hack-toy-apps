@@ -13,6 +13,8 @@ var NULL_BALL = -1;
 var MAX_BALLS = 100;
 var DEATH_ANIMATION_RADIUS_SCALE = 160.0;
 
+var MAX_DEATHEFFECTS = 8
+
 var SCREEN_WIDTH  = 1920;
 var SCREEN_HEIGHT = 1040;
 
@@ -268,7 +270,7 @@ function HackyBalls()
     var _backgroundImageIndex   = -1;
     var _success                = new Image();
     var _balls                  = new Array();
-    var _deathAnimation         = new DeathAnimation();
+    var _deathAnimations        = new Array();
     var _numBalls               = 0;
     var _hackyBallsGUI          = new HackyBallsGUI();
     var _leftWall               = ZERO;
@@ -444,15 +446,6 @@ function HackyBalls()
         //------------------------------------
         _tools.initialize();
         _tools.setNumSpecies( NUM_BALL_SPECIES );
-                 
-        //---------------------------------
-        // set up death animation
-        //---------------------------------
-        _deathAnimation.position.clear()
-        _deathAnimation.clock     = 100; // So we don't play the animation in the corner
-        _deathAnimation.radius    = ZERO;
-        _deathAnimation.duration  = 0;
-        _deathAnimation.image.src = "images/death-0.png";    //default
                 
         //------------------------------------------------------------------------
         // NOTE: The json-reading scheme is not fully figured out yet! 
@@ -515,6 +508,17 @@ function HackyBalls()
     
 
 
+    this.updateDeathAnimations = function()
+    {
+        for (var i=_deathAnimations.length-1; i>=0; i--)
+        {
+            _deathAnimations[i].clock++;
+            if (_deathAnimations[i].clock > _deathAnimations[i].duration)
+            {
+                _deathAnimations.splice(i, 1);
+            }
+        }
+    }
 
 
     //-----------------------
@@ -558,6 +562,8 @@ function HackyBalls()
             globalParameters.preset = 0;
         }
         
+        this.updateDeathAnimations();
+
         //------------------------------------
         // this gets called all the time to 
         // catch any changes from the UI
@@ -892,16 +898,56 @@ function HackyBalls()
     //---------------------------------------------------------------
     this.playBallDeathEffect = function( b, deathImage, deathSound )
     {    
-        _deathAnimation.position.setXY( _balls[b].getPosition().x, _balls[b].getPosition().y )
-        _deathAnimation.clock    = 0;
-        _deathAnimation.duration = 20;
-        _deathAnimation.radius   = _balls[b].getRadius();
-        _deathAnimation.image    = deathImage;
+        if (_deathAnimations.length >= MAX_DEATHEFFECTS)
+        {
+            return;
+        }
 
-        Sounds.stop( deathSound );   
-        Sounds.play( deathSound );   
-    }    
+        anim = new DeathAnimation();
+        anim.position.setXY( _balls[b].getPosition().x, _balls[b].getPosition().y )
+        anim.clock    = 0;
+        anim.duration = 20;
+        anim.radius   = _balls[b].getRadius();
+        anim.image    = deathImage;
 
+        Sounds.stop( deathSound );
+        Sounds.play( deathSound );
+
+        _deathAnimations.push(anim);
+    }
+
+
+    this.renderDeathAnimation = function(anim)
+    {
+        if ( anim.clock > anim.duration )
+        {
+            return;
+        }
+
+        var t = anim.clock / anim.duration;
+        var omt = 1.0 - t;
+        var r = 1.0 - omt*omt*omt*omt;
+        var size = anim.radius + DEATH_ANIMATION_RADIUS_SCALE * r;
+
+        var fadeTime = 0.6;
+        if ( t > fadeTime )
+        {
+            canvas.globalAlpha = 1.0 - ( t - fadeTime ) / ( 1.0 - fadeTime );
+        }
+        else
+        {
+            canvas.globalAlpha = ONE;
+        }
+
+        canvas.drawImageCached
+        (
+            anim.image,
+            anim.position.x - size * ONE_HALF,
+            anim.position.y - size * ONE_HALF,
+            size,
+            size
+        );
+    }
 
         
     //------------------------
@@ -925,33 +971,9 @@ function HackyBalls()
         //-----------------------------------------
         // show animation from balls being killed
         //-----------------------------------------
-        if ( _deathAnimation.clock < _deathAnimation.duration )
+        for (var i=0; i<_deathAnimations.length; ++i)
         {
-            _deathAnimation.clock ++;
-        
-            var t = _deathAnimation.clock / _deathAnimation.duration;
-            var omt = 1.0 - t;
-            var r = 1.0 - omt*omt*omt*omt;
-            var size = _deathAnimation.radius + DEATH_ANIMATION_RADIUS_SCALE * r;
-
-            var fadeTime = 0.6;
-            if ( t > fadeTime )
-            {
-                canvas.globalAlpha = 1.0 - ( t - fadeTime ) / ( 1.0 - fadeTime );
-            }
-            else
-            {
-                canvas.globalAlpha = ONE;
-            }
-
-            canvas.drawImageCached
-            ( 
-                _deathAnimation.image, 
-                _deathAnimation.position.x - size * ONE_HALF,
-                _deathAnimation.position.y - size * ONE_HALF,
-                size,
-                size
-            );
+            this.renderDeathAnimation(_deathAnimations[i]);
         }
 
         canvas.globalAlpha = ONE;

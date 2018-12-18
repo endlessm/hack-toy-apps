@@ -11,7 +11,7 @@ var WINDOW_HEIGHT = canvasID.height;
 
 var NULL_BALL = -1;
 var MAX_BALLS = 100;
-var DEATH_ANIMATION_RADUIS_SCALE = 120.0;
+var DEATH_ANIMATION_RADIUS_SCALE = 160.0;
 
 var SCREEN_WIDTH  = 1920;
 var SCREEN_HEIGHT = 1040;
@@ -894,7 +894,7 @@ function HackyBalls()
     {    
         _deathAnimation.position.setXY( _balls[b].getPosition().x, _balls[b].getPosition().y )
         _deathAnimation.clock    = 0;
-        _deathAnimation.duration = 60;
+        _deathAnimation.duration = 20;
         _deathAnimation.radius   = _balls[b].getRadius();
         _deathAnimation.image    = deathImage;
 
@@ -929,16 +929,19 @@ function HackyBalls()
         {
             _deathAnimation.clock ++;
         
-            var f = _deathAnimation.clock / _deathAnimation.duration;
-            var wave = ONE_HALF - ONE_HALF * Math.cos( f * Math.PI );
-            var size = _deathAnimation.radius + DEATH_ANIMATION_RADUIS_SCALE * wave;
+            var t = _deathAnimation.clock / _deathAnimation.duration;
+            var omt = 1.0 - t;
+            var r = 1.0 - omt*omt*omt*omt;
+            var size = _deathAnimation.radius + DEATH_ANIMATION_RADIUS_SCALE * r;
+
             var fadeTime = 0.6;
-
-            canvas.globalAlpha = ONE;
-
-            if ( f > fadeTime )
+            if ( t > fadeTime )
             {
-                canvas.globalAlpha -= ( f - fadeTime ) / ( ONE - fadeTime );
+                canvas.globalAlpha = 1.0 - ( t - fadeTime ) / ( 1.0 - fadeTime );
+            }
+            else
+            {
+                canvas.globalAlpha = ONE;
             }
 
             canvas.drawImageCached

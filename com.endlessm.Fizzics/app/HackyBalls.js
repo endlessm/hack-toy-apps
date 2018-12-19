@@ -636,6 +636,17 @@ function HackyBalls()
         //-----------------------------
         _balls[b].update( deltaTime );
 
+
+        const velocity_x = _balls[b].getVelocity().x;
+        const velocity_y = _balls[b].getVelocity().y;
+
+        if (_balls[b].getType() === 0 && _balls[b].isCollidingWithWalls() &&
+                !_balls[b].wasCollidingWithWalls() &&
+                velocity_x !== ZERO && velocity_y !== ZERO &&
+                _flinger.getState() === FLINGER_STATE_NULL) {
+            Sounds.play( "fizzics/collision/wall" );
+        }
+
         //-------------------------------------
         // update interactions with flinger
         //-------------------------------------
@@ -716,9 +727,18 @@ function HackyBalls()
                             // collisions
                             //-----------------------------------------------------------------------------------------------------
                             var collisionDistance = ( _balls[b].getRadius() + _balls[o].getRadius() ) - COLLISION_DISTANCE_FUDGE;
+                            var lastDistance = _balls[b].getLastPosition().getDistanceTo(_balls[o].getLastPosition());
+
+                            // Check if two bulls *just* collisioned between them.
+                            if ( distance < collisionDistance && lastDistance >= collisionDistance &&
+                                    lastDistance < INTERACTION_RADIUS && lastDistance > ZERO ) {
+                                if ( _balls[b].getType() === 0 && _balls[o].getType() === 3)
+                                    Sounds.play( 'fizzics/collision/neutral' );
+                            }
 
                             if ( distance < collisionDistance )
                             {
+
                                 //-------------------------------------------------------------
                                 // if we are running a game and collecting collision info...    
                                 //-------------------------------------------------------------
@@ -828,12 +848,15 @@ function HackyBalls()
 
         if ( deathType == 1 ) // good
         {
+
             deathImage.src = "images/death-" + _species[ ballSpecies ].deathVisualGood + ".png";
-            
                  if ( _species[ ballSpecies ].deathSoundGood  == 0 ) { deathSound = "fizzics/death0"; }
             else if ( _species[ ballSpecies ].deathSoundGood  == 1 ) { deathSound = "fizzics/death1"; }
             else if ( _species[ ballSpecies ].deathSoundGood  == 2 ) { deathSound = "fizzics/death2"; }
             else if ( _species[ ballSpecies ].deathSoundGood  == 3 ) { deathSound = "fizzics/death3"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  === 4 ) { deathSound = "fizzics/death4"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  === 5 ) { deathSound = "fizzics/death5"; }
+            else if ( _species[ ballSpecies ].deathSoundGood  === 6 ) { deathSound = "fizzics/death6"; }
         }
         else if ( deathType == 2 ) // bad
         {
@@ -843,6 +866,9 @@ function HackyBalls()
             else if ( _species[ ballSpecies ].deathSoundBad   == 1 ) { deathSound = "fizzics/death1"; }
             else if ( _species[ ballSpecies ].deathSoundBad   == 2 ) { deathSound = "fizzics/death2"; }
             else if ( _species[ ballSpecies ].deathSoundBad   == 3 ) { deathSound = "fizzics/death3"; }
+            else if ( _species[ ballSpecies ].deathSoundBad  === 4 ) { deathSound = "fizzics/death4"; }
+            else if ( _species[ ballSpecies ].deathSoundBad  === 5 ) { deathSound = "fizzics/death5"; }
+            else if ( _species[ ballSpecies ].deathSoundBad  === 6 ) { deathSound = "fizzics/death6"; }
         }
         
         gameState.numBonus += _species[ ballSpecies ].score;

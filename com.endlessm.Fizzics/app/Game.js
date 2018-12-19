@@ -33,23 +33,29 @@ function Game()
         this.enabled = false;
     }
     
-    var _level          = 0;
-    var _score          = 0;
-    var _ballDied       = false;
-    var _levelboard     = new UIElement();
-    var _previousButton = new UIElement();
-    var _resetButton    = new UIElement();
-    var _nextButton     = new UIElement();
-    var _scoreboard     = new UIElement();
-    var _flingboard     = new UIElement();
-    var _successScreen  = new UIElement();
-    var _levelData      = null;
-    var _sucessBall     = new Image();
+    var _level           = 0;
+    var _score           = 0;
+    var _ballDied        = false;
+    var _ballReachedGoal = false;
+    var _levelboard      = new UIElement();
+    var _previousButton  = new UIElement();
+    var _resetButton     = new UIElement();
+    var _nextButton      = new UIElement();
+    var _scoreboard      = new UIElement();
+    var _flingboard      = new UIElement();
+    var _successScreen   = new UIElement();
+    var _levelData       = null;
+    var _sucessBall      = new Image();
     
     this.setBallDied = function()
     {
         _ballDied = true;
         globalParameters.ballDied = true;
+    }
+
+    this.setBallReachedGoal = function()
+    {
+        _ballReachedGoal = true;
     }
 
     //----------------------------------------
@@ -937,7 +943,9 @@ function Game()
 
             if ( _level < _levelData.levels.length )
             {
-                if ( globalParameters.type0BallCount == 0 && !_ballDied)
+                if ( globalParameters.type0BallCount == 0
+                && !_ballDied
+                && _ballReachedGoal )
                 {   
                     gameState.running = false;
                     gameState.success = true;
@@ -948,6 +956,8 @@ function Game()
                     
                     //_scoreboard.image.src = "images/scoreboard-win.png";
                 }
+
+                _ballReachedGoal = false;
             }
 
             // Quest level

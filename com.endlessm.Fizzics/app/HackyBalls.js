@@ -846,9 +846,19 @@ function HackyBalls()
         }
         
         gameState.numBonus += _species[ ballSpecies ].score;
-        if (ballSpecies == 0 && deathType == 2)
+        if (ballSpecies == 0)
         {
-            _game.setBallDied();
+            if (deathType == 1)
+            {
+                // Good death: Setting this flag so we can check outside the loop
+                // if the level has been beat.
+                _game.setBallReachedGoal();
+            }
+            else
+            {
+	        // Bad death: Set flag so we can't beat level anymore
+                _game.setBallDied();
+            }
         }
         
         this.deleteBall( b, deathImage, deathSound );    

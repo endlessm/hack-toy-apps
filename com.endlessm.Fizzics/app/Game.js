@@ -987,12 +987,12 @@ function Game()
                     }
                 }
 
-                if (!gameState.quest0Success)
+                if (!globalParameters.quest0Success)
                 {
                     globalParameters.quest0Success = this.isQuest0GoalReached();
                 }
             
-                if (!gameState.quest1Success)
+                if (!globalParameters.quest1Success)
                 {
                     globalParameters.quest1Success = this.isQuest1GoalReached();
                 }

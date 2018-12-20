@@ -10,6 +10,7 @@ var ImageCache = {};
 function Ball()
 {    
 	var _image		= null;
+    var _lastPosition    = new Vector2D();
     var _position        = new Vector2D();
     var _grabPosition    = new Vector2D();
     var _velocity        = new Vector2D();
@@ -24,10 +25,13 @@ function Ball()
     var _collision         = ZERO;
     var _type             = 0;
     var _usingPhysics    = false;
+    var _wasCollidingWithWalls = false;
+    var _isCollidingWithWalls = false;
 
     //----------------------------------
     this.update = function( deltaTime )
     {                
+        _lastPosition.set( _position );
         if ( _grabbed )
         {
             _position.set( _grabPosition );
@@ -77,14 +81,16 @@ function Ball()
         _position.add( _velocity );
     }
 
-
-
     //-------------------------------------
     this.updateWallCollisions = function()
     {
+        _wasCollidingWithWalls = _isCollidingWithWalls;
+
+        _isCollidingWithWalls = false;
         if ( _position.x > _rightWall - _radius ) 
         { 
             _position.x = _rightWall - _radius;
+            _isCollidingWithWalls = true;
 
             if ( _velocity.x > ZERO ) 
             { 
@@ -94,6 +100,7 @@ function Ball()
         else if ( _position.x < _leftWall + _radius ) 
         { 
             _position.x = _leftWall + _radius;
+            _isCollidingWithWalls = true;
 
             if ( _velocity.x < ZERO ) 
             { 
@@ -101,9 +108,11 @@ function Ball()
             } 
         }
 
+
         if ( _position.y > _bottomWall - _radius ) 
         { 
             _position.y = _bottomWall - _radius;
+            _isCollidingWithWalls = true;
 
             if ( _velocity.y > ZERO ) 
             { 
@@ -113,6 +122,7 @@ function Ball()
         else if ( _position.y < _topWall + _radius ) 
         { 
             _position.y = _topWall + _radius;
+            _isCollidingWithWalls = true;
 
             if ( _velocity.y < ZERO ) 
             { 
@@ -121,10 +131,10 @@ function Ball()
         }
     }
 
-
     //---------------------------------------------------------------
     // get methods
     //---------------------------------------------------------------
+    this.getLastPosition         = function() { return _lastPosition;         }
     this.getPosition         = function() { return _position;         }
     this.getVelocity         = function() { return _velocity;         }
     this.getRadius           = function() { return _radius;             }
@@ -134,6 +144,8 @@ function Ball()
     this.getUsingPhysics    = function() { return _usingPhysics;    }
     this.getGrabbed          = function() { return _grabbed;         }
     this.getType              = function() { return _type;             }
+    this.isCollidingWithWalls = function() { return _isCollidingWithWalls; }
+    this.wasCollidingWithWalls = function() { return _wasCollidingWithWalls; }
 
     //---------------------------------------------------------------
     // set methods

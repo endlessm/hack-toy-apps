@@ -670,8 +670,8 @@ function Game()
                 globalParameters.touchDeath_0_4     = 0;
                 globalParameters.deathVisualGood_0  = 0;
                 globalParameters.deathVisualBad_0   = 1;
-                globalParameters.deathSoundGood_0   = 0;
-                globalParameters.deathSoundBad_0    = 0;
+                globalParameters.deathSoundGood_0   = 4;
+                globalParameters.deathSoundBad_0    = 6;
 
                 globalParameters.usePhysics_1       = false;
                 globalParameters.radius_1           = 60;
@@ -754,7 +754,7 @@ function Game()
                 globalParameters.touchDeath_4_4     = 0;
                 globalParameters.deathVisualGood_4  = 8;
                 globalParameters.deathVisualBad_4   = 0;
-                globalParameters.deathSoundGood_4   = 0;
+                globalParameters.deathSoundGood_4   = 5;
                 globalParameters.deathSoundBad_4    = 0;
             }
         }
@@ -952,7 +952,8 @@ function Game()
                     globalParameters.levelSuccess = true;
                     
                     // to do: this needs to be determined by which species the sound is associated with.
-                    Sounds.play( "fizzics/success1" );                    
+                    // Sounds.play( "fizzics/success1" );
+                    Sounds.play( "fizzics/collision/winning" );
                     
                     //_scoreboard.image.src = "images/scoreboard-win.png";
                 }

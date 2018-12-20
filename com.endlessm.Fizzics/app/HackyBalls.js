@@ -1254,6 +1254,9 @@ function HackyBalls()
     {
         globalParameters.levelSuccess = false;
         globalParameters.ballDied = false;
+
+        Sounds.stop( "fizzics/you_won" );
+
         _levelLoading = true;
         _game.setLevelGlobalParams(level);
         _numBalls = 0;

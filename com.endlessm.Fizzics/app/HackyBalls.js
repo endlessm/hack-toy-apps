@@ -523,7 +523,7 @@ function HackyBalls()
 
     //-----------------------
     this.update = function()
-    {       
+    {
         //-----------------------------------------------------------------------------
         // NOTE: The json-reading scheme is not fully figured out yet! 
         //
@@ -1096,7 +1096,11 @@ function HackyBalls()
             }
         }  
 
-
+        if ( _flinger.getState() == FLINGER_STATE_PULLING )
+        {
+            cancelFlinger = false;
+            cancelGrab = true;
+        }
         if ( _flinger.positionOverHandle( _mousePosition ) )
         {
             if ( _flinger.getState() == FLINGER_STATE_WAITING )
@@ -1105,24 +1109,6 @@ function HackyBalls()
                 Sounds.playLoop( "fizzics/pullFling" );
                 cancelFlinger = false;
                 cancelGrab = true;
-            }            
-            else if ( _flinger.getState() == FLINGER_STATE_PULLING )        
-            {
-                if ( _flinger.getReadyToFling() )
-                {
-                    //console.log( "now" );
-                    
-                    //cancelFlinger = true;
-
-                    /*
-                    _flinger.fling();
-                
-                    gameState.numFlings++;
-                    Sounds.stop( "pullFling" );
-                    Sounds.play( "fling" );
-                    Sounds.playLoop( _species[ _balls[ _flinger.getFlingingBall() ].getType() ].flySound );            
-                    */
-                }
             }
         }
         
@@ -1313,7 +1299,7 @@ function HackyBalls()
         }
          
         if ( _flinger.getState() == FLINGER_STATE_PULLING )
-        {            
+        {
             if ( _flinger.getReadyToFling() )
             {
                 _flinger.fling();

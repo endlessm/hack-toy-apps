@@ -954,6 +954,7 @@ function Game()
                     // to do: this needs to be determined by which species the sound is associated with.
                     // Sounds.play( "fizzics/success1" );
                     Sounds.play( "fizzics/collision/winning" );
+                    Sounds.playLoop( "fizzics/you_won" );
                     
                     //_scoreboard.image.src = "images/scoreboard-win.png";
                 }

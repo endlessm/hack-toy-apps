@@ -1069,7 +1069,13 @@ function HackyBalls()
         // send mouse click to the game and get the result
         //--------------------------------------------------
         var gameAction = _game.getMouseDownAction( x, y );
-        if ( gameAction == GAME_ACTION_NEXT_LEVEL  ) { this.setGameLevel( _game.getNextLevel() ); Sounds.play( "fizzics/buttonClick" ); }
+        if ( gameAction == GAME_ACTION_NEXT_LEVEL  ) {
+            if ( !gameState.success )
+                Sounds.play( "fizzics/buttonClick" );
+            else
+                Sounds.play( "fizzics/NEXT-LEVEL/clicked" );
+            this.setGameLevel( _game.getNextLevel() );
+        }
         if ( gameAction == GAME_ACTION_PREV_LEVEL  ) { this.setGameLevel( _game.getPrevLevel() ); Sounds.play( "fizzics/buttonClick" ); }
         if ( gameAction == GAME_ACTION_RESET_LEVEL ) { this.resetLevelOnly(); Sounds.play( "fizzics/buttonClick" ); }
         

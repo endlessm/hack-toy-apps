@@ -293,6 +293,7 @@ function HackyBalls()
     var _savedBalls             = null;
     var _numSavedBalls          = 0;
     var _levelLoading           = false;
+    var _simulationTimeLeft     = 0;
 
     //------------------------------------------------------------------------- 
     // NOTE: The json-reading scheme is not fully figured out yet! 
@@ -565,34 +566,47 @@ function HackyBalls()
         //----------------------------------------------------
         _prevSeconds = _seconds;
         _seconds = ( (new Date).getTime() - _startTime ) / MILLISECONDS_PER_SECOND;
-        var deltaTime = _seconds - _prevSeconds;
+        var deltaTime = Math.min(_seconds - _prevSeconds, 0.100);
 
         //-----------------------
         // update game logic
         //-----------------------
         _game.update( deltaTime, _collisionBalls, _ballsWithSomeCollision, _numBalls, _balls );
         
-        //-----------------------------
-        // loop through all balls
-        //-----------------------------
-        for (var b=0; b<_numBalls; b++)
+        
+        // FIXED-TIME STEP LOOP
+        // Instead of just updating the physics for the ball by delta time, we do it in small, fixed-time steps.
+        // We figure out how many of those steps we can take given the delta time for this frame and save
+        // the unused time in _simulationTimeLeft for the next frame.
+        // This makes the simulation much more stable and it behaves the same way independently of frame rate.
+        var timeStep = 0.01;
+        _simulationTimeLeft += deltaTime;
+        while (_simulationTimeLeft > timeStep)
         {
-            if ( _grabbedBall == b )
-            {
-                _balls[b].grab( _mousePosition );
-                
-                if ( this._devMode )
-                {
-                    _balls[b].setPosition( _mousePosition );
-                }
-            }
+            _simulationTimeLeft -= timeStep;
             
             //-----------------------------
-            // basic ball physics update
+            // loop through all balls
             //-----------------------------
-            if ( !this._devMode )
+            for (var b=0; b<_numBalls; b++)
             {
-                this.updateBall( b, deltaTime );
+                if ( _grabbedBall == b )
+                {
+                    _balls[b].grab( _mousePosition );
+                
+                    if ( this._devMode )
+                    {
+                        _balls[b].setPosition( _mousePosition );
+                    }
+                }
+            
+                //-----------------------------
+                // basic ball physics update
+                //-----------------------------
+                if ( !this._devMode )
+                {
+                    this.updateBall( b, timeStep );
+                }
             }
         }
         
@@ -662,7 +676,7 @@ function HackyBalls()
             }
             else if ( _flinger.getState() == FLINGER_STATE_WAITING )
             {
-                _balls[b].scaleVelocity( 0.9 );
+                _balls[b].scaleVelocity( 0.98 );
             }
         } 
                 
@@ -683,11 +697,7 @@ function HackyBalls()
         //-----------------------------------------------        
         this.updateBallToBallCollisions( b, deltaTime );
     }
-    
-    
-    
-    
-    
+
 
     //---------------------------------------------------------
     this.updateBallToBallCollisions = function( b, deltaTime )
@@ -1136,6 +1146,7 @@ function HackyBalls()
             cancelFlinger = false;
             cancelGrab = true;
         }
+
         if ( _flinger.positionOverHandle( _mousePosition ) )
         {
             if ( _flinger.getState() == FLINGER_STATE_WAITING )
@@ -1146,7 +1157,6 @@ function HackyBalls()
                 cancelGrab = true;
             }
         }
-        
         
         var canCreateBall = false;
         if ( selectedTool == -1 )

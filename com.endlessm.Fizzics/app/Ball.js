@@ -65,20 +65,21 @@ function Ball()
         //--------------------------------------
         // dampen velocity by air friction
         //--------------------------------------
-        var friction = _airFriction * deltaTime;        
-        if ( friction < ONE )
-        {
-             _velocity.scale( ONE - friction );
-        }
-        else
-        {
+         _velocity.scale( ONE - _airFriction );
+
+        if (_velocity.getMagnitudeSquared() < 0.01)
             _velocity.clear();
-        }
-                
+
         //----------------------------------
         // update position by velocity...
         //----------------------------------
-        _position.add( _velocity );
+        // We're doing this weird division by 0.03 because the code initially was adding the velocity every frame
+        // which means that velocities are tuned for about 30ms frames. Instead of changing them everywhere
+        // this seemed a simpler step. We can change it later if we want to.
+        var deltaPos = new Vector2D();
+        deltaPos.set( _velocity );
+        deltaPos.scale( deltaTime/0.03 );
+        _position.add( deltaPos );
     }
 
     //-------------------------------------

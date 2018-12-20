@@ -657,7 +657,7 @@ function Game()
                 globalParameters.radius_0           = 50;
                 globalParameters.gravity_0          = 0.0
                 globalParameters.collision_0        = 0.9;
-                globalParameters.friction_0         = 0.5;
+                globalParameters.friction_0         = 0.005;
                 globalParameters.imageIndex_0       = 6;
                 globalParameters.socialForce_0_0    = 0;
                 globalParameters.socialForce_0_1    = 0;
@@ -678,7 +678,7 @@ function Game()
                 globalParameters.radius_1           = 60;
                 globalParameters.gravity_1          = 0.0
                 globalParameters.collision_1        = 0.2;
-                globalParameters.friction_1         = 0.05;
+                globalParameters.friction_1         = 0;
                 globalParameters.imageIndex_1       = 8;
                 globalParameters.socialForce_1_0    = 0;
                 globalParameters.socialForce_1_1    = 0;
@@ -699,7 +699,7 @@ function Game()
                 globalParameters.radius_2           = 60;
                 globalParameters.gravity_2          = 0.0
                 globalParameters.collision_2        = 0.5;
-                globalParameters.friction_2         = 0.7;
+                globalParameters.friction_2         = 0;
                 globalParameters.imageIndex_2       = 1;
                 globalParameters.socialForce_2_0    = 0;
                 globalParameters.socialForce_2_1    = 0;
@@ -720,7 +720,7 @@ function Game()
                 globalParameters.radius_3           = 60;
                 globalParameters.gravity_3          = 0.0
                 globalParameters.collision_3        = 0.2;
-                globalParameters.friction_3         = 0.05;
+                globalParameters.friction_3         = 0;
                 globalParameters.imageIndex_3       = 9;
                 globalParameters.socialForce_3_0    = 0;
                 globalParameters.socialForce_3_1    = 0;
@@ -741,7 +741,7 @@ function Game()
                 globalParameters.radius_4           = 35;
                 globalParameters.gravity_4          = 0.0
                 globalParameters.collision_4        = 0.2;
-                globalParameters.friction_4         = 0.4;
+                globalParameters.friction_4         = 0.010;
                 globalParameters.imageIndex_4       = 10;
                 globalParameters.socialForce_4_0    = 0;
                 globalParameters.socialForce_4_1    = 0;

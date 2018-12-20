@@ -1258,6 +1258,9 @@ function HackyBalls()
         Sounds.stop( "fizzics/you_won" );
 
         _levelLoading = true;
+
+        Sounds.stop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
+
         _game.setLevelGlobalParams(level);
         _numBalls = 0;
         _game.setLevel( this, level, _collisionBalls, _ballsWithSomeCollision ); 
@@ -1278,6 +1281,8 @@ function HackyBalls()
         _currentTool = TOOL_FLING;
 
         _levelLoading = false;
+
+        Sounds.playLoop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
 
         _startTime = (new Date).getTime();
         _prevSeconds = 0;

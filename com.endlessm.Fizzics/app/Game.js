@@ -1210,12 +1210,11 @@ function Game()
             canvas.drawImage
             ( 
                 _sucessBall, 
-                canvasID.width  * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF,
-                canvasID.height * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF - 120,
+                SCREEN_WIDTH  * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF,
+                SCREEN_HEIGHT * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF - 135,
                 SUCCESS_BALL_RADIUS, 
                 SUCCESS_BALL_RADIUS
             );            
         }
     }
 }
-

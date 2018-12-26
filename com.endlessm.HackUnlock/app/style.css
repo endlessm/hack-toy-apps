@@ -2,6 +2,10 @@ body {
     margin: 0px;
 }
 
+div#preload {
+    display: none;
+}
+
 #canvas {
     background: url('images/gate.png') 100% 100%;
 }

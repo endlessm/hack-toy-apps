@@ -139,7 +139,6 @@ function Unlock()
         //--------------------------------------
         // load background and glow images
         //--------------------------------------
-        this.setBackground("images/gate.png");
         _glowImage.src  = "images/glow.png";            
         
         //----------------------------
@@ -154,14 +153,6 @@ function Unlock()
 
         Sounds.play('HackUnlock/landing');
         Sounds.playLoop('HackUnlock/ambient/front');
-    }
-
-
-    //------------------------
-    this.setBackground = function(background)
-    {
-        canvasID.style.backgroundImage = `url('${background}')`;
-        canvasID.style.backgroundSize = '100% 100%';
     }
 
 
@@ -192,6 +183,22 @@ function Unlock()
         }
     }
 
+
+    //-------------------------------------
+    this.updateStyle = function()
+    {
+        if (globalParameters.mode == MODE_SOLVING_PUZZLE ||
+            globalParameters.mode == MODE_SUCCESS)
+        {
+            canvasID.classList.add('puzzle');
+        }
+        else
+        {
+            canvasID.classList.remove('puzzle');
+        }
+    }
+
+
     //------------------------
     this.update = function()
     {    
@@ -200,24 +207,15 @@ function Unlock()
         //-----------------------------------------------------
         this.applyParameters();
 
+        this.updateStyle();
+
         //---------------------------
         // update solving puzzle...
         //---------------------------
-        if ( globalParameters.mode == MODE_FIRST_SCREEN )
-        {
-            this.setBackground("images/gate.png");
-        }
-        else if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
+        if ( globalParameters.mode == MODE_SOLVING_PUZZLE ||
+             globalParameters.mode == MODE_SUCCESS )
         {
             this.updateSolvingPuzzle();
-        }
-        else if ( globalParameters.mode == MODE_SUCCESS )
-        {
-            this.updateSolvingPuzzle();
-        }
-        else if ( globalParameters.mode == MODE_FINISHED )
-        {
-            this.setBackground("images/gate.png");
         }
         else if ( globalParameters.mode == MODE_VIDEO_PLAYBACK )
         {
@@ -258,8 +256,6 @@ function Unlock()
     //-------------------------------------
     this.updateSolvingPuzzle = function()
     {
-        this.setBackground("images/sine-gate.png");
-
         var amplitudeDiff   = Math.abs( _amplitude  - IDEAL_AMPLITUDE   );
         var frequencyDiff   = Math.abs( _frequency  - IDEAL_FREQUENCY   );
         var phaseDiff       = Math.abs( _phase      - IDEAL_PHASE       );

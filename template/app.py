@@ -117,6 +117,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             provider = Gtk.CssProvider()
             provider.load_from_data(bytes(
                 """
+toy-app-window,
 toy-app-window > overlay > revealer > frame {
     background: white, url('%s') no-repeat center;
 }

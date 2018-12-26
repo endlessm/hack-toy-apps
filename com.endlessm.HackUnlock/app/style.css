@@ -1,0 +1,15 @@
+body {
+    margin: 0px;
+}
+
+div#preload {
+    display: none;
+}
+
+#canvas {
+    background: url('images/gate.png') 100% 100%;
+}
+
+#canvas.puzzle {
+    background: url('images/sine-gate.png') 100% 100%;
+}

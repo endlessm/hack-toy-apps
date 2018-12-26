@@ -72,7 +72,6 @@ function normalize(value, min, max, normalizedMin, normalizedMax) {
 function Unlock()
 {    
     var USING_TEST_GUI      = false;
-    var USING_SYNTHESIZER   = false;
 
     var IDEAL_AMPLITUDE     = 0.615;
     var IDEAL_FREQUENCY     = 12.1;
@@ -98,7 +97,6 @@ function Unlock()
     var SINE_WAVE_Y_POSITION    = canvasID.height * ONE_HALF + SINE_WAVE_Y_OFFSET;
     var SINE_WAVE_AMP_SCALE     = 300;
 
-    var _synthesizer            = new Synthesizer();
     var _glowImage              = new Image();
     var _testGUI                = new UnlockTestGUI();
     var _amplitude              = ZERO;
@@ -141,21 +139,12 @@ function Unlock()
         //--------------------------------------
         // load background and glow images
         //--------------------------------------
-        this.setBackground("images/gate.png");
         _glowImage.src  = "images/glow.png";            
         
         //----------------------------
         // apply parameters  
         //----------------------------
         this.applyParameters();
-                
-        //-------------------------------
-        // initialize synthesizer
-        //-------------------------------
-        if ( USING_SYNTHESIZER )
-        {
-            _synthesizer.initialize();
-        }
                 
         //--------------------------------------------------------------------
         // start up the timer
@@ -164,14 +153,6 @@ function Unlock()
 
         Sounds.play('HackUnlock/landing');
         Sounds.playLoop('HackUnlock/ambient/front');
-    }
-
-
-    //------------------------
-    this.setBackground = function(background)
-    {
-        canvasID.style.backgroundImage = `url('${background}')`;
-        canvasID.style.backgroundSize = '100% 100%';
     }
 
 
@@ -202,6 +183,22 @@ function Unlock()
         }
     }
 
+
+    //-------------------------------------
+    this.updateStyle = function()
+    {
+        if (globalParameters.mode == MODE_SOLVING_PUZZLE ||
+            globalParameters.mode == MODE_SUCCESS)
+        {
+            canvasID.classList.add('puzzle');
+        }
+        else
+        {
+            canvasID.classList.remove('puzzle');
+        }
+    }
+
+
     //------------------------
     this.update = function()
     {    
@@ -210,29 +207,15 @@ function Unlock()
         //-----------------------------------------------------
         this.applyParameters();
 
+        this.updateStyle();
+
         //---------------------------
         // update solving puzzle...
         //---------------------------
-        if ( globalParameters.mode == MODE_FIRST_SCREEN )
-        {
-            this.setBackground("images/gate.png");
-        }
-        else if ( globalParameters.mode == MODE_SOLVING_PUZZLE )
+        if ( globalParameters.mode == MODE_SOLVING_PUZZLE ||
+             globalParameters.mode == MODE_SUCCESS )
         {
             this.updateSolvingPuzzle();
-        }
-        else if ( globalParameters.mode == MODE_SUCCESS )
-        {
-            this.updateSolvingPuzzle();
-
-            if ( USING_SYNTHESIZER )
-            {
-                _synthesizer.turnOffAllNotes();
-            }
-        }
-        else if ( globalParameters.mode == MODE_FINISHED )
-        {
-            this.setBackground("images/gate.png");
         }
         else if ( globalParameters.mode == MODE_VIDEO_PLAYBACK )
         {
@@ -273,29 +256,6 @@ function Unlock()
     //-------------------------------------
     this.updateSolvingPuzzle = function()
     {
-        this.setBackground("images/sine-gate.png");
-    
-        if ( USING_SYNTHESIZER )
-        {
-            _synthesizer.update();
-
-            _soundClock ++;
-
-            if ( _soundClock > 2 )
-            {
-                _soundClock = 0;
-
-                _synthesizer.turnOffAllNotes();
-
-                var note     = BASE_NOTE + _frequency * SINE_WAVE_FREQ_SCALE;
-                var duration = 2.0;
-                var attack   = 0.1;
-                var release  = 0.0;
-
-                _synthesizer.playNote( note, _amplitude, duration, attack, release );
-            }
-        }
-        
         var amplitudeDiff   = Math.abs( _amplitude  - IDEAL_AMPLITUDE   );
         var frequencyDiff   = Math.abs( _frequency  - IDEAL_FREQUENCY   );
         var phaseDiff       = Math.abs( _phase      - IDEAL_PHASE       );
@@ -332,12 +292,6 @@ function Unlock()
 
         if ( amplitudeSolved && frequencySolved && phaseSolved )
         {
-            if ( USING_SYNTHESIZER )
-            {            
-                console.log( "OFF NOTES!" );
-                _synthesizer.turnOffAllNotes();
-            }
-
             globalParameters.mode = MODE_SUCCESS;
             if (!_solutionSoundPlayed) {
                 Sounds.stop('HackUnlock/ambient/back');

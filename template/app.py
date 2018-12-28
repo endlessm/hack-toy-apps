@@ -73,16 +73,20 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         for sound_id in self._played_async_sounds:
             HackSoundServer.stop(self._played_async_sounds[sound_id])
 
+    def _manager_add_msg_handler(self, manager, msg, callback):
+        manager.register_script_message_handler(msg)
+        manager.connect('script-message-received::%s' % msg, callback)
+
     def _setup_js(self):
         manager = self.view.get_user_content_manager()
 
-        # Register message hanlders
-        manager.register_script_message_handler("ToyAppLoadNotify")
-        manager.register_script_message_handler("ToyAppSetHackable")
-        manager.register_script_message_handler('playSound')
-        manager.register_script_message_handler('playSoundAsync')
-        manager.register_script_message_handler('updateSound')
-        manager.register_script_message_handler('stopSound')
+        # Register message handlers
+        self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
+        self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
+        self._manager_add_msg_handler(manager, 'playSound', self._on_play_sound)
+        self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
+        self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
+        self._manager_add_msg_handler(manager, 'stopSound', self._on_stop_sound)
 
         # Inject custom JS on every page
         manager.add_script(
@@ -94,19 +98,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
                 None
             )
         )
-
-        manager.connect('script-message-received::ToyAppLoadNotify',
-                        self._on_load_notify)
-        manager.connect('script-message-received::ToyAppSetHackable',
-                        self._on_set_hackable)
-        manager.connect('script-message-received::playSound',
-                        self._on_play_sound)
-        manager.connect('script-message-received::playSoundAsync',
-                        self._on_play_sound_async)
-        manager.connect('script-message-received::updateSound',
-                        self._on_update_sound)
-        manager.connect('script-message-received::stopSound',
-                        self._on_stop_sound)
 
     def _setup_splash(self, app_id):
         # Check if we can use the splash screen as a temporary background while

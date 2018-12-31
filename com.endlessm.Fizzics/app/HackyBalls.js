@@ -1056,6 +1056,8 @@ function HackyBalls()
         // restore canvas to default transform
         //---------------------------------------
         canvas.restore()
+
+        this.updateCursor();
     }
 
     //------------------------
@@ -1312,8 +1314,8 @@ function HackyBalls()
         x = sx / _worldToWindowScale;
         y = sy / _worldToWindowScale;
         
-        var gameAction = _game.getMouseMoveAction( x, y );
-        
+        _game.getMouseMoveAction( x, y );
+
         if ( _grabbedBall == NULL_BALL )
         {
             if ( USING_TEST_GUI )
@@ -1379,6 +1381,55 @@ function HackyBalls()
         _mouseVelocity.y = _mousePosition.y - _prevMousePosition.y;
     }
     
+
+    this.updateCursor = function ()
+    {
+        // Update cursor from pointer coordinates
+        x = _mousePosition.x;
+        y = _mousePosition.y;
+
+        // Start with default
+        var cursor = (_currentTool == TOOL_CREATE || _currentTool === TOOL_SPECIES) ? "crosshair" : "default";
+
+        // Check if we are hovering any ball
+        for (var i = 0; i < _numBalls; i++)
+        {
+            const ball = _balls[i];
+            const position = ball.getPosition();
+            const r = ball.getRadius();
+            const specie = _species[ball.getType()];
+
+            if (Math.abs(x - position.x) < r && Math.abs(y - position.y) < r)
+            {
+                if (_currentTool === TOOL_MOVE)
+                    cursor = "grab";
+                else if (_currentTool === TOOL_FLING && specie.flingable && specie.usePhysics)
+                    cursor = "move";
+                else if (_currentTool === TOOL_DELETE)
+                    cursor = "not-allowed";
+                else if (_currentTool !== TOOL_CREATE && specie.usePhysics )
+                    cursor = "pointer";
+
+                break;
+            }
+        }
+
+        // Check if we are hovering the flinger
+        const state = _flinger.getState();
+
+        if ( state == FLINGER_STATE_PULLING )
+            cursor = "grabbing";
+        else if ( state == FLINGER_STATE_WAITING  &&
+                 _flinger.positionOverHandle(_mousePosition) )
+            cursor = "grab";
+
+        // Check if the pointer is over any tool button
+        if ( _tools.isPositionOverButton(x, y) || _game.isPositionOverButton(x, y) )
+            cursor = "pointer";
+
+        // Finally set the cursor
+        document.body.style.cursor = cursor;
+    }
 
     //---------------------------------
     this.deleteKeyPressed = function()

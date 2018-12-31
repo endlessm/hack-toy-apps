@@ -305,6 +305,7 @@ function Game()
         gameState.numBonus  = 0;
         gameState.running   = true; 
         gameState.success   = false; 
+        _successScreen.enabled = false;
         
 
         if (_level >= QUEST_FIZZICS1)
@@ -950,7 +951,8 @@ function Game()
                     gameState.running = false;
                     gameState.success = true;
                     globalParameters.levelSuccess = true;
-                    
+                    _successScreen.enabled = true;
+
                     // to do: this needs to be determined by which species the sound is associated with.
                     // Sounds.play( "fizzics/success1" );
                     Sounds.play( "fizzics/collision/winning" );
@@ -1063,6 +1065,23 @@ function Game()
     this.getScore = function()
     {
         return 10 - gameState.numFlings + gameState.numBonus;
+    }
+
+    //--------------------------
+    this.isPositionOverButton = function(x, y)
+    {
+        const buttons = [ _resetButton, _previousButton, _nextButton,  _successScreen ];
+
+        for (var i = 0, n = buttons.length; i < n; i++)
+        {
+            const button = buttons[i];
+            if ( button.enabled &&
+                 x > button.x && x < button.x + button.width &&
+                 y > button.y && y < button.y + button.height)
+                return true;
+        }
+
+        return false;
     }
 
     //------------------------

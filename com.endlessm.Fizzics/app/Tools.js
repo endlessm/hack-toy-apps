@@ -100,10 +100,10 @@ function Tools()
         this.buttons[ TOOL_CREATE   ].image.src = "images/create-tool.png";
         this.buttons[ TOOL_DELETE   ].image.src = "images/delete-tool.png";
         
-             if ( t == TOOL_MOVE    ) { this.buttons[t].image.src = "images/move-tool-selected.png";     document.body.style.cursor = "grab";        }
-        else if ( t == TOOL_FLING   ) { this.buttons[t].image.src = "images/fling-tool-selected.png";    document.body.style.cursor = "move";        }
-        else if ( t == TOOL_CREATE  ) { this.buttons[t].image.src = "images/create-tool-selected.png";   document.body.style.cursor = "crosshair";   }
-        else if ( t == TOOL_DELETE  ) { this.buttons[t].image.src = "images/delete-tool-selected.png";   document.body.style.cursor = "not-allowed"; }
+             if ( t == TOOL_MOVE    ) { this.buttons[t].image.src = "images/move-tool-selected.png";   }
+        else if ( t == TOOL_FLING   ) { this.buttons[t].image.src = "images/fling-tool-selected.png";  }
+        else if ( t == TOOL_CREATE  ) { this.buttons[t].image.src = "images/create-tool-selected.png"; }
+        else if ( t == TOOL_DELETE  ) { this.buttons[t].image.src = "images/delete-tool-selected.png"; }
         
         if ( t == TOOL_SPECIES )
         {
@@ -164,6 +164,20 @@ function Tools()
     this.getSelectedSpecies = function()
     {            
         return this.selectedSpecies;
+    }
+
+    //--------------------------
+    this.isPositionOverButton = function(x, y)
+    {
+        for (var i = 0; i < NUM_TOOLS; i++)
+        {
+            const button = this.buttons[i];
+            if ( button.visible &&
+                 x > button.position.x && x < button.position.x + button.width &&
+                 y > button.position.y && y < button.position.y + button.height)
+                return true;
+        }
+        return false;
     }
     
     //--------------------------

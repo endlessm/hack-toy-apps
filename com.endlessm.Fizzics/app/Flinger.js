@@ -199,8 +199,15 @@ function Flinger()
         _state = FLINGER_STATE_FLINGING;
         _flingingBall = _ballIndex;
     }
-    
-    
+
+    this.getDistanceToBall = function()
+    {
+        return Math.hypot(
+            _position.x - _handlePosition.x,
+            _position.y - _handlePosition.y
+        );
+    }
+
     //------------------------------------------------------
     this.getFlingingBallPastFlinger = function( ballPosition )
     {

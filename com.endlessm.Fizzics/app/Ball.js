@@ -134,6 +134,20 @@ function Ball()
     //---------------------------------------------------------------
     // get methods
     //---------------------------------------------------------------
+    this.getMaxDistanceToCorner = function()
+    {
+        const maxWidth = Math.max(
+            Math.abs(_position.x - _leftWall),
+            Math.abs(_position.x - _rightWall)
+        );
+        const maxHeight = Math.max(
+            Math.abs(_position.y - _bottomWall),
+            Math.abs(_position.y - _topWall)
+        );
+        const distance = Math.hypot(maxWidth, maxHeight);
+        return Math.abs(distance - _radius);
+    }
+
     this.getLastPosition         = function() { return _lastPosition;         }
     this.getPosition         = function() { return _position;         }
     this.getVelocity         = function() { return _velocity;         }

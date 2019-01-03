@@ -658,7 +658,15 @@ function HackyBalls()
             
             if ( _flinger.getState() == FLINGER_STATE_PULLING )
             {
+                const distanceToBall = _flinger.getDistanceToBall();
+                const distanceToCorner = _balls[b].getMaxDistanceToCorner();
                 _balls[b].setPosition( _flinger.getPullPosition() );
+
+                // Rate range: [distance=0: 0.5, distance=maxDistance: 3.0].
+                Sounds.updateSound('fizzics/pullFling', 100, {
+                    rate: 2.5 * distanceToBall / distanceToCorner + 0.5
+                });
+
             }
             else if ( _flinger.getState() == FLINGER_STATE_WAITING )
             {

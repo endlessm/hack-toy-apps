@@ -205,6 +205,7 @@ var gameState =
 function flip()
 {
     globalParameters.flipped = true;
+    hackyBalls.flip();
 }
 
 //----------------------
@@ -296,6 +297,7 @@ function HackyBalls()
     var _savedBalls             = null;
     var _numSavedBalls          = 0;
     var _levelLoading           = false;
+    var _flipped                = false;
 
     //------------------------------------------------------------------------- 
     // NOTE: The json-reading scheme is not fully figured out yet! 
@@ -1235,7 +1237,20 @@ function HackyBalls()
         else if ( r == 2 ) { Sounds.play( soundNamePrefix + "c" ); }
     }
 
+    this.getBackgroundSound = function () {
+        return `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background`;
+    }
 
+
+    this.flip = function () {
+        _flipped = !_flipped;
+
+        var volume = 1.0;
+        var background = this.getBackgroundSound();
+        if ( _flipped )
+            volume = 0.1;
+        Sounds.updateSound( background, 100, { volume: volume } );
+    }
 
     //------------------------------------
     this.setGameLevel = function( level )
@@ -1247,7 +1262,7 @@ function HackyBalls()
 
         _levelLoading = true;
 
-        Sounds.stop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
+        Sounds.stop( this.getBackgroundSound() );
 
         _game.setLevelGlobalParams(level);
         _numBalls = 0;
@@ -1270,7 +1285,7 @@ function HackyBalls()
 
         _levelLoading = false;
 
-        Sounds.playLoop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
+        Sounds.playLoop( this.getBackgroundSound() );
 
         _startTime = (new Date).getTime();
         _prevSeconds = 0;

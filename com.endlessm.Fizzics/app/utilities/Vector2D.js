@@ -1,9 +1,9 @@
 "use strict";
 
-function Vector2D()
+function Vector2D( x_ = 0.0, y_ = 0.0)
 {	
-	this.x = 0.0;
-	this.y = 0.0;
+	this.x = x_;
+	this.y = y_;
 
 	//------------------------------
 	this.setXY = function( x_, y_ )

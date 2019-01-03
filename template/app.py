@@ -155,27 +155,37 @@ toy-app-window > overlay > revealer > frame {
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        HackSoundServer.play(val.to_string(), user_data=val.to_string(),
+        sound_id = val.to_string()
+        uuid = self._played_async_sounds.get(sound_id, None)
+        if uuid is not None:
+            return
+        self._played_async_sounds[sound_id] = 'pending'
+        HackSoundServer.play(sound_id, user_data=val.to_string(),
                              result_handler=self._on_play_sound_finish)
 
     def _on_play_sound_finish(self, proxy, result, sound_id):
         if isinstance(result, Exception):
             raise result
-        # be sure to stop the previous one so we don't lose track of it
         uuid = self._played_async_sounds.get(sound_id, None)
-        if uuid is not None:
-            HackSoundServer.stop(uuid)
+        if uuid == 'cancel':
+            HackSoundServer.stop(result)
+            del self._played_async_sounds[sound_id]
+            return
         self._played_async_sounds[sound_id] = result
 
     def _on_stop_sound(self, manager, result):
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
-        uuid = self._played_async_sounds.get(val.to_string(), None)
-        if uuid is None:
+        sound_id = val.to_string()
+        uuid = self._played_async_sounds.get(sound_id, None)
+        if uuid in [None, 'cancel']:
+            return
+        if uuid == 'pending':
+            self._played_async_sounds[sound_id] = 'cancel'
             return
         HackSoundServer.stop(uuid)
-        del self._played_async_sounds[val.to_string()]
+        del self._played_async_sounds[sound_id]
 
     def _on_update_sound(self, manager, result):
         val = result.get_js_value()

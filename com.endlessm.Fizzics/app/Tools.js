@@ -20,7 +20,9 @@ function Tools()
         this.width     = ZERO;
         this.height    = ZERO;
         this.image     = new Image();
+        this.imageSelected = new Image();
         this.imagePath = "";
+        this.selected  = false;
     }
 
     this.buttons = new Array( NUM_TOOLS );
@@ -58,10 +60,19 @@ function Tools()
             this.buttons[t].visible = true;
             this.buttons[t].width  = buttonSize;
             this.buttons[t].height = buttonSize;
-            this.buttons[t].image.src = "images/move-tool.png";
         }
         
-        this.backgroundImage.src     = "images/tool-panel-background.png"; 
+        this.buttons[ TOOL_FLING  ].image.src = "images/fling-tool.png";
+        this.buttons[ TOOL_MOVE   ].image.src = "images/move-tool.png";
+        this.buttons[ TOOL_CREATE ].image.src = "images/create-tool.png";
+        this.buttons[ TOOL_DELETE ].image.src = "images/delete-tool.png";
+
+        this.buttons[ TOOL_FLING  ].imageSelected.src = "images/fling-tool-selected.png";
+        this.buttons[ TOOL_MOVE   ].imageSelected.src = "images/move-tool-selected.png";
+        this.buttons[ TOOL_CREATE ].imageSelected.src = "images/create-tool-selected.png";
+        this.buttons[ TOOL_DELETE ].imageSelected.src = "images/delete-tool-selected.png";
+
+        this.backgroundImage.src     = "images/tool-panel-background.png";
         this.speciesSelectImage.src  = "images/species-selection.png";
         
         var yy = 0;
@@ -73,6 +84,7 @@ function Tools()
         this.buttons[ TOOL_SPECIES  ].position.setXY( left + buttonSize + speciesButtonMargin, this.buttons[ TOOL_CREATE ].position.y );
         this.buttons[ TOOL_SPECIES  ].height = speciesToolHeight;
         this.buttons[ TOOL_SPECIES  ].image.src = "images/tool-panel-background.png";
+        this.buttons[ TOOL_SPECIES  ].imageSelected = this.buttons[ TOOL_SPECIES  ].image;
         this.buttons[ TOOL_SPECIES  ].visible = false;
     
         globalParameters.moveToolActive    = true;
@@ -95,29 +107,14 @@ function Tools()
     //-----------------------------
     this.select = function(t)
     {
-        this.buttons[ TOOL_MOVE     ].image.src = "images/move-tool.png";
-        this.buttons[ TOOL_FLING    ].image.src = "images/fling-tool.png";
-        this.buttons[ TOOL_CREATE   ].image.src = "images/create-tool.png";
-        this.buttons[ TOOL_DELETE   ].image.src = "images/delete-tool.png";
+        // Deselect all
+        for (var i=0; i<NUM_TOOLS; i++)
+            this.buttons[i].selected = false;
         
-             if ( t == TOOL_MOVE    ) { this.buttons[t].image.src = "images/move-tool-selected.png";   }
-        else if ( t == TOOL_FLING   ) { this.buttons[t].image.src = "images/fling-tool-selected.png";  }
-        else if ( t == TOOL_CREATE  ) { this.buttons[t].image.src = "images/create-tool-selected.png"; }
-        else if ( t == TOOL_DELETE  ) { this.buttons[t].image.src = "images/delete-tool-selected.png"; }
+        // Select button
+        this.buttons[t].selected = true;
         
-        if ( t == TOOL_SPECIES )
-        {
-            this.buttons[t].image.src = "images/tool-panel-background.png";  
-            this.buttons[ TOOL_SPECIES ].visible = true; 
-        }                     
-        else if ( t == TOOL_CREATE )
-        {
-            this.buttons[ TOOL_SPECIES ].visible = true;
-        }
-        else
-        {
-            this.buttons[ TOOL_SPECIES ].visible = false;
-        }
+        this.buttons[ TOOL_SPECIES ].visible = ( t == TOOL_SPECIES ) ? true : ( t == TOOL_CREATE );
     }
     
 
@@ -125,7 +122,7 @@ function Tools()
     this.mouseClick = function( x, y )
     {
         var selectedTool = -1;
-        
+
         for (var t=0; t<NUM_TOOLS; t++)
         {
             if (( x > this.buttons[t].position.x )
@@ -158,6 +155,9 @@ function Tools()
         this.buttons[ TOOL_FLING    ].visible = globalParameters.flingToolActive;
         this.buttons[ TOOL_CREATE   ].visible = globalParameters.createToolActive;
         this.buttons[ TOOL_DELETE   ].visible = globalParameters.deleteToolActive;
+
+        for (var i=0; i<this.numSpecies; i++)
+            this.speciesImages[i].src = `images/ball-${globalParameters['imageIndex_'+i]}.png`;
     }
     
     //------------------------------------
@@ -183,40 +183,32 @@ function Tools()
     //--------------------------
     this.render = function()
     {            
-      canvas.drawImage( this.backgroundImage, left - backgroundMargin, top - backgroundMargin, backgroundWidth, backgroundHeight );
+      canvas.drawImageCached( this.backgroundImage, left - backgroundMargin, top - backgroundMargin, backgroundWidth, backgroundHeight );
     
         for (var t=0; t<NUM_TOOLS; t++)
         {
-            if ( this.buttons[t].visible )
+            var b = this.buttons[t];
+
+            if ( b.visible )
             {
                 canvas.drawImageCached
-                ( 
-                    this.buttons[t].image, 
-                    this.buttons[t].position.x, 
-                    this.buttons[t].position.y, 
-                    this.buttons[t].width, 
-                    this.buttons[t].height 
+                (
+                    b.selected ? b.imageSelected || b.image : b.image,
+                    b.position.x,
+                    b.position.y,
+                    b.width,
+                    b.height
                 );
-            
+
                 if ( t == TOOL_SPECIES )
                 {
                     for (var s=0; s<this.numSpecies; s++)
                     {
-                        var imageID = 0;
-            
-                             if ( s == 0 ) { imageID = globalParameters.imageIndex_0; }
-                        else if ( s == 1 ) { imageID = globalParameters.imageIndex_1; }
-                        else if ( s == 2 ) { imageID = globalParameters.imageIndex_2; }
-                        else if ( s == 3 ) { imageID = globalParameters.imageIndex_3; }
-                        else if ( s == 4 ) { imageID = globalParameters.imageIndex_4; }
-
-                        this.speciesImages[s].src = "images/ball-" + imageID + ".png"  
-                
-                        var x = this.buttons[t].position.x + speciesImageMargin;
-                        var y = this.buttons[t].position.y + speciesImageMargin;
+                        var x = b.position.x + speciesImageMargin;
+                        var y = b.position.y + speciesImageMargin;
                         
-                        canvas.drawImage( this.speciesImages[s],   x, y + speciesImageRadius * s,                    speciesImageRadius, speciesImageRadius );
-                        canvas.drawImage( this.speciesSelectImage, x, y + speciesImageRadius * this.selectedSpecies, speciesImageRadius, speciesImageRadius );
+                        canvas.drawImageCached( this.speciesImages[s],   x, y + speciesImageRadius * s,                    speciesImageRadius, speciesImageRadius );
+                        canvas.drawImageCached( this.speciesSelectImage, x, y + speciesImageRadius * this.selectedSpecies, speciesImageRadius, speciesImageRadius );
                     }
                 }                
             }

@@ -24,7 +24,9 @@ function Game()
     
     function UIElement()
     {    
-        this.image   = new Image();
+        this.image         = new Image();
+        this.imageHover    = new Image();
+        this.imageDisabled = new Image();
         this.width   = 0;
         this.height  = 0;
         this.x       = 0;
@@ -82,18 +84,12 @@ function Game()
                 if ( !_resetButton.hover )
                 {
                     _resetButton.hover = true;
-                    _resetButton.image.src = "images/reset_hover.png";
                 }    
             }
             else if ( _resetButton.hover )
             {
                 _resetButton.hover = false;
-                _resetButton.image.src = "images/reset_enabled.png";
             }
-        }
-        else
-        {
-            _resetButton.image.src = "images/reset_disabled.png";
         }
 
         //-----------------------------------
@@ -109,20 +105,14 @@ function Game()
                 if ( !_nextButton.hover )
                 {
                     _nextButton.hover = true;
-                    _nextButton.image.src = "images/next_hover.png";
-                }    
+                }
             }
             else if ( _nextButton.hover )
             {
                 _nextButton.hover = false;
-                _nextButton.image.src = "images/next_enabled.png";                
             }
         }
-        else
-        {
-            _nextButton.image.src = "images/next_disabled.png";
-        }
-        
+
         //-----------------------------------
         // previous button
         //-----------------------------------
@@ -136,18 +126,12 @@ function Game()
                 if ( !_previousButton.hover )
                 {
                     _previousButton.hover = true;
-                    _previousButton.image.src = "images/prev_hover.png";
-                }    
+                }
             }
             else if ( _previousButton.hover )
             {
                 _previousButton.hover = false;
-                _previousButton.image.src = "images/prev_enabled.png";
             }
-        }
-        else
-        {
-            _previousButton.image.src = "images/prev_disabled.png";
         }
     }
     
@@ -281,13 +265,23 @@ function Game()
         _flingboard.enabled     = true;
         _successScreen.enabled  = true;        
         
-        _levelboard.image.src     = "images/level_background.png";
-        _resetButton.image.src    = "images/reset_enabled.png";
-        _previousButton.image.src = "images/prev_enabled.png";
-        _nextButton.image.src     = "images/next_enabled.png";
-        _scoreboard.image.src     = "images/score_background.png";
-        _flingboard.image.src     = "images/flings_background.png";
-        _successScreen.image.src  = "images/success-screen.png";
+        _levelboard.image.src             = "images/level_background.png";
+
+        _resetButton.image.src            = "images/reset_enabled.png";
+        _resetButton.imageDisabled.src    = "images/reset_disabled.png";
+        _resetButton.imageHover.src       = "images/reset_hover.png";
+
+        _previousButton.image.src         = "images/prev_enabled.png";
+        _previousButton.imageDisabled.src = "images/prev_disabled.png";
+        _previousButton.imageHover.src    = "images/prev_hover.png";
+
+        _nextButton.image.src             = "images/next_enabled.png";
+        _nextButton.imageDisabled.src     = "images/next_disabled.png";
+        _nextButton.imageHover.src        = "images/next_hover.png";
+
+        _scoreboard.image.src             = "images/score_background.png";
+        _flingboard.image.src             = "images/flings_background.png";
+        _successScreen.image.src          = "images/success-screen.png";
     }
     
     
@@ -785,27 +779,11 @@ function Game()
         return _level - 1;
     }
     
-    
 
     //----------------------------------------------
     this.setNextButtonEnabled = function( enabled )
     {
-        if ( enabled )
-        {
-            if ( !_nextButton.enabled )
-            {
-                _nextButton.enabled = true;
-                _nextButton.image.src = "images/next_enabled.png";
-            }
-        }     
-        else
-        {
-            if ( _nextButton.enabled )
-            {
-                _nextButton.enabled = false;
-                _nextButton.image.src = "images/next_disabled.png";
-            }            
-        }        
+        _nextButton.enabled = enabled;
     }
 
 
@@ -813,48 +791,16 @@ function Game()
     //----------------------------------------------
     this.setResetButtonEnabled = function( enabled )
     {
-        if ( enabled )
-        {
-            if ( !_resetButton.enabled )
-            {
-                _resetButton.enabled = true;
-                _resetButton.image.src = "images/reset_enabled.png";
-            }
-        }     
-        else
-        {
-            if ( _resetButton.enabled )
-            {
-                _resetButton.enabled = false;
-                _resetButton.image.src = "images/reset_disabled.png";
-            }            
-        }        
+        _resetButton.enabled = enabled;
     }
 
 
     //----------------------------------------------
     this.setPreviousButtonEnabled = function( enabled )
     {
-        if ( enabled )
-        {
-            if ( !_previousButton.enabled )
-            {
-                _previousButton.enabled = true;
-                _previousButton.image.src = "images/prev_enabled.png";
-            }
-        }     
-        else
-        {
-            if ( _previousButton.enabled )
-            {
-                _previousButton.enabled = false;
-                _previousButton.image.src = "images/prev_disabled.png";
-            }            
-        }        
+        _previousButton.enabled = enabled;
     }
 
-
-        
         
     //----------------------------------------------------------------------------
     this.createBallCircle = function( parent, x, y, ballType, radius, ballCount )
@@ -957,8 +903,6 @@ function Game()
                     // Sounds.play( "fizzics/success1" );
                     Sounds.play( "fizzics/collision/winning" );
                     Sounds.playLoop( "fizzics/you_won" );
-                    
-                    //_scoreboard.image.src = "images/scoreboard-win.png";
                 }
 
                 _ballReachedGoal = false;
@@ -1084,6 +1028,18 @@ function Game()
         return false;
     }
 
+    this._renderButton = function (b)
+    {
+        var image;
+
+        if (b.enabled)
+            image = b.blinkImage ? b.blinkImage : (b.hover ? b.imageHover : b.image);
+        else
+            image = b.imageDisabled;
+
+        canvas.drawImageCached ( image, b.x, b.y, b.width, b.height );
+    }
+
     //------------------------
     this.render = function()
     {
@@ -1092,7 +1048,7 @@ function Game()
         //--------------------------------------
         // render levelboard
         //--------------------------------------
-        canvas.drawImage
+        canvas.drawImageCached
         ( 
             _levelboard.image, 
             _levelboard.x,
@@ -1112,17 +1068,10 @@ function Game()
         //------------------------------------------------------------
         if ( _ballDied )
         {
-            var period = 500;
+            const period = 500;
             var timer = (new Date).getTime() % period;
 
-            if ( timer > ( period * ONE_HALF) )
-            {
-                _resetButton.image.src = "images/reset_hover.png";
-            }
-            else
-            {
-                _resetButton.image.src = "images/reset_enabled.png";
-            }
+            _resetButton.blinkImage = timer > ( period * ONE_HALF) ? _resetButton.imageHover : _resetButton.image;
         }
         else
         {
@@ -1132,48 +1081,27 @@ function Game()
         //------------------------
         // render reset button
         //------------------------
-        canvas.drawImage
-        ( 
-            _resetButton.image, 
-            _resetButton.x,
-            _resetButton.y, 
-            _resetButton.width, 
-            _resetButton.height
-        );
+        this._renderButton (_resetButton);
 
         //--------------------------------------
         // render previous button
         //--------------------------------------
-        canvas.drawImage
-        ( 
-            _previousButton.image, 
-            _previousButton.x,
-            _previousButton.y, 
-            _previousButton.width, 
-            _previousButton.height
-        );
+        this._renderButton (_previousButton);
 
         //--------------------------------------
         // render next button
         //--------------------------------------
-        canvas.drawImage
-        ( 
-            _nextButton.image, 
-            _nextButton.x,
-            _nextButton.y, 
-            _nextButton.width, 
-            _nextButton.height
-        );
+        this._renderButton (_nextButton);
 
         //--------------------------------------
         // render scoreboard
         //--------------------------------------
-        canvas.drawImage
+        canvas.drawImageCached
         ( 
             _scoreboard.image, 
             _scoreboard.x,
             _scoreboard.y, 
-            _scoreboard.width, 
+            _scoreboard.width,
             _scoreboard.height
         );        
         canvas.fillText( gameState.numBonus.toString(), _scoreboard.x + _scoreboard.width * 0.6, _scoreboard.y + _scoreboard.height * FONT_Y_SCALE );
@@ -1182,12 +1110,12 @@ function Game()
         //--------------------------------------
         // render flingboard
         //--------------------------------------
-        canvas.drawImage
+        canvas.drawImageCached
         ( 
             _flingboard.image, 
             _flingboard.x,
             _flingboard.y, 
-            _flingboard.width, 
+            _flingboard.width,
             _flingboard.height
         );
         canvas.fillText( gameState.numFlings.toString(), _flingboard.x + _flingboard.width * 0.6, _flingboard.y + _flingboard.height * FONT_Y_SCALE );
@@ -1197,7 +1125,7 @@ function Game()
         //--------------------------------------
         if ( gameState.success )
         {
-            canvas.drawImage
+            canvas.drawImageCached
             ( 
                 _successScreen.image, 
                 _successScreen.x,
@@ -1226,7 +1154,7 @@ function Game()
             // render success ball
             //--------------------------------------
             _sucessBall.src = "images/ball-" + globalParameters.imageIndex_0 + ".png";
-            canvas.drawImage
+            canvas.drawImageCached
             ( 
                 _sucessBall, 
                 canvasID.width  * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF,

@@ -6,18 +6,15 @@ var canvas = canvasID.getContext( '2d' );
 var USING_TEST_GUI = false;
 var USING_FALLBACK_SOUNDS = false;
 
-var WINDOW_WIDTH  = canvasID.width;
-var WINDOW_HEIGHT = canvasID.height;
+const WIDTH  = 1920;
+const HEIGHT = 1004;
+const RATIO = WIDTH / HEIGHT;
 
 var NULL_BALL = -1;
 var MAX_BALLS = 100;
 var DEATH_ANIMATION_RADIUS_SCALE = 160.0;
 
 var MAX_DEATHEFFECTS = 8
-
-var SCREEN_WIDTH  = 1920;
-var SCREEN_HEIGHT = 1040;
-
 
 //---------------------------------------------------------
 // The object globalParameters contains all the data that
@@ -275,8 +272,8 @@ function HackyBalls()
     var _hackyBallsGUI          = new HackyBallsGUI();
     var _leftWall               = ZERO;
     var _topWall                = ZERO;
-    var _bottomWall             = WINDOW_HEIGHT;
-    var _rightWall              = WINDOW_WIDTH;
+    var _bottomWall             = HEIGHT;
+    var _rightWall              = WIDTH;
     var _worldToWindowScale     = 1.0;
     var _grabbedBall            = NULL_BALL;
     var _selectedSpecies        = 0;
@@ -318,15 +315,9 @@ function HackyBalls()
     {        
         if ( _backgroundImageIndex != imageIndex )
         {
-            /*
-            if ( _backgroundImageIndex == 0 ) { Sounds.stop( "background1" ); Sounds.play( "fizzics/background1" ); }
-            if ( _backgroundImageIndex == 1 ) { Sounds.stop( "background2" ); Sounds.play( "fizzics/background2" ); }
-            if ( _backgroundImageIndex == 2 ) { Sounds.stop( "background3" ); Sounds.play( "fizzics/background3" ); }
-            */
-            
             _backgroundImageIndex = imageIndex;
-            
-            canvasID.style.backgroundImage = "url('images/background-" + _backgroundImageIndex + ".png')";
+            canvasID.style.backgroundImage = `url('images/background-${_backgroundImageIndex}.png')`;
+            canvasID.style.backgroundSize = 'cover';
         }
     }
 
@@ -996,7 +987,7 @@ function HackyBalls()
         
     //------------------------
     this.render = function()
-    {   
+    {
         //-------------------------------------------
         // clear background
         //-------------------------------------------
@@ -1006,7 +997,7 @@ function HackyBalls()
         // save canvas transform before applying the following scaling...
         //-------------------------------------------------------------------
         canvas.save();
-        
+
         //-------------------------------------------------------
         // scale background to the window size
         //-------------------------------------------------------
@@ -1059,11 +1050,11 @@ function HackyBalls()
         {
             _hackyBallsGUI.render();
         }
-         
+
         //---------------------------------------
         // restore canvas to default transform
         //---------------------------------------
-        canvas.restore()
+        canvas.restore();
 
         this.updateCursor();
     }
@@ -1708,26 +1699,16 @@ function HackyBalls()
     
     
     //---------------------------------------------------
-    this.onWindowResize = function( width, height )
-    {
-        var ratio = width / height;
-        var screenRatio = SCREEN_WIDTH / SCREEN_HEIGHT;
-        
-        if ( ratio >= screenRatio )
-        {
-            _worldToWindowScale = height / SCREEN_HEIGHT;
-        }
-        else
-        {
-            _worldToWindowScale = width / SCREEN_WIDTH;
-        }
-        
-        //JuanPablo, can this be set to only display in the correct width and height?         
-        canvasID.style.backgroundImage = "url('images/background-" + _backgroundImageIndex + ".png')";  
-        canvasID.style.backgroundSize = width + "px " + height + "px";        
-        canvasID.style.backgroundRepeat = "no-repeat";
-    }
-    
+    window.addEventListener("resize", () => {
+        const w  = window.innerWidth;
+        const h  = window.innerHeight;
+        const scale = Math.min(Math.max(0, ( w/h >= RATIO ) ? h/HEIGHT : w/WIDTH), 1);
+
+        _worldToWindowScale = scale;
+        canvasID.width = WIDTH * scale;
+        canvasID.height = HEIGHT * scale;
+    });
+
     //---------------------
     // start this puppy!
     //---------------------
@@ -1781,12 +1762,3 @@ function reset()
     hackyBalls.resetGlobalParams();
 }
 
-window.addEventListener("resize", function () {
-
-    // Resize canvas
-    canvasID.width  = window.innerWidth;
-    canvasID.height = window.innerHeight;
-
-    // Update balls walls
-    hackyBalls.onWindowResize ( canvasID.width, canvasID.height );
-});

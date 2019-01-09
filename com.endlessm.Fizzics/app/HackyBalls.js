@@ -976,7 +976,8 @@ function HackyBalls()
             canvas.globalAlpha = ONE;
         }
 
-        canvas.drawImageCached
+        // Do not use drawImageChached since we know the size wont be the same!
+        canvas.drawImage
         (
             anim.image,
             anim.position.x - size * ONE_HALF,

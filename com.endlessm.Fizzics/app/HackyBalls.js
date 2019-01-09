@@ -614,7 +614,9 @@ function HackyBalls()
         //---------------------------------------------------
         // this forces the frame rate to be same as browser        
         //---------------------------------------------------
-        window.requestAnimationFrame( this.update.bind(this) );                
+        window.requestAnimationFrame( () => {
+            window.requestAnimationFrame( this.update.bind(this) );
+        } );
     } 
 
 

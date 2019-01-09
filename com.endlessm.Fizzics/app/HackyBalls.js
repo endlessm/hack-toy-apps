@@ -34,7 +34,7 @@ var globalParameters =
     minCollision    :   0.01,
     maxCollision    :   0.2,
     minFriction     :   0.0,
-    maxFriction     :  18.0,
+    maxFriction     :  100.0,
     minSocialForce  : -30.0,
     maxSocialForce  :  30.0,
 
@@ -1706,10 +1706,10 @@ function HackyBalls()
             {
                 _balls[b].setGravity      ( _species[s].gravity    );
                 _balls[b].setRadius       ( _species[s].radius     );
-                _balls[b].setCollision    ( _species[s].collision  );     
-                _balls[b].setAirFriction  ( _species[s].friction   );    
-                _balls[b].setImageID      ( _species[s].imageID    );    
-                _balls[b].setUsingPhysics ( _species[s].usePhysics );     
+                _balls[b].setCollision    ( _species[s].collision  );
+                _balls[b].setAirFriction  ( _species[s].friction/1000 );
+                _balls[b].setImageID      ( _species[s].imageID    );
+                _balls[b].setUsingPhysics ( _species[s].usePhysics );
             }
         }
         

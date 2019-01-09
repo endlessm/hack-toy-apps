@@ -47,6 +47,7 @@ function flip()
     }
     else if ( globalParameters.mode === MODE_SUCCESS )
     {
+        Sounds.stop('HackUnlock/success/back');
         Sounds.play('HackUnlock/success');
         globalParameters.mode = MODE_FINISHED;
         if (window.ToyApp)
@@ -297,6 +298,7 @@ function Unlock()
                 Sounds.stop('HackUnlock/ambient/back');
                 Sounds.stop('HackUnlock/wave');
                 Sounds.play('HackUnlock/solution');
+                Sounds.playLoop('HackUnlock/success/back');
                 _solutionSoundPlayed = true;
             }
         }
@@ -305,6 +307,7 @@ function Unlock()
             globalParameters.mode = MODE_SOLVING_PUZZLE;
 
             if (_solutionSoundPlayed) {
+                Sounds.stop('HackUnlock/success/back');
                 _solutionSoundPlayed = false;
                 Sounds.playLoop('HackUnlock/ambient/back');
                 Sounds.playLoop('HackUnlock/wave');

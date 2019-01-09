@@ -3,8 +3,12 @@
 //-------------------------------------------------------
 CanvasRenderingContext2D.prototype.drawImageCached = function (image, dx, dy, dWidth, dHeight)
 {
-    var transform = this.webkitCurrentTransform;
-    if (!transform || (transform && !transform.isIdentity))
+    // No-Op if the image is not loaded
+    if (image.tagName === 'IMG' && !image.complete)
+        return;
+
+    const t = this.getTransform() || this.currentTransform || this.webkitCurrentTransform;
+    if (t === undefined)
     {
         this.drawImage(image, dx, dy, dWidth, dHeight);
         return;
@@ -13,19 +17,20 @@ CanvasRenderingContext2D.prototype.drawImageCached = function (image, dx, dy, dW
     dWidth = Math.round(dWidth);
     dHeight = Math.round(dHeight);
 
-    if (!image._offScreen)
+    var off = image._off;
+    if (!off || off.canvas.width !== dWidth || off.canvas.height !== dHeight ||
+        off._t.a !== t.a || off._t.d !== t.d)
     {
-        image._offScreen = document.createElement('canvas');
-        image._offScreenCtx = image._offScreen.getContext('2d');
+        if (!off)
+            image._off = off = document.createElement('canvas').getContext('2d');
+
+        off._t = t;
+        off.scale(t.a, t.d);
+        off.canvas.width = dWidth;
+        off.canvas.height = dHeight;
+        off.drawImage(image, 0, 0, dWidth, dHeight);
     }
 
-    if (image._offScreen.width !== dWidth || image._offScreen.height !== dHeight)
-    {
-        image._offScreen.width = dWidth;
-        image._offScreen.height = dHeight;
-        image._offScreenCtx.drawImage(image, 0, 0, dWidth, dHeight);
-    }
-
-    this.drawImage(image._offScreen, dx, dy);
+    this.drawImage(off.canvas, dx, dy);
 };
 

@@ -350,9 +350,10 @@ function HackyBalls()
         //-----------------------------------
         canvasID.width  = window.innerWidth;
         canvasID.height = window.innerHeight;
+        this.onWindowResize ( canvasID.width, canvasID.height );
 
-        _rightWall  = canvasID.width;
-        _bottomWall = canvasID.height;
+        _rightWall  = SCREEN_WIDTH;
+        _bottomWall = SCREEN_HEIGHT;
 
         //--------------------------------------
         // create species array  

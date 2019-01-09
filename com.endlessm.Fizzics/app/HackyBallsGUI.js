@@ -32,14 +32,14 @@ function HackyBallsGUI()
         //--------------------------------
         // build the UI components
         //--------------------------------
-        _userInterface.createButton( canvasID.width - 120, 20, 100,  37, "flip to hack" );
-        _userInterface.createButton( canvasID.width - 120, 20, 100,  37, "flip back"    );
+        _userInterface.createButton( SCREEN_WIDTH - 120, 20, 100,  37, "flip to hack" );
+        _userInterface.createButton( SCREEN_WIDTH - 120, 20, 100,  37, "flip back"    );
 
         var panelWidth  = 320.0;
         var panelHeight = 790.0;
         var panelMargin = 10;
 
-        var panelLeft   = canvasID.width  - ( panelWidth  + panelMargin );
+        var panelLeft   = SCREEN_WIDTH  - ( panelWidth  + panelMargin );
         var panelTop    = 10;
 
         var panelRight  = panelLeft + panelWidth;
@@ -590,7 +590,7 @@ function HackyBallsGUI()
     {
         if ( _flipped )
         {
-            canvas.drawImage( _hackOverlay, 0, 0, canvasID.width, canvasID.height );
+            canvas.drawImage( _hackOverlay, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
         }
             
         _userInterface.render();

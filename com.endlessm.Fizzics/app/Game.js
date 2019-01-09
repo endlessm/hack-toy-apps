@@ -243,7 +243,7 @@ function Game()
         
         var buttonHeight = _levelboard.y + _levelboard.height * 0.1;
 
-        var left = canvasID.width * ONE_HALF - ( _levelboard.width + _scoreboard.width + _flingboard.width ) * ONE_HALF;
+        var left = SCREEN_WIDTH * ONE_HALF - ( _levelboard.width + _scoreboard.width + _flingboard.width ) * ONE_HALF;
         var top = 0;
         
         _levelboard.x = left;
@@ -262,8 +262,8 @@ function Game()
         _resetButton.y    = buttonHeight;
         _nextButton.y     = buttonHeight;
         
-        _successScreen.x = canvasID.width  * ONE_HALF - _successScreen.width  * ONE_HALF;
-        _successScreen.y = canvasID.height * ONE_HALF - _successScreen.height * ONE_HALF;
+        _successScreen.x = SCREEN_WIDTH  * ONE_HALF - _successScreen.width  * ONE_HALF;
+        _successScreen.y = SCREEN_HEIGHT * ONE_HALF - _successScreen.height * ONE_HALF;
         
         _levelboard.hover     = false;
         _resetButton.hover    = false;
@@ -326,7 +326,7 @@ function Game()
         else if ( _level == QUEST_FIZZICS1 )
         {        
             var r = 300;
-            this.createBallCircle( parent, 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
+            this.createBallCircle( parent, 0.5 * SCREEN_WIDTH, 0.5 * SCREEN_HEIGHT, 1, r, 20 );
 
             var period = 50; // how many time steps are used to run this test?
             this.initializeGameState( period, 0, 0, collisionBalls, ballsWithSomeCollision  );

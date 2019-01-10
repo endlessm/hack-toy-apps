@@ -12,9 +12,15 @@ var globalParameters =
 function flip()
 {
     globalParameters.flipped = !globalParameters.flipped;
+    if (globalParameters.flipped)
+        Sounds.stop('system/background/front');
+    else
+        Sounds.playLoop('system/background/front');
 }
 
 document.onmousedown = function(e)
 {
     globalParameters.clicked = !globalParameters.clicked;
 }
+
+Sounds.playLoop('system/background/front');

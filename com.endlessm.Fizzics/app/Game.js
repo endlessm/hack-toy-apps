@@ -1157,8 +1157,8 @@ function Game()
             canvas.drawImageCached
             ( 
                 _sucessBall, 
-                canvasID.width  * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF,
-                canvasID.height * ONE_HALF - SUCCESS_BALL_RADIUS * ONE_HALF - 120,
+                _successScreen.x + _successScreen.width/2 - SUCCESS_BALL_RADIUS * ONE_HALF,
+                _successScreen.y + _successScreen.height/2 - SUCCESS_BALL_RADIUS * ONE_HALF - 120,
                 SUCCESS_BALL_RADIUS, 
                 SUCCESS_BALL_RADIUS
             );            

@@ -1777,3 +1777,7 @@ function reset()
     hackyBalls.resetGlobalParams();
 }
 
+window.addEventListener("load", function(event) {
+    ToyApp.setAspectRatio(RATIO);
+});
+

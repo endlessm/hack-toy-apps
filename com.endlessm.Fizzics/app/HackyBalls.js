@@ -1218,15 +1218,7 @@ function HackyBalls()
         
         if ( cancelFlinger )
         {
-            if ( _flinger.getBallIndex() != NULL_BALL )
-            {
-                Sounds.play( "fizzics/unGrab" );
-                var stop = new Vector2D();
-                _balls[ _flinger.getBallIndex() ].setVelocity( stop );
-            }
-
-            _flinger.cancel();
-            Sounds.stop( "fizzics/pullFling" );
+            this.cancelFlinger();
         }
     }
     
@@ -1336,6 +1328,19 @@ function HackyBalls()
     }
     
 
+    this.cancelFlinger = function()
+    {
+        if ( _flinger.getBallIndex() != NULL_BALL )
+        {
+            Sounds.play( "fizzics/unGrab" );
+            var stop = new Vector2D();
+            var ball = _balls[ _flinger.getBallIndex() ];
+            ball.setPosition( _flinger.getPosition() );
+            ball.setVelocity( stop );
+        }
+        _flinger.cancel();
+        Sounds.stop( "fizzics/pullFling" );
+    }
 
     //------------------------------
     this.mouseUp = function( sx, sy )
@@ -1358,6 +1363,14 @@ function HackyBalls()
                 Sounds.stop( "fizzics/pullFling" );
                 Sounds.play( "fizzics/fling" );
                 Sounds.playLoop( _species[ _balls[ _flinger.getFlingingBall() ].getType() ].flySound );
+            }
+            else if (_flinger.getClickCount() > 0)
+            {
+                this.cancelFlinger();
+            }
+            else
+            {
+                _flinger.increaseClickCount();
             }
         }
         
@@ -1458,7 +1471,12 @@ function HackyBalls()
     {    
         this.createBall( _mousePosition.x, _mousePosition.y, _selectedSpecies );        
     }
-    
+
+    //---------------------------------
+    this.escKeyPressed = function()
+    {    
+        this.cancelFlinger();
+    }
 
     this.toggleDevMode = function()
     {
@@ -1758,6 +1776,7 @@ document.onkeydown = function(e)
 {
     if ( e.keyCode === 32 ) { hackyBalls.spaceKeyPressed();  }
     if ( e.keyCode ===  8 ) { hackyBalls.deleteKeyPressed(); }
+    if ( e.keyCode === 27 ) { hackyBalls.escKeyPressed();  }
 
     // Ctrl + Sift + D: Toggle developer mode
     if (e.keyCode == 68 && e.ctrlKey && e.shiftKey) { hackyBalls.toggleDevMode(); }

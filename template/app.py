@@ -12,6 +12,7 @@ from gi.repository import Gtk
 from gi.repository import WebKit2
 
 from soundserver import HackSoundServer
+from gamestateservice import GameStateService
 
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
@@ -81,12 +82,17 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager = self.view.get_user_content_manager()
 
         # Register message handlers
+
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
+        # hack-sound-server
         self._manager_add_msg_handler(manager, 'playSound', self._on_play_sound)
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
         self._manager_add_msg_handler(manager, 'stopSound', self._on_stop_sound)
+        # hack-game-state-service
+        self._manager_add_msg_handler(manager, 'someLockscreenActive',
+            self._on_some_lockscreen_active)
 
         # Inject custom JS on every page
         manager.add_script(
@@ -166,6 +172,27 @@ toy-app-window > overlay > revealer > frame {
         if uuid is not None:
             HackSoundServer.stop(uuid)
         self._played_async_sounds[sound_id] = result
+
+    def _on_some_lockscreen_active(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_array():
+            raise ValueError('arg should be array')
+        length = val.object_get_property('length').to_int32()
+
+        active = False
+        for i in range(length):
+            js_strval = val.object_get_property_at_index(i)
+            if not js_strval.is_string():
+                raise ValueError('array item at pos %d should be string' % i)
+            strval = js_strval.to_string()
+            try:
+                active = bool(GameStateService().get(strval))
+            except:
+                active = False
+            if active:
+                break
+        template = 'gameState.someLockscreenActive = {};'
+        self.view.run_javascript(template.format(str(active).lower()))
 
     def _on_stop_sound(self, manager, result):
         val = result.get_js_value()

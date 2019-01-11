@@ -26,3 +26,9 @@ window.Sounds = {
         window.webkit.messageHandlers.stopSound.postMessage(id);
     },
 };
+
+window.GameState = {
+    someLockscreenActive(key) {
+        window.webkit.messageHandlers.someLockscreenActive.postMessage(key);
+    }
+}

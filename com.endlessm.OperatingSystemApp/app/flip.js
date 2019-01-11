@@ -4,6 +4,20 @@ var globalParameters =
     clicked         : false
 }
 
+var gameState =
+{
+    someLockscreenActive: false
+}
+
+Object.defineProperty(gameState, 'someLockscreenActive', {
+    set: function(val) {
+        const isActive = Boolean(val);
+        if (globalParameters.flipped && !isActive)
+            Sounds.playLoop('system/background/back');
+        this.val = isActive;
+    }
+});
+
 
 //-----------------------------------------------------------------
 // This function should be called from outside to tell this app
@@ -12,10 +26,17 @@ var globalParameters =
 function flip()
 {
     globalParameters.flipped = !globalParameters.flipped;
-    if (globalParameters.flipped)
+    if (globalParameters.flipped) {
+        GameState.someLockscreenActive([
+            'item.key.OperatingSystemApp.1',
+            'item.key.OperatingSystemApp.2',
+            'item.key.OperatingSystemApp.3'
+        ]);
         Sounds.stop('system/background/front');
-    else
+    } else {
+        Sounds.stop('system/background/back');
         Sounds.playLoop('system/background/front');
+    }
 }
 
 document.onmousedown = function(e)

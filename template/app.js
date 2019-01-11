@@ -7,6 +7,10 @@ window.ToyApp = {
         window.webkit.messageHandlers.ToyAppSetHackable.postMessage(state);
     },
 
+    setAspectRatio(ratio) {
+        window.webkit.messageHandlers.ToyAppSetAspectRatio.postMessage(ratio);
+    },
+
 };
 
 window.Sounds = {

@@ -83,6 +83,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         # Register message handlers
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
+        self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
         self._manager_add_msg_handler(manager, 'playSound', self._on_play_sound)
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
@@ -140,6 +141,18 @@ toy-app-window > overlay > revealer > frame {
     def _on_set_hackable(self, manager, result):
         val = result.get_js_value()
         self.get_application().send_hackable(val.to_string() == 'true')
+
+    def _on_set_aspect_ratio(self, manager, result):
+        val = result.get_js_value()
+        if val.is_undefined():
+            raise ValueError('needs ratio argument')
+
+        if not val.is_number():
+            raise ValueError('ratio arg should be number')
+
+        hint = Gdk.Geometry()
+        hint.min_aspect = hint.max_aspect = val.to_double()
+        self.set_geometry_hints(None, hint, Gdk.WindowHints.ASPECT)
 
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:

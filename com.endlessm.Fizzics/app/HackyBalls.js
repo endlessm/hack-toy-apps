@@ -339,8 +339,7 @@ function HackyBalls()
         //-----------------------------------
         // Set canvas size
         //-----------------------------------
-        canvasID.width  = window.innerWidth;
-        canvasID.height = window.innerHeight;
+        this._updateCanvasSize();
 
         _rightWall  = canvasID.width;
         _bottomWall = canvasID.height;
@@ -1699,10 +1698,10 @@ function HackyBalls()
         
         _tools.applyParameters();
     }
-    
-    
-    //---------------------------------------------------
-    window.addEventListener("resize", () => {
+
+    //---------------------------------
+    this._updateCanvasSize = function()
+    {
         const w  = window.innerWidth;
         const h  = window.innerHeight;
         const scale = Math.min(Math.max(0, ( w/h >= RATIO ) ? h/HEIGHT : w/WIDTH), 1);
@@ -1710,7 +1709,10 @@ function HackyBalls()
         _worldToWindowScale = scale;
         canvasID.width = WIDTH * scale;
         canvasID.height = HEIGHT * scale;
-    });
+    }
+
+    //---------------------------------------------------
+    window.addEventListener("resize", this._updateCanvasSize.bind(this));
 
     //---------------------
     // start this puppy!

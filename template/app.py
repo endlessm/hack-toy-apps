@@ -45,6 +45,14 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         decorated = metadata.get('decorated', True)
         use_load_notify = metadata.get('use-load-notify', False)
 
+        context = self.view.get_context()
+        security = context.get_security_manager()
+        security.register_uri_scheme_as_cors_enabled('local')
+        security.register_uri_scheme_as_secure('local')
+        security.register_uri_scheme_as_local('local')
+
+        context.register_uri_scheme('local', self._on_local_uri_scheme)
+
         self._played_async_sounds = {}
         self.connect('destroy', self._on_destroy)
 
@@ -69,10 +77,17 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         # Finally load html app index
         self.view.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
+        #self.view.load_uri('local://%s/app/webgl-examples/tutorial/sample6/index.html' % SCRIPT_PATH)
+        #self.view.load_uri('http://localhost/~xjuan')
 
     def _on_destroy(self, window):
         for sound_id in self._played_async_sounds:
             HackSoundServer.stop(self._played_async_sounds[sound_id])
+
+    def _on_local_uri_scheme(self, request):
+        file = Gio.file_new_for_path(request.get_path())
+        print('Loading... ', request.get_path())
+        request.finish(file.read(), -1)
 
     def _manager_add_msg_handler(self, manager, msg, callback):
         manager.register_script_message_handler(msg)

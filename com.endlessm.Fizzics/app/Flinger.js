@@ -41,6 +41,7 @@ function Flinger()
     var _state          = FLINGER_STATE_NULL;
     var _readyToFling   = false;
     var _flingingBall   = NULL_BALL;
+    var _clickCount     = 0;
 
     
     _image.src = "images/flinger.png";
@@ -51,6 +52,7 @@ function Flinger()
     {
         _handleLength       = ballRadius + 4.0;    
         _state              = FLINGER_STATE_WAITING;
+        _clickCount         = 0;
         _ballIndex          = ballIndex;
         _position.x         = ballPosition.x;
         _position.y         = ballPosition.y;
@@ -430,21 +432,34 @@ function Flinger()
     
     //-----------------------------
     this.getBallIndex = function()
-    {    
+    {
         return _ballIndex;
     }
     
     //-------------------------------
     this.setState = function(state )
-    {    
+    {
         _state = state;
     }
-    
-    
     //--------------------------
     this.getState = function()
-    {    
+    {
         return _state;
+    }
+
+    this.getPosition = function()
+    {
+        return _position;
+    }
+
+    this.getClickCount = function()
+    {
+        return _clickCount;
+    }
+
+    this.increaseClickCount = function()
+    {
+        _clickCount++;
     }
 }
 

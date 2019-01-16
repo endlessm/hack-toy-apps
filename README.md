@@ -10,3 +10,5 @@ You can generate the manifest using the generate_manifest script:
 Then you can build the flatpak of the app and install it:
 
 <code>flatpak-builder --force-clean --install fbuild [app_id].json</code>
+
+For more details about these apps, visit the [documentation](DOCUMENTATION.md).

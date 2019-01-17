@@ -35,6 +35,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
     splash = Gtk.Template.Child()
     view = Gtk.Template.Child()
     settings = Gtk.Template.Child()
+    provider = None
 
     def __init__(self, application, metadata):
         super(ToyAppWindow, self).__init__()
@@ -106,8 +107,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         splash = Gio.File.new_for_path('/app/share/eos-shell-content/splash/%s.jpg' % app_id)
 
         if splash.query_exists():
-            provider = Gtk.CssProvider()
-            provider.load_from_data(bytes(
+            self.provider = Gtk.CssProvider()
+            self.provider.load_from_data(bytes(
                 """
 toy-app-window,
 toy-app-window > overlay > revealer > frame {
@@ -116,7 +117,7 @@ toy-app-window > overlay > revealer > frame {
                 """ % splash.get_path(), 'UTF8'))
             Gtk.StyleContext.add_provider_for_screen(
                 Gdk.Screen.get_default(),
-                provider,
+                self.provider,
                 Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
             )
             self.revealer.set_reveal_child(True)
@@ -131,6 +132,10 @@ toy-app-window > overlay > revealer > frame {
     def _on_child_revealed(self, revealer, pspec):
         if not self.revealer.get_child_revealed():
             self.revealer.destroy()
+            Gtk.StyleContext.remove_provider_for_screen(
+                Gdk.Screen.get_default(),
+                self.provider
+            )
 
     def _on_context_menu(self, webview, context, event, hit):
         return Gtk.true()
@@ -248,7 +253,7 @@ class Application(Gtk.Application):
         self.add_action(quit)
 
     def _flip_action_activated_cb(self, action, param):
-        self._window.view.run_javascript('if(typeof flip !== "undefined"){flip();}');
+        self._window.view.run_javascript('if(typeof flip !== "undefined"){flip();}')
 
     def _reset_action_activated_cb(self, action, param):
         self._window.view.run_javascript('if(typeof reset !== "undefined"){reset();}')
@@ -262,14 +267,6 @@ class Application(Gtk.Application):
     def do_startup(self):
         Gtk.Application.do_startup(self)
         self._setup_actions()
-
-        provider = Gtk.CssProvider()
-        provider.load_from_path(os.path.join(SCRIPT_PATH, 'app.css'))
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
 
         try:
             with open(os.path.join(SCRIPT_PATH, 'metadata.json')) as metadata_file:

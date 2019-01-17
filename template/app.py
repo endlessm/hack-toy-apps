@@ -263,14 +263,6 @@ class Application(Gtk.Application):
         Gtk.Application.do_startup(self)
         self._setup_actions()
 
-        provider = Gtk.CssProvider()
-        provider.load_from_path(os.path.join(SCRIPT_PATH, 'app.css'))
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
-            provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
-
         try:
             with open(os.path.join(SCRIPT_PATH, 'metadata.json')) as metadata_file:
                 self._metadata = json.load(metadata_file)

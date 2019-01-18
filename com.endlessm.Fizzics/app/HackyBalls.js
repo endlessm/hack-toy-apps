@@ -281,6 +281,7 @@ function HackyBalls()
     var _mousePosition          = new Vector2D();
     var _prevMousePosition      = new Vector2D();
     var _mouseVelocity          = new Vector2D();
+    var _mouseButtonIsDown      = false;
     var _vector                 = new Vector2D();
     var _startTime              = ZERO;
     var _deleteImage            = new Image();
@@ -1088,6 +1089,8 @@ function HackyBalls()
     //--------------------------------
     this.mouseDown = function( sx, sy )
     {
+        _mouseButtonIsDown = true;
+
         x = sx / _worldToWindowScale;
         y = sy / _worldToWindowScale;
         
@@ -1348,6 +1351,8 @@ function HackyBalls()
     //------------------------------
     this.mouseUp = function( sx, sy )
     {    
+        _mouseButtonIsDown = false;
+
         x = sx / _worldToWindowScale;
         y = sy / _worldToWindowScale;
         
@@ -1426,7 +1431,7 @@ function HackyBalls()
             if (Math.abs(x - position.x) < r && Math.abs(y - position.y) < r)
             {
                 if (_currentTool === TOOL_MOVE)
-                    cursor = "grab";
+                    cursor = _mouseButtonIsDown ? "grabbing" : "grab";
                 else if (_currentTool === TOOL_FLING && specie.flingable && specie.usePhysics)
                     cursor = "move";
                 else if (_currentTool === TOOL_DELETE)

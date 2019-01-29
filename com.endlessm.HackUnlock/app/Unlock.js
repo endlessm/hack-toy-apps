@@ -336,7 +336,9 @@ function Unlock()
         {
             if ( _video && !_video.ended )
             {
-                canvas.drawImage( _video, 0, 0, canvasID.width, canvasID.height );
+                var bg_diff_x = canvasID.width - BG_SIZE.width;
+                var bg_diff_y =  canvasID.height - BG_SIZE.height;
+                canvas.drawImage( _video, bg_diff_x / 2, bg_diff_y / 2);
             }
 
             return;

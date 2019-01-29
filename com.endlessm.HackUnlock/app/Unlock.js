@@ -4,6 +4,8 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
+var BG_SIZE = { width: 1920, height: 1040 };
+
 var MODE_FIRST_SCREEN   = 0;
 var MODE_SOLVING_PUZZLE = 1;
 var MODE_SUCCESS        = 2;
@@ -334,7 +336,9 @@ function Unlock()
         {
             if ( _video && !_video.ended )
             {
-                canvas.drawImage( _video, 0, 0, canvasID.width, canvasID.height );
+                var bg_diff_x = canvasID.width - BG_SIZE.width;
+                var bg_diff_y =  canvasID.height - BG_SIZE.height;
+                canvas.drawImage( _video, bg_diff_x / 2, bg_diff_y / 2);
             }
 
             return;
@@ -356,8 +360,12 @@ function Unlock()
             //-------------------------------------------
             var f = _successClock / SUCCESS_DURATION;
             if ( f > 0 ) {
+                var bg_diff_x = canvasID.width - BG_SIZE.width;
+                var bg_diff_y =  canvasID.height - BG_SIZE.height;
+
                 canvas.globalAlpha = f;
-                canvas.drawImage( _glowImage, 0, 0, canvasID.width, canvasID.height );
+                // centering this image to support all resolutions
+                canvas.drawImage( _glowImage, bg_diff_x / 2, bg_diff_y / 2);
                 canvas.globalAlpha = 1.0;
             }
 
@@ -397,8 +405,8 @@ function Unlock()
 
         for ( var i = 0; i < SINE_WAVE_RES; i++ )
         {                    
-            var f = -ONE_HALF + i / SINE_WAVE_RES;            
-            var x = canvasID.width * ONE_HALF + f * canvasID.width + SINE_WAVE_WIDTH / 2;
+            var f = -ONE_HALF + i / SINE_WAVE_RES;
+            var x = canvasID.width * ONE_HALF + f * BG_SIZE.width + SINE_WAVE_WIDTH / 2;
             var y = SINE_WAVE_Y_POSITION + _renderedAmplitude * SINE_WAVE_AMP_SCALE * Math.sin( f * _renderedFrequency + _renderedPhase );
             
             if ( i == 0 )

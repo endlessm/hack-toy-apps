@@ -7,6 +7,15 @@
 
 var levelIndex = 0;
 
+var globalParameters = {
+    // Communication with quest scripts
+    currentLevel : 0,
+    levelCount : 1,
+    score : 0,
+    success : false
+}
+
+
 var levelParameters = [
    {
        shipAsset: 'ship',

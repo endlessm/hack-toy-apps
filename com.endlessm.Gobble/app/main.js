@@ -40,6 +40,7 @@ var config = {
     scene: scenes
 };
 
+
 /* Bootstrap game */
 var game = new Phaser.Game(config);
 

@@ -85,10 +85,13 @@ class LevelScene extends Phaser.Scene {
             this.scene.start(this.nextScene);
         }, this);
 
+        globalParameters.success = false;
+
         /* Score */
-        this.scoreText = this.add.text(40, 40, 'Level: 1\nScore: 0', { color: 'white', fontSize: '42px' });
+        globalParameters.score = 0;
+        this.scoreText = this.add.text(40, 40, '', { color: 'white', fontSize: '42px' });
+        this.scoreText.setText(`Level: ${globalParameters.currentLevel+1}\nScore: ${globalParameters.score}`);
         this.scoreText.depth = 100;
-        this.score = 0;
 
         /* FPS counter */
         this.fps = this.add.text(width - 100, height - 40, '', { color: '#00ff00' });
@@ -195,8 +198,8 @@ class LevelScene extends Phaser.Scene {
 
     onShipAstronautOverlap (ship, astronaut) {
         /* Update Score */
-        this.score++;
-        this.scoreText.setText(`Level: ${Math.trunc(this.score/10)+1}\nScore: ${this.score}`);
+        globalParameters.score++;
+        this.scoreText.setText(`Level: ${globalParameters.currentLevel+1}\nScore: ${globalParameters.score}`);
 
         /* Remove astronaut from collistion group */
         this.astronauts.remove(astronaut);

@@ -5,16 +5,15 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-var levelIndex = 0;
-
+/*
+ * Global parameters exposed to the quests and toolbox
+ */
 var globalParameters = {
-    // Communication with quest scripts
-    currentLevel : 0,
-    levelCount : 1,
-    score : 0,
-    success : false
+    currentLevel: 0,
+    availableLevels: 1,
+    score: 0,
+    success: false
 }
-
 
 var levelParameters = [
    {

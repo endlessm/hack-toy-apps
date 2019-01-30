@@ -70,9 +70,10 @@ class GameOverScene extends Phaser.Scene {
             this.cameras.main.fadeOut(200);
         }, this);
 
-        /* Switch to level1 scene after the fading is done */
+        /* Switch to level after fading is done */
         this.cameras.main.on('camerafadeoutcomplete', () => {
-            this.scene.start(`level_${levelIndex}`, levelParameters[levelIndex]);
+            const i = globalParameters.currentLevel;
+            this.scene.start(`level_${i}`, levelParameters[i]);
         }, this);
 
         this.events.on('shutdown', () => {

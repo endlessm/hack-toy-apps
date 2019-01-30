@@ -127,9 +127,10 @@ class LevelScene extends Phaser.Scene {
     }
 
     getScope () {
+        const i = globalParameters.currentLevel;
         return {
-            level: levelIndex,
-            config: levelParameters[levelIndex],
+            level: i,
+            config: levelParameters[i],
             tick: this.tick,
             width: this.cameras.main.width,
             height: this.cameras.main.height,

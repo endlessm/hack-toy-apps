@@ -94,9 +94,6 @@ class TitleScene extends Phaser.Scene {
         });
         emitter.startFollow(this.astronaut);
 
-        /* FPS */
-        this.fps = this.add.text(40, 40, '', { color: '#00ff00' });
-
         /* Fade in scene */
         this.cameras.main.fadeIn(200);
 
@@ -127,8 +124,6 @@ class TitleScene extends Phaser.Scene {
     update(time, delta) {
         const width = this.cameras.main.width;
         const height = this.cameras.main.height;
-
-        this.fps.setText(`FPS: ${(game.loop.actualFps).toFixed(1)}`);
 
         const ship = this.ship;
         const ship_delta = Math.abs(ship.x - width);

@@ -17,6 +17,8 @@ for (var i = 0; i < nLevels; i++)
 
 scenes.push(new GameOverScene('gameover'));
 
+scenes.push(new OverlayScene({ key: 'overlay', active: true }));
+
 /* Config */
 var config = {
     title: 'Gobble',

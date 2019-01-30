@@ -9,29 +9,55 @@
  * Global parameters exposed to the quests and toolbox
  */
 var globalParameters = {
+    availableLevels: 2,
     currentLevel: 0,
-    availableLevels: 1,
     score: 0,
+    currentScore: 0,
     success: false
 }
 
-var levelParameters = [
-   {
-       shipAsset: 'ship',
-       shipSpeed: 256,
-       shipSize: 50,
-       shipAcceleration: 196,
+var defaultLevelParameters = {
+    description: null,
 
-       setParamsCode: null,
-       spawnObstacleCode: 'return (tick%120 === 0) ? { x: width+300, y: random(0, height), scale: random(20, 60) } : null;',
-       spawnAstronautCode: 'return (tick%256 === 0) ? { x: width+100, y: random(0, height) } : null;',
-       updateEnemyCode: null,
-   },
+    scoreTarget: 1,
+    timeLimit: -1,
+
+    shipAsset: 'ship',
+    shipSpeed: 256,
+    shipSize: 50,
+    shipAcceleration: 196,
+
+    spawnAstronautCode: 'return (tick%256 === 0) ? { x: width+100, y: random(0, height) } : null;',
+    spawnObstacleCode: null,
+    updateEnemyCode: null,
+    setParamsCode: null,
+};
+
+var levelParameters = [
+    {
+        description: 'Rescue 4 astronauts in less than a minute!',
+        scoreTarget: 4,
+        timeLimit: 60
+    },
+    {
+        description: 'Rescue 8 astronauts without being hit by an asteroid!',
+        scoreTarget: 8,
+        timeLimit: 120,
+        spawnObstacleCode: 'return (tick%120 === 0) ? { x: width+300, y: random(0, height), scale: random(20, 60) } : null;',
+    },
 ];
 
 var nLevels = levelParameters.length;
 
-/* Export every param object in the global name space */
-for (var i = 0; i < nLevels; i++)
+for (var i = 0; i < nLevels; i++) {
+
+    /* Dup default object */
+    var defaults = Object.assign({}, defaultLevelParameters);
+
+    /* Merge with level params */
+    levelParameters[i] = Object.assign(defaults, levelParameters[i]);
+
+    /* Export every level params as a diferent object */
     window[`globalLevel${i}Parameters`] = levelParameters[i];
+}
 

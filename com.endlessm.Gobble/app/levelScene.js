@@ -32,6 +32,9 @@ class LevelScene extends Phaser.Scene {
         this.params = data;
         this.tick = 0;
 
+        globalParameters.success = false;
+        globalParameters.currentScore= 0;
+
         this.setParams = this.getUserFunction(data.setParamsCode);
         this.updateEnemy = this.getUserFunction(data.updateEnemyCode);
         this.spawnObstacle = this.getUserFunction(data.spawnObstacleCode);
@@ -75,32 +78,18 @@ class LevelScene extends Phaser.Scene {
         /* Go back to title screen */
         this.input.keyboard.on('keyup', (event) => {
             if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ESC) {
-                this.nextScene = 'title';
-                this.cameras.main.fadeOut(200);
+                this.switchToScene('title');
             }
         }, this);
 
         /* Switch to tile screen after the fading is done */
         this.cameras.main.on('camerafadeoutcomplete', () => {
             this.scene.start(this.nextScene);
+            this.nextScene = null;
         }, this);
-
-        globalParameters.success = false;
-
-        /* Score */
-        globalParameters.score = 0;
-        this.scoreText = this.add.text(40, 40, '', { color: 'white', fontSize: '42px' });
-        this.scoreText.setText(`Level: ${globalParameters.currentLevel+1}\nScore: ${globalParameters.score}`);
-        this.scoreText.depth = 100;
-
-        /* FPS counter */
-        this.fps = this.add.text(width - 100, height - 40, '', { color: '#00ff00' });
-        this.fps.depth = 100;
     }
 
     update(time, delta) {
-        this.fps.setText(`FPS: ${(game.loop.actualFps).toFixed(1)}`);
-
         /* Input */
         var cursors = this.input.keyboard.createCursorKeys();
 
@@ -126,6 +115,8 @@ class LevelScene extends Phaser.Scene {
         this.runSpawnAstronaut();
     }
 
+    /* Private functions */
+
     getScope () {
         const i = globalParameters.currentLevel;
         return {
@@ -138,6 +129,27 @@ class LevelScene extends Phaser.Scene {
             random: (min, max) => {
                 return Math.random() * (max - min) + min;
             }
+        }
+    }
+
+    switchToScene (name) {
+        this.nextScene = name;
+        this.cameras.main.fadeOut(200);
+    }
+
+    checkLevelDone () {
+        if (globalParameters.currentScore >= this.params.scoreTarget) {
+            globalParameters.score += globalParameters.currentScore;
+            globalParameters.currentScore =
+            globalParameters.success = globalParameters.currentLevel;
+
+            globalParameters.currentLevel++;
+
+            /* Limit current level to available one */
+            if (globalParameters.currentLevel >= globalParameters.availableLevel)
+                globalParameters.currentLevel = globalParameters.availableLevel - 1;
+
+            this.switchToScene('title');
         }
     }
 
@@ -193,14 +205,16 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipObstacleOverlap (ship, object) {
-        this.nextScene = 'gameover';
-        this.cameras.main.fadeOut(200);
+        if (this.nextScene)
+            return;
+        console.log ('overlap');
+        this.switchToScene('gameover');
     }
 
     onShipAstronautOverlap (ship, astronaut) {
+
         /* Update Score */
-        globalParameters.score++;
-        this.scoreText.setText(`Level: ${globalParameters.currentLevel+1}\nScore: ${globalParameters.score}`);
+        globalParameters.currentScore++;
 
         /* Remove astronaut from collistion group */
         this.astronauts.remove(astronaut);
@@ -218,6 +232,9 @@ class LevelScene extends Phaser.Scene {
             onComplete: () => {
                 /* Disable collected astronaut */
                 astronaut.disableBody(true, true);
+
+                /* Check if we finished the level */
+                this.checkLevelDone();
             }
         });
     }

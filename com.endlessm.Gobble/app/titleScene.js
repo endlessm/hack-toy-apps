@@ -38,7 +38,7 @@ class TitleScene extends Phaser.Scene {
 
         /* Bottom text */
         var text = this.add.text(0, 0,
-            'Press any key to start',
+            'Press enter to start',
             { color: 'white', fontSize: '42px' }
         );
         Phaser.Display.Align.In.BottomCenter(text, bg, 0, -128);
@@ -106,12 +106,11 @@ class TitleScene extends Phaser.Scene {
             combo.tch = true;
         }, this);
 
-        /* Fade out when any key is released */
+        /* Fade out when enter key is released */
         this.input.keyboard.on('keyup', (event) => {
-            if (!combo.tch && combo.index === 0)
+            if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER) {
                 this.cameras.main.fadeOut(200);
-
-            delete combo.tch;
+            }
         }, this);
 
         /* Switch to current level after fading is done */

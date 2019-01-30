@@ -52,10 +52,10 @@ class GameOverScene extends Phaser.Scene {
 
         /* Bottom text */
         var text = this.add.text(0, 0,
-            'Press any key to continue',
+            'Press enter to continue',
             { color: 'white', fontSize: '42px' }
         );
-        Phaser.Display.Align.In.BottomCenter(text, gameOver, 0, 128);
+        Phaser.Display.Align.In.BottomCenter(text, gameOver, 0, 256);
         this.tweens.add({
             targets: text,
             alpha: 0.16,
@@ -67,7 +67,9 @@ class GameOverScene extends Phaser.Scene {
 
         /* Fade out when any key is released */
         this.input.keyboard.on('keyup', (event) => {
-            this.cameras.main.fadeOut(200);
+            if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER) {
+                this.cameras.main.fadeOut(200);
+            }
         }, this);
 
         /* Switch to level after fading is done */

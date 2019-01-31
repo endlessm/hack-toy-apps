@@ -42,11 +42,11 @@ class LevelScene extends Phaser.Scene {
     }
 
     preload () {
-        this.load.image('space', 'assets/space.jpg');
+        this.load.image('background', 'assets/background.jpg');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
         this.load.image('asteroid', 'assets/asteroid.png');
-        this.load.image('ship', 'assets/ship.png');
+        this.load.image('ship', 'assets/spaceship.png');
     }
 
     create (data) {
@@ -56,7 +56,7 @@ class LevelScene extends Phaser.Scene {
         const height = this.cameras.main.height;
 
         /* Background */
-        this.add.image(centerX, centerY, 'space');
+        this.add.image(centerX, centerY, 'background');
 
         /* Fade in scene */
         this.cameras.main.fadeIn(200);
@@ -199,6 +199,7 @@ class LevelScene extends Phaser.Scene {
             this.astronauts.add(obj);
             obj.depth = 1;
             obj.setVelocityX(-this.params.shipSpeed);
+            obj.setScale(this.params.astronautSize/100);
             obj.body.setAllowRotation(true);
             obj.body.setAngularVelocity(Phaser.Math.RND.integerInRange(-90, 90));
         }

@@ -22,6 +22,8 @@ var defaultLevelParameters = {
     scoreTarget: 1,
     timeLimit: -1,
 
+    astronautSize: 30,
+
     shipAsset: 'ship',
     shipSpeed: 256,
     shipSize: 50,

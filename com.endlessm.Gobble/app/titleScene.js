@@ -18,12 +18,12 @@ class TitleScene extends Phaser.Scene {
 
     preload () {
         /* Images */
-        this.load.image('space', 'assets/space.jpg');
+        this.load.image('background', 'assets/background.jpg');
         this.load.image('logo', 'assets/logo.png');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
         this.load.image('tch', 'assets/tch.png');
-        this.load.image('ship', 'assets/ship.png');
+        this.load.image('ship', 'assets/spaceship.png');
     }
 
     create (data) {
@@ -34,7 +34,7 @@ class TitleScene extends Phaser.Scene {
         this.cameras.main.resetFX();
 
         /* Background */
-        var bg = this.add.image(centerX, centerY, 'space');
+        var bg = this.add.image(centerX, centerY, 'background');
 
         /* Bottom text */
         var text = this.add.text(0, 0, 'Press enter to start', fontConfig);
@@ -51,6 +51,7 @@ class TitleScene extends Phaser.Scene {
         /* Ship */
         this.ship = this.physics.add.image(-500, Phaser.Math.RND.integerInRange(0, centerY*2), 'ship');
         this.ship.setVelocityX(Phaser.Math.RND.integerInRange(32, 256));
+        this.ship.setScale(0.5);
 
         /* Astronaut particles */
         var particles = this.add.particles('particle');
@@ -69,14 +70,15 @@ class TitleScene extends Phaser.Scene {
 
         /* Astronaut */
         this.astronaut = this.physics.add.image(centerX, centerY, 'astronaut');
-        this.astronaut.setVelocity(Phaser.Math.RND.integerInRange(16, 128),
-                                   Phaser.Math.RND.integerInRange(16, 128));
+        this.astronaut.setVelocity(Phaser.Math.RND.integerInRange(16, 96),
+                                   Phaser.Math.RND.integerInRange(16, 96));
         this.astronaut.setBounce(1, 1);
         this.astronaut.setCollideWorldBounds(true);
+        this.astronaut.setScale(0.3);
         this.tweens.add({
             targets: this.astronaut,
-            scaleX: 0.5,
-            scaleY: 0.5,
+            scaleX: 1,
+            scaleY: 1,
             duration: 8000,
             ease: 'Sine',
             yoyo: true,

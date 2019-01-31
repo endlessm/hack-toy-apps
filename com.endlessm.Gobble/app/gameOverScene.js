@@ -16,7 +16,7 @@ class GameOverScene extends Phaser.Scene {
 
     preload () {
         /* Images */
-        this.load.image('space', 'assets/space.jpg');
+        this.load.image('background', 'assets/background.jpg');
         this.load.image('game-over', 'assets/game-over.png');
         this.load.image('particle', 'assets/particle.png');
     }
@@ -26,7 +26,7 @@ class GameOverScene extends Phaser.Scene {
         const centerY = this.cameras.main.centerY;
 
         /* Background */
-        this.add.image(centerX, centerY, 'space');
+        this.add.image(centerX, centerY, 'background');
 
         /* Astronaut particles */
         var particles = this.add.particles('particle');

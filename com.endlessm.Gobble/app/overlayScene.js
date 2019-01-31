@@ -26,10 +26,10 @@ class OverlayScene extends Phaser.Scene {
         this.fps = this.add.text(width - 52, 10, '', { color: '#00ff00' });
 
         /* Level */
-        this.levelText = this.add.text(40, 40, '', { color: 'white', fontSize: '42px' });
+        this.levelText = this.add.text(40, 40, '', fontConfig);
 
         /* Score */
-        this.scoreText = this.add.text(40, 100, '', { color: 'white', fontSize: '42px' });
+        this.scoreText = this.add.text(40, 90, '', fontConfig);
 
         this.updateText();
     }
@@ -47,8 +47,11 @@ class OverlayScene extends Phaser.Scene {
         if (this.level !== level)
             this.levelText.setText(`Level: ${level}`);
 
-        if (this.score !== score)
-            this.scoreText.setText(`Score: ${score}`);
+        if (this.score !== score) {
+            const i = globalParameters.currentLevel;
+            const target = globalParameters.score + levelParameters[i].scoreTarget;
+            this.scoreText.setText(`Score: ${score}/${target}`);
+        }
     }
 }
 

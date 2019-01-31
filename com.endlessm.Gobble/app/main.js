@@ -5,6 +5,18 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+const fontConfig = {
+    color: 'white',
+    fontSize: '38px',
+    shadow: {
+        color: 'black',
+        fill: true,
+        offsetX: 2,
+        offsetY: 2,
+        blur: 8
+    }
+};
+
 /* Scenes */
 var scenes = new Array();
 

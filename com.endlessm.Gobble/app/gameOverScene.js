@@ -51,10 +51,7 @@ class GameOverScene extends Phaser.Scene {
         emitter.startFollow(gameOver);
 
         /* Bottom text */
-        var text = this.add.text(0, 0,
-            'Press enter to continue',
-            { color: 'white', fontSize: '42px' }
-        );
+        var text = this.add.text(0, 0, 'Press enter to continue', fontConfig);
         Phaser.Display.Align.In.BottomCenter(text, gameOver, 0, 256);
         this.tweens.add({
             targets: text,

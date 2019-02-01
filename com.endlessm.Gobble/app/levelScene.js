@@ -30,15 +30,18 @@ class LevelScene extends Phaser.Scene {
 
     init(data) {
         this.params = data;
-        this.tick = 0;
-
-        globalParameters.success = false;
-        globalParameters.currentScore= 0;
 
         this.setParams = this.getUserFunction(data.setParamsCode);
         this.updateEnemy = this.getUserFunction(data.updateEnemyCode);
         this.spawnObstacle = this.getUserFunction(data.spawnObstacleCode);
         this.spawnAstronaut = this.getUserFunction(data.spawnAstronautCode);
+
+        /* Reset Global game state */
+        globalParameters.success = false;
+        globalParameters.score = 0;
+
+        /* Init scene variables */
+        this.tick = 0;
     }
 
     preload () {
@@ -74,6 +77,10 @@ class LevelScene extends Phaser.Scene {
         /* Detect collisions */
         this.physics.add.overlap(this.ship, this.obstacles, this.onShipObstacleOverlap, null, this);
         this.physics.add.overlap(this.ship, this.astronauts, this.onShipAstronautOverlap, null, this);
+
+        /* Score Box */
+        this.createScoreBox('Level: 00 Rescued: 000');
+        this.updateScore();
 
         /* Go back to title screen */
         this.input.keyboard.on('keyup', (event) => {
@@ -117,6 +124,35 @@ class LevelScene extends Phaser.Scene {
 
     /* Private functions */
 
+    updateScore () {
+        const level = globalParameters.currentLevel + 1;
+        const score = globalParameters.score;
+
+        this.scoreText.setText(`Level: ${level} Rescued: ${score}`);
+    }
+
+    createScoreBox (text) {
+        var text = this.scoreText = this.add.text(0, 0, text, fontConfig);
+        var box = this.scoreBox = this.add.container();
+
+        box.setSize(text.width + 32, text.height + 16);
+        text.setOrigin(0.5, 0.5);
+
+        var xx = box.width/2;
+        text.setPosition(xx, box.height/2);
+        box.setPosition(this.cameras.main.centerX - xx, 4);
+
+        var bg = this.add.graphics();
+        bg.fillStyle('black', 1);
+        bg.fillRoundedRect(0, 0, box.width, box.height, 8);
+        bg.setAlpha(0.5);
+
+        box.add(bg);
+        box.add(text);
+
+        box.depth = 100;
+    }
+
     getScope () {
         const i = globalParameters.currentLevel;
         return {
@@ -138,11 +174,9 @@ class LevelScene extends Phaser.Scene {
     }
 
     checkLevelDone () {
-        if (globalParameters.currentScore >= this.params.scoreTarget) {
-            globalParameters.score += globalParameters.currentScore;
-            globalParameters.currentScore =
-            globalParameters.success = globalParameters.currentLevel;
-
+        if (globalParameters.score >= this.params.scoreTarget) {
+            globalParameters.score = 0;
+            globalParameters.success = true;
             globalParameters.currentLevel++;
 
             /* Limit current level to available one */
@@ -206,16 +240,16 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipObstacleOverlap (ship, object) {
-        if (this.nextScene)
-            return;
-        console.log ('overlap');
-        this.switchToScene('gameover');
+        var overlay = this.scene.get('overlay');
+        overlay.gameOverDialog.setVisible(true);
+        this.scene.pause();
     }
 
     onShipAstronautOverlap (ship, astronaut) {
 
         /* Update Score */
-        globalParameters.currentScore++;
+        globalParameters.score++;
+        this.updateScore();
 
         /* Remove astronaut from collistion group */
         this.astronauts.remove(astronaut);

@@ -17,20 +17,6 @@ const fontConfig = {
     }
 };
 
-/* Scenes */
-var scenes = new Array();
-
-/* Create title screen scene */
-scenes.push(new TitleScene('title'));
-
-/* Create a level scene for each parameter */
-for (var i = 0; i < nLevels; i++)
-    scenes.push(new LevelScene(`level_${i}`));
-
-scenes.push(new GameOverScene('gameover'));
-
-scenes.push(new OverlayScene({ key: 'overlay', active: true }));
-
 /* Config */
 var config = {
     title: 'Gobble',
@@ -51,9 +37,12 @@ var config = {
             debug: true
         }
     },
-    scene: scenes
+    scene: [
+        new TitleScene('title'),
+        new LevelScene('level'),
+        new OverlayScene({ key: 'overlay', active: true }),
+    ]
 };
-
 
 /* Bootstrap game */
 var game = new Phaser.Game(config);

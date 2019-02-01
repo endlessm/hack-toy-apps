@@ -10,9 +10,8 @@
  */
 var globalParameters = {
     availableLevels: 2,
-    currentLevel: 0,
+    currentLevel: 1,
     score: 0,
-    currentScore: 0,
     success: false
 }
 

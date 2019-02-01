@@ -27,6 +27,7 @@ class TitleScene extends Phaser.Scene {
     }
 
     create (data) {
+        globalParameters.playing = false;
         const centerX = this.cameras.main.centerX;
         const centerY = this.cameras.main.centerY;
 

@@ -37,6 +37,7 @@ class LevelScene extends Phaser.Scene {
         this.spawnAstronaut = this.getUserFunction(data.spawnAstronautCode);
 
         /* Reset Global game state */
+        globalParameters.obstacleSpawnedCount = 0;
         globalParameters.playing = true;
         globalParameters.success = false;
         globalParameters.score = 0;
@@ -201,9 +202,10 @@ class LevelScene extends Phaser.Scene {
             return;
 
         var retval = null;
+        var scope = this.getScope();
 
         try {
-            retval = this.spawnObstacle(this.getScope());
+            retval = this.spawnObstacle(scope);
         } catch (e){
             /* User function error! */
         }
@@ -211,7 +213,9 @@ class LevelScene extends Phaser.Scene {
         if (retval) {
             const type = retval.type || 'asteroid';
 
-            var obj = this.physics.add.sprite(retval.x, retval.y, type);
+            var x = (retval.x != undefined) ? retval.x : scope.width+100+scope.random(0,300);
+            var y = (retval.y != undefined) ? retval.y : scope.random(0, scope.height);
+            var obj = this.physics.add.sprite(x, y, type);
             this.obstacles.add(obj);
             obj.depth = 1;
 
@@ -221,7 +225,8 @@ class LevelScene extends Phaser.Scene {
             if (retval.scale)
                 obj.setScale(retval.scale/100);
 
-            obj.setVelocityX(-this.params.shipSpeed);
+            var speedFactor = 0.5 + Phaser.Math.RND.frac();
+            obj.setVelocityX(-this.params.shipSpeed*speedFactor);
         }
     }
 

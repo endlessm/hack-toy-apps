@@ -13,7 +13,9 @@ var globalParameters = {
     currentLevel: 0,
     score: 0,
     success: false,
-    playing: false
+    playing: false,
+
+    obstacleSpawnedCount: 0,
 }
 
 var defaultLevelParameters = {

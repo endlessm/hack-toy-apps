@@ -212,19 +212,30 @@ class LevelScene extends Phaser.Scene {
 
         if (retval) {
             const type = retval.type || 'asteroid';
+            const x = retval.x || scope.width + scope.random(100, 400);
+            const y = retval.y || scope.random(0, scope.height);
 
-            var x = (retval.x != undefined) ? retval.x : scope.width+100+scope.random(0,300);
-            var y = (retval.y != undefined) ? retval.y : scope.random(0, scope.height);
+            /* Create obstacle object */
             var obj = this.physics.add.sprite(x, y, type);
+
+            /* Add to obstacle group */
             this.obstacles.add(obj);
             obj.depth = 1;
 
+            /* Increment global counter */
+            globalParameters.obstacleSpawnedCount++;
+
+            /* FIXME: improve obstacle shape handling */
             if (type === 'asteroid')
                 obj.setCircle(250);
 
+            /* Set a scale */
             if (retval.scale)
                 obj.setScale(retval.scale/100);
 
+            /* FIXME: split group and obstacle velocity in order to easily
+             * implement changing the ship speed.
+             */
             var speedFactor = 0.5 + Phaser.Math.RND.frac();
             obj.setVelocityX(-this.params.shipSpeed*speedFactor);
         }
@@ -248,6 +259,8 @@ class LevelScene extends Phaser.Scene {
             obj.depth = 1;
             obj.setVelocityX(-this.params.shipSpeed);
             obj.setScale(this.params.astronautSize/100);
+
+            /* FIXME: improve colission shape */
             obj.body.setAllowRotation(true);
             obj.body.setAngularVelocity(Phaser.Math.RND.integerInRange(-90, 90));
         }

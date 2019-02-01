@@ -11,10 +11,11 @@
 var globalParameters = {
     availableLevels: 2,
     currentLevel: 0,
+
+    /* Level specific parameters */
     score: 0,
     success: false,
     playing: false,
-
     obstacleSpawnedCount: 0,
 }
 
@@ -31,8 +32,26 @@ var defaultLevelParameters = {
     shipSize: 50,
     shipAcceleration: 500,
 
-    spawnAstronautCode: 'return (tick%230 === 0) ? { x: width+100+random(0,300), y: random(0, height) } : null;',
-    spawnObstacleCode: 'return (tick%40 === 0) ? { x: width+100+random(0,300), y: random(0, height), scale: random(20, 60) } : null;',
+    spawnAstronautCode: `
+        if (tick%230 === 0) {
+            return {
+                x: width + random(100, 400),
+                y: random(0, height)
+            };
+        }
+
+        return null;
+    `,
+    spawnObstacleCode: `
+        if (tick%40 === 0) {
+            return {
+                x: width + random(100, 400),
+                y: random(0, height),
+                scale: random(20, 60)
+            };
+        }
+        return null;
+    `,
     updateEnemyCode: null,
     setParamsCode: null,
 };
@@ -49,12 +68,22 @@ var levelParameters = [
 
     /* Level 3 */
     {
-        spawnObstacleCode: 'return (tick%40 === 0) ? { x: width+200+random(0,300), y: random(0, height), scale: 120 } : null;',
+        spawnObstacleCode: `
+            if (tick%40 === 0) {
+                return {
+                    x: width + random(200, 500),
+                    y: random(0, height),
+                    scale: 120
+                };
+            }
+
+            return null;
+        `,
     },
 
     /* Level 4 */
     {
-        spawnObstacleCode: 'return null;',
+        spawnObstacleCode: null,
     },
 ];
 

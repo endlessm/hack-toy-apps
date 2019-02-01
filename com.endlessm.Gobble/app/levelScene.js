@@ -37,6 +37,7 @@ class LevelScene extends Phaser.Scene {
         this.spawnAstronaut = this.getUserFunction(data.spawnAstronautCode);
 
         /* Reset Global game state */
+        globalParameters.playing = true;
         globalParameters.success = false;
         globalParameters.score = 0;
 
@@ -97,6 +98,13 @@ class LevelScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+
+        /* Skip every other update */
+        this.odd_tick = !this.odd_tick;
+
+        if (this.odd_tick)
+            return;
+
         /* Input */
         var cursors = this.input.keyboard.createCursorKeys();
 
@@ -171,6 +179,7 @@ class LevelScene extends Phaser.Scene {
     switchToScene (name) {
         this.nextScene = name;
         this.cameras.main.fadeOut(200);
+        globalParameters.playing = false;
     }
 
     checkLevelDone () {
@@ -242,6 +251,7 @@ class LevelScene extends Phaser.Scene {
     onShipObstacleOverlap (ship, object) {
         var overlay = this.scene.get('overlay');
         overlay.gameOverDialog.setVisible(true);
+        globalParameters.playing = false;
         this.scene.pause();
     }
 

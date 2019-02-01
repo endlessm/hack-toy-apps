@@ -22,9 +22,6 @@ var config = {
     title: 'Gobble',
     type: Phaser.AUTO,
     background: 'black',
-    fps: {
-        target: 30
-    },
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,

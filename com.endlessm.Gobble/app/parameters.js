@@ -10,41 +10,49 @@
  */
 var globalParameters = {
     availableLevels: 2,
-    currentLevel: 1,
+    currentLevel: 0,
     score: 0,
-    success: false
+    success: false,
+    playing: false
 }
 
 var defaultLevelParameters = {
     description: null,
 
-    scoreTarget: 1,
+    scoreTarget: 5,
     timeLimit: -1,
 
     astronautSize: 30,
 
     shipAsset: 'ship',
-    shipSpeed: 256,
+    shipSpeed: 500,
     shipSize: 50,
-    shipAcceleration: 196,
+    shipAcceleration: 500,
 
-    spawnAstronautCode: 'return (tick%256 === 0) ? { x: width+100, y: random(0, height) } : null;',
-    spawnObstacleCode: null,
+    spawnAstronautCode: 'return (tick%230 === 0) ? { x: width+100+random(0,300), y: random(0, height) } : null;',
+    spawnObstacleCode: 'return (tick%40 === 0) ? { x: width+100+random(0,300), y: random(0, height), scale: random(20, 60) } : null;',
     updateEnemyCode: null,
     setParamsCode: null,
 };
 
 var levelParameters = [
+    /* Level 1 */
     {
-        description: 'Rescue 4 astronauts in less than a minute!',
-        scoreTarget: 4,
-        timeLimit: 60
     },
+
+    /* Level 2 */
     {
-        description: 'Rescue 8 astronauts without being hit by an asteroid!',
-        scoreTarget: 8,
-        timeLimit: 120,
-        spawnObstacleCode: 'return (tick%120 === 0) ? { x: width+300, y: random(0, height), scale: random(20, 60) } : null;',
+        shipSpeed: 6000,
+    },
+
+    /* Level 3 */
+    {
+        spawnObstacleCode: 'return (tick%40 === 0) ? { x: width+200+random(0,300), y: random(0, height), scale: 120 } : null;',
+    },
+
+    /* Level 4 */
+    {
+        spawnObstacleCode: 'return null;',
     },
 ];
 
@@ -61,4 +69,5 @@ for (var i = 0; i < nLevels; i++) {
     /* Export every level params as a diferent object */
     window[`globalLevel${i}Parameters`] = levelParameters[i];
 }
+
 

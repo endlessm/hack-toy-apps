@@ -201,7 +201,7 @@ var gameState =
 
 function flip()
 {
-    globalParameters.flipped = true;
+    globalParameters.flipped = !globalParameters.flipped;
 }
 
 //----------------------

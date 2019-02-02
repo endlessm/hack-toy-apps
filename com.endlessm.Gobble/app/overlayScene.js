@@ -16,8 +16,14 @@ class OverlayScene extends Phaser.Scene {
 
     preload () {
         this.load.image('game-over', 'assets/game-over.png');
-        this.load.image('dialog-logo', 'assets/dialog-logo.png');
-        this.load.image('controls', 'assets/controls.png');
+
+        this.load.image('confetti', 'assets/ui/confetti.png');
+        this.load.image('arrow-keys', 'assets/ui/arrow_keys.png');
+        this.load.image('explosion', 'assets/ui/explosion.png');
+
+        Utils.load_button(this, 'prev');
+        Utils.load_button(this, 'next');
+        Utils.load_button(this, 'button');
     }
 
     create (data) {
@@ -25,17 +31,7 @@ class OverlayScene extends Phaser.Scene {
         this.fps = this.add.text(8, 8, '', { color: '#00ff00' });
 
         this.createGamerOverDialog();
-
-        this.input.keyboard.on('keyup', (event) => {
-            if(this.gameOverDialog.visible &&
-               event.keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER) {
-                const i = globalParameters.currentLevel;
-                var level = this.scene.get('level');
-
-                this.gameOverDialog.visible = false;
-                level.scene.restart(levelParameters[i]);
-            }
-        }, this);
+        this.createStartDialog();
     }
 
     update(time, delta) {
@@ -45,7 +41,6 @@ class OverlayScene extends Phaser.Scene {
     createGamerOverDialog () {
         const centerX = this.cameras.main.centerX;
         const centerY = this.cameras.main.centerY;
-
 
         var box = this.gameOverDialog = this.add.container();
         /* Astronaut particles */
@@ -82,41 +77,115 @@ class OverlayScene extends Phaser.Scene {
             repeat: -1
         });
 
-        box.add(particles);
-        box.add(gameOver);
-        box.add(text);
+        box.add([particles, gameOver, text]);
 
         box.visible = false;
+
+        this.input.keyboard.on('keyup', (event) => {
+            if(this.gameOverDialog.visible &&
+               event.keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER) {
+                const i = globalParameters.currentLevel;
+                var level = this.scene.get('level');
+
+                this.gameOverDialog.visible = false;
+                level.scene.restart(levelParameters[i]);
+            }
+        }, this);
     }
 
-    levelStartDialog (message) {
-        var messageText = this.add.text(0, 0, message, fontConfig);
-        this.scoreText.setOrigin(0.5, 0.5);
+    updateLevel (prev, next, levelText, level) {
+        levelText.setText(`Level ${this.currentLevel + 1}`, fontConfig);
+        prev.sensitive = this.currentLevel > 0;
+        next.sensitive = this.currentLevel < globalParameters.availableLevels-1;
+    }
 
-        /* Level start box */
-        var box = this.levelStartBox = this.add.container();
-
+    createStartDialog () {
         const spacing = 16;
-        var dialogLogo = box.add.image(0, 0, 'dialogLogo');
-        var controlsText = box.add.text(0, 0, 'Move with', fontConfig);
-        var controls = box.add.image(0, 0, 'controls');
-/*
-        scoreBox.setSize(dialogLogo.width,
-            dialogLogo.height +
-            spacing +
-            controlsText.height +
-            spacing +
-            controls.height +
-            spacing +
-            messageText.height +
-            spacing +
-            startButton.height +
-            spacing);
-*/
-        var scoreBg = box.add.graphics();
-        scoreBg.fillStyle('black', 1);
-        scoreBg.fillRoundedRect(0, 0, box.width, box.height, 8);
-        scoreBg.setAlpha(0.5);
+
+        var confetti = this.add.image(0, 0, 'confetti').setOrigin(0,0);
+        var logo = this.add.image(0, 0, 'logo').setOrigin(0.5,0.5);
+        var controlsText = this.add.text(0, 0, 'Move with', fontConfig);
+        var arrowKeys = this.add.image(0, 0, 'arrow-keys');
+        this.startMessage = this.add.text(0, 0, '\n\n', fontConfig).setOrigin(0.5,0.5);
+
+        var prev = new Utils.Button(this, 'prev');
+        var level = this.add.text(0, 0, '', fontConfig);
+        var next = new Utils.Button(this, 'next');
+
+        this.currentLevel = globalParameters.currentLevel;
+        this.updateLevel(prev, next, level);
+
+        const lw = prev.width + spacing + level.width + spacing + next.width + 8;
+        const lh = prev.height + 8;
+        var levelBg = new Utils.TransparentBox(this, lw, lh, 8);
+        var levelBox = new Phaser.GameObjects.Container(this, 0, 0, [levelBg, prev, level, next]);
+
+        /* FIXME: find a better way to align objects */
+        levelBg.setPosition(-lw/2, -lh/2);
+        levelBox.setSize(lw, lh);
+        Phaser.Display.Align.In.LeftCenter(prev, levelBox, -4);
+        Phaser.Display.Align.In.Center(level, levelBox);
+        Phaser.Display.Align.In.RightCenter(next, levelBox, -4);
+
+        var startButton = new Utils.Button(this, 'button', 'START');
+
+        logo.setScale(0.4);
+        this.tweens.add({
+            targets: logo,
+            scaleX: 0.32,
+            scaleY: 0.64,
+            duration: 600,
+            ease: 'Sine',
+            yoyo: true,
+            repeat: -1
+        });
+
+        Phaser.Display.Align.In.Center(logo, confetti);
+        Phaser.Display.Align.To.BottomCenter(controlsText, confetti, 0, spacing * 2);
+        Phaser.Display.Align.To.BottomCenter(arrowKeys, controlsText, 0, spacing);
+        Phaser.Display.Align.To.BottomCenter(this.startMessage, arrowKeys, 0, spacing);
+        Phaser.Display.Align.To.BottomCenter(levelBox, this.startMessage, 0, spacing);
+        Phaser.Display.Align.To.BottomCenter(startButton, levelBox, 0, spacing * 2);
+
+        const w = confetti.width;
+        const h = startButton.y + startButton.height + spacing;
+
+        var bg = new Utils.TransparentBox(this, w, h, 16);
+
+        this.startDialog = this.add.container(
+            (game.config.width - w)/2, (game.config.height - h)/2,
+            [ bg, confetti, logo, controlsText, arrowKeys, this.startMessage, levelBox, startButton ]
+        );
+
+        startButton.on('pointerup', function () {
+            this.startDialog.visible = false;
+
+            if (globalParameters.currentLevel !== this.currentLevel) {
+                globalParameters.currentLevel = this.currentLevel;
+                this.scene.launch('level', levelParameters[this.currentLevel]);
+            }
+            else {
+                this.scene.get('level').scene.resume();
+            }
+        }, this);
+
+        prev.on('pointerup', function () {
+            this.currentLevel--;
+            this.updateLevel(prev, next, level);
+
+        }, this);
+
+        next.on('pointerup', function () {
+            this.currentLevel++;
+            this.updateLevel(prev, next, level);
+        }, this);
+
+        this.startDialog.visible = false;
+    }
+
+    showStartDialog (message) {
+        this.startMessage.setText(message);
+        this.startDialog.visible = true;
     }
 }
 

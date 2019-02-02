@@ -20,7 +20,7 @@ var globalParameters = {
 }
 
 var defaultLevelParameters = {
-    description: null,
+    description: 'Rescue Astronauts\nAvoid asteroids',
 
     scoreTarget: 5,
     timeLimit: -1,

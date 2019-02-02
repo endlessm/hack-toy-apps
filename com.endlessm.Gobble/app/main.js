@@ -8,6 +8,7 @@
 const fontConfig = {
     color: 'white',
     fontSize: '38px',
+    align: 'center',
     shadow: {
         color: 'black',
         fill: true,

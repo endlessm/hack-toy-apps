@@ -113,6 +113,7 @@ class TitleScene extends Phaser.Scene {
         /* Switch to current level after fading is done */
         this.cameras.main.on('camerafadeoutcomplete', () => {
             const i = globalParameters.currentLevel;
+            levelParameters[i].showStartDialog = true;
             this.scene.start('level', levelParameters[i]);
         }, this);
 

@@ -81,13 +81,13 @@ class LevelScene extends Phaser.Scene {
         this.physics.add.overlap(this.ship, this.astronauts, this.onShipAstronautOverlap, null, this);
 
         /* Score Box */
-        this.createScoreBox('Level: 00 Rescued: 000');
+        this.createScoreBox('Level: 00 Rescued: 00');
         this.updateScore();
 
         /* Go back to title screen */
         this.input.keyboard.on('keyup', (event) => {
             if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ESC) {
-                this.switchToScene('title');
+                this.switchToTitle();
             }
         }, this);
 
@@ -96,6 +96,17 @@ class LevelScene extends Phaser.Scene {
             this.scene.start(this.nextScene);
             this.nextScene = null;
         }, this);
+
+        if (this.params.showStartDialog) {
+            delete this.params.showStartDialog;
+            /* Show start dialog */
+            this.scene.get('overlay').showStartDialog(this.params.description);
+
+            /* Pause scene as soon its visible  */
+            this.cameras.main.on('camerafadeincomplete', () => {
+                this.scene.pause();
+            }, this);
+        }
     }
 
     update(time, delta) {
@@ -134,32 +145,23 @@ class LevelScene extends Phaser.Scene {
     /* Private functions */
 
     updateScore () {
-        const level = globalParameters.currentLevel + 1;
-        const score = globalParameters.score;
+        const level = globalParameters.currentLevel + 1 + '';
+        const score = globalParameters.score + '';
 
-        this.scoreText.setText(`Level: ${level} Rescued: ${score}`);
+        this.scoreText.setText(`Level: ${level.padStart(2, ' ')} Rescued: ${score.padStart(2, ' ')}`);
     }
 
     createScoreBox (text) {
-        var text = this.scoreText = this.add.text(0, 0, text, fontConfig);
-        var box = this.scoreBox = this.add.container();
+        this.scoreText = this.add.text(16, 8, text, fontConfig);
+        const w = this.scoreText.width + 32;
+        const h = this.scoreText.height + 16;
 
-        box.setSize(text.width + 32, text.height + 16);
-        text.setOrigin(0.5, 0.5);
+        this.scoreBox = this.add.container(
+            (game.config.width - w) / 2, 4,
+            [new Utils.TransparentBox(this, w, h), this.scoreText]
+        );
 
-        var xx = box.width/2;
-        text.setPosition(xx, box.height/2);
-        box.setPosition(this.cameras.main.centerX - xx, 4);
-
-        var bg = this.add.graphics();
-        bg.fillStyle('black', 1);
-        bg.fillRoundedRect(0, 0, box.width, box.height, 8);
-        bg.setAlpha(0.5);
-
-        box.add(bg);
-        box.add(text);
-
-        box.depth = 100;
+        this.scoreBox.depth = 100;
     }
 
     getScope () {
@@ -177,8 +179,8 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    switchToScene (name) {
-        this.nextScene = name;
+    switchToTitle (name) {
+        this.nextScene = 'title';
         this.cameras.main.fadeOut(200);
         globalParameters.playing = false;
     }
@@ -193,7 +195,7 @@ class LevelScene extends Phaser.Scene {
             if (globalParameters.currentLevel >= globalParameters.availableLevel)
                 globalParameters.currentLevel = globalParameters.availableLevel - 1;
 
-            this.switchToScene('title');
+            this.switchToTitle();
         }
     }
 

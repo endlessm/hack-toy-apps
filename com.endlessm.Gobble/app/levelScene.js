@@ -67,10 +67,7 @@ class LevelScene extends Phaser.Scene {
         this.cameras.main.fadeIn(200);
 
         /* Ship */
-        this.ship = this.physics.add.sprite(256, centerY, 'ship');
-        this.ship.setCollideWorldBounds(true);
-        this.ship.setScale(this.params.shipSize/100);
-        this.ship.depth = 100;
+        this.createShip(256, centerY);
 
         /* Create objects groups */
         this.obstacles = this.physics.add.group();
@@ -143,6 +140,28 @@ class LevelScene extends Phaser.Scene {
     }
 
     /* Private functions */
+
+    createShip (x, y) {
+        this.ship = this.physics.add.sprite(x, y, 'ship');
+        const scale = this.params.shipSize/100;
+        const ship_box_height = 264;
+
+        this.ship.setScale(scale);
+
+        /* Make colission box smaller */
+        this.ship.setSize(326, ship_box_height).setOffset(132, 64);
+
+        /* Update world bounds to allow half the ship to be outside */
+        this.physics.world.setBounds(
+            0,
+            -((ship_box_height*scale)/2),
+            game.config.width,
+            game.config.height + ship_box_height*scale
+        );
+
+        this.ship.setCollideWorldBounds(true);
+        this.ship.depth = 100;
+    }
 
     updateScore () {
         const level = globalParameters.currentLevel + 1 + '';
@@ -229,7 +248,7 @@ class LevelScene extends Phaser.Scene {
 
             /* FIXME: improve obstacle shape handling */
             if (type === 'asteroid')
-                obj.setCircle(250);
+                obj.setCircle(230, 28, 28);
 
             /* Set a scale */
             if (retval.scale)

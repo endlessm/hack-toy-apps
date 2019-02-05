@@ -196,12 +196,19 @@ var gameState =
     someCollisionsInPeriod : false,
     numFlings           : 0,
     numBonus            : 0,
-    success             : false
+    success             : false,
+    soundtrack          : null,
 }
 
 function flip()
 {
     globalParameters.flipped = !globalParameters.flipped;
+    if (gameState.soundtrack) {
+        if (globalParameters.flipped)
+            Sounds.stop(gameState.soundtrack);
+        else
+            Sounds.play(gameState.soundtrack);
+    }
 }
 
 //----------------------
@@ -1255,7 +1262,8 @@ function HackyBalls()
 
         _levelLoading = true;
 
-        Sounds.stop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
+        if (gameState.soundtrack)
+            Sounds.stop(gameState.soundtrack);
 
         _game.setLevelGlobalParams(level);
         _numBalls = 0;
@@ -1278,7 +1286,9 @@ function HackyBalls()
 
         _levelLoading = false;
 
-        Sounds.playLoop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
+        const soundtrackNumber = (_game.getCurrentLevel() % 10) + 1;
+        gameState.soundtrack = `fizzics/level/${soundtrackNumber}/background`;
+        Sounds.playLoop(gameState.soundtrack);
 
         _startTime = (new Date).getTime();
         _prevSeconds = 0;

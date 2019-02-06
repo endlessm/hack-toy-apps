@@ -40,6 +40,7 @@ var config = {
         new LevelScene('level'),
         new StartScene('start'),
         new GameOverScene('gameover'),
+        new ContinueScene('continue'),
         new OverlayScene({ key: 'overlay', active: true }),
     ]
 };

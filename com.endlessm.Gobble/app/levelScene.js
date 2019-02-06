@@ -197,13 +197,16 @@ class LevelScene extends Phaser.Scene {
         if (globalParameters.score >= this.params.scoreTarget) {
             globalParameters.score = 0;
             globalParameters.success = true;
-            globalParameters.currentLevel++;
 
             /* Limit current level to available one */
-            if (globalParameters.currentLevel >= globalParameters.availableLevel)
-                globalParameters.currentLevel = globalParameters.availableLevel - 1;
-
-            this.switchToTitle();
+            if (globalParameters.currentLevel+1 >= globalParameters.availableLevel) {
+                globalParameters.currentLevel = 0;
+                this.switchToTitle();
+            } else {
+                this.scene.launch('continue', `Level ${globalParameters.currentLevel+1} Complete!`);
+                globalParameters.playing = false;
+                this.scene.pause();
+            }
         }
     }
 

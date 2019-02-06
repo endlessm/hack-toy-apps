@@ -93,17 +93,6 @@ class LevelScene extends Phaser.Scene {
             this.scene.start(this.nextScene);
             this.nextScene = null;
         }, this);
-
-        if (this.params.showStartDialog) {
-            delete this.params.showStartDialog;
-            /* Show start dialog */
-            this.scene.get('overlay').showStartDialog(this.params.description);
-
-            /* Pause scene as soon its visible  */
-            this.cameras.main.on('camerafadeincomplete', () => {
-                this.scene.pause();
-            }, this);
-        }
     }
 
     update(time, delta) {
@@ -288,6 +277,9 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipObstacleOverlap (ship, object) {
+        if (this.inDemo)
+            return;
+
         var overlay = this.scene.get('overlay');
         overlay.gameOverDialog.setVisible(true);
         globalParameters.playing = false;
@@ -295,6 +287,8 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipAstronautOverlap (ship, astronaut) {
+        if (this.inDemo)
+            return;
 
         /* Update Score */
         globalParameters.score++;

@@ -38,6 +38,7 @@ var config = {
     scene: [
         new TitleScene('title'),
         new LevelScene('level'),
+        new StartScene('start'),
         new OverlayScene({ key: 'overlay', active: true }),
     ]
 };

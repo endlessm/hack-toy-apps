@@ -280,8 +280,7 @@ class LevelScene extends Phaser.Scene {
         if (this.inDemo)
             return;
 
-        var overlay = this.scene.get('overlay');
-        overlay.gameOverDialog.setVisible(true);
+        this.scene.launch('gameover');
         globalParameters.playing = false;
         this.scene.pause();
     }

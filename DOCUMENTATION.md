@@ -305,8 +305,7 @@ var BouncingModel = GObject.registerClass({
     },
 }, class BouncingModel extends ClippyWrapper {
     _init(props = {}) {
-        props.appId = 'com.endlessm.Bouncing';
-        super._init(props);
+        super._init('com.endlessm.Bouncing', props);
     }
 });
 ```

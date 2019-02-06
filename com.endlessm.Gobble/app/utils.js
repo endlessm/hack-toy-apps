@@ -37,6 +37,7 @@ class Button extends Phaser.GameObjects.Container {
 
         if (label) {
             this._label = new Phaser.GameObjects.Text(scene, 0, 0, label, fontConfig);
+            this._label.setFontSize('32px');
             this._label.setOrigin(0.5,0.5);
             Phaser.Display.Align.In.Center(this._label, this._image);
             this.add(this._label);

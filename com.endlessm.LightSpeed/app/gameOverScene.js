@@ -5,24 +5,22 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+/* exported GameOverScene */
+/* global LevelChooser */
+
 class GameOverScene extends Phaser.Scene {
-
-    constructor (config) {
-        super(config);
-    }
-
-    init(data) {
+    init() {
+        void this;
         globalParameters.playing = false;
     }
 
-    preload () {
+    preload() {
         this.load.image('game-over', 'assets/game-over.png');
         this.load.image('explosion', 'assets/ui/explosion.png');
     }
 
-    create (data) {
-        const centerX = this.cameras.main.centerX;
-        const centerY = this.cameras.main.centerY;
+    create() {
+        const {centerX, centerY} = this.cameras.main;
 
         var gameOver = this.add.image(centerX, centerY, 'game-over');
         gameOver.setScale(0.6);
@@ -33,25 +31,26 @@ class GameOverScene extends Phaser.Scene {
             duration: 600,
             ease: 'Sine',
             yoyo: true,
-            repeat: -1
+            repeat: -1,
         });
 
         var particles = this.add.particles('particle');
         var emitter = particles.createEmitter({
             speed: 128,
-            scale: { start: 1, end: 0 },
+            scale: {start: 1, end: 0},
             blendMode: 'ADD',
-            tint: [ 0xffee00, 0xff2900, 0xff8a00, 0xff6600 ],
-            lifespan: 3000
+            tint: [0xffee00, 0xff2900, 0xff8a00, 0xff6600],
+            lifespan: 3000,
         });
         emitter.startFollow(gameOver);
 
         const levelParams = levelParameters[globalParameters.currentLevel];
         const spacing = 32;
 
-        var pad = this.add.zone(0, 0, 512, 310).setOrigin(0,0);
-        var explosion = this.add.image(0, 0, 'explosion').setOrigin(0,0);
-        this.startMessage = this.add.text(0, 0, levelParams.description, fontConfig).setOrigin(0.5,0.5);
+        var pad = this.add.zone(0, 0, 512, 310).setOrigin(0, 0);
+        var explosion = this.add.image(0, 0, 'explosion').setOrigin(0, 0);
+        this.startMessage = this.add.text(0, 0, levelParams.description, fontConfig)
+            .setOrigin(0.5, 0.5);
         this.levelChooser = new LevelChooser(this, 'prev', 'next');
         var restartButton = new Utils.Button(this, 'button', 'RESTART');
 
@@ -66,11 +65,11 @@ class GameOverScene extends Phaser.Scene {
         var bg = new Utils.TransparentBox(this, w, h, 16);
 
         this.add.container(
-            (game.config.width - w)/2, (game.config.height - h)/2,
-            [ bg, pad, explosion, particles, gameOver, this.startMessage, this.levelChooser, restartButton ]
-        );
+            (game.config.width - w) / 2, (game.config.height - h) / 2,
+            [bg, pad, explosion, particles, gameOver, this.startMessage,
+                this.levelChooser, restartButton]);
 
-        this.levelChooser.on('level-changed', (level) => {
+        this.levelChooser.on('level-changed', level => {
             this.startMessage.setText(levelParameters[level].description);
         });
 
@@ -79,7 +78,7 @@ class GameOverScene extends Phaser.Scene {
         this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
     }
 
-    restartLevel () {
+    restartLevel() {
         const i = this.levelChooser.currentLevel;
         globalParameters.currentLevel = i;
         globalParameters.playing = true;

@@ -5,9 +5,10 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-class LevelChooser extends Phaser.GameObjects.Container {
+/* exported LevelChooser */
 
-    constructor (scene, prevBtn, nextBtn) {
+class LevelChooser extends Phaser.GameObjects.Container {
+    constructor(scene, prevBtn, nextBtn) {
         const spacing = 16;
 
         super(scene, 0, 0);
@@ -26,7 +27,7 @@ class LevelChooser extends Phaser.GameObjects.Container {
         this.add([levelBg, prev, level, next]);
 
         /* FIXME: find a better way to align objects */
-        levelBg.setPosition(-lw/2, -lh/2);
+        levelBg.setPosition(-lw / 2, -lh / 2);
         this.setSize(lw, lh);
         Phaser.Display.Align.In.LeftCenter(prev, this, -4);
         Phaser.Display.Align.In.Center(level, this);
@@ -41,7 +42,7 @@ class LevelChooser extends Phaser.GameObjects.Container {
         }, this);
     }
 
-    updateLevel (increment) {
+    updateLevel(increment) {
         const maxLevel = globalParameters.availableLevels - 1;
         var currentLevel = this.currentLevel + increment;
 

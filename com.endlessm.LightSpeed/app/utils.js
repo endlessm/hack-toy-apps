@@ -5,9 +5,10 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-class TransparentBox extends Phaser.GameObjects.Graphics {
+/* exported Utils */
 
-    constructor (scene, w, h, radius=8, fill=0x00000, alpha=0.5) {
+class TransparentBox extends Phaser.GameObjects.Graphics {
+    constructor(scene, w, h, radius = 8, fill = 0x00000, alpha = 0.5) {
         super(scene);
         this.fillStyle(fill, 1);
         this.setAlpha(alpha);
@@ -16,8 +17,7 @@ class TransparentBox extends Phaser.GameObjects.Graphics {
 }
 
 class Button extends Phaser.GameObjects.Container {
-
-    constructor (scene, name, label) {
+    constructor(scene, name, label) {
         super(scene, 0, 0);
 
         this.hoverTint = 0xffff00;
@@ -38,12 +38,12 @@ class Button extends Phaser.GameObjects.Container {
         if (label) {
             this._label = new Phaser.GameObjects.Text(scene, 0, 0, label, fontConfig);
             this._label.setFontSize('32px');
-            this._label.setOrigin(0.5,0.5);
+            this._label.setOrigin(0.5, 0.5);
             Phaser.Display.Align.In.Center(this._label, this._image);
             this.add(this._label);
         }
 
-        this.on('pointerover', function (event) {
+        this.on('pointerover', () => {
             if (!this._sensitive)
                 return;
 
@@ -53,21 +53,21 @@ class Button extends Phaser.GameObjects.Container {
                 this._image.setTint(this.hoverTint);
         });
 
-        this.on('pointerout', function (event) {
-            if (this._disabled)
+        this.on('pointerout', () => {
+            if (this._disabled) {
                 this._image.setTexture(this._sensitive ? this._enabled : this._disabled);
-            else {
+            } else {
                 this._image.setTexture(this._enabled);
                 this._image.clearTint();
             }
         });
     }
 
-    set sensitive (value) {
+    set sensitive(value) {
         this._sensitive = value;
 
         if (value) {
-            this.setInteractive({ cursor: 'pointer' });
+            this.setInteractive({cursor: 'pointer'});
             this._image.setTexture(this._enabled);
             return;
         }
@@ -80,21 +80,18 @@ class Button extends Phaser.GameObjects.Container {
             this._image.setTint(this.disabledTint);
     }
 
-    get sensitive () {
+    get sensitive() {
         return this._sensitive;
     }
 }
 
 var Utils = {
-    TransparentBox: TransparentBox,
-    Button: Button,
-    load_button: function (scene, name) {
-
+    TransparentBox,
+    Button,
+    load_button(scene, name) {
         /* Load button state images */
         scene.load.image(`${name}_enabled`, `assets/ui/${name}_enabled.png`);
         scene.load.image(`${name}_disabled`, `assets/ui/${name}_disabled.png`);
         scene.load.image(`${name}_hover`, `assets/ui/${name}_hover.png`);
-    }
+    },
 };
-
-

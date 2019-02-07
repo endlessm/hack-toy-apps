@@ -5,6 +5,8 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+/* exported globalParameters */
+
 /*
  * Global parameters exposed to the quests and toolbox
  */
@@ -17,7 +19,7 @@ var globalParameters = {
     success: false,
     playing: false,
     obstacleSpawnedCount: 0,
-}
+};
 
 var defaultLevelParameters = {
     description: 'Rescue Astronauts\nAvoid asteroids',
@@ -90,7 +92,6 @@ var levelParameters = [
 var nLevels = levelParameters.length;
 
 for (var i = 0; i < nLevels; i++) {
-
     /* Dup default object */
     var defaults = Object.assign({}, defaultLevelParameters);
 
@@ -100,5 +101,3 @@ for (var i = 0; i < nLevels; i++) {
     /* Export every level params as a diferent object */
     window[`globalLevel${i}Parameters`] = levelParameters[i];
 }
-
-

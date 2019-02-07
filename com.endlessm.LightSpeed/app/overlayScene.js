@@ -5,19 +5,16 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+/* exported OverlayScene */
+
 class OverlayScene extends Phaser.Scene {
-
-    constructor (config) {
-        super(config);
-    }
-
-    create (data) {
+    create() {
         /* FPS counter */
-        this.fps = this.add.text(8, 8, '', { color: '#00ff00' });
+        this.fps = this.add.text(8, 8, '', {color: '#00ff00'});
     }
 
-    update(time, delta) {
-        this.fps.setText(`${(game.loop.actualFps).toFixed(1)}`);
+    update() {
+        this.fps.setText(game.loop.actualFps.toFixed(1));
     }
 }
 

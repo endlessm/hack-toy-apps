@@ -12,6 +12,7 @@ class ContinueScene extends Phaser.Scene {
     }
 
     init(data) {
+        globalParameters.playing = false;
     }
 
     preload () {
@@ -56,6 +57,7 @@ class ContinueScene extends Phaser.Scene {
 
         continueButton.on('pointerup', function () {
             globalParameters.currentLevel++;
+            globalParameters.playing = true;
             this.scene.start('level', levelParameters[globalParameters.currentLevel]);
         }, this);
     }

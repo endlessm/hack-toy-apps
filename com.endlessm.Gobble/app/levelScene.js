@@ -38,7 +38,6 @@ class LevelScene extends Phaser.Scene {
 
         /* Reset Global game state */
         globalParameters.obstacleSpawnedCount = 0;
-        globalParameters.playing = true;
         globalParameters.success = false;
         globalParameters.score = 0;
 
@@ -83,7 +82,7 @@ class LevelScene extends Phaser.Scene {
 
         /* Go back to title screen */
         this.input.keyboard.on('keyup_ESC', (event) => {
-            if (!this.inDemo)
+            if (globalParameters.playing)
                 this.scene.start('title');
         }, this);
     }
@@ -191,7 +190,6 @@ class LevelScene extends Phaser.Scene {
                 this.scene.start('title');
             } else {
                 this.scene.launch('continue', `Level ${globalParameters.currentLevel+1} Complete!`);
-                globalParameters.playing = false;
                 this.scene.pause();
             }
         }
@@ -267,16 +265,15 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipObstacleOverlap (ship, object) {
-        if (this.inDemo)
+        if (!globalParameters.playing)
             return;
 
         this.scene.launch('gameover');
-        globalParameters.playing = false;
         this.scene.pause();
     }
 
     onShipAstronautOverlap (ship, astronaut) {
-        if (this.inDemo)
+        if (!globalParameters.playing)
             return;
 
         /* Update Score */

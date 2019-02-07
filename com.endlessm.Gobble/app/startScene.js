@@ -12,6 +12,7 @@ class StartScene extends Phaser.Scene {
     }
 
     init(data) {
+        globalParameters.playing = false;
     }
 
     preload () {
@@ -69,13 +70,12 @@ class StartScene extends Phaser.Scene {
         startButton.on('pointerup', function () {
             const i = this.levelChooser.currentLevel;
             globalParameters.currentLevel = i;
-            this.scene.get('level').inDemo = false;
+            globalParameters.playing = true;
             this.scene.start('level', levelParameters[i]);
         }, this);
 
         /* Start current level */
         this.scene.launch('level', levelParams);
-        this.scene.get('level').inDemo = true;
     }
 }
 

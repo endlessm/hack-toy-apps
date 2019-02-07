@@ -12,6 +12,7 @@ class GameOverScene extends Phaser.Scene {
     }
 
     init(data) {
+        globalParameters.playing = false;
     }
 
     preload () {
@@ -61,8 +62,8 @@ class GameOverScene extends Phaser.Scene {
 
         this.input.keyboard.on('keyup', (event) => {
             if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER) {
-                const i = globalParameters.currentLevel;
-                this.scene.get('level').scene.restart(levelParameters[i]);
+                globalParameters.playing = true;
+                this.scene.get('level').scene.restart(levelParameters[globalParameters.currentLevel]);
                 this.scene.stop();
             }
         }, this);

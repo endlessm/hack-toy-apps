@@ -104,14 +104,7 @@ class TitleScene extends Phaser.Scene {
         }, this);
 
         /* Fade out when enter key is released */
-        this.input.keyboard.on('keyup', (event) => {
-            if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ENTER) {
-                this.cameras.main.fadeOut(200);
-            }
-        }, this);
-
-        /* Switch to current level after fading is done */
-        this.cameras.main.on('camerafadeoutcomplete', () => {
+        this.input.keyboard.on('keyup_ENTER', (event) => {
             this.scene.start('start');
         }, this);
 

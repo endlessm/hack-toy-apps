@@ -82,16 +82,9 @@ class LevelScene extends Phaser.Scene {
         this.updateScore();
 
         /* Go back to title screen */
-        this.input.keyboard.on('keyup', (event) => {
-            if(event.keyCode === Phaser.Input.Keyboard.KeyCodes.ESC) {
-                this.switchToTitle();
-            }
-        }, this);
-
-        /* Switch to tile screen after the fading is done */
-        this.cameras.main.on('camerafadeoutcomplete', () => {
-            this.scene.start(this.nextScene);
-            this.nextScene = null;
+        this.input.keyboard.on('keyup_ESC', (event) => {
+            if (!this.inDemo)
+                this.scene.start('title');
         }, this);
     }
 
@@ -187,12 +180,6 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    switchToTitle (name) {
-        this.nextScene = 'title';
-        this.cameras.main.fadeOut(200);
-        globalParameters.playing = false;
-    }
-
     checkLevelDone () {
         if (globalParameters.score >= this.params.scoreTarget) {
             globalParameters.score = 0;
@@ -201,7 +188,7 @@ class LevelScene extends Phaser.Scene {
             /* Limit current level to available one */
             if (globalParameters.currentLevel+1 >= globalParameters.availableLevel) {
                 globalParameters.currentLevel = 0;
-                this.switchToTitle();
+                this.scene.start('title');
             } else {
                 this.scene.launch('continue', `Level ${globalParameters.currentLevel+1} Complete!`);
                 globalParameters.playing = false;

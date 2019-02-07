@@ -1,4 +1,4 @@
-/* Gobble
+/* LightSpeed
  *
  * Copyright (C) 2019 Endless Mobile, Inc.
  *
@@ -20,7 +20,7 @@ const fontConfig = {
 
 /* Config */
 var config = {
-    title: 'Gobble',
+    title: 'LightSpeed',
     type: Phaser.AUTO,
     background: 'black',
     scale: {

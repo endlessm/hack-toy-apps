@@ -1,4 +1,4 @@
-/* Gobble
+/* LightSpeed
  *
  * Copyright (C) 2019 Endless Mobile, Inc.
  *
@@ -58,7 +58,7 @@ class TitleScene extends Phaser.Scene {
         var particles = this.add.particles('particle');
 
         /* Logo */
-        var logo = this.add.image(centerX, centerY/2, 'logo');
+        var logo = this.add.image(centerX, centerY-centerY/3, 'logo');
         this.tweens.add({
             targets: logo,
             scaleX: 0.8,

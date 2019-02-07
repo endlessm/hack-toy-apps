@@ -1,4 +1,4 @@
-/* Gobble
+/* LightSpeed
  *
  * Copyright (C) 2019 Endless Mobile, Inc.
  *

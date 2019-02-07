@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=LightSpeed
+Type=Application
+Exec=com.endlessm.LightSpeed
+StartupNotify=true
+Icon=com.endlessm.LightSpeed
+Categories=Game;
+X-Endless-LaunchMaximized=true
+X-Endless-SplashBackground=com.endlessm.LightSpeed.jpg

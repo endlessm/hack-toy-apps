@@ -55,11 +55,15 @@ class ContinueScene extends Phaser.Scene {
             [ bg, confetti, ship, levelText, continueButton ]
         );
 
-        continueButton.on('pointerup', function () {
-            globalParameters.currentLevel++;
-            globalParameters.playing = true;
-            this.scene.start('level', levelParameters[globalParameters.currentLevel]);
-        }, this);
+        /* Continue on button click and enter */
+        this.input.keyboard.on('keyup_ENTER', this.nextLevel.bind(this));
+        continueButton.on('pointerup', this.nextLevel.bind(this));
+    }
+
+    nextLevel () {
+        globalParameters.currentLevel++;
+        globalParameters.playing = true;
+        this.scene.start('level', levelParameters[globalParameters.currentLevel]);
     }
 }
 

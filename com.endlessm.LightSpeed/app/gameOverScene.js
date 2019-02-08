@@ -74,13 +74,17 @@ class GameOverScene extends Phaser.Scene {
             this.startMessage.setText(levelParameters[level].description);
         });
 
-        restartButton.on('pointerup', function () {
-            const i = this.levelChooser.currentLevel;
-            globalParameters.currentLevel = i;
-            globalParameters.playing = true;
-            this.scene.get('level').scene.restart(levelParameters[i]);
-            this.scene.stop();
-        }, this);
+        /* Restart level on button click and enter */
+        restartButton.on('pointerup', this.restartLevel.bind(this));
+        this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
+    }
+
+    restartLevel () {
+        const i = this.levelChooser.currentLevel;
+        globalParameters.currentLevel = i;
+        globalParameters.playing = true;
+        this.scene.get('level').scene.restart(levelParameters[i]);
+        this.scene.stop();
     }
 }
 

@@ -67,15 +67,20 @@ class StartScene extends Phaser.Scene {
             this.startMessage.setText(levelParameters[level].description);
         });
 
-        startButton.on('pointerup', function () {
-            const i = this.levelChooser.currentLevel;
-            globalParameters.currentLevel = i;
-            globalParameters.playing = true;
-            this.scene.start('level', levelParameters[i]);
-        }, this);
+        /* Start level on button click and enter */
+        startButton.on('pointerup', this.startLevel.bind(this));
+        this.input.keyboard.on('keyup_ENTER', this.startLevel.bind(this));
 
         /* Start current level */
         this.scene.launch('level', levelParams);
+    }
+
+    startLevel () {
+        const i = this.levelChooser.currentLevel;
+
+        globalParameters.currentLevel = i;
+        globalParameters.playing = true;
+        this.scene.start('level', levelParameters[i]);
     }
 }
 

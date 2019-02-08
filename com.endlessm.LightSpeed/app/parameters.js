@@ -19,6 +19,9 @@ var globalParameters = {
     success: false,
     playing: false,
     obstacleSpawnedCount: 0,
+
+    // communication with Clubhouse
+    flipped: false,
 };
 
 var defaultLevelParameters = {
@@ -101,3 +104,7 @@ for (var i = 0; i < nLevels; i++) {
     /* Export every level params as a diferent object */
     window[`globalLevel${i}Parameters`] = levelParameters[i];
 }
+
+window.flip = function() {
+    globalParameters.flipped = !globalParameters.flipped;
+};

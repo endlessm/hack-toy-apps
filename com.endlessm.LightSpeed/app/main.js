@@ -44,6 +44,7 @@ var config = {
         new LevelScene('level'),
         new StartScene('start'),
         new GameOverScene('gameover'),
+        new PauseScene('pause'),
         new ContinueScene('continue'),
         new DebugScene({key: 'debug', active: true}),
     ]
@@ -51,3 +52,4 @@ var config = {
 
 /* Bootstrap game */
 var game = new Phaser.Game(config);
+

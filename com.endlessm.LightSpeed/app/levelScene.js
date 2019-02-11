@@ -78,6 +78,12 @@ class LevelScene extends Phaser.Scene {
         this.createScoreBox('Level: 00 Rescued: 00');
         this.updateScore();
 
+        /* Pause game on space bar press */
+        this.input.keyboard.on('keyup_SPACE', () => {
+            if (globalParameters.playing)
+                globalParameters.paused = true;
+        });
+
         /* Go back to title screen */
         this.input.keyboard.on('keyup_ESC', () => {
             if (globalParameters.playing)
@@ -91,6 +97,12 @@ class LevelScene extends Phaser.Scene {
 
         if (this.odd_tick)
             return;
+
+        /* Pause scene if param changed */
+        if (globalParameters.paused) {
+            this.scene.launch('pause');
+            this.scene.pause();
+        }
 
         /* Input */
         var cursors = this.input.keyboard.createCursorKeys();

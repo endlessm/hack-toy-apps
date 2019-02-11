@@ -11,7 +11,7 @@
  * Global parameters exposed to the quests and toolbox
  */
 var globalParameters = {
-    availableLevels: 2,
+    availableLevels: 1,
     currentLevel: 0,
 
     /* Level specific parameters */

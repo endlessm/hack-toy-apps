@@ -124,7 +124,15 @@ var defaultLevelParameters = [
 
     /* Level 4 */
     {
-        spawnObstacleCode: null,
+        spawnObstacleCode: ` return null;`,
+    },
+
+    /* Level 5 */
+    {
+    },
+
+    /* Level 6 */
+    {
     },
 ];
 

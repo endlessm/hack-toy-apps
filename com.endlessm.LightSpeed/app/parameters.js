@@ -13,6 +13,7 @@
 var globalParameters = {
     availableLevels: 1,
     currentLevel: 0,
+    flipped: false,
 
     /* Level specific parameters */
     score: 0,

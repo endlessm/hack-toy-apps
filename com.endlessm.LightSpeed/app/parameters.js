@@ -30,7 +30,7 @@ Object.freeze(obstacleTypes);
  * Global parameters exposed to the quests and toolbox
  */
 var globalParameters = {
-    availableLevels: 2,
+    availableLevels: 1,
     currentLevel: 1,
 
     /* Level specific parameters */

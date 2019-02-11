@@ -5,6 +5,10 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+/* exported fontConfig, game */
+/* global ContinueScene, GameOverScene, LevelScene, OverlayScene, StartScene,
+    TitleScene */
+
 const fontConfig = {
     color: 'white',
     fontSize: '38px',
@@ -14,8 +18,8 @@ const fontConfig = {
         fill: true,
         offsetX: 2,
         offsetY: 2,
-        blur: 8
-    }
+        blur: 8,
+    },
 };
 
 /* Config */
@@ -27,13 +31,13 @@ var config = {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: 1920,
-        height: 1004
+        height: 1004,
     },
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
-        }
+            debug: true,
+        },
     },
     scene: [
         new TitleScene('title'),
@@ -41,10 +45,9 @@ var config = {
         new StartScene('start'),
         new GameOverScene('gameover'),
         new ContinueScene('continue'),
-        new OverlayScene({ key: 'overlay', active: true }),
-    ]
+        new OverlayScene({key: 'overlay', active: true}),
+    ],
 };
 
 /* Bootstrap game */
 var game = new Phaser.Game(config);
-

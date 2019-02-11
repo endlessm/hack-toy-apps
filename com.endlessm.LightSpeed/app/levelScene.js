@@ -5,36 +5,35 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+/* exported LevelScene */
+
+function getUserFunction(code) {
+    if (!code)
+        return null;
+
+    var retval = null;
+
+    try {
+        // eslint-disable-next-line no-new-func
+        retval = new Function('scope', `with(scope){\n${code}\n;}`);
+    } catch (e) {
+        retval = null;
+        if (!(e instanceof SyntaxError || e instanceof ReferenceError))
+            // FIXME reflect the error in the game somehow
+            console.error(e);  // eslint-disable-line no-console
+    }
+
+    return retval;
+}
+
 class LevelScene extends Phaser.Scene {
-
-    constructor (config) {
-        super(config);
-    }
-
-    getUserFunction (code) {
-        if (!code)
-            return null;
-
-        var retval = null;
-
-        try {
-            retval = new Function('scope', `with(scope){\n${code}\n;}`);
-        } catch (e) {
-            retval = null;
-            if (!(e instanceof SyntaxError || e instanceof ReferenceError))
-                console.error(e);
-        }
-
-        return retval;
-    }
-
     init(data) {
         this.params = data;
 
-        this.setParams = this.getUserFunction(data.setParamsCode);
-        this.updateEnemy = this.getUserFunction(data.updateEnemyCode);
-        this.spawnObstacle = this.getUserFunction(data.spawnObstacleCode);
-        this.spawnAstronaut = this.getUserFunction(data.spawnAstronautCode);
+        this.setParams = getUserFunction(data.setParamsCode);
+        this.updateEnemy = getUserFunction(data.updateEnemyCode);
+        this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
+        this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
 
         /* Reset Global game state */
         globalParameters.obstacleSpawnedCount = 0;
@@ -45,7 +44,7 @@ class LevelScene extends Phaser.Scene {
         this.tick = 0;
     }
 
-    preload () {
+    preload() {
         this.load.image('background', 'assets/background.jpg');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
@@ -53,11 +52,8 @@ class LevelScene extends Phaser.Scene {
         this.load.image('ship', 'assets/spaceship.png');
     }
 
-    create (data) {
-        const centerX = this.cameras.main.centerX;
-        const centerY = this.cameras.main.centerY;
-        const width = this.cameras.main.width;
-        const height = this.cameras.main.height;
+    create() {
+        const {centerX, centerY} = this.cameras.main;
 
         /* Background */
         this.add.image(centerX, centerY, 'background');
@@ -73,22 +69,23 @@ class LevelScene extends Phaser.Scene {
         this.astronauts = this.physics.add.group();
 
         /* Detect collisions */
-        this.physics.add.overlap(this.ship, this.obstacles, this.onShipObstacleOverlap, null, this);
-        this.physics.add.overlap(this.ship, this.astronauts, this.onShipAstronautOverlap, null, this);
+        this.physics.add.overlap(this.ship, this.obstacles,
+            this.onShipObstacleOverlap, null, this);
+        this.physics.add.overlap(this.ship, this.astronauts,
+            this.onShipAstronautOverlap, null, this);
 
         /* Score Box */
         this.createScoreBox('Level: 00 Rescued: 00');
         this.updateScore();
 
         /* Go back to title screen */
-        this.input.keyboard.on('keyup_ESC', (event) => {
+        this.input.keyboard.on('keyup_ESC', () => {
             if (globalParameters.playing)
                 this.scene.start('title');
-        }, this);
+        });
     }
 
-    update(time, delta) {
-
+    update() {
         /* Skip every other update */
         this.odd_tick = !this.odd_tick;
 
@@ -122,9 +119,9 @@ class LevelScene extends Phaser.Scene {
 
     /* Private functions */
 
-    createShip (x, y) {
+    createShip(x, y) {
         this.ship = this.physics.add.sprite(x, y, 'ship');
-        const scale = this.params.shipSize/100;
+        const scale = this.params.shipSize / 100;
         const ship_box_height = 264;
 
         this.ship.setScale(scale);
@@ -135,36 +132,35 @@ class LevelScene extends Phaser.Scene {
         /* Update world bounds to allow half the ship to be outside */
         this.physics.world.setBounds(
             0,
-            -((ship_box_height*scale)/2),
+            -(ship_box_height * scale) / 2,
             game.config.width,
-            game.config.height + ship_box_height*scale
+            game.config.height + ship_box_height * scale
         );
 
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
     }
 
-    updateScore () {
-        const level = globalParameters.currentLevel + 1 + '';
-        const score = globalParameters.score + '';
+    updateScore() {
+        const level = `${globalParameters.currentLevel + 1}`.padStart(2, ' ');
+        const score = `${globalParameters.score}`.padStart(2, ' ');
 
-        this.scoreText.setText(`Level: ${level.padStart(2, ' ')} Rescued: ${score.padStart(2, ' ')}`);
+        this.scoreText.setText(`Level: ${level} Rescued: ${score}`);
     }
 
-    createScoreBox (text) {
+    createScoreBox(text) {
         this.scoreText = this.add.text(16, 8, text, fontConfig);
         const w = this.scoreText.width + 32;
         const h = this.scoreText.height + 16;
 
         this.scoreBox = this.add.container(
             (game.config.width - w) / 2, 4,
-            [new Utils.TransparentBox(this, w, h), this.scoreText]
-        );
+            [new Utils.TransparentBox(this, w, h), this.scoreText]);
 
         this.scoreBox.depth = 100;
     }
 
-    getScope () {
+    getScope() {
         const i = globalParameters.currentLevel;
         return {
             level: i,
@@ -173,29 +169,28 @@ class LevelScene extends Phaser.Scene {
             width: this.cameras.main.width,
             height: this.cameras.main.height,
 
-            random: (min, max) => {
-                return Math.random() * (max - min) + min;
-            }
-        }
+            random: (min, max) => Math.random() * (max - min) + min,
+        };
     }
 
-    checkLevelDone () {
+    checkLevelDone() {
         if (globalParameters.score >= this.params.scoreTarget) {
             globalParameters.score = 0;
             globalParameters.success = true;
 
             /* Limit current level to available one */
-            if (globalParameters.currentLevel+1 >= globalParameters.availableLevel) {
+            if (globalParameters.currentLevel + 1 >= globalParameters.availableLevel) {
                 globalParameters.currentLevel = 0;
                 this.scene.start('title');
             } else {
-                this.scene.launch('continue', `Level ${globalParameters.currentLevel+1} Complete!`);
+                this.scene.launch('continue',
+                    `Level ${globalParameters.currentLevel + 1} Complete!`);
                 this.scene.pause();
             }
         }
     }
 
-    runSpawnObstacle () {
+    runSpawnObstacle() {
         if (!this.spawnObstacle)
             return;
 
@@ -204,7 +199,7 @@ class LevelScene extends Phaser.Scene {
 
         try {
             retval = this.spawnObstacle(scope);
-        } catch (e){
+        } catch (e) {
             /* User function error! */
         }
 
@@ -229,17 +224,17 @@ class LevelScene extends Phaser.Scene {
 
             /* Set a scale */
             if (retval.scale)
-                obj.setScale(retval.scale/100);
+                obj.setScale(retval.scale / 100);
 
             /* FIXME: split group and obstacle velocity in order to easily
              * implement changing the ship speed.
              */
             var speedFactor = 0.5 + Phaser.Math.RND.frac();
-            obj.setVelocityX(-this.params.shipSpeed*speedFactor);
+            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
         }
     }
 
-    runSpawnAstronaut () {
+    runSpawnAstronaut() {
         if (!this.spawnAstronaut)
             return;
 
@@ -247,7 +242,7 @@ class LevelScene extends Phaser.Scene {
 
         try {
             retval = this.spawnAstronaut(this.getScope());
-        } catch (e){
+        } catch (e) {
             /* User function error! */
         }
 
@@ -256,7 +251,7 @@ class LevelScene extends Phaser.Scene {
             this.astronauts.add(obj);
             obj.depth = 1;
             obj.setVelocityX(-this.params.shipSpeed);
-            obj.setScale(this.params.astronautSize/100);
+            obj.setScale(this.params.astronautSize / 100);
 
             /* FIXME: improve colission shape */
             obj.body.setAllowRotation(true);
@@ -264,7 +259,7 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    onShipObstacleOverlap (ship, object) {
+    onShipObstacleOverlap() {
         if (!globalParameters.playing)
             return;
 
@@ -272,7 +267,7 @@ class LevelScene extends Phaser.Scene {
         this.scene.pause();
     }
 
-    onShipAstronautOverlap (ship, astronaut) {
+    onShipAstronautOverlap(ship, astronaut) {
         if (!globalParameters.playing)
             return;
 
@@ -299,7 +294,7 @@ class LevelScene extends Phaser.Scene {
 
                 /* Check if we finished the level */
                 this.checkLevelDone();
-            }
+            },
         });
     }
 }

@@ -5,17 +5,16 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
+/* exported StartScene */
+/* global LevelChooser */
+
 class StartScene extends Phaser.Scene {
-
-    constructor (config) {
-        super(config);
-    }
-
-    init(data) {
+    init() {
+        void this;
         globalParameters.playing = false;
     }
 
-    preload () {
+    preload() {
         this.load.image('confetti', 'assets/ui/confetti.png');
         this.load.image('arrow-keys', 'assets/ui/arrow_keys.png');
 
@@ -24,15 +23,16 @@ class StartScene extends Phaser.Scene {
         Utils.load_button(this, 'button');
     }
 
-    create (data) {
+    create() {
         const levelParams = levelParameters[globalParameters.currentLevel];
         const spacing = 16;
 
-        var confetti = this.add.image(0, 0, 'confetti').setOrigin(0,0);
-        var logo = this.add.image(0, 0, 'logo').setOrigin(0.5,0.5);
+        var confetti = this.add.image(0, 0, 'confetti').setOrigin(0, 0);
+        var logo = this.add.image(0, 0, 'logo').setOrigin(0.5, 0.5);
         var controlsText = this.add.text(0, 0, 'Move with', fontConfig);
         var arrowKeys = this.add.image(0, 0, 'arrow-keys');
-        this.startMessage = this.add.text(0, 0, levelParams.description, fontConfig).setOrigin(0.5,0.5);
+        this.startMessage = this.add.text(0, 0, levelParams.description, fontConfig)
+            .setOrigin(0.5, 0.5);
         this.levelChooser = new LevelChooser(this, 'prev', 'next');
         var startButton = new Utils.Button(this, 'button', 'START');
 
@@ -44,7 +44,7 @@ class StartScene extends Phaser.Scene {
             duration: 600,
             ease: 'Sine',
             yoyo: true,
-            repeat: -1
+            repeat: -1,
         });
 
         Phaser.Display.Align.In.Center(logo, confetti);
@@ -59,11 +59,11 @@ class StartScene extends Phaser.Scene {
         var bg = new Utils.TransparentBox(this, w, h, 16);
 
         this.add.container(
-            (game.config.width - w)/2, (game.config.height - h)/2,
-            [ bg, confetti, logo, controlsText, arrowKeys, this.startMessage, this.levelChooser, startButton ]
-        );
+            (game.config.width - w) / 2, (game.config.height - h) / 2,
+            [bg, confetti, logo, controlsText, arrowKeys, this.startMessage,
+                this.levelChooser, startButton]);
 
-        this.levelChooser.on('level-changed', (level) => {
+        this.levelChooser.on('level-changed', level => {
             this.startMessage.setText(levelParameters[level].description);
         });
 
@@ -75,7 +75,7 @@ class StartScene extends Phaser.Scene {
         this.scene.launch('level', levelParams);
     }
 
-    startLevel () {
+    startLevel() {
         const i = this.levelChooser.currentLevel;
 
         globalParameters.currentLevel = i;

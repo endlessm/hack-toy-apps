@@ -41,6 +41,9 @@ var globalParameters = {
 
     /* Communication with Clubhouse */
     flipped: false,
+
+    obstacleType1MinY: +10000,
+    obstacleType1MaxY: -10000,
 };
 
 /* We need a counter for each obstacle types
@@ -86,7 +89,7 @@ var defaultParameters = {
         }
         return null;
     `,
-
+    updateObstacleCode: 'return null;',
     setParamsCode: null,
 };
 

@@ -37,7 +37,10 @@ class LevelScene extends Phaser.Scene {
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
 
         /* Reset Global game state */
-        globalParameters.obstacleSpawnedCount = 0;
+        globalParameters.obstacleType0SpawnedCount = 0;
+        globalParameters.obstacleType1SpawnedCount = 0;
+        globalParameters.obstacleType2SpawnedCount = 0;
+        globalParameters.obstacleType3SpawnedCount = 0;
         globalParameters.success = false;
         globalParameters.score = 0;
 
@@ -311,18 +314,26 @@ class LevelScene extends Phaser.Scene {
         }
 
         if (retval) {
-            const type = retval.type || 'asteroid';
+            var type = retval.type || 'asteroid';
             const x = retval.x || scope.width + scope.random(100, 400);
             const y = retval.y || scope.random(0, scope.height);
 
             /* Make sure type is a valid obstacle */
-            if (retval.type && this.obstacleTypes.indexOf(retval.type) >= 0)
+            var obstacleTypeIndex = this.obstacleTypes.indexOf(retval.type);
+            if (retval.type && obstacleTypeIndex >= 0)
                 type = retval.type;
 
             var obj = this.createObstacle(type, x, y, retval.scale);
 
             /* Increment global counter */
-            globalParameters.obstacleSpawnedCount++;
+            switch (obstacleTypeIndex)
+            {
+            case 0: globalParameters.obstacleType0SpawnedCount++; break;
+            case 1: globalParameters.obstacleType1SpawnedCount++; break;
+            case 2: globalParameters.obstacleType2SpawnedCount++; break;
+            case 3: globalParameters.obstacleType3SpawnedCount++; break;
+            default: break;
+            }
 
             /* FIXME: split group and obstacle velocity in order to easily
              * implement changing the ship speed.

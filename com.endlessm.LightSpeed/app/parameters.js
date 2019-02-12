@@ -24,6 +24,9 @@ var globalParameters = {
     obstacleType1SpawnedCount: 0,
     obstacleType2SpawnedCount: 0,
     obstacleType3SpawnedCount: 0,
+    
+    obstacleType1MinY : +10000,
+    obstacleType1MaxY : -10000,
 
     /* Communication with Clubhouse */
     flipped: false,
@@ -62,7 +65,7 @@ var defaultLevelParameters = {
         }
         return null;
     `,
-    updateObstacleCode: null,
+    updateObstacleCode: ` return null;`,
     setParamsCode: null,
 };
 

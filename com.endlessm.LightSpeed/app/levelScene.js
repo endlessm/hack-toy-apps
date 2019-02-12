@@ -41,6 +41,8 @@ class LevelScene extends Phaser.Scene {
         globalParameters.obstacleType1SpawnedCount = 0;
         globalParameters.obstacleType2SpawnedCount = 0;
         globalParameters.obstacleType3SpawnedCount = 0;
+        globalParameters.obstacleType1MinY = +1000;
+        globalParameters.obstacleType1MaxY = -1000;
         globalParameters.success = false;
         globalParameters.score = 0;
 
@@ -55,6 +57,9 @@ class LevelScene extends Phaser.Scene {
             'beam',
             'squid',
         ];
+        
+        // Internal variables for checking quest state
+        this.firstType1Object = null;
     }
 
     preload() {
@@ -157,9 +162,28 @@ class LevelScene extends Phaser.Scene {
         this.runSpawnObstacle();
         this.runSpawnAstronaut();
         this.runUpdateObstacle();
+        
+        this.updateQuestData();
     }
 
     /* Private functions */
+    
+    
+    updateQuestData() {
+        // Track the first type 1 object
+        if (this.firstType1Object == null) {
+            for (const obj of this.obstacles.getChildren()) {
+                if (obj.texture.key == 'spinner') {
+                    this.firstType1Object = obj;
+                }
+            }
+        }
+        else
+        {
+            globalParameters.obstacleType1MinY = Math.min(this.firstType1Object.y, globalParameters.obstacleType1MinY);
+            globalParameters.obstacleType1MaxY = Math.max(this.firstType1Object.y, globalParameters.obstacleType1MaxY);
+        }
+    }
 
     _setShipCollisionBox(shipAsset) {
         /* Make collision box smaller so that asteroids don't collide on the

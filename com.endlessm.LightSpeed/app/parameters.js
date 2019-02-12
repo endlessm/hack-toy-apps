@@ -18,9 +18,10 @@ var globalParameters = {
     score: 0,
     success: false,
     playing: false,
+    paused: false,
     obstacleSpawnedCount: 0,
 
-    // communication with Clubhouse
+    /* Communication with Clubhouse */
     flipped: false,
 };
 
@@ -107,4 +108,7 @@ for (var i = 0; i < nLevels; i++) {
 
 window.flip = function() {
     globalParameters.flipped = !globalParameters.flipped;
+
+    /* Pause game automatically when flipped */
+    globalParameters.paused = globalParameters.flipped;
 };

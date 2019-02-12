@@ -230,6 +230,8 @@ To debug a ToyApp, you can enable the webkit inspector:
 $ TOY_APP_ENABLE_INSPECTOR=1 flatpak run com.endlessm.Bouncing
 ```
 
+Then with the app running, right-click on the canvas and then click in "Inspect Element" to open the inspector.
+
 # The Magic of Clippy
 
 If you got to this point, you have realized that it was never explained how other components of the desktop communicate with the ToyApps to access their hackable parameters, e.g. the `hackable.radius` in our Bouncing example. This is because the ToyApp them-selves don't do that. Instead, the communication relies on a external library called [Clippy](https://github.com/endlessm/clippy) that is injected into the ToyApps in run-time. The benefit of this approach is that the same communication mechanism can be re-used with other applications, even if they were not designed to be ToyApps. See the example below:

@@ -191,56 +191,10 @@ class LevelScene extends Phaser.Scene {
         this.ship.depth = 100;
     }
 
-    createObstacle(type, x, y, scale) {
-        /* Create obstacle object */
-        var obj = this.physics.add.sprite(x, y, type);
+    updateScore () {
+        const level = globalParameters.currentLevel + 1 + '';
+        const score = globalParameters.score + '';
 
-        /* Add to obstacle group */
-        this.obstacles.add(obj);
-        obj.depth = 1;
-
-        /* Set a scale */
-        const s = scale ? scale / 100 : 1;
-
-        if (scale)
-            obj.setScale(s);
-
-        /* FIXME: improve obstacle shape handling */
-        if (type === 'asteroid')
-            obj.setCircle(230, 28, 28);
-        else if (type === 'spinner') {
-            obj.setCircle(161, 94, 94);
-            obj.body.setAllowRotation(true);
-            const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
-            obj.body.setAngularVelocity(v * 128);
-        } else if (type === 'beam') {
-            obj.setSize(78, 334).setOffset(112, 86);
-            this.tweens.add({
-                targets: obj,
-                scaleY: s * 0.6,
-                duration: 600,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1,
-            });
-        } else if (type === 'squid') {
-            obj.setSize(390, 150).setOffset(26, 60);
-            this.tweens.add({
-                targets: obj,
-                scaleX: s * 0.7,
-                duration: 600,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1,
-            });
-        }
-
-        return obj;
-    }
-
-    updateScore() {
-        const level = `${globalParameters.currentLevel + 1}`.padStart(2, ' ');
-        const score = `${globalParameters.score}`.padStart(2, ' ');
         this.scoreText.setText(`Level: ${level.padStart(2, ' ')} Rescued: ${score.padStart(2, ' ')}`);
     }
 
@@ -306,14 +260,23 @@ class LevelScene extends Phaser.Scene {
             const x = retval.x || scope.width + scope.random(100, 400);
             const y = retval.y || scope.random(0, scope.height);
 
-            /* Make sure type is a valid obstacle */
-            if (retval.type && this.obstacleTypes.indexOf(retval.type) >= 0)
-                type = retval.type;
+            /* Create obstacle object */
+            var obj = this.physics.add.sprite(x, y, type);
 
-            var obj = this.createObstacle(type, x, y, retval.scale);
+            /* Add to obstacle group */
+            this.obstacles.add(obj);
+            obj.depth = 1;
 
             /* Increment global counter */
             globalParameters.obstacleSpawnedCount++;
+
+            /* FIXME: improve obstacle shape handling */
+            if (type === 'asteroid')
+                obj.setCircle(230, 28, 28);
+
+            /* Set a scale */
+            if (retval.scale)
+                obj.setScale(retval.scale/100);
 
             /* FIXME: split group and obstacle velocity in order to easily
              * implement changing the ship speed.

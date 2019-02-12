@@ -4,8 +4,8 @@ var canvas = canvasID.getContext( '2d' );
 "use strict";
 
 
-var QUEST_FIZZICS1 =  1000;
-var QUEST_FIZZICS2 =  1001;
+var QUEST0 =  1000; // Episode 1: Fizzics2
+var QUEST1 =  1001; // Episode 2: MakerIntro
 
 var FONT_SIZE_SCALE = 0.45;
 var FONT_Y_SCALE    = 0.65;
@@ -289,7 +289,7 @@ function Game()
     this.setLevel = function( parent, levelID, collisionBalls, ballsWithSomeCollision )
     {                
         _level = levelID;
-        if (_level < QUEST_FIZZICS1)
+        if (_level < QUEST0)
             localStorage.furthestLevel = Math.max(_level, localStorage.furthestLevel);
 
         _score = 0;
@@ -302,7 +302,7 @@ function Game()
         _successScreen.enabled = false;
         
 
-        if (_level >= QUEST_FIZZICS1)
+        if (_level >= QUEST0)
         {
             this.setPreviousButtonEnabled(false);
             this.setNextButtonEnabled(false);
@@ -318,7 +318,7 @@ function Game()
             this.applyLevel( _levelData.levels[_level], parent );
         }        
   
-        else if ( _level == QUEST_FIZZICS1 )
+        else if ( _level == QUEST0 )
         {        
             var r = 300;
             this.createBallCircle( parent, 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
@@ -327,25 +327,25 @@ function Game()
             this.initializeGameState( period, 0, 0, collisionBalls, ballsWithSomeCollision  );
         }
 
-        else if ( _level == QUEST_FIZZICS2 )
+        else if ( _level == QUEST1 )
         {
             posX = 1200;
-            parent.createBall( posX, WINDOW_HEIGHT * ONE_HALF, 1 );
+            parent.createBall( posX, 0.5 * canvasID.height, 1 );
             
             var num = 10;
             for (var i=0; i<num; i++)
             {
                 var a = ( i / num ) * PI2;
-                var r = 150.0 + 130.0 * Math.random();
+                var r = 130.0 + 30.0 * Math.random();
                 var x = posX + r * Math.sin(a);
-                var y = WINDOW_HEIGHT * ONE_HALF + r * Math.cos(a);
+                var y = 0.5 * canvasID.height + r * Math.cos(a);
                 parent.createBall( x, y, 0 );
             }
 
             //------------------------------------------------------------------------
             // set up the game state to detect collisions between species...
             //------------------------------------------------------------------------
-            var period = 5;             // how many time steps are used to run this test?   
+            var period = 1;            // how many time steps are used to run this test?   
             var collisionSpecies = 0;   // which species of balls do we care about for collisions?
             var numCollisionsGoal = 10;     // how many unique balls do we want to test for collisions?
             this.initializeGameState( period, collisionSpecies, numCollisionsGoal, collisionBalls, ballsWithSomeCollision );
@@ -384,7 +384,7 @@ function Game()
 
     this.setLevelGlobalParams = function( levelID )
     {                
-        if ( levelID == QUEST_FIZZICS1 )
+        if ( levelID == QUEST0 )
         {
             globalParameters.backgroundImageIndex = 0;
 
@@ -473,12 +473,12 @@ function Game()
             globalParameters.deathEffect_4_2    = 2;
         }
 
-        else if ( levelID == QUEST_FIZZICS2 )
+        else if ( levelID == QUEST1 )
         {
             globalParameters.backgroundImageIndex = 0;
 
             globalParameters.radius_0           = 30.0;
-            globalParameters.gravity_0          = 100.0;
+            globalParameters.gravity_0          = 0.0;
             globalParameters.collision_0        = 0.2;
             globalParameters.friction_0         = 1.0;
             globalParameters.usePhysics_0       = true;
@@ -495,7 +495,7 @@ function Game()
 
             // parameters for species 1 balls
             globalParameters.radius_1           = 50.0;
-            globalParameters.gravity_1          = 100.0;
+            globalParameters.gravity_1          = 0.0;
             globalParameters.collision_1        = 0.2;
             globalParameters.friction_1         = 1.0;
             globalParameters.usePhysics_1       = true;
@@ -516,7 +516,7 @@ function Game()
             globalParameters.collision_2        = 0.0;
             globalParameters.friction_2         = 0.0;
             globalParameters.usePhysics_2       = false;
-            globalParameters.imageIndex_2       = 0;
+            globalParameters.imageIndex_2       = 2;
             globalParameters.socialForce_2_0    = 0.0;
             globalParameters.socialForce_2_1    = 0.0;
             globalParameters.socialForce_2_2    = 0.0;
@@ -994,15 +994,20 @@ function Game()
     }
 
 
-    //--------------------------------------
+    // Success: Whenever we have 10 green balls and 1 red ball, and all 10 green balls are touching the red ball at the same time
     this.isQuest1GoalReached = function()
     {
+        // We need exactly 10 type 0 balls
+        if (globalParameters.type0BallCount != 10)
+            return false;
+
+        // And exactly 1 type 1 (red) ball
         if (globalParameters.type1BallCount != 1)
             return false;
-    
+
         if ( gameState.numCollisions >= gameState.numCollisionsGoal )
             return true;
-        
+
         return false;
     }    
 
@@ -1059,7 +1064,7 @@ function Game()
         
         canvas.font = eval( _levelboard.height * FONT_SIZE_SCALE ) + "px Arial";
         var levelString = _level+1;
-        if (_level >= QUEST_FIZZICS1)
+        if (_level >= QUEST0)
             levelString = "Ꮘො";
         canvas.fillText( "Level " + levelString, _levelboard.x + _levelboard.width * 0.23, _levelboard.y + _levelboard.height * FONT_Y_SCALE );
 

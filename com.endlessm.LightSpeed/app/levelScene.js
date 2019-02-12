@@ -42,14 +42,30 @@ class LevelScene extends Phaser.Scene {
 
         /* Init scene variables */
         this.tick = 0;
+        this.shipTypes = [
+            'spaceship',
+        ];
+        this.obstacleTypes = [
+            'asteroid',
+            'spinner',
+            'beam',
+            'squid',
+        ];
     }
 
     preload() {
+        /* Common assets */
         this.load.image('background', 'assets/background.jpg');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
-        this.load.image('asteroid', 'assets/asteroid.png');
-        this.load.image('ship', 'assets/spaceship.png');
+
+        /* Ship assets */
+        for (const ship of this.shipTypes)
+            this.load.image(ship, `assets/ships/${ship}.png`);
+
+        /* Obstacles assets */
+        for (const obstacle of this.obstacleTypes)
+            this.load.image(obstacle, `assets/obstacles/${obstacle}.png`);
     }
 
     create() {
@@ -120,7 +136,7 @@ class LevelScene extends Phaser.Scene {
     /* Private functions */
 
     createShip(x, y) {
-        this.ship = this.physics.add.sprite(x, y, 'ship');
+        this.ship = this.physics.add.sprite(x, y, 'spaceship');
         const scale = this.params.shipSize / 100;
         const ship_box_height = 264;
 
@@ -139,6 +155,53 @@ class LevelScene extends Phaser.Scene {
 
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
+    }
+
+    createObstacle(type, x, y, scale) {
+        /* Create obstacle object */
+        var obj = this.physics.add.sprite(x, y, type);
+
+        /* Add to obstacle group */
+        this.obstacles.add(obj);
+        obj.depth = 1;
+
+        /* Set a scale */
+        const s = scale ? scale / 100 : 1;
+
+        if (scale)
+            obj.setScale(s);
+
+        /* FIXME: improve obstacle shape handling */
+        if (type === 'asteroid')
+            obj.setCircle(230, 28, 28);
+        else if (type === 'spinner') {
+            obj.setCircle(161, 94, 94);
+            obj.body.setAllowRotation(true);
+            const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
+            obj.body.setAngularVelocity(v * 128);
+        } else if (type === 'beam') {
+            obj.setSize(78, 334).setOffset(112, 86);
+            this.tweens.add({
+                targets: obj,
+                scaleY: s * 0.6,
+                duration: 600,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1,
+            });
+        } else if (type === 'squid') {
+            obj.setSize(390, 150).setOffset(26, 60);
+            this.tweens.add({
+                targets: obj,
+                scaleX: s * 0.7,
+                duration: 600,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1,
+            });
+        }
+
+        return obj;
     }
 
     updateScore() {
@@ -168,6 +231,8 @@ class LevelScene extends Phaser.Scene {
             tick: this.tick,
             width: this.cameras.main.width,
             height: this.cameras.main.height,
+            shipTypes: this.shipTypes,
+            obstacleTypes: this.obstacleTypes,
 
             random: (min, max) => Math.random() * (max - min) + min,
         };
@@ -208,23 +273,14 @@ class LevelScene extends Phaser.Scene {
             const x = retval.x || scope.width + scope.random(100, 400);
             const y = retval.y || scope.random(0, scope.height);
 
-            /* Create obstacle object */
-            var obj = this.physics.add.sprite(x, y, type);
+            /* Make sure type is a valid obstacle */
+            if (retval.type && this.obstacleTypes.indexOf(retval.type) >= 0)
+                type = retval.type;
 
-            /* Add to obstacle group */
-            this.obstacles.add(obj);
-            obj.depth = 1;
+            var obj = this.createObstacle(type, x, y, retval.scale);
 
             /* Increment global counter */
             globalParameters.obstacleSpawnedCount++;
-
-            /* FIXME: improve obstacle shape handling */
-            if (type === 'asteroid')
-                obj.setCircle(230, 28, 28);
-
-            /* Set a scale */
-            if (retval.scale)
-                obj.setScale(retval.scale / 100);
 
             /* FIXME: split group and obstacle velocity in order to easily
              * implement changing the ship speed.

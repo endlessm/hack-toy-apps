@@ -58,7 +58,7 @@ var defaultLevelParameters = {
         }
         return null;
     `,
-    updateEnemyCode: null,
+    updateObstacleCode: null,
     setParamsCode: null,
 };
 

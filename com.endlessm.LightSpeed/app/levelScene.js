@@ -241,8 +241,7 @@ class LevelScene extends Phaser.Scene {
     updateScore() {
         const level = `${globalParameters.currentLevel + 1}`.padStart(2, ' ');
         const score = `${globalParameters.score}`.padStart(2, ' ');
-
-        this.scoreText.setText(`Level: ${level} Rescued: ${score}`);
+        this.scoreText.setText(`Level: ${level.padStart(2, ' ')} Rescued: ${score.padStart(2, ' ')}`);
     }
 
     createScoreBox(text) {

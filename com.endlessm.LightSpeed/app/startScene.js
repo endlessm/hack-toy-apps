@@ -80,6 +80,7 @@ class StartScene extends Phaser.Scene {
 
         globalParameters.currentLevel = i;
         globalParameters.playing = true;
+        globalParameters.paused = false;
         this.scene.start('level', levelParameters[i]);
     }
 }

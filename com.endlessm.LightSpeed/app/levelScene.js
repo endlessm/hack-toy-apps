@@ -31,7 +31,7 @@ class LevelScene extends Phaser.Scene {
         this.params = data;
 
         this.setParams = getUserFunction(data.setParamsCode);
-        this.updateEnemy = getUserFunction(data.updateEnemyCode);
+        this.updateObstacle = getUserFunction(data.updateObstacleCode);
         this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
 
@@ -127,6 +127,7 @@ class LevelScene extends Phaser.Scene {
         /* Execute spawn functions */
         this.runSpawnObstacle();
         this.runSpawnAstronaut();
+        this.runUpdateObstacle();
     }
 
     /* Private functions */
@@ -268,6 +269,35 @@ class LevelScene extends Phaser.Scene {
             /* FIXME: improve colission shape */
             obj.body.setAllowRotation(true);
             obj.body.setAngularVelocity(Phaser.Math.RND.integerInRange(-90, 90));
+        }
+    }
+
+    runUpdateObstacle() {
+        if (!this.updateObstacle)
+            return;
+
+        var scope = this.getScope();
+
+        for (const obj of this.obstacles.getChildren()) {
+            var retval = null;
+
+            try {
+                scope.obstacle = {
+                    type: obj.texture.key,
+                    x: obj.x,
+                    y: obj.y
+                };
+                retval = this.updateObstacle(scope);
+            } catch (e) {
+                /* User function error! */
+            }
+
+            if (retval) {
+                if (retval.x !== undefined)
+                    obj.x = retval.x;
+                if (retval.y !== undefined)
+                    obj.y = retval.y;
+            }
         }
     }
 

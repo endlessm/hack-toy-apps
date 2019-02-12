@@ -38,7 +38,10 @@ var globalParameters = {
     success: false,
     playing: false,
     paused: false,
-    obstacleSpawnedCount: 0,
+    obstacleType0SpawnedCount: 0,
+    obstacleType1SpawnedCount: 0,
+    obstacleType2SpawnedCount: 0,
+    obstacleType3SpawnedCount: 0,
 
     /* Communication with Clubhouse */
     flipped: false,

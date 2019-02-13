@@ -31,11 +31,6 @@ class LevelScene extends Phaser.Scene {
     init(data) {
         this.params = data;
 
-        this.setParams = getUserFunction(data.setParamsCode);
-        this.updateObstacle = getUserFunction(data.updateObstacleCode);
-        this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
-        this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
-
         /* Reset Global game state */
         globalParameters.obstacleSpawnedCount = 0;
         globalParameters.success = false;
@@ -43,6 +38,18 @@ class LevelScene extends Phaser.Scene {
 
         /* Init scene variables */
         this.tick = 0;
+
+        /* Get user functions */
+        this.setParams = getUserFunction(data.setParamsCode);
+        this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
+        this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
+
+        /* We have one function for each obstacle type */
+        this.updateObstacle = {};
+        for (const o of obstacleTypes)
+            this.updateObstacle[o] = getUserFunction(
+                data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
+            );
     }
 
     preload() {
@@ -73,14 +80,28 @@ class LevelScene extends Phaser.Scene {
         this.createShip(256, centerY);
 
         /* Create objects groups */
-        this.obstacles = this.physics.add.group();
         this.astronauts = this.physics.add.group();
-
-        /* Detect collisions */
-        this.physics.add.overlap(this.ship, this.obstacles,
-            this.onShipObstacleOverlap, null, this);
         this.physics.add.overlap(this.ship, this.astronauts,
             this.onShipAstronautOverlap, null, this);
+
+        this.obstacles = {};
+        for (const o of obstacleTypes) {
+            this.obstacles[o] = this.physics.add.group();
+            this.physics.add.overlap(this.ship, this.obstacles[o],
+                this.onShipObstacleOverlap, null, this);
+        }
+
+        /* User coordinate transformation matrix
+         * It reflects on the X axis and translate by game height
+         *
+         * Use transformPoint() method to transform TO user space coordinates
+         * Use applyInverse() method to transform FROM user space coordinates
+         */
+        this.userSpace = new Phaser.GameObjects.Components.TransformMatrix(
+            1,  0,
+            0, -1,
+            0, game.config.height
+        );
 
         /* Score Box */
         this.createScoreBox('Level: 00 Rescued: 00');
@@ -191,12 +212,14 @@ class LevelScene extends Phaser.Scene {
         this.ship.depth = 100;
     }
 
-    createObstacle(type, x, y, scale) {
+    createObstacle(type, position, scale) {
         /* Create obstacle object */
-        var obj = this.physics.add.sprite(x, y, type);
+        var obj = this.physics.add.sprite(position.x, position.y, type);
 
         /* Add to obstacle group */
-        this.obstacles.add(obj);
+        this.obstacles[type].add(obj);
+
+        /* Set depth */
         obj.depth = 1;
 
         /* Set a scale */
@@ -303,24 +326,29 @@ class LevelScene extends Phaser.Scene {
         }
 
         if (retval) {
-            const type = retval.type || 'asteroid';
-            const x = retval.x || scope.width + scope.random(100, 400);
-            const y = retval.y || scope.random(0, scope.height);
+            var type = retval.type || 'asteroid';
+            var pos = this.userSpace.applyInverse(
+                retval.x || scope.width + scope.random(100, 400),
+                retval.y || scope.random(0, scope.height)
+            );
 
             /* Make sure type is a valid obstacle */
-            if (retval.type && this.obstacleTypes.indexOf(retval.type) >= 0)
+            if (retval.type && obstacleTypes.indexOf(retval.type) >= 0)
                 type = retval.type;
 
-            var obj = this.createObstacle(type, x, y, retval.scale);
+            var obj = this.createObstacle(type, pos, retval.scale);
 
             /* Increment global counter */
             globalParameters.obstacleSpawnedCount++;
 
-            /* FIXME: split group and obstacle velocity in order to easily
-             * implement changing the ship speed.
-             */
-            var speedFactor = 0.5 + Phaser.Math.RND.frac();
-            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
+            /* Set object velocity */
+            if (retval.velocity && retval.velocity.x)
+                obj.setVelocityX(-this.params.shipSpeed + retval.velocity.x);
+            else
+                obj.setVelocityX(-this.params.shipSpeed);
+
+            if (retval.velocity && retval.velocity.y)
+                obj.setVelocityY(-retval.velocity.y);
         }
     }
 
@@ -337,7 +365,8 @@ class LevelScene extends Phaser.Scene {
         }
 
         if (retval) {
-            var obj = this.physics.add.sprite(retval.x, retval.y, 'astronaut');
+            var pos = this.userSpace.applyInverse(retval.x, retval.y);
+            var obj = this.physics.add.sprite(pos.x, pos.y, 'astronaut');
             this.astronauts.add(obj);
             obj.depth = 1;
             obj.setVelocityX(-this.params.shipSpeed);
@@ -349,32 +378,55 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    runUpdateObstacle() {
-        if (!this.updateObstacle)
-            return;
+    callUpdateObstacle(updateObstacle, scope, obj) {
+        const vx = obj.body.velocity.x + this.params.shipSpeed;
+        const vy = -obj.body.velocity.y;
 
+        var obstacle = {
+            position: this.userSpace.transformPoint(obj.x, obj.y),
+            velocity: {x: vx, y: vy},
+        };
+
+        try {
+            scope.obstacle = obstacle;
+            updateObstacle(scope);
+        } catch (e) {
+            /* User function error! */
+        }
+
+        /* Transform back from user space coordinates */
+        const position = this.userSpace.applyInverse(obstacle.position.x,
+            obstacle.position.y);
+
+        /* Update position */
+        if (obj.x !== position.x)
+            obj.x = position.x;
+
+        if (obj.y !== position.y)
+            obj.y = position.y;
+
+        /* Update velocity */
+        if (vx !== obstacle.velocity.x)
+            obj.setVelocityX(-this.params.shipSpeed + obstacle.velocity.x);
+        if (vy !== obstacle.velocity.y)
+            obj.setVelocityY(-obstacle.velocity.y);
+    }
+
+    runUpdateObstacle() {
+        const height = game.config.height;
         var scope = this.getScope();
 
-        for (const obj of this.obstacles.getChildren()) {
-            var retval = null;
+        /* Iterate over obstacle types */
+        for (const o of obstacleTypes) {
+            const updateObstacle = this.updateObstacle[o];
 
-            try {
-                scope.obstacle = {
-                    type: obj.texture.key,
-                    x: obj.x,
-                    y: obj.y
-                };
-                retval = this.updateObstacle(scope);
-            } catch (e) {
-                /* User function error! */
-            }
+            if (!updateObstacle)
+                continue;
 
-            if (retval) {
-                if (retval.x !== undefined)
-                    obj.x = retval.x;
-                if (retval.y !== undefined)
-                    obj.y = retval.y;
-            }
+            /* Iterate over obstacles */
+            const children = this.obstacles[o].getChildren();
+            for (const obj of children)
+                this.callUpdateObstacle(updateObstacle, scope, obj);
         }
     }
 

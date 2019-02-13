@@ -60,12 +60,21 @@ var defaultLevelParameters = {
             return {
                 x: width + random(100, 400),
                 y: random(0, height),
-                scale: random(20, 60)
+                scale: random(20, 60),
+                type: obstacleTypes[Math.trunc(random(0, obstacleTypes.length-1))]
             };
         }
         return null;
     `,
-    updateObstacleCode: ` return null;`,
+
+    updateAsteroidCode: `
+        obstacle.position.y -= 2;
+    `,
+    updateSpinnerCode:  `
+        obstacle.position.y += 2;
+    `,
+    updateBeamCode: null,
+    updateSquidCode: null,
     setParamsCode: null,
 };
 

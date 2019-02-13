@@ -31,11 +31,6 @@ class LevelScene extends Phaser.Scene {
     init(data) {
         this.params = data;
 
-        this.setParams = getUserFunction(data.setParamsCode);
-        this.updateObstacle = getUserFunction(data.updateObstacleCode);
-        this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
-        this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
-
         /* Reset Global game state */
         globalParameters.obstacleType0SpawnedCount = 0;
         globalParameters.obstacleType1SpawnedCount = 0;
@@ -60,6 +55,18 @@ class LevelScene extends Phaser.Scene {
         
         // Internal variables for checking quest state
         this.firstType1Object = null;
+
+        /* Get user functions */
+        this.setParams = getUserFunction(data.setParamsCode);
+        this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
+        this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
+
+        /* We have one function for each obstacle type */
+        this.updateObstacle = {};
+        for (const o of this.obstacleTypes)
+            this.updateObstacle[o] = getUserFunction(
+                data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
+            );
     }
 
     preload() {
@@ -359,11 +366,14 @@ class LevelScene extends Phaser.Scene {
             default: break;
             }
 
-            /* FIXME: split group and obstacle velocity in order to easily
-             * implement changing the ship speed.
-             */
-            var speedFactor = 0.5 + Phaser.Math.RND.frac();
-            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
+            /* Set object velocity */
+            if (retval.velocity && retval.velocity.x)
+                obj.setVelocityX(-this.params.shipSpeed + retval.velocity.x);
+            else
+                obj.setVelocityX(-this.params.shipSpeed);
+
+            if (retval.velocity && retval.velocity.y)
+                obj.setVelocityY(retval.velocity.y);
         }
     }
 
@@ -396,28 +406,44 @@ class LevelScene extends Phaser.Scene {
         if (!this.updateObstacle)
             return;
 
+        const height = game.config.height;
         var scope = this.getScope();
 
         for (const obj of this.obstacles.getChildren()) {
-            var retval = null;
+            const updateObstacle = this.updateObstacle[obj.texture.key];
+
+            if (!updateObstacle)
+                continue;
+
+            const x = obj.x;
+            const y = height - obj.y;
+            const vx = obj.body.velocity.x + this.params.shipSpeed;
+            const vy = obj.body.velocity.y * -1;
+
+            var obstacle = {
+                position: {x: x, y: y},
+                velocity: {x: vx, y: vy},
+            };
 
             try {
-                scope.obstacle = {
-                    type: obj.texture.key,
-                    x: obj.x,
-                    y: obj.y
-                };
-                retval = this.updateObstacle(scope);
+                scope.obstacle = obstacle;
+                updateObstacle(scope);
             } catch (e) {
                 /* User function error! */
             }
 
-            if (retval) {
-                if (retval.x !== undefined)
-                    obj.x = retval.x;
-                if (retval.y !== undefined)
-                    obj.y = retval.y;
-            }
+            /* Update position */
+            if (x !== obstacle.position.x)
+                obj.x = obstacle.position.x;
+
+            if (y !== obstacle.position.y)
+                obj.y = height - obstacle.position.y;
+
+            /* Update velocity */
+            if (vx !== obstacle.velocity.x)
+                obj.setVelocityX(-this.params.shipSpeed + obstacle.velocity.x);
+            if (vy !== obstacle.velocity.y)
+                obj.setVelocityY(obstacle.velocity.y * -1);
         }
     }
 

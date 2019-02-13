@@ -23,13 +23,7 @@ class PauseScene extends Phaser.Scene {
         this.input.keyboard.on('keyup_SPACE', this.unpause.bind(this));
     }
 
-    update() {
-        if (!globalParameters.paused)
-            this.unpause();
-    }
-
     unpause() {
-        this.scene.get('level').scene.resume();
         globalParameters.paused = false;
         this.scene.stop();
     }

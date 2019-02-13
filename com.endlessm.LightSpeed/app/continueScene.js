@@ -60,6 +60,7 @@ class ContinueScene extends Phaser.Scene {
     nextLevel() {
         globalParameters.currentLevel++;
         globalParameters.playing = true;
+        globalParameters.paused = false;
         this.scene.start('level', levelParameters[globalParameters.currentLevel]);
     }
 }

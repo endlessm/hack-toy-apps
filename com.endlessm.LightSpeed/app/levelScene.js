@@ -116,8 +116,17 @@ class LevelScene extends Phaser.Scene {
 
         /* Pause scene if param changed */
         if (globalParameters.paused) {
-            this.scene.launch('pause');
-            this.scene.pause();
+            /* Pause the physics engine instead of the scene to keep sprites
+             * updates working
+             */
+            if (!this.physics.world.isPaused) {
+                this.scene.launch('pause');
+                this.physics.pause();
+            }
+            return;
+        } else if (this.physics.world.isPaused) {
+            this.scene.stop('pause');
+            this.physics.resume();
         }
 
         /* Input */

@@ -110,5 +110,6 @@ window.flip = function() {
     globalParameters.flipped = !globalParameters.flipped;
 
     /* Pause game automatically when flipped */
-    globalParameters.paused = globalParameters.flipped;
+    if (globalParameters.flipped)
+        globalParameters.paused = true;
 };

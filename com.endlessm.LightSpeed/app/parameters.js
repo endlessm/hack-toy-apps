@@ -61,18 +61,14 @@ var defaultLevelParameters = {
                 x: width + random(100, 400),
                 y: random(0, height),
                 scale: random(20, 60),
-                type: obstacleTypes[Math.trunc(random(0, obstacleTypes.length-1))]
+                type: 'asteroid'
             };
         }
         return null;
     `,
 
-    updateAsteroidCode: `
-        obstacle.position.y -= 2;
-    `,
-    updateSpinnerCode:  `
-        obstacle.position.y += 2;
-    `,
+    updateAsteroidCode: ``,
+    updateSpinnerCode:  ``,
     updateBeamCode: null,
     updateSquidCode: null,
     setParamsCode: null,

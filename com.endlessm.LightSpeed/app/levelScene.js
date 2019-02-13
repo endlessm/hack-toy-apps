@@ -187,8 +187,9 @@ class LevelScene extends Phaser.Scene {
         }
         else
         {
-            globalParameters.obstacleType1MinY = Math.min(this.firstType1Object.y, globalParameters.obstacleType1MinY);
-            globalParameters.obstacleType1MaxY = Math.max(this.firstType1Object.y, globalParameters.obstacleType1MaxY);
+            var y = game.config.height - this.firstType1Object.y;
+            globalParameters.obstacleType1MinY = Math.min(y, globalParameters.obstacleType1MinY);
+            globalParameters.obstacleType1MaxY = Math.max(y, globalParameters.obstacleType1MaxY);
         }
     }
 

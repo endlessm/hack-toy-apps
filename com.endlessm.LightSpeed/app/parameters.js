@@ -38,14 +38,18 @@ var globalParameters = {
     success: false,
     playing: false,
     paused: false,
-    obstacleType0SpawnedCount: 0,
-    obstacleType1SpawnedCount: 0,
-    obstacleType2SpawnedCount: 0,
-    obstacleType3SpawnedCount: 0,
 
     /* Communication with Clubhouse */
     flipped: false,
 };
+
+/* We need a counter for each obstacle types
+ * FIXME: can we add support for arrays in clippy!
+ */
+(function() {
+    for (var i = 0, n = obstacleTypes.length; i < n; i++)
+        globalParameters[`obstacleType${i}SpawnedCount`] = 0;
+}());
 
 /* Level defaults values */
 var defaultParameters = {

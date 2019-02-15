@@ -32,12 +32,12 @@ class LevelScene extends Phaser.Scene {
         this.params = data;
 
         /* Reset Global game state */
-        globalParameters.obstacleType0SpawnedCount = 0;
-        globalParameters.obstacleType1SpawnedCount = 0;
-        globalParameters.obstacleType2SpawnedCount = 0;
-        globalParameters.obstacleType3SpawnedCount = 0;
         globalParameters.success = false;
         globalParameters.score = 0;
+
+        /* Reset obstacle counters */
+        for (var i = 0, n = obstacleTypes.length; i < n; i++)
+            globalParameters[`obstacleType${i}SpawnedCount`] = 0;
 
         /* Init scene variables */
         this.tick = 0;
@@ -375,14 +375,7 @@ class LevelScene extends Phaser.Scene {
             var obj = this.createObstacle(type, pos, retval.scale);
 
             /* Increment global counter */
-            switch (obstacleTypeIndex)
-            {
-            case 0: globalParameters.obstacleType0SpawnedCount++; break;
-            case 1: globalParameters.obstacleType1SpawnedCount++; break;
-            case 2: globalParameters.obstacleType2SpawnedCount++; break;
-            case 3: globalParameters.obstacleType3SpawnedCount++; break;
-            default: break;
-            }
+            globalParameters[`obstacleType${obstacleTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */
             if (retval.velocity && retval.velocity.x)

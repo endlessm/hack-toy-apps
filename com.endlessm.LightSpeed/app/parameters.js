@@ -71,6 +71,7 @@ var defaultParameters = {
     spawnObstacleCode: `
         if (tick%40 === 0) {
             return {
+                type: 'asteroid',
                 x: width + random(100, 400),
                 y: random(0, height),
                 scale: random(20, 60)
@@ -112,6 +113,7 @@ var defaultLevelParameters = [
         spawnObstacleCode: `
             if (tick%40 === 0) {
                 return {
+                    type: 'asteroid',
                     x: width + random(200, 500),
                     y: random(0, height),
                     scale: 150

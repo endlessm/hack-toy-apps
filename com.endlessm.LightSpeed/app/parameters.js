@@ -13,7 +13,7 @@
  */
 var globalParameters = {
     availableLevels: 2,
-    currentLevel: 0,
+    currentLevel: 1,
 
     /* Level specific parameters */
     score: 0,
@@ -26,6 +26,7 @@ var globalParameters = {
     flipped: false,
 };
 
+/* Level defaults values */
 var defaultParameters = {
     description: 'Rescue Astronauts\nAvoid asteroids',
 
@@ -63,7 +64,14 @@ var defaultParameters = {
     setParamsCode: null,
 };
 
+/* Per Level defaults:
+ * This parameters will override the ones defined in defaultParameters
+ */
 var defaultLevelParameters = [
+    /* Title screen - Level 0 */
+    {
+    },
+
     /* Level 1 */
     {
     },
@@ -94,4 +102,6 @@ var defaultLevelParameters = [
     },
 ];
 
+/* This array has references to globalLevel#Parameters for easy access */
 var levelParameters = [];
+

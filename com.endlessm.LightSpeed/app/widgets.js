@@ -43,14 +43,14 @@ class LevelChooser extends Phaser.GameObjects.Container {
     }
 
     updateLevel(increment) {
-        const maxLevel = globalParameters.availableLevels - 1;
+        const maxLevel = globalParameters.availableLevels;
         var currentLevel = this.currentLevel + increment;
 
         currentLevel = Math.min(Math.max(currentLevel, 0), maxLevel);
 
         /* Update level text */
-        this._level.setText(`Level ${currentLevel + 1}`, fontConfig);
-        this._prev.sensitive = currentLevel > 0;
+        this._level.setText(`Level ${currentLevel}`, fontConfig);
+        this._prev.sensitive = currentLevel > 1;
         this._next.sensitive = currentLevel < maxLevel;
 
         if (this.currentLevel !== currentLevel) {

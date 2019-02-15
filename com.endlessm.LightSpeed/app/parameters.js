@@ -91,10 +91,9 @@ var levelParameters = [
                 return {
                     x: width + random(200, 500),
                     y: random(0, height),
-                    scale: 120
+                    scale: 150
                 };
             }
-
             return null;
         `,
     },
@@ -106,6 +105,12 @@ var levelParameters = [
 
     /* Level 5 */
     {
+        spawnObstacleCode: `
+            if (tick%40 === 0) {
+                return null;
+            }
+            return null;
+        `,
     },
 
     /* Level 6 */

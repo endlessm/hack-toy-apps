@@ -5,8 +5,26 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported globalParameters, defaultLevelParameters, levelParametersOverride,
-    levelParameters */
+/* exported obstacleTypes, shipTypes, globalParameters, defaultParameters,
+    defaultLevelParameters, levelParameters */
+
+/* Global constants */
+var shipTypes = [
+    'spaceship',
+    'daemon',
+    'unicorn',
+];
+
+var obstacleTypes = [
+    'asteroid',
+    'spinner',
+    'beam',
+    'squid',
+];
+
+/* Freeze constants */
+Object.freeze(shipTypes);
+Object.freeze(obstacleTypes);
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -60,9 +78,17 @@ var defaultParameters = {
         }
         return null;
     `,
-    updateObstacleCode: null,
+
     setParamsCode: null,
 };
+
+/* You can define an update function for each obstacle types */
+(function() {
+    for (const o of obstacleTypes) {
+        const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
+        defaultParameters[func] = null;
+    }
+}());
 
 /* Per Level defaults:
  * This parameters will override the ones defined in defaultParameters
@@ -101,6 +127,10 @@ var defaultLevelParameters = [
         spawnObstacleCode: null,
     },
 ];
+
+/* Freeze default parameters */
+Object.freeze(defaultParameters);
+Object.freeze(defaultLevelParameters);
 
 /* This array has references to globalLevel#Parameters for easy access */
 var levelParameters = [];

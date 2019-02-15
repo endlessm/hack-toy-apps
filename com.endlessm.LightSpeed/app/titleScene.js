@@ -6,6 +6,7 @@
  */
 
 /* exported TitleScene */
+/* global shipTypes */
 
 const kcode = [38, 38, 40, 40, 37, 39, 37, 39, 65, 66];
 
@@ -21,7 +22,10 @@ class TitleScene extends Phaser.Scene {
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
         this.load.image('tch', 'assets/tch.png');
-        this.load.image('ship', 'assets/ships/spaceship.png');
+
+        /* Ship assets */
+        for (const ship of shipTypes)
+            this.load.image(ship, `assets/ships/${ship}.png`);
     }
 
     create() {
@@ -48,7 +52,7 @@ class TitleScene extends Phaser.Scene {
 
         /* Ship */
         this.ship = this.physics.add.image(-500,
-            Phaser.Math.RND.integerInRange(0, centerY * 2), 'ship');
+            Phaser.Math.RND.integerInRange(0, centerY * 2), 'spaceship');
         this.ship.setVelocityX(Phaser.Math.RND.integerInRange(32, 256));
         this.ship.setScale(0.5);
 

@@ -24,7 +24,7 @@ class ContinueScene extends Phaser.Scene {
         const spacing = 32;
 
         var confetti = this.add.sprite(0, 0, 'confetti-full').setOrigin(0, 0);
-        var ship = this.add.image(0, 0, 'ship').setOrigin(0.5, 0.5);
+        var ship = this.add.image(0, 0, 'spaceship').setOrigin(0.5, 0.5);
         var levelText = this.add.text(0, 0, message, fontConfig).setOrigin(0.5, 0.5);
         var continueButton = new Utils.Button(this, 'button', 'CONTINUE');
 

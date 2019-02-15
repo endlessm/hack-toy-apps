@@ -33,7 +33,7 @@ var defaultLevelParameters = {
 
     astronautSize: 30,
 
-    shipAsset: 'ship',
+    shipAsset: 'spaceship',
     shipSpeed: 500,
     shipSize: 50,
     shipAcceleration: 500,

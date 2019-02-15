@@ -50,6 +50,9 @@ class LevelScene extends Phaser.Scene {
             this.updateObstacle[o] = getUserFunction(
                 data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
             );
+
+        /* Let user initialize the level parameters */
+        this.runSetParams();
     }
 
     preload() {
@@ -281,13 +284,10 @@ class LevelScene extends Phaser.Scene {
     }
 
     getScope() {
-        const i = globalParameters.currentLevel;
         return {
-            level: i,
-            config: levelParameters[i],
             tick: this.tick,
-            width: this.cameras.main.width,
-            height: this.cameras.main.height,
+            width: game.config.width,
+            height: game.config.height,
             shipTypes,
             obstacleTypes,
 
@@ -309,6 +309,21 @@ class LevelScene extends Phaser.Scene {
                     `Level ${globalParameters.currentLevel + 1} Complete!`);
                 this.scene.pause();
             }
+        }
+    }
+
+    runSetParams() {
+        if (!this.setParams)
+            return;
+
+        var scope = this.getScope();
+
+        try {
+            scope.level = globalParameters.currentLevel;
+            scope.config = this.params;
+            this.setParams(scope);
+        } catch (e) {
+            /* User function error! */
         }
     }
 

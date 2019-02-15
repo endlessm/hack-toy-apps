@@ -58,10 +58,10 @@ var defaultLevelParameters = {
     spawnObstacleCode: `
         if (tick%40 === 0) {
             return {
+                type: 'asteroid',
                 x: width + random(100, 400),
                 y: random(0, height),
-                scale: random(20, 60),
-                type: 'asteroid'
+                scale: random(20, 60)
             };
         }
         return null;
@@ -69,8 +69,8 @@ var defaultLevelParameters = {
 
     updateAsteroidCode: ``,
     updateSpinnerCode:  ``,
-    updateBeamCode: null,
-    updateSquidCode: null,
+    updateBeamCode: ``,
+    updateSquidCode: ``,
     setParamsCode: null,
 };
 
@@ -89,6 +89,7 @@ var levelParameters = [
         spawnObstacleCode: `
             if (tick%40 === 0) {
                 return {
+                    type: 'asteroid',
                     x: width + random(200, 500),
                     y: random(0, height),
                     scale: 150

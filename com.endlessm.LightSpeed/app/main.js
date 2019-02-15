@@ -56,6 +56,8 @@ var game = new Phaser.Game(config);
 /* Global constants */
 var shipTypes = [
     'spaceship',
+    'daemon',
+    'unicorn',
 ];
 var obstacleTypes = [
     'asteroid',

@@ -165,6 +165,19 @@ class LevelScene extends Phaser.Scene {
         /* Update variables */
         this.tick++;
 
+        /* Update any graphics that might have been changed by the toolbox */
+        if (this.ship.key !== this.params.shipAsset) {
+            this.ship.setTexture(this.params.shipAsset);
+            this._setShipCollisionBox();
+        }
+        this.ship.setScale(this.params.shipSize / 100);
+        this.astronauts.getChildren().forEach(astronaut => {
+            astronaut.setScale(this.params.astronautSize / 100);
+        });
+
+        /* Check target score and time limit in case they were hacked */
+        this.checkLevelDone();
+
         /* Execute spawn functions */
         this.runSpawnObstacle();
         this.runSpawnAstronaut();
@@ -173,7 +186,7 @@ class LevelScene extends Phaser.Scene {
 
     /* Private functions */
 
-    _setShipCollisionBox(shipAsset) {
+    _setShipCollisionBox() {
         /* Make collision box smaller so that asteroids don't collide on the
          * outer corners of the box where no ship is */
         const scale = this.params.shipSize / 100;
@@ -181,7 +194,7 @@ class LevelScene extends Phaser.Scene {
 
         let ship_box_height;
 
-        switch (shipAsset) {
+        switch (this.params.shipAsset) {
         case 'spaceship':
             ship_box_height = 264;
             this.ship.setSize(326, ship_box_height).setOffset(132, 64);
@@ -195,7 +208,7 @@ class LevelScene extends Phaser.Scene {
             this.ship.setSize(300, ship_box_height).setOffset(200, 128);
             break;
         default:
-            console.error(`unexpected ship type ${shipAsset}`);
+            console.error(`unexpected ship type ${this.params.shipAsset}`);
             ship_box_height = 100;
         }
 
@@ -209,8 +222,8 @@ class LevelScene extends Phaser.Scene {
     }
 
     createShip(x, y) {
-        this.ship = this.physics.add.sprite(x, y, 'spaceship');
-        this._setShipCollisionBox('spaceship');
+        this.ship = this.physics.add.sprite(x, y, this.params.shipAsset);
+        this._setShipCollisionBox();
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
     }

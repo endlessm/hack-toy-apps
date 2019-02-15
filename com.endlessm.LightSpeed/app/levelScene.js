@@ -149,15 +149,31 @@ class LevelScene extends Phaser.Scene {
 
     /* Private functions */
 
-    createShip(x, y) {
-        this.ship = this.physics.add.sprite(x, y, 'spaceship');
+    _setShipCollisionBox(shipAsset) {
+        /* Make collision box smaller so that asteroids don't collide on the
+         * outer corners of the box where no ship is */
         const scale = this.params.shipSize / 100;
-        const ship_box_height = 264;
-
         this.ship.setScale(scale);
 
-        /* Make colission box smaller */
-        this.ship.setSize(326, ship_box_height).setOffset(132, 64);
+        let ship_box_height;
+
+        switch (shipAsset) {
+        case 'spaceship':
+            ship_box_height = 264;
+            this.ship.setSize(326, ship_box_height).setOffset(132, 64);
+            break;
+        case 'daemon':
+            ship_box_height = 512;
+            this.ship.setCircle(256, 0, 0);
+            break;
+        case 'unicorn':
+            ship_box_height = 256;
+            this.ship.setSize(300, ship_box_height).setOffset(200, 128);
+            break;
+        default:
+            console.error(`unexpected ship type ${shipAsset}`);
+            ship_box_height = 100;
+        }
 
         /* Update world bounds to allow half the ship to be outside */
         this.physics.world.setBounds(
@@ -166,7 +182,11 @@ class LevelScene extends Phaser.Scene {
             game.config.width,
             game.config.height + ship_box_height * scale
         );
+    }
 
+    createShip(x, y) {
+        this.ship = this.physics.add.sprite(x, y, 'spaceship');
+        this._setShipCollisionBox('spaceship');
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
     }

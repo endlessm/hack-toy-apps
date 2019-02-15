@@ -6,8 +6,10 @@
  */
 
 /* exported fontConfig, game, obstacleTypes, shipTypes */
-/* global ContinueScene, GameOverScene, LevelScene, OverlayScene, StartScene,
-    TitleScene */
+
+/* global globalParameters, defaultLevelParameters, levelParametersOverride,
+    levelParameters, TitleScene, LevelScene, StartScene, GameOverScene,
+    PauseScene, ContinueScene, DebugScene */
 
 const fontConfig = {
     color: 'white',
@@ -47,8 +49,23 @@ var config = {
         new PauseScene('pause'),
         new ContinueScene('continue'),
         new DebugScene({key: 'debug', active: true}),
-    ]
+    ],
 };
+
+/* Export one global parameter object for each level */
+(function() {
+    for (var i = 0, n = defaultLevelParameters.length; i < n; i++) {
+        /* Dup default object */
+        var defaults = Object.assign({}, defaultParameters);
+
+        var params = Object.assign(defaults, defaultLevelParameters[i]);
+
+        levelParameters.push(params);
+
+        /* Merge defaults with level parameters */
+        window[`globalLevel${i}Parameters`] = params;
+    }
+}());
 
 /* Bootstrap game */
 var game = new Phaser.Game(config);
@@ -65,3 +82,23 @@ var obstacleTypes = [
     'beam',
     'squid',
 ];
+
+/* External API */
+
+window.flip = function() {
+    globalParameters.flipped = !globalParameters.flipped;
+
+    /* Pause game automatically when flipped */
+    if (globalParameters.flipped)
+        globalParameters.paused = true;
+};
+
+window.reset = function() {
+    const i = globalParameters.currentLevel;
+
+    if (i < 0 || i > levelParameters.length)
+        return;
+
+     Object.assign(window[`globalLevel${i}Parameters`], levelParameters[i]);
+};
+

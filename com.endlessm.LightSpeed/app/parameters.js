@@ -5,7 +5,8 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported globalParameters */
+/* exported globalParameters, defaultLevelParameters, levelParametersOverride,
+    levelParameters */
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -25,7 +26,7 @@ var globalParameters = {
     flipped: false,
 };
 
-var defaultLevelParameters = {
+var defaultParameters = {
     description: 'Rescue Astronauts\nAvoid asteroids',
 
     scoreTarget: 5,
@@ -62,7 +63,7 @@ var defaultLevelParameters = {
     setParamsCode: null,
 };
 
-var levelParameters = [
+var defaultLevelParameters = [
     /* Level 1 */
     {
     },
@@ -93,23 +94,4 @@ var levelParameters = [
     },
 ];
 
-var nLevels = levelParameters.length;
-
-for (var i = 0; i < nLevels; i++) {
-    /* Dup default object */
-    var defaults = Object.assign({}, defaultLevelParameters);
-
-    /* Merge with level params */
-    levelParameters[i] = Object.assign(defaults, levelParameters[i]);
-
-    /* Export every level params as a diferent object */
-    window[`globalLevel${i}Parameters`] = levelParameters[i];
-}
-
-window.flip = function() {
-    globalParameters.flipped = !globalParameters.flipped;
-
-    /* Pause game automatically when flipped */
-    if (globalParameters.flipped)
-        globalParameters.paused = true;
-};
+var levelParameters = [];

@@ -6,6 +6,7 @@
  */
 
 /* exported LevelScene */
+/* global obstacleTypes, shipTypes */
 
 function getUserFunction(code) {
     if (!code)
@@ -42,15 +43,6 @@ class LevelScene extends Phaser.Scene {
 
         /* Init scene variables */
         this.tick = 0;
-        this.shipTypes = [
-            'spaceship',
-        ];
-        this.obstacleTypes = [
-            'asteroid',
-            'spinner',
-            'beam',
-            'squid',
-        ];
     }
 
     preload() {
@@ -60,11 +52,11 @@ class LevelScene extends Phaser.Scene {
         this.load.image('astronaut', 'assets/astronaut.png');
 
         /* Ship assets */
-        for (const ship of this.shipTypes)
+        for (const ship of shipTypes)
             this.load.image(ship, `assets/ships/${ship}.png`);
 
         /* Obstacles assets */
-        for (const obstacle of this.obstacleTypes)
+        for (const obstacle of obstacleTypes)
             this.load.image(obstacle, `assets/obstacles/${obstacle}.png`);
     }
 
@@ -253,8 +245,8 @@ class LevelScene extends Phaser.Scene {
             tick: this.tick,
             width: this.cameras.main.width,
             height: this.cameras.main.height,
-            shipTypes: this.shipTypes,
-            obstacleTypes: this.obstacleTypes,
+            shipTypes,
+            obstacleTypes,
 
             random: (min, max) => Math.random() * (max - min) + min,
         };

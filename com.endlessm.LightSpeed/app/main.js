@@ -5,7 +5,7 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported fontConfig, game */
+/* exported fontConfig, game, obstacleTypes, shipTypes */
 /* global ContinueScene, GameOverScene, LevelScene, OverlayScene, StartScene,
     TitleScene */
 
@@ -53,3 +53,13 @@ var config = {
 /* Bootstrap game */
 var game = new Phaser.Game(config);
 
+/* Global constants */
+var shipTypes = [
+    'spaceship',
+];
+var obstacleTypes = [
+    'asteroid',
+    'spinner',
+    'beam',
+    'squid',
+];

@@ -46,10 +46,11 @@ class LevelScene extends Phaser.Scene {
 
         /* We have one function for each obstacle type */
         this.updateObstacle = {};
-        for (const o of obstacleTypes)
+        for (const o of obstacleTypes) {
             this.updateObstacle[o] = getUserFunction(
                 data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
             );
+        }
 
         /* Let user initialize the level parameters */
         this.runSetParams();
@@ -101,7 +102,7 @@ class LevelScene extends Phaser.Scene {
          * Use applyInverse() method to transform FROM user space coordinates
          */
         this.userSpace = new Phaser.GameObjects.Components.TransformMatrix(
-            1,  0,
+            1, 0,
             0, -1,
             0, game.config.height
         );
@@ -208,6 +209,9 @@ class LevelScene extends Phaser.Scene {
             this.ship.setSize(300, ship_box_height).setOffset(200, 128);
             break;
         default:
+            // FIXME add a "missing image" asset, TBD however we decide to
+            // indicate a runtime error in code
+            // eslint-disable-next-line no-console
             console.error(`unexpected ship type ${this.params.shipAsset}`);
             ship_box_height = 100;
         }
@@ -245,9 +249,9 @@ class LevelScene extends Phaser.Scene {
             obj.setScale(s);
 
         /* FIXME: improve obstacle shape handling */
-        if (type === 'asteroid')
+        if (type === 'asteroid') {
             obj.setCircle(230, 28, 28);
-        else if (type === 'spinner') {
+        } else if (type === 'spinner') {
             obj.setCircle(161, 94, 94);
             obj.body.setAllowRotation(true);
             const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
@@ -441,7 +445,6 @@ class LevelScene extends Phaser.Scene {
     }
 
     runUpdateObstacle() {
-        const height = game.config.height;
         var scope = this.getScope();
 
         /* Iterate over obstacle types */

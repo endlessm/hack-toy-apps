@@ -7,9 +7,9 @@
 
 /* exported fontConfig, game */
 
-/* global globalParameters, defaultLevelParameters, levelParametersOverride,
-    levelParameters, TitleScene, LevelScene, StartScene, GameOverScene,
-    PauseScene, ContinueScene, DebugScene */
+/* global globalParameters, defaultLevelParameters, defaultParameters,
+    levelParameters, ContinueScene, DebugScene, GameOverScene, LevelScene,
+    PauseScene, StartScene, TitleScene */
 
 const fontConfig = {
     color: 'white',
@@ -86,6 +86,6 @@ window.reset = function() {
     if (i < 0 || i > levelParameters.length)
         return;
 
-     Object.assign(window[`globalLevel${i}Parameters`], levelParameters[i]);
+    Object.assign(window[`globalLevel${i}Parameters`], levelParameters[i]);
 };
 

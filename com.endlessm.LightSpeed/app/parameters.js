@@ -89,7 +89,6 @@ var defaultParameters = {
         }
         return null;
     `,
-    updateObstacleCode: 'return null;',
     setParamsCode: null,
 };
 

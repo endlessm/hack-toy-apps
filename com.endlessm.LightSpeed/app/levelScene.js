@@ -194,21 +194,18 @@ class LevelScene extends Phaser.Scene {
     }
 
     /* Private functions */
-    
-    
+
     updateQuestData() {
-        // Track the first type 1 object
-        if (this.firstType1Object == null) {
-            for (const obj of this.obstacles.getChildren()) {
-                if (obj.texture.key == 'spinner') {
-                    this.firstType1Object = obj;
-                }
-            }
-        }
-        else
-        {
-            globalParameters.obstacleType1MinY = Math.min(this.firstType1Object.y, globalParameters.obstacleType1MinY);
-            globalParameters.obstacleType1MaxY = Math.max(this.firstType1Object.y, globalParameters.obstacleType1MaxY);
+        var obj = this.firstType1Object;
+
+        if (obj) {
+            var {y} = this.userSpace.transformPoint(0, obj.y);
+
+            globalParameters.obstacleType1MinY =
+                Math.min(y, globalParameters.obstacleType1MinY);
+
+            globalParameters.obstacleType1MaxY =
+                Math.max(y, globalParameters.obstacleType1MaxY);
         }
     }
 
@@ -281,6 +278,11 @@ class LevelScene extends Phaser.Scene {
             obj.body.setAllowRotation(true);
             const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
             obj.body.setAngularVelocity(v * 128);
+
+            /* FIXME: find a better place/way to do this */
+            /* Track the first type 1 object */
+            if (!this.firstType1Object)
+                this.firstType1Object = obj;
         } else if (type === 'beam') {
             obj.setSize(78, 334).setOffset(112, 86);
             this.tweens.add({

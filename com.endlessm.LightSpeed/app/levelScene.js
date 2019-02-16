@@ -361,8 +361,8 @@ class LevelScene extends Phaser.Scene {
             );
 
             /* Make sure type is a valid obstacle */
-            if (retval.type && obstacleTypes.indexOf(retval.type) >= 0)
-                type = retval.type;
+            if (!obstacleTypes.includes(type))
+                type = 'asteroid';
 
             var obj = this.createObstacle(type, pos, retval.scale);
 

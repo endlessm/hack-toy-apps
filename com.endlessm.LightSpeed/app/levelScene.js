@@ -32,9 +32,15 @@ class LevelScene extends Phaser.Scene {
         this.params = data;
 
         /* Reset Global game state */
-        globalParameters.obstacleSpawnedCount = 0;
         globalParameters.success = false;
         globalParameters.score = 0;
+
+        /* Reset obstacle counters */
+        for (var i = 0, n = obstacleTypes.length; i < n; i++)
+            globalParameters[`obstacleType${i}SpawnedCount`] = 0;
+
+        globalParameters.obstacleType1MinY = +1000;
+        globalParameters.obstacleType1MaxY = -1000;
 
         /* Init scene variables */
         this.tick = 0;
@@ -183,9 +189,25 @@ class LevelScene extends Phaser.Scene {
         this.runSpawnObstacle();
         this.runSpawnAstronaut();
         this.runUpdateObstacle();
+
+        this.updateQuestData();
     }
 
     /* Private functions */
+
+    updateQuestData() {
+        var obj = this.firstType1Object;
+
+        if (obj) {
+            var {y} = this.userSpace.transformPoint(0, obj.y);
+
+            globalParameters.obstacleType1MinY =
+                Math.min(y, globalParameters.obstacleType1MinY);
+
+            globalParameters.obstacleType1MaxY =
+                Math.max(y, globalParameters.obstacleType1MaxY);
+        }
+    }
 
     _setShipCollisionBox() {
         /* Make collision box smaller so that asteroids don't collide on the
@@ -256,6 +278,11 @@ class LevelScene extends Phaser.Scene {
             obj.body.setAllowRotation(true);
             const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
             obj.body.setAngularVelocity(v * 128);
+
+            /* FIXME: find a better place/way to do this */
+            /* Track the first type 1 object */
+            if (!this.firstType1Object)
+                this.firstType1Object = obj;
         } else if (type === 'beam') {
             obj.setSize(78, 334).setOffset(112, 86);
             this.tweens.add({
@@ -367,11 +394,12 @@ class LevelScene extends Phaser.Scene {
             /* Make sure type is a valid obstacle */
             if (!obstacleTypes.includes(type))
                 type = 'asteroid';
+            var obstacleTypeIndex = obstacleTypes.indexOf(retval.type);
 
             var obj = this.createObstacle(type, pos, retval.scale);
 
             /* Increment global counter */
-            globalParameters.obstacleSpawnedCount++;
+            globalParameters[`obstacleType${obstacleTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */
             if (retval.velocity && retval.velocity.x)

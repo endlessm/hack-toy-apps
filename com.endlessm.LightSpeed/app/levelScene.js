@@ -401,10 +401,12 @@ class LevelScene extends Phaser.Scene {
             globalParameters[`obstacleType${obstacleTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */
-            if (retval.velocity && retval.velocity.x)
+            if (retval.velocity && retval.velocity.x) {
                 obj.setVelocityX(-this.params.shipSpeed + retval.velocity.x);
-            else
-                obj.setVelocityX(-this.params.shipSpeed);
+            } else {
+                var speedFactor = 0.5 + Phaser.Math.RND.frac();
+                obj.setVelocityX(-this.params.shipSpeed * speedFactor);
+            }
 
             if (retval.velocity && retval.velocity.y)
                 obj.setVelocityY(-retval.velocity.y);

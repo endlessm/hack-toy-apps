@@ -341,7 +341,6 @@ class LevelScene extends Phaser.Scene {
 
     checkLevelDone() {
         if (globalParameters.score >= this.params.scoreTarget) {
-            globalParameters.score = 0;
             globalParameters.success = true;
 
             /* Limit current level to available one */

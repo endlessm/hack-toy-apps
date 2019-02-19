@@ -89,6 +89,8 @@ var defaultParameters = {
         }
         return null;
     `,
+    updateSpinnerCode: '',
+    updateSquidCode: '',
     setParamsCode: '',
 };
 

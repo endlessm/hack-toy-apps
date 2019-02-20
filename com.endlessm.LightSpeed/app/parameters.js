@@ -89,14 +89,14 @@ var defaultParameters = {
         }
         return null;
     `,
-    setParamsCode: null,
+    setParamsCode: '',
 };
 
 /* You can define an update function for each obstacle types */
 (function() {
     for (const o of obstacleTypes) {
         const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
-        defaultParameters[func] = null;
+        defaultParameters[func] = '';
     }
 }());
 

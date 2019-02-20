@@ -52,23 +52,52 @@ var config = {
     ],
 };
 
+/* Bootstrap game */
+var game = new Phaser.Game(config);
+
 /* Export one global parameter object for each level */
 (function() {
+    function objectNotify(obj) {
+        obj._proxy = Object.create(
+            Object.getPrototypeOf(obj),
+            Object.getOwnPropertyDescriptors(obj)
+        );
+
+        Object.keys(obj).forEach(prop => {
+            if (prop[0] === '_')
+                return;
+
+            Object.defineProperty(obj, prop, {
+                get() {
+                    return this._proxy[prop];
+                },
+                set(val) {
+                    if (this._proxy[prop] !== val) {
+                        this._proxy[prop] = val;
+                        game.events.emit('global-property-change', obj, prop);
+                    }
+                },
+            });
+        });
+    }
+
     for (var i = 0, n = defaultLevelParameters.length; i < n; i++) {
         /* Dup default object */
         var defaults = Object.assign({}, defaultParameters);
 
+        /* Merge defaults with level parameters */
         var params = Object.assign(defaults, defaultLevelParameters[i]);
 
+        /* Make object notify an event every time a property changes */
+        objectNotify(params);
+
+        /* Push to levels paramters array */
         levelParameters.push(params);
 
-        /* Merge defaults with level parameters */
+        /* And export as a global object */
         window[`globalLevel${i}Parameters`] = params;
     }
 }());
-
-/* Bootstrap game */
-var game = new Phaser.Game(config);
 
 /* External API */
 

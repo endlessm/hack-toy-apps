@@ -117,6 +117,22 @@ class LevelScene extends Phaser.Scene {
         this.createScoreBox('Level: 00 Rescued: 00');
         this.updateScore();
 
+        /* Update user functions when they change */
+        this.game.events.on('global-property-change', (obj, property) => {
+            if (Object.is(this.params, obj) && property.endsWith('Code')) {
+                const func = getUserFunction(obj[property]);
+                const funcName = property.slice(0, -4);
+                var member;
+
+                if (property.startsWith('update') &&
+                    (member = funcName.slice(6).toLowerCase()) &&
+                    obstacleTypes.indexOf(member) >= 0)
+                    this.updateObstacle[member] = func;
+                else if (funcName in this)
+                    this[funcName] = func;
+            }
+        });
+
         /* Pause game on space bar press */
         this.input.keyboard.on('keyup_SPACE', () => {
             if (globalParameters.playing)

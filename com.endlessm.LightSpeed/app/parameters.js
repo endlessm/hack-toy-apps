@@ -80,12 +80,7 @@ var defaultParameters = {
     `,
     spawnObstacleCode: `
         if (tick%40 === 0) {
-            return {
-                type: 'asteroid',
-                x: width + random(100, 400),
-                y: random(0, height),
-                scale: random(20, 60)
-            };
+            return null;
         }
         return null;
     `,
@@ -112,11 +107,33 @@ var defaultLevelParameters = [
 
     /* Level 1 */
     {
+        spawnObstacleCode: `
+            if (tick%40 === 0) {
+                return {
+                    type: 'asteroid',
+                    x: width + random(100, 400),
+                    y: random(0, height),
+                    scale: random(20, 60)
+                };
+            }
+            return null;
+        `,
     },
 
     /* Level 2 */
     {
         shipSpeed: 6000,
+        spawnObstacleCode: `
+            if (tick%40 === 0) {
+                return {
+                    type: 'asteroid',
+                    x: width + random(100, 400),
+                    y: random(0, height),
+                    scale: random(20, 60)
+                };
+            }
+            return null;
+        `,
     },
 
     /* Level 3 */
@@ -141,12 +158,6 @@ var defaultLevelParameters = [
 
     /* Level 5 */
     {
-        spawnObstacleCode: `
-            if (tick%40 === 0) {
-                return null;
-            }
-            return null;
-        `,
     },
 
     /* Level 6 */

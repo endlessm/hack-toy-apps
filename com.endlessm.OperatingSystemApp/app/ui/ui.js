@@ -1,4 +1,4 @@
-var temp1, temp2, temp3;
+var lapseBubble, lapseBubbleContent, lapseMask;
 const UI = {};
 
 UI.lang = lang;
@@ -30,11 +30,23 @@ class Layer {
 
 class Mask {
   show(maskClass) {
-    $(".ui__overlay").stop().fadeIn("80");
+    $(".ui__mask")
+      .addClass(`${maskClass}_mask`)
+      .removeClass("hidden")
+      .addClass("visible");
   }
 
   hide(maskClass, delay) {
-    $(".ui__overlay").stop().fadeOut("80");
+    delay = delay || 0;
+
+    $(".ui__mask")
+      .addClass("hidden")
+      .removeClass("visible");
+
+    lapseMask = setTimeout(function() {
+      $(".ui__mask")
+        .removeClass(`${maskClass}_mask`);
+    }, delay);
   }
 };
 
@@ -158,23 +170,20 @@ UI.bubbles;
 UI.index = 0;
 UI.showBubbles = function() {
   var lapseLoading = function() {
-    temp1 = setTimeout(function() {
+    lapseBubble = setTimeout(function() {
       if (UI.index >= UI.bubbles.length) {
         return;
       }
+
       $(UI.bubbles[UI.index])
         .fadeIn()
         .removeClass("loading");
-        temp3 = setInterval(function() {
-        }, 1300);
 
-      temp2 = setTimeout(function() {
-        clearInterval(temp3);
+      lapseBubbleContent = setTimeout(function() {
         $(".ui__box-bubble", UI.bubbles[UI.index]).removeClass("loading");
         UI.index++;
         lapseLoading();
-      }, 2500);
-
+      }, 3000);
     }, 1250);
   }
 
@@ -209,10 +218,8 @@ UI.hideDialog = function() {
   UI.layer.hide();
   UI.mask.hide(UI.current);
   UI.runAnimation = true;
-
-  clearTimeout(temp1);
-  clearTimeout(temp2);
-  clearInterval(temp3);
+  clearTimeout(lapseBubble);
+  clearTimeout(lapseBubbleContent);
 
   if (UI.current != "daemons") {
     $("#OS_daemon_7").removeClass("daemon_7_still");

@@ -10,7 +10,6 @@ window.ToyApp = {
     setAspectRatio(ratio) {
         window.webkit.messageHandlers.ToyAppSetAspectRatio.postMessage(ratio);
     },
-
 };
 
 window.Sounds = {

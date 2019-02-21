@@ -18,8 +18,8 @@ var shipTypes = [
 var obstacleTypes = [
     'asteroid',
     'spinner',
-    'beam',
     'squid',
+    'beam',
 ];
 
 /* Freeze constants */

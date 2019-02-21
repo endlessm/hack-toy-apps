@@ -294,21 +294,23 @@ class LevelScene extends Phaser.Scene {
             obj.body.setAllowRotation(true);
             const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
             obj.body.setAngularVelocity(v * 128);
-        } else if (type === 'beam') {
-            obj.setSize(78, 334).setOffset(112, 86);
-            this.tweens.add({
-                targets: obj,
-                scaleY: s * 0.6,
-                duration: 600,
-                ease: 'Sine.easeInOut',
-                yoyo: true,
-                repeat: -1,
-            });
         } else if (type === 'squid') {
             obj.setSize(390, 150).setOffset(26, 60);
             this.tweens.add({
                 targets: obj,
                 scaleX: s * 0.7,
+                duration: 600,
+                ease: 'Sine.easeInOut',
+                yoyo: true,
+                repeat: -1,
+            });
+            if (!this.firstType2Object)
+                this.firstType2Object = obj;
+        } else if (type === 'beam') {
+            obj.setSize(78, 334).setOffset(112, 86);
+            this.tweens.add({
+                targets: obj,
+                scaleY: s * 0.6,
                 duration: 600,
                 ease: 'Sine.easeInOut',
                 yoyo: true,

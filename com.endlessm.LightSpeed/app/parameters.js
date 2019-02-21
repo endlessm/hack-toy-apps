@@ -70,22 +70,22 @@ var defaultParameters = {
     shipSize: 50,
     shipAcceleration: 500,
 
-    spawnAstronautCode: `
-        if (tick%230 === 0) {
-            return {
-                x: width + random(100, 400),
-                y: random(0, height)
-            };
-        }
+    /* Note, the code will appear exactly as indented here, with the correct
+     * function spawnAstronaut() { ... } declaration surrounding it. */
+    spawnAstronautCode: `\
+    if (tick%230 === 0) {
+        return {
+            x: width + random(100, 400),
+            y: random(0, height)
+        };
+    }
 
+    return null;`,
+    spawnEnemyCode: `\
+    if (tick%40 === 0) {
         return null;
-    `,
-    spawnEnemyCode: `
-        if (tick%40 === 0) {
-            return null;
-        }
-        return null;
-    `,
+    }
+    return null;`,
 };
 
 /* You can define an update function for each enemy type */
@@ -106,53 +106,50 @@ var defaultLevelParameters = [
 
     /* Level 1 */
     {
-        spawnEnemyCode: `
-            if (tick%40 === 0) {
-                return {
-                    type: 'asteroid',
-                    x: width + random(100, 400),
-                    y: random(0, height),
-                    scale: random(20, 60)
-                };
-            }
-            return null;
-        `,
+        spawnEnemyCode: `\
+    if (tick%40 === 0) {
+        return {
+            type: 'asteroid',
+            x: width + random(100, 400),
+            y: random(0, height),
+            scale: random(20, 60)
+        };
+    }
+    return null;`,
     },
 
     /* Level 2 */
     {
         shipSpeed: 6000,
-        spawnEnemyCode: `
-            if (tick%40 === 0) {
-                return {
-                    type: 'asteroid',
-                    x: width + random(100, 400),
-                    y: random(0, height),
-                    scale: random(20, 60)
-                };
-            }
-            return null;
-        `,
+        spawnEnemyCode: `\
+    if (tick%40 === 0) {
+        return {
+            type: 'asteroid',
+            x: width + random(100, 400),
+            y: random(0, height),
+            scale: random(20, 60)
+        };
+    }
+    return null;`,
     },
 
     /* Level 3 */
     {
-        spawnEnemyCode: `
-            if (tick%40 === 0) {
-                return {
-                    type: 'asteroid',
-                    x: width + random(200, 500),
-                    y: random(0, height),
-                    scale: 150
-                };
-            }
-            return null;
-        `,
+        spawnEnemyCode: `\
+    if (tick%40 === 0) {
+        return {
+            type: 'asteroid',
+            x: width + random(200, 500),
+            y: random(0, height),
+            scale: 150
+        };
+    }
+    return null;`,
     },
 
     /* Level 4 */
     {
-        spawnEnemyCode: 'return null;',
+        spawnEnemyCode: '   return null;',
     },
 
     /* Level 5 */

@@ -86,7 +86,6 @@ var defaultParameters = {
         }
         return null;
     `,
-    setParamsCode: '',
 };
 
 /* You can define an update function for each enemy type */

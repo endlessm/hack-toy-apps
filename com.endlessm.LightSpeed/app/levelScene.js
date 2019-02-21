@@ -48,7 +48,6 @@ class LevelScene extends Phaser.Scene {
         this.tick = 0;
 
         /* Get user functions */
-        this.setParams = getUserFunction(data.setParamsCode);
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
 
@@ -59,9 +58,6 @@ class LevelScene extends Phaser.Scene {
                 data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
             );
         }
-
-        /* Let user initialize the level parameters */
-        this.runSetParams();
     }
 
     preload() {
@@ -366,21 +362,6 @@ class LevelScene extends Phaser.Scene {
                     `Level ${globalParameters.currentLevel + 1} Complete!`);
                 this.scene.pause();
             }
-        }
-    }
-
-    runSetParams() {
-        if (!this.setParams)
-            return;
-
-        var scope = this.getScope();
-
-        try {
-            scope.level = globalParameters.currentLevel;
-            scope.config = this.params;
-            this.setParams(scope);
-        } catch (e) {
-            /* User function error! */
         }
     }
 

@@ -18,8 +18,8 @@ var shipTypes = [
 var obstacleTypes = [
     'asteroid',
     'spinner',
-    'beam',
     'squid',
+    'beam',
 ];
 
 /* Freeze constants */
@@ -41,17 +41,19 @@ var globalParameters = {
 
     /* Communication with Clubhouse */
     flipped: false,
-
-    obstacleType1MinY: +10000,
-    obstacleType1MaxY: -10000,
 };
 
-/* We need a counter for each obstacle types
+/* We need counters and min/max Y coordinate reached for each obstacle type,
+ * for the clubhouse to read in order to determine if quests have been solved.
+ *
  * FIXME: can we add support for arrays in clippy!
  */
 (function() {
-    for (var i = 0, n = obstacleTypes.length; i < n; i++)
+    for (let i = 0, n = obstacleTypes.length; i < n; i++) {
         globalParameters[`obstacleType${i}SpawnedCount`] = 0;
+        globalParameters[`obstacleType${i}MinY`] = +Infinity;
+        globalParameters[`obstacleType${i}MaxY`] = -Infinity;
+    }
 }());
 
 /* Level defaults values */
@@ -80,12 +82,7 @@ var defaultParameters = {
     `,
     spawnObstacleCode: `
         if (tick%40 === 0) {
-            return {
-                type: 'asteroid',
-                x: width + random(100, 400),
-                y: random(0, height),
-                scale: random(20, 60)
-            };
+            return null;
         }
         return null;
     `,
@@ -112,11 +109,33 @@ var defaultLevelParameters = [
 
     /* Level 1 */
     {
+        spawnObstacleCode: `
+            if (tick%40 === 0) {
+                return {
+                    type: 'asteroid',
+                    x: width + random(100, 400),
+                    y: random(0, height),
+                    scale: random(20, 60)
+                };
+            }
+            return null;
+        `,
     },
 
     /* Level 2 */
     {
         shipSpeed: 6000,
+        spawnObstacleCode: `
+            if (tick%40 === 0) {
+                return {
+                    type: 'asteroid',
+                    x: width + random(100, 400),
+                    y: random(0, height),
+                    scale: random(20, 60)
+                };
+            }
+            return null;
+        `,
     },
 
     /* Level 3 */
@@ -141,12 +160,6 @@ var defaultLevelParameters = [
 
     /* Level 5 */
     {
-        spawnObstacleCode: `
-            if (tick%40 === 0) {
-                return null;
-            }
-            return null;
-        `,
     },
 
     /* Level 6 */

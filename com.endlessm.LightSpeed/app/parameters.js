@@ -41,17 +41,19 @@ var globalParameters = {
 
     /* Communication with Clubhouse */
     flipped: false,
-
-    obstacleType1MinY: +10000,
-    obstacleType1MaxY: -10000,
 };
 
-/* We need a counter for each obstacle types
+/* We need counters and min/max Y coordinate reached for each obstacle type,
+ * for the clubhouse to read in order to determine if quests have been solved.
+ *
  * FIXME: can we add support for arrays in clippy!
  */
 (function() {
-    for (var i = 0, n = obstacleTypes.length; i < n; i++)
+    for (let i = 0, n = obstacleTypes.length; i < n; i++) {
         globalParameters[`obstacleType${i}SpawnedCount`] = 0;
+        globalParameters[`obstacleType${i}MinY`] = +Infinity;
+        globalParameters[`obstacleType${i}MaxY`] = -Infinity;
+    }
 }());
 
 /* Level defaults values */

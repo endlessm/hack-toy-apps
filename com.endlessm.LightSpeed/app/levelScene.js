@@ -36,11 +36,11 @@ class LevelScene extends Phaser.Scene {
         globalParameters.score = 0;
 
         /* Reset obstacle counters */
-        for (var i = 0, n = obstacleTypes.length; i < n; i++)
+        for (let i = 0, n = obstacleTypes.length; i < n; i++) {
             globalParameters[`obstacleType${i}SpawnedCount`] = 0;
-
-        globalParameters.obstacleType1MinY = +1000;
-        globalParameters.obstacleType1MaxY = -1000;
+            globalParameters[`obstacleType${i}MinY`] = +Infinity;
+            globalParameters[`obstacleType${i}MaxY`] = -Infinity;
+        }
 
         /* Init scene variables */
         this.tick = 0;
@@ -212,17 +212,17 @@ class LevelScene extends Phaser.Scene {
     /* Private functions */
 
     updateQuestData() {
-        var obj = this.firstType1Object;
+        obstacleTypes.forEach((type, ix) => {
+            const obj = this.obstacles[type][0];
+            if (obj) {
+                const {y} = this.userSpace.transformPoint(0, obj.y);
 
-        if (obj) {
-            var {y} = this.userSpace.transformPoint(0, obj.y);
-
-            globalParameters.obstacleType1MinY =
-                Math.min(y, globalParameters.obstacleType1MinY);
-
-            globalParameters.obstacleType1MaxY =
-                Math.max(y, globalParameters.obstacleType1MaxY);
-        }
+                globalParameters[`obstacleType${ix}MinY`] =
+                    Math.min(y, globalParameters[`obstacleType${ix}MinY`]);
+                globalParameters[`obstacleType${ix}MaxY`] =
+                    Math.max(y, globalParameters[`obstacleType${ix}MaxY`]);
+            }
+        });
     }
 
     _setShipCollisionBox() {
@@ -294,11 +294,6 @@ class LevelScene extends Phaser.Scene {
             obj.body.setAllowRotation(true);
             const v = Phaser.Math.RND.integerInRange(-3, 3) || 1;
             obj.body.setAngularVelocity(v * 128);
-
-            /* FIXME: find a better place/way to do this */
-            /* Track the first type 1 object */
-            if (!this.firstType1Object)
-                this.firstType1Object = obj;
         } else if (type === 'beam') {
             obj.setSize(78, 334).setOffset(112, 86);
             this.tweens.add({

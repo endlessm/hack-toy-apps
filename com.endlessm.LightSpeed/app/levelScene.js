@@ -343,6 +343,7 @@ class LevelScene extends Phaser.Scene {
     getScope() {
         return {
             tick: this.tick,
+            time: this.tick * 0.33,
             width: game.config.width,
             height: game.config.height,
             shipTypes,

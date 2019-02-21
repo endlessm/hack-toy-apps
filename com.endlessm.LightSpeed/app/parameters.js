@@ -5,7 +5,7 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported obstacleTypes, shipTypes, globalParameters, defaultParameters,
+/* exported enemyTypes, shipTypes, globalParameters, defaultParameters,
     defaultLevelParameters, levelParameters */
 
 /* Global constants */
@@ -15,7 +15,7 @@ var shipTypes = [
     'unicorn',
 ];
 
-var obstacleTypes = [
+var enemyTypes = [
     'asteroid',
     'spinner',
     'squid',
@@ -24,7 +24,7 @@ var obstacleTypes = [
 
 /* Freeze constants */
 Object.freeze(shipTypes);
-Object.freeze(obstacleTypes);
+Object.freeze(enemyTypes);
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -43,16 +43,16 @@ var globalParameters = {
     flipped: false,
 };
 
-/* We need counters and min/max Y coordinate reached for each obstacle type,
+/* We need counters and min/max Y coordinate reached for each enemy type,
  * for the clubhouse to read in order to determine if quests have been solved.
  *
  * FIXME: can we add support for arrays in clippy!
  */
 (function() {
-    for (let i = 0, n = obstacleTypes.length; i < n; i++) {
-        globalParameters[`obstacleType${i}SpawnedCount`] = 0;
-        globalParameters[`obstacleType${i}MinY`] = +1e9;
-        globalParameters[`obstacleType${i}MaxY`] = -1e9;
+    for (let i = 0, n = enemyTypes.length; i < n; i++) {
+        globalParameters[`enemyType${i}SpawnedCount`] = 0;
+        globalParameters[`enemyType${i}MinY`] = +1e9;
+        globalParameters[`enemyType${i}MaxY`] = -1e9;
     }
 }());
 
@@ -80,7 +80,7 @@ var defaultParameters = {
 
         return null;
     `,
-    spawnObstacleCode: `
+    spawnEnemyCode: `
         if (tick%40 === 0) {
             return null;
         }
@@ -91,9 +91,9 @@ var defaultParameters = {
     setParamsCode: '',
 };
 
-/* You can define an update function for each obstacle types */
+/* You can define an update function for each enemy type */
 (function() {
-    for (const o of obstacleTypes) {
+    for (const o of enemyTypes) {
         const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
         defaultParameters[func] = '';
     }
@@ -109,7 +109,7 @@ var defaultLevelParameters = [
 
     /* Level 1 */
     {
-        spawnObstacleCode: `
+        spawnEnemyCode: `
             if (tick%40 === 0) {
                 return {
                     type: 'asteroid',
@@ -125,7 +125,7 @@ var defaultLevelParameters = [
     /* Level 2 */
     {
         shipSpeed: 6000,
-        spawnObstacleCode: `
+        spawnEnemyCode: `
             if (tick%40 === 0) {
                 return {
                     type: 'asteroid',
@@ -140,7 +140,7 @@ var defaultLevelParameters = [
 
     /* Level 3 */
     {
-        spawnObstacleCode: `
+        spawnEnemyCode: `
             if (tick%40 === 0) {
                 return {
                     type: 'asteroid',
@@ -155,7 +155,7 @@ var defaultLevelParameters = [
 
     /* Level 4 */
     {
-        spawnObstacleCode: 'return null;',
+        spawnEnemyCode: 'return null;',
     },
 
     /* Level 5 */

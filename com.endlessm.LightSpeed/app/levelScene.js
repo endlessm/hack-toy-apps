@@ -6,7 +6,7 @@
  */
 
 /* exported LevelScene */
-/* global obstacleTypes, shipTypes */
+/* global enemyTypes, shipTypes */
 
 function getUserFunction(code) {
     if (!code)
@@ -35,12 +35,12 @@ class LevelScene extends Phaser.Scene {
         globalParameters.success = false;
         globalParameters.score = 0;
 
-        /* Reset obstacle counters */
+        /* Reset enemy counters */
         this.firstObjectOfType = [];
-        for (let i = 0, n = obstacleTypes.length; i < n; i++) {
-            globalParameters[`obstacleType${i}SpawnedCount`] = 0;
-            globalParameters[`obstacleType${i}MinY`] = +1e9;
-            globalParameters[`obstacleType${i}MaxY`] = -1e9;
+        for (let i = 0, n = enemyTypes.length; i < n; i++) {
+            globalParameters[`enemyType${i}SpawnedCount`] = 0;
+            globalParameters[`enemyType${i}MinY`] = +1e9;
+            globalParameters[`enemyType${i}MaxY`] = -1e9;
             this.firstObjectOfType[i] = null;
         }
 
@@ -49,13 +49,13 @@ class LevelScene extends Phaser.Scene {
 
         /* Get user functions */
         this.setParams = getUserFunction(data.setParamsCode);
-        this.spawnObstacle = getUserFunction(data.spawnObstacleCode);
+        this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
 
-        /* We have one function for each obstacle type */
-        this.updateObstacle = {};
-        for (const o of obstacleTypes) {
-            this.updateObstacle[o] = getUserFunction(
+        /* We have one function for each enemy type */
+        this.updateEnemy = {};
+        for (const o of enemyTypes) {
+            this.updateEnemy[o] = getUserFunction(
                 data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
             );
         }
@@ -74,9 +74,9 @@ class LevelScene extends Phaser.Scene {
         for (const ship of shipTypes)
             this.load.image(ship, `assets/ships/${ship}.png`);
 
-        /* Obstacles assets */
-        for (const obstacle of obstacleTypes)
-            this.load.image(obstacle, `assets/obstacles/${obstacle}.png`);
+        /* Enemy assets */
+        for (const enemy of enemyTypes)
+            this.load.image(enemy, `assets/enemies/${enemy}.png`);
     }
 
     create() {
@@ -96,11 +96,11 @@ class LevelScene extends Phaser.Scene {
         this.physics.add.overlap(this.ship, this.astronauts,
             this.onShipAstronautOverlap, null, this);
 
-        this.obstacles = {};
-        for (const o of obstacleTypes) {
-            this.obstacles[o] = this.physics.add.group();
-            this.physics.add.overlap(this.ship, this.obstacles[o],
-                this.onShipObstacleOverlap, null, this);
+        this.enemies = {};
+        for (const o of enemyTypes) {
+            this.enemies[o] = this.physics.add.group();
+            this.physics.add.overlap(this.ship, this.enemies[o],
+                this.onShipEnemyOverlap, null, this);
         }
 
         /* User coordinate transformation matrix
@@ -128,8 +128,8 @@ class LevelScene extends Phaser.Scene {
 
                 if (property.startsWith('update') &&
                     (member = funcName.slice(6).toLowerCase()) &&
-                    obstacleTypes.indexOf(member) >= 0)
-                    this.updateObstacle[member] = func;
+                    enemyTypes.indexOf(member) >= 0)
+                    this.updateEnemy[member] = func;
                 else if (funcName in this)
                     this[funcName] = func;
             }
@@ -204,9 +204,9 @@ class LevelScene extends Phaser.Scene {
         this.checkLevelDone();
 
         /* Execute spawn functions */
-        this.runSpawnObstacle();
+        this.runSpawnEnemy();
         this.runSpawnAstronaut();
-        this.runUpdateObstacle();
+        this.runUpdateEnemy();
 
         this.updateQuestData();
     }
@@ -214,15 +214,15 @@ class LevelScene extends Phaser.Scene {
     /* Private functions */
 
     updateQuestData() {
-        obstacleTypes.forEach((type, ix) => {
+        enemyTypes.forEach((type, ix) => {
             const obj = this.firstObjectOfType[ix];
             if (obj) {
                 const {y} = this.userSpace.transformPoint(0, obj.y);
 
-                globalParameters[`obstacleType${ix}MinY`] =
-                    Math.min(y, globalParameters[`obstacleType${ix}MinY`]);
-                globalParameters[`obstacleType${ix}MaxY`] =
-                    Math.max(y, globalParameters[`obstacleType${ix}MaxY`]);
+                globalParameters[`enemyType${ix}MinY`] =
+                    Math.min(y, globalParameters[`enemyType${ix}MinY`]);
+                globalParameters[`enemyType${ix}MaxY`] =
+                    Math.max(y, globalParameters[`enemyType${ix}MaxY`]);
             }
         });
     }
@@ -272,12 +272,12 @@ class LevelScene extends Phaser.Scene {
         this.ship.depth = 100;
     }
 
-    createObstacle(type, position, scale) {
-        /* Create obstacle object */
+    createEnemy(type, position, scale) {
+        /* Create enemy object */
         var obj = this.physics.add.sprite(position.x, position.y, type);
 
-        /* Add to obstacle group */
-        this.obstacles[type].add(obj);
+        /* Add to enemy group */
+        this.enemies[type].add(obj);
 
         /* Set depth */
         obj.depth = 1;
@@ -288,7 +288,7 @@ class LevelScene extends Phaser.Scene {
         if (scale)
             obj.setScale(s);
 
-        /* FIXME: improve obstacle shape handling */
+        /* FIXME: improve enemy shape handling */
         if (type === 'asteroid') {
             obj.setCircle(230, 28, 28);
         } else if (type === 'spinner') {
@@ -347,7 +347,7 @@ class LevelScene extends Phaser.Scene {
             width: game.config.width,
             height: game.config.height,
             shipTypes,
-            obstacleTypes,
+            enemyTypes,
 
             random: (min, max) => Phaser.Math.RND.integerInRange(min, max),
         };
@@ -384,21 +384,21 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    runSpawnObstacle() {
-        if (!this.spawnObstacle)
+    runSpawnEnemy() {
+        if (!this.spawnEnemy)
             return;
 
         var retval = null;
         var scope = this.getScope();
 
         try {
-            retval = this.spawnObstacle(scope);
+            retval = this.spawnEnemy(scope);
         } catch (e) {
             /* User function error! */
         }
 
         /*
-         * Retval can be a string that defines the obstacle type or an
+         * Retval can be a string that defines the enemy type or an
          * object with the following members:
          *
          * {
@@ -419,17 +419,17 @@ class LevelScene extends Phaser.Scene {
                 retval.y || scope.random(0, scope.height)
             );
 
-            /* Make sure type is a valid obstacle */
-            if (!obstacleTypes.includes(type))
+            /* Make sure type is a valid enemy */
+            if (!enemyTypes.includes(type))
                 type = 'asteroid';
-            var obstacleTypeIndex = obstacleTypes.indexOf(retval.type);
+            var enemyTypeIndex = enemyTypes.indexOf(retval.type);
 
-            var obj = this.createObstacle(type, pos, retval.scale);
+            var obj = this.createEnemy(type, pos, retval.scale);
 
             /* Increment global counter */
-            if (this.firstObjectOfType[obstacleTypeIndex] === null)
-                this.firstObjectOfType[obstacleTypeIndex] = obj;
-            globalParameters[`obstacleType${obstacleTypeIndex}SpawnedCount`]++;
+            if (this.firstObjectOfType[enemyTypeIndex] === null)
+                this.firstObjectOfType[enemyTypeIndex] = obj;
+            globalParameters[`enemyType${enemyTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */
             if (retval.velocity && retval.velocity.x) {
@@ -470,26 +470,26 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    callUpdateObstacle(updateObstacle, scope, obj) {
+    callUpdateEnemy(updateEnemy, scope, obj) {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
 
-        var obstacle = {
+        var enemy = {
             position: this.userSpace.transformPoint(obj.x, obj.y),
             velocity: {x: vx, y: vy},
         };
 
         scope.playerShipY = this.userSpace.transformPoint(this.ship.x, this.ship.y).y;
         try {
-            scope.obstacle = obstacle;
-            updateObstacle(scope);
+            scope.enemy = enemy;
+            updateEnemy(scope);
         } catch (e) {
             /* User function error! */
         }
 
         /* Transform back from user space coordinates */
-        const position = this.userSpace.applyInverse(obstacle.position.x,
-            obstacle.position.y);
+        const position = this.userSpace.applyInverse(enemy.position.x,
+            enemy.position.y);
 
         /* Update position */
         if (obj.x !== position.x)
@@ -499,30 +499,30 @@ class LevelScene extends Phaser.Scene {
             obj.y = position.y;
 
         /* Update velocity */
-        if (vx !== obstacle.velocity.x)
-            obj.setVelocityX(-this.params.shipSpeed + obstacle.velocity.x);
-        if (vy !== obstacle.velocity.y)
-            obj.setVelocityY(-obstacle.velocity.y);
+        if (vx !== enemy.velocity.x)
+            obj.setVelocityX(-this.params.shipSpeed + enemy.velocity.x);
+        if (vy !== enemy.velocity.y)
+            obj.setVelocityY(-enemy.velocity.y);
     }
 
-    runUpdateObstacle() {
+    runUpdateEnemy() {
         var scope = this.getScope();
 
-        /* Iterate over obstacle types */
-        for (const o of obstacleTypes) {
-            const updateObstacle = this.updateObstacle[o];
+        /* Iterate over enemy types */
+        for (const o of enemyTypes) {
+            const updateEnemy = this.updateEnemy[o];
 
-            if (!updateObstacle)
+            if (!updateEnemy)
                 continue;
 
-            /* Iterate over obstacles */
-            const children = this.obstacles[o].getChildren();
+            /* Iterate over enemies */
+            const children = this.enemies[o].getChildren();
             for (const obj of children)
-                this.callUpdateObstacle(updateObstacle, scope, obj);
+                this.callUpdateEnemy(updateEnemy, scope, obj);
         }
     }
 
-    onShipObstacleOverlap() {
+    onShipEnemyOverlap() {
         if (!globalParameters.playing)
             return;
 

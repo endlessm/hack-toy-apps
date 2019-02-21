@@ -51,8 +51,8 @@ var globalParameters = {
 (function() {
     for (let i = 0, n = obstacleTypes.length; i < n; i++) {
         globalParameters[`obstacleType${i}SpawnedCount`] = 0;
-        globalParameters[`obstacleType${i}MinY`] = +Infinity;
-        globalParameters[`obstacleType${i}MaxY`] = -Infinity;
+        globalParameters[`obstacleType${i}MinY`] = +1e9;
+        globalParameters[`obstacleType${i}MaxY`] = -1e9;
     }
 }());
 

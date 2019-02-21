@@ -479,6 +479,7 @@ class LevelScene extends Phaser.Scene {
             velocity: {x: vx, y: vy},
         };
 
+        scope.playerShipY = this.userSpace.transformPoint(this.ship.x, this.ship.y).y;
         try {
             scope.obstacle = obstacle;
             updateObstacle(scope);

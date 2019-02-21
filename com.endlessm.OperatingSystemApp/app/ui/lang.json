@@ -271,7 +271,7 @@ lang = {
         {
           "index": 0,
           "name": "Estelle",
-          "text": "A computer’s memory resides in the physical devices capable of storing information, both temporarily and permanently. <a href=\"https://www.computerhope.com/jargon/r/ram.htm\" target=\"_blank\">RAM</a>, or “random access memory” is a form of temporary memory. ROM, or “read-only memory” is a permanent form."
+          "text": "A computer’s memory resides in the physical devices capable of storing information, both temporarily and permanently. RAM, or “random access memory” is a form of temporary memory. ROM, or “read-only memory” is a permanent form."
         },
         {
           "index": 1,

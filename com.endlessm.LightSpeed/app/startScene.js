@@ -37,15 +37,6 @@ class StartScene extends Phaser.Scene {
         var startButton = new Utils.Button(this, 'button', 'START');
 
         logo.setScale(0.4);
-        this.tweens.add({
-            targets: logo,
-            scaleX: 0.32,
-            scaleY: 0.64,
-            duration: 600,
-            ease: 'Sine',
-            yoyo: true,
-            repeat: -1,
-        });
 
         Phaser.Display.Align.In.Center(logo, confetti);
         Phaser.Display.Align.To.BottomCenter(controlsText, confetti, 0, spacing * 2);

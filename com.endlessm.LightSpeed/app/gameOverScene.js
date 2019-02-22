@@ -16,47 +16,27 @@ class GameOverScene extends Phaser.Scene {
 
     preload() {
         this.load.image('game-over', 'assets/game-over.png');
-        this.load.image('explosion', 'assets/ui/explosion.png');
+        this.load.image('game-over-glow', 'assets/game-over-glow.png');
     }
 
     create() {
         const {centerX, centerY} = this.cameras.main;
 
+        this.gameOverGlow = this.add.image(centerX, centerY, 'game-over-glow');
         var gameOver = this.add.image(centerX, centerY, 'game-over');
-        gameOver.setScale(0.6);
-        this.tweens.add({
-            targets: gameOver,
-            scaleX: 0.32,
-            scaleY: 0.8,
-            duration: 600,
-            ease: 'Sine',
-            yoyo: true,
-            repeat: -1,
-        });
-
-        var particles = this.add.particles('particle');
-        var emitter = particles.createEmitter({
-            speed: 128,
-            scale: {start: 1, end: 0},
-            blendMode: 'ADD',
-            tint: [0xffee00, 0xff2900, 0xff8a00, 0xff6600],
-            lifespan: 3000,
-        });
-        emitter.startFollow(gameOver);
 
         const levelParams = levelParameters[globalParameters.currentLevel];
         const spacing = 32;
 
         var pad = this.add.zone(0, 0, 512, 310).setOrigin(0, 0);
-        var explosion = this.add.image(0, 0, 'explosion').setOrigin(0, 0);
         this.startMessage = this.add.text(0, 0, levelParams.description, fontConfig)
             .setOrigin(0.5, 0.5);
         this.levelChooser = new LevelChooser(this, 'prev', 'next');
         var restartButton = new Utils.Button(this, 'button', 'RESTART');
 
-        Phaser.Display.Align.In.Center(explosion, pad);
-        Phaser.Display.Align.In.Center(gameOver, explosion);
-        Phaser.Display.Align.To.BottomCenter(this.startMessage, explosion, 0, spacing);
+        Phaser.Display.Align.In.Center(this.gameOverGlow, pad);
+        Phaser.Display.Align.In.Center(gameOver, pad);
+        Phaser.Display.Align.To.BottomCenter(this.startMessage, gameOver, 0, spacing);
         Phaser.Display.Align.To.BottomCenter(this.levelChooser, this.startMessage, 0, spacing);
         Phaser.Display.Align.To.BottomCenter(restartButton, this.levelChooser, 0, spacing);
 
@@ -66,7 +46,7 @@ class GameOverScene extends Phaser.Scene {
 
         this.add.container(
             (game.config.width - w) / 2, (game.config.height - h) / 2,
-            [bg, pad, explosion, particles, gameOver, this.startMessage,
+            [bg, pad, this.gameOverGlow, gameOver, this.startMessage,
                 this.levelChooser, restartButton]);
 
         this.levelChooser.on('level-changed', level => {
@@ -76,6 +56,23 @@ class GameOverScene extends Phaser.Scene {
         /* Restart level on button click and enter */
         restartButton.on('pointerup', this.restartLevel.bind(this));
         this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
+
+        this.flickTime = 0;
+    }
+
+    update(time) {
+        if (time < this.flickTime)
+            return;
+
+        var offset;
+
+        if (this.gameOverGlow.visible)
+            offset = Phaser.Math.RND.integerInRange(128, 256);
+        else
+            offset = Phaser.Math.RND.integerInRange(512, 1024);
+
+        this.flickTime = time + offset;
+        this.gameOverGlow.visible = !this.gameOverGlow.visible;
     }
 
     restartLevel() {

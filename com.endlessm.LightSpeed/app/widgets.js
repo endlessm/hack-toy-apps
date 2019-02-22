@@ -7,6 +7,42 @@
 
 /* exported LevelChooser */
 
+class Logo extends Phaser.GameObjects.Container {
+    constructor (scene, x, y)
+    {
+        super(scene, x, y);
+
+        this.logo = new Phaser.GameObjects.Image(scene, 0, 0, 'logo');
+        this.add(this.logo);
+
+        //this.setSize(this.logo.width, this.logo.height);
+        var particles = this.scene.add.particles('logo-particles');
+        var {x, y} = this.getBounds();
+
+        const emitters = [
+            { x: 483, y: 20, lifespan: 1200 },
+            { x: 180, y: 40, lifespan: 800 },
+            { x: 170, y: 60, lifespan: 800 },
+            { x: 160, y: 130, lifespan: 800 },
+            { x: 625, y: 150, lifespan: 1400 },
+        ];
+
+        for (var i = 0, n = emitters.length; i < n; i++) {
+            particles.createEmitter({
+                frame: [ 'logo-p1', 'logo-p2', 'logo-p3'],
+                blendMode: 'ADD',
+                x: x + emitters[i].x,
+                y: y + emitters[i].y,
+                angle: 180,
+                speed: { min: 256, max: 512 },
+                alpha: { start: 1, end: 0 },
+                lifespan: emitters[i].lifespan,
+                frequency: 64
+            });
+        }
+    }
+}
+
 class LevelChooser extends Phaser.GameObjects.Container {
     constructor(scene, prevBtn, nextBtn) {
         const spacing = 16;

@@ -23,6 +23,9 @@ class TitleScene extends Phaser.Scene {
         this.load.image('astronaut', 'assets/astronaut.png');
         this.load.image('tch', 'assets/tch.png');
 
+        this.load.atlas('logo-particles', 'assets/atlas/logo-particles.png',
+            'assets/atlas/logo-particles.json');
+
         /* Ship assets */
         for (const ship of shipTypes)
             this.load.image(ship, `assets/ships/${ship}.png`);
@@ -60,16 +63,7 @@ class TitleScene extends Phaser.Scene {
         var particles = this.add.particles('particle');
 
         /* Logo */
-        var logo = this.add.image(centerX, centerY - centerY / 3, 'logo');
-        this.tweens.add({
-            targets: logo,
-            scaleX: 0.8,
-            scaleY: 1.6,
-            duration: 600,
-            ease: 'Sine',
-            yoyo: true,
-            repeat: -1,
-        });
+        this.add.existing( new Logo(this, centerX, centerY - centerY / 3));
 
         /* Astronaut */
         this.astronaut = this.physics.add.image(centerX, centerY, 'astronaut');

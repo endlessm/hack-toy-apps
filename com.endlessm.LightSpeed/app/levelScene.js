@@ -397,7 +397,22 @@ class LevelScene extends Phaser.Scene {
             /* User function error! */
         }
 
+        /*
+         * Retval can be a string that defines the obstacle type or an
+         * object with the following members:
+         *
+         * {
+         *   type: string
+         *   x: int
+         *   y: int
+         *   scale: 0-100
+         *   velocity: { x: int, y: int }
+         * }
+         */
         if (retval) {
+            if (typeof retval === 'string')
+                retval = {type: retval};
+
             var type = retval.type || 'asteroid';
             var pos = this.userSpace.applyInverse(
                 retval.x || scope.width + scope.random(100, 400),

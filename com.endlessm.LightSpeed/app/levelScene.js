@@ -337,6 +337,8 @@ class LevelScene extends Phaser.Scene {
     }
 
     getScope() {
+        /* Keep this in sync with COMMON_SCOPE in
+         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
         return {
             tick: this.tick,
             time: this.tick * 0.33,
@@ -460,9 +462,11 @@ class LevelScene extends Phaser.Scene {
             velocity: {x: vx, y: vy},
         };
 
+        /* Keep this in sync with COMMON_UPDATE_SCOPE in
+         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
         scope.playerShipY = this.userSpace.transformPoint(this.ship.x, this.ship.y).y;
+        scope.enemy = enemy;
         try {
-            scope.enemy = enemy;
             updateEnemy(scope);
         } catch (e) {
             /* User function error! */

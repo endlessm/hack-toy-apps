@@ -36,10 +36,12 @@ class LevelScene extends Phaser.Scene {
         globalParameters.score = 0;
 
         /* Reset obstacle counters */
+        this.firstObjectOfType = [];
         for (let i = 0, n = obstacleTypes.length; i < n; i++) {
             globalParameters[`obstacleType${i}SpawnedCount`] = 0;
             globalParameters[`obstacleType${i}MinY`] = +1e9;
             globalParameters[`obstacleType${i}MaxY`] = -1e9;
+            this.firstObjectOfType[i] = null;
         }
 
         /* Init scene variables */
@@ -213,7 +215,7 @@ class LevelScene extends Phaser.Scene {
 
     updateQuestData() {
         obstacleTypes.forEach((type, ix) => {
-            const obj = this.obstacles[type][0];
+            const obj = this.firstObjectOfType[ix];
             if (obj) {
                 const {y} = this.userSpace.transformPoint(0, obj.y);
 
@@ -304,8 +306,6 @@ class LevelScene extends Phaser.Scene {
                 yoyo: true,
                 repeat: -1,
             });
-            if (!this.firstType2Object)
-                this.firstType2Object = obj;
         } else if (type === 'beam') {
             obj.setSize(78, 334).setOffset(112, 86);
             this.tweens.add({
@@ -427,6 +427,8 @@ class LevelScene extends Phaser.Scene {
             var obj = this.createObstacle(type, pos, retval.scale);
 
             /* Increment global counter */
+            if (this.firstObjectOfType[obstacleTypeIndex] === null)
+                this.firstObjectOfType[obstacleTypeIndex] = obj;
             globalParameters[`obstacleType${obstacleTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */

@@ -55,23 +55,32 @@ UI.mask = new Mask();
 UI.runAnimation = true;
 
 UI.subSystems = {
-  "cursor": {element: "#cursor", childs: ".cursor"},
-  "window": {element: "#window-manager", childs: ".window"},
-  "memory": {element: "#memory-manager", childs: ".memory"},
-  "file": {element: "#file-system", childs: ".file"},
-  "dev": {element: "#dev-null", childs: ".dev"},
-  "kernel": {element: "#kernel", childs: ".kernel"},
-  "clock": {element: "#clock", childs: ".kernel-clock"},
-  "daemons": {element: ".ui__daemon", childs: ".Animation"},
-  "system": {element: "#system", childs: null},
+  "cursor": {element: "#cursor", children: ".cursor"},
+  "window": {element: "#window-manager", children: ".window"},
+  "memory": {element: "#memory-manager", children: ".memory"},
+  "file": {element: "#file-system", children: ".file"},
+  "dev": {element: "#dev-null", children: ".dev"},
+  "kernel": {element: "#kernel", children: ".kernel"},
+  "clock": {element: "#clock", children: ".kernel-clock"},
+  "daemons": {element: ".ui__daemon", children: ".Animation"},
+  "system": {element: "#system", children: null},
 }
+
+$(".bg-sys").hover(function() {
+  Sounds.playLoop("system/background/front");
+}, function() {
+  Sounds.stop("system/background/front");
+});
 
 UI.hover_interact = function(element, children, id) {
   var _content = UI.lang[id];
 
-  $(element).hover(function(e) {
+  $(element).stop().hover(function(e) {
     UI.mask.show(id);
-    $(children).toggleClass("current");
+    Sounds.stop("system/background/front");
+    Sounds.playLoop(`operatingSystem/${id}`);
+
+    $(children).addClass("current");
     UI.runAnimation = false;
 
     UI.layer.setTitle(_content.title);
@@ -81,8 +90,10 @@ UI.hover_interact = function(element, children, id) {
       $("#OS_daemon_7").addClass("daemon_7_still");
     }
   }, function(e) {
-    UI.mask.hide();
-    $(children).toggleClass("current");
+    UI.mask.hide(id, 500);
+
+    Sounds.stop(`operatingSystem/${id}`);
+    $(children).removeClass("current");
     UI.runAnimation = true;
     UI.layer.setTitle("");
     $(".ui__layer-title").removeClass("visible");
@@ -179,8 +190,11 @@ UI.showBubbles = function() {
         .fadeIn()
         .removeClass("loading");
 
+      Sounds.play("operatingSystem/writing");
+
       lapseBubbleContent = setTimeout(function() {
         $(".ui__box-bubble", UI.bubbles[UI.index]).removeClass("loading");
+        Sounds.play("operatingSystem/land");
         UI.index++;
         lapseLoading();
       }, 3000);
@@ -196,12 +210,14 @@ UI.showBubbles = function() {
 };
 
 $.each(UI.subSystems, function(index, el) {
-  UI.hover_interact(el.element, el.childs, index);
+  UI.hover_interact(el.element, el.children, index);
 });
 
 UI.showDialog = function(areaId) {
+  Sounds.play("operatingSystem/select");
   UI.current = areaId;
   UI.layer.show();
+  Sounds.play("operatingSystem/open");
 
   UI.unfoldContent(areaId);
   UI.showBubbles();
@@ -218,6 +234,9 @@ UI.hideDialog = function() {
   UI.layer.hide();
   UI.mask.hide(UI.current);
   UI.runAnimation = true;
+  Sounds.play("operatingSystem/close");
+  Sounds.stop(`operatingSystem/${UI.current}`);
+  Sounds.play("system/background/front");
   clearTimeout(lapseBubble);
   clearTimeout(lapseBubbleContent);
 
@@ -226,7 +245,7 @@ UI.hideDialog = function() {
   }
 
   $.each(UI.subSystems, function(index, el) {
-    UI.hover_interact(el.element, el.childs, index);
+    UI.hover_interact(el.element, el.children, index);
   });
 
 };

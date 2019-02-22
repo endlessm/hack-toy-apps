@@ -349,7 +349,7 @@ class LevelScene extends Phaser.Scene {
             shipTypes,
             obstacleTypes,
 
-            random: (min, max) => Math.random() * (max - min) + min,
+            random: (min, max) => Phaser.Math.RND.integerInRange(min, max),
         };
     }
 

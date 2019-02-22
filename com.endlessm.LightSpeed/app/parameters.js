@@ -165,6 +165,22 @@ var defaultLevelParameters = [
     /* Level 6 */
     {
     },
+
+    /* Level 7 */
+    {
+    },
+
+    /* Level 8 */
+    {
+    },
+
+    /* Level 9 */
+    {
+    },
+
+    /* Level 10 */
+    {
+    },
 ];
 
 /* Freeze default parameters */

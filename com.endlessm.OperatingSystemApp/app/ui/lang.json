@@ -127,14 +127,14 @@ lang = {
     ]
   },
   "dev": {
-    "title": "dev/null",
+    "title": "/dev/null",
     "columns": [
       [
         {
           "index": 0,
           "left": 75,
           "name": "Estelle",
-          "text": "Dev/null is a very tiny piece of the operating system. I can take it as a source or as a destination. It’s probably 100 lines of code. But It’s impactful. Dev null is a file in the file system that doesn’t exist. Anytime you need an empty file, dev null is there."
+          "text": "/dev/null is a very tiny piece of the operating system. I can take it as a source or as a destination. It’s probably 100 lines of code. But It’s impactful. dev/null is a file in the file system that doesn’t exist. Anytime you need an empty file, /dev/null is there.",
         }
       ],
       [
@@ -146,7 +146,7 @@ lang = {
         {
           "index": 2,
           "name": "Saniel",
-          "text": "Great question. Dev/null is a special file. Anything you dump into it disappears. We typically use dev null for disposing of unwanted output streams, or as a handy empty file for an input process."
+          "text": "Great question. /dev/null is a special file. Anything you dump into it disappears. We typically use /dev/null for disposing of unwanted output streams, or as a handy empty file for an input process.",
         }
       ],
       [
@@ -167,7 +167,7 @@ lang = {
           "index": 5,
           "top": "-60",
           "name": "Saniel",
-          "text": "Indeed. There’s a joke among programmers. If someone complains to me, I might say, “I’m sending your complaints to dev/null.”"
+          "text": "Indeed. There’s a joke among programmers. If someone complains to me, I might say, “I’m sending your complaints to /dev/null.”"
         },
         {
           "index": 6,

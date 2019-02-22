@@ -12,12 +12,6 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 1850px) {
-  body {
-    overflow: scroll;
-  }
-}
-
 .clearfix:after,
 .clearfix:before {
   display: table;
@@ -42,6 +36,15 @@
   z-index: 500;
 }
 
+.ui__mask.visible {
+  opacity: 0.55 !important;
+  transition: opacity 0.5s linear;
+}
+.ui__mask.hidden {
+  opacity: 0;
+  transition: opacity 0.5s linear;
+}
+
 .ui__mask:after {
   background-color: rgb(7, 8, 88);
   bottom: -500px;
@@ -52,10 +55,6 @@
   right: 0;
   width: 1920px;
   z-index: 500;
-}
-
-.ui__mask.visible {
-  opacity: 0.55 !important;
 }
 
 .ui__mask.cursor_mask {

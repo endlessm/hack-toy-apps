@@ -64,6 +64,12 @@ class StartScene extends Phaser.Scene {
 
         /* Start current level */
         this.scene.launch('level', levelParams);
+
+        this.events.on('shutdown', () => {
+            Sounds.stop('lightspeed/bg/zarathustra-whale');
+        }, this);
+
+        Sounds.playLoop('lightspeed/bg/zarathustra-whale');
     }
 
     startLevel() {

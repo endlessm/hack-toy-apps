@@ -57,6 +57,12 @@ class GameOverScene extends Phaser.Scene {
         restartButton.on('pointerup', this.restartLevel.bind(this));
         this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
 
+        this.events.on('shutdown', () => {
+            Sounds.stop('lightspeed/bg/zarathustra-whale');
+        }, this);
+
+        Sounds.playLoop('lightspeed/bg/zarathustra-whale');
+
         /* Current flick end time */
         this.flickTime = 0;
 

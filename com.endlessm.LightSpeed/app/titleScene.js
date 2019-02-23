@@ -106,7 +106,10 @@ class TitleScene extends Phaser.Scene {
 
         this.events.on('shutdown', () => {
             this.input.keyboard.shutdown();
+            Sounds.stop('lightspeed/bg/2001-hardcore');
         }, this);
+
+        Sounds.playLoop('lightspeed/bg/2001-hardcore');
     }
 
     update() {

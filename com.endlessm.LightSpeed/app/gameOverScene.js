@@ -57,7 +57,11 @@ class GameOverScene extends Phaser.Scene {
         restartButton.on('pointerup', this.restartLevel.bind(this));
         this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
 
+        /* Current flick end time */
         this.flickTime = 0;
+
+        /* Rapid flickering effect end time */
+        this.flickerTime = 0;
     }
 
     update(time) {
@@ -66,10 +70,16 @@ class GameOverScene extends Phaser.Scene {
 
         var offset;
 
-        if (this.gameOverGlow.visible)
-            offset = Phaser.Math.RND.integerInRange(128, 256);
-        else
-            offset = Phaser.Math.RND.integerInRange(512, 1024);
+        if (time > this.flickerTime) {
+            this.flickerTime = time + Phaser.Math.RND.integerInRange(300, 500);
+
+            if (this.gameOverGlow.visible)
+                offset = Phaser.Math.RND.integerInRange(40, 100);
+            else
+                offset = Phaser.Math.RND.integerInRange(600, 1500);
+        } else {
+            offset = Phaser.Math.RND.integerInRange(40, 100);
+        }
 
         this.flickTime = time + offset;
         this.gameOverGlow.visible = !this.gameOverGlow.visible;

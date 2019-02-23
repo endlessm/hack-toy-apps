@@ -142,6 +142,17 @@ class LevelScene extends Phaser.Scene {
             if (globalParameters.playing)
                 this.scene.start('title');
         });
+
+        this.cameras.main.on('camerafadeincomplete', () => {
+            if (globalParameters.playing)
+                Sounds.playLoop('lightspeed/bg/level-loop1');
+            else
+                this.scene.pause();
+        });
+
+        this.events.on('shutdown', () => {
+            Sounds.stop('lightspeed/bg/level-loop1');
+        }, this);
     }
 
     update() {

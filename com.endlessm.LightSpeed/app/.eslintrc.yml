@@ -248,6 +248,7 @@ globals:
   globalParameters: false
   levelParameters: false
   Phaser: false
+  Sounds: false
   Utils: false
   window: false
 parserOptions:

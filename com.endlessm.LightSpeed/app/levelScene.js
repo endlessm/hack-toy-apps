@@ -359,6 +359,12 @@ class LevelScene extends Phaser.Scene {
             enemyTypes,
 
             random: (min, max) => Phaser.Math.RND.integerInRange(min, max),
+            sin(theta) {
+                return Math.sin(theta);
+            },
+            cos(theta) {
+                return Math.cos(theta);
+            },
         };
     }
 

@@ -12,6 +12,7 @@ from gi.repository import Gtk
 from gi.repository import WebKit2
 
 from soundserver import HackSoundServer
+from gamestateservice import GameState
 
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
@@ -40,8 +41,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, metadata):
         super(ToyAppWindow, self).__init__()
 
-        app_id = application.get_application_id()
-        app_info = Gio.DesktopAppInfo.new(app_id + '.desktop')
+        self.app_id = application.get_application_id()
+        app_info = Gio.DesktopAppInfo.new(self.app_id + '.desktop')
         decorated = metadata.get('decorated', True)
         use_load_notify = metadata.get('use-load-notify', False)
 
@@ -59,7 +60,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             # menu should only be visible when using the inspector
             self.view.connect('context-menu', self._on_context_menu)
 
-        self._setup_splash(app_id)
+        self._setup_splash()
         self._setup_js()
 
         # Check if toy app will notify us manually when it finished loading
@@ -85,6 +86,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
         self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
+        self._manager_add_msg_handler(manager, 'ToyAppSaveState', self._on_save_state)
         self._manager_add_msg_handler(manager, 'playSound', self._on_play_sound)
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
@@ -101,10 +103,10 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             )
         )
 
-    def _setup_splash(self, app_id):
+    def _setup_splash(self):
         # Check if we can use the splash screen as a temporary background while
         # the webview loads
-        splash = Gio.File.new_for_path('/app/share/eos-shell-content/splash/%s.jpg' % app_id)
+        splash = Gio.File.new_for_path('/app/share/eos-shell-content/splash/%s.jpg' % self.app_id)
 
         if splash.query_exists():
             self.provider = Gtk.CssProvider()
@@ -128,6 +130,7 @@ toy-app-window > overlay > revealer > frame {
         self.revealer.connect('notify::child-revealed', self._on_child_revealed)
         self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.revealer.set_reveal_child(False)
+        GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
 
     def _on_child_revealed(self, revealer, pspec):
         if not self.revealer.get_child_revealed():
@@ -158,6 +161,30 @@ toy-app-window > overlay > revealer > frame {
         hint = Gdk.Geometry()
         hint.min_aspect = hint.max_aspect = val.to_double()
         self.set_geometry_hints(None, hint, Gdk.WindowHints.ASPECT)
+
+    def _on_save_state(self, manager, result):
+        val = result.get_js_value()
+        if val.is_undefined():
+            raise ValueError('needs state argument')
+
+        if not val.is_string():
+            raise ValueError('state arg should be string')
+
+        GameState.set('%s.State' % self.app_id,
+                      GLib.Variant('s', val.to_string()))
+
+    def _on_load_state_finish(self, proxy, result, user_data):
+        val = None;
+
+        try:
+            val = proxy.call_finish(result)
+        except GLib.Error as err:
+            print("Error loading game state: %s" % err.message)
+
+        if val is not None:
+            json = GLib.strescape(val.unpack()[0])
+            js = 'if(typeof loadState === "function"){loadState(JSON.parse("%s"));}' % json
+            self.view.run_javascript(js);
 
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:

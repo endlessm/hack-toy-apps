@@ -11,6 +11,12 @@ window.ToyApp = {
         window.webkit.messageHandlers.ToyAppSetAspectRatio.postMessage(ratio);
     },
 
+    saveState(state) {
+        var string = JSON.stringify(state, (key, value) => {
+            return key[0] === '_' ? undefined : value;
+        }, 2);
+        window.webkit.messageHandlers.ToyAppSaveState.postMessage(string);
+    },
 };
 
 window.Sounds = {

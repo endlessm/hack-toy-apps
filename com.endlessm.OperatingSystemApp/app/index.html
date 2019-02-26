@@ -10,35 +10,43 @@
   <body>
     <img src="images/background.png"/>
 
+    <div class="bg-sys"></div>
+    <div class="whole" id="system" data-id="system"></div>
+
     <div id="cursor" class="ui__area" data-id="cursor"></div>
-    <img src="images/hovers/cursor.png" class="ui__hover cursor">
+    <img src="images/hovers/cursor_rays.png" class="ui__hover cursor">
+
+    <div id="cursor-daemon-4" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_4"
          class="Animation cursor"
          style="left: 219px; top: 5px;"
          data-frames="[700, 100, 100, 700, 100, 100, 100, 700, 100, 100]">
     </div>
 
+    <div id="cursor-daemon-8" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_8"
          class="Animation cursor"
          style="left: 412px; top: 19px;"
          data-frames="[800, 100, 100, 100, 100, 200, 200, 300, 100, 100]">
     </div>
 
+    <div id="cursor-daemon-5" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_5"
          class="Animation cursor"
          style="left: 496px; top: 168px;"
          data-frames="[500, 100, 100, 100, 100, 500, 100, 100, 100, 100]">
     </div>
 
+    <div id="cursor-daemon-9" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_9"
          class="Animation cursor"
          style="left: 284px; top: 206px;"
          data-frames="[800, 100, 100, 100, 100, 300, 100, 100, 100, 100, 100, 100]">
     </div>
 
+    <div id="window-daemon" class="ui__daemon" data-id="daemons"></div>
     <div id="window-manager" class="ui__area" data-id="window"></div>
-    <div id="window-subarea" class="ui__subarea"></div>
-    <img src="images/hovers/windows_manager.png" class="ui__hover window">
+    <img src="images/hovers/windows_mask.png" class="ui__hover window">
     <div id="OS_daemon_1"
          class="Animation window"
          style="left: 1329px; top: 0px;"
@@ -46,7 +54,8 @@
     </div>
 
     <div id="file-system" class="ui__area" data-id="file"></div>
-    <img src="images/hovers/file_system.png" class="ui__hover file">
+    <div id="file-daemon" class="ui__daemon" data-id="daemons"></div>
+    <img src="images/hovers/system_rays.png" class="ui__hover file">
     <div id="OS_daemon_2"
          class="Animation file"
          style="left: 73px; top: 444px;"
@@ -54,8 +63,9 @@
     </div>
 
     <div id="kernel" class="ui__area" data-id="kernel"></div>
-    <div id="clock" class="ui__area" data-id="kernel-clock"></div>
-    <img src="images/hovers/kernel.png" class="ui__hover kernel kernel-clock">
+    <img src="images/hovers/kernel_rays.png" class="ui__hover kernel">
+    <img src="images/hovers/clock_rays.png" class="ui__hover kernel-clock">
+    <div id="clock" class="ui__area" data-id="clock"></div>
     <div id="rtc" class="clock kernel kernel-clock" style="left:856px; top: 180px; display: none;">
       <img src="images/clock/background.png"/>
       <img id="hour-shadow" class="hand shadow" src="images/clock/hour-shadow.png"/>
@@ -67,29 +77,32 @@
     </div>
 
     <div id="memory-manager" class="ui__area" data-id="memory"></div>
-    <img src="images/hovers/memory_manager.png" class="ui__hover memory">
+    <img src="images/hovers/memory_rays.png" class="ui__hover memory">
+
+    <div id="memory-daemon-out" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_7"
          class="Animation memory"
          style="left: 1684px; top: 432px;"
          data-frames="[100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]">
     </div>
 
+    <div id="memory-daemon-in" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_6"
          class="Animation memory"
          style="left: 1209px; top: 676px;"
          data-frames="[100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 700]">
     </div>
 
-    <div id="dev-null" class="ui__area" data-id="dev-null"></div>
-    <img src="images/hovers/dev_null.png" class="ui__hover dev">
+    <div id="dev-null" class="ui__area" data-id="dev"></div>
+    <img src="images/hovers/dev_rays.png" class="ui__hover dev">
     <img src="images/back_sign.png" style="left: 380px; top: 646px;"/>
     <img src="images/fence_back.png" style="left: 328px; top: 700px;"/>
 
+    <div id="dev-daemon" class="ui__daemon" data-id="daemons"></div>
     <div id="OS_daemon_3"
          class="Animation dev"
          style="left: 158px; top: 627px;"
-         data-frames="[100, 200, 100, 100, 400, 100, 100, 400, 100, 100, 100, 100, 100, 100, 100, 100, 100, 200, 100, 100, 100, 100, 100, 100,
-       96, 100, 700]">
+         data-frames="[100, 200, 100, 100, 400, 100, 100, 400, 100, 100, 100, 100, 100, 100, 100, 100, 100, 200, 100, 100, 100, 100, 100, 100, 96, 100, 700]">
     </div>
 
     <img src="images/fence_front.png" style="left: 326px; top: 865px;"/>
@@ -100,10 +113,12 @@
     <img src="images/hovers/window_rays.png" class="ui__hover cursor">
 
     <img id="lighting" src="images/lighting.png" />
-    <div id="overlay" class="ui__overlay"></div>
+
+    <div id="mask" class="ui__mask"></div>
+    <h1 class="ui__layer-title"></h1>
+
     <div class="ui__layer">
       <button class="ui__layer-close"></button>
-      <h1 class="ui__layer-title">Cursor</h1>
       <div class="ui__layer-content"></div>
     </div>
 

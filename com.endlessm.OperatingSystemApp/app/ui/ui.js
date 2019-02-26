@@ -2,40 +2,59 @@ class UserInterface {
   constructor() {
     this.lang = lang;
     this.layer = new Layer();
-    this.overlay = new Overlay();
+    this.mask = new Mask();
 
+    this._index = 0;
     this._isAnimationRunning = true;
-    this._stations = [
-      {element: "#cursor", children: ".cursor"},
-      {element: "#window-manager", children: ".window"},
-      {element: "#memory-manager", children: ".memory"},
-      {element: "#file-system", children: ".file"},
-      {element: "#dev-null", children: ".dev"},
-      {element: "#kernel", children: ".kernel"},
-    ];
-    this._stations.forEach((station) => {
-      this.hoverInteract(station.element, station.children);
+    this._currentAreaId = null;
+    this._subSystems = {
+      "cursor": {element: "#cursor", childs: ".cursor"},
+      "window": {element: "#window-manager", childs: ".window"},
+      "memory": {element: "#memory-manager", childs: ".memory"},
+      "file": {element: "#file-system", childs: ".file"},
+      "dev": {element: "#dev-null", childs: ".dev"},
+      "kernel": {element: "#kernel", childs: ".kernel"},
+      "clock": {element: "#clock", childs: ".kernel-clock"},
+      "daemons": {element: ".ui__daemon", childs: ".Animation"},
+      "system": {element: "#system", childs: null},
+    }
+    this.applyHoverInteraction();
+
+
+    $(".whole").click((event) => {
+      const targetElement = $(event.currentTarget);
+      $(targetElement).unbind("mouseleave");
+      this.showDialog($(targetElement).data("id"));
+      this.mask.show($(targetElement).data("id"));
+    });
+
+    $(".ui__daemon").click((event) => {
+      const targetElement = $(event.currentTarget);
+      $(targetElement).off("mouseleave");
+      this.showDialog($(targetElement).data("id"));
     });
 
     $(".ui__area").click((event) => {
       const targetElement = $(event.currentTarget);
-      const areaId = targetElement.data("id");
-
-      targetElement.off("mouseenter mouseleave");
-      $(".ui__overlay").stop().fadeIn(80);
-
-      this.layer.show();
-      this.unfoldContent(areaId);
-      this.showBubbles();
-      this.stopAnimation();
-      $(`.${areaId}`).toggleClass("current");
+      $(targetElement).unbind("mouseleave");
+      this.showDialog($(targetElement).data("id"));
     });
 
-    $(".ui__layer-close").click(() => {
-      $(".current").toggleClass("current");
-      this.layer.hide();
-      this.overlay.hide();
-      this.runAnimation();
+    $(".ui__layer-close").click(this.hideDialog.bind(this));
+
+    $(".ui__layer").on("click", (event) => {
+      const classTarget = $(event.target).attr("class");
+      function isNotTarget(classTarget) {
+        return classTarget != "ui__layer" &&
+               classTarget != "clearfix" &&
+               classTarget != "ui__layer-col";
+      }
+
+      if (isNotTarget(classTarget)) {
+        return false;
+      }
+
+      this.hideDialog();
     });
   }
 
@@ -51,15 +70,35 @@ class UserInterface {
     return this._isAnimationRunning;
   }
 
-  hoverInteract(element, children) {
+  hoverInteract(element, children, id) {
+    const _content = this.lang[id];
+
     $(element).hover((event) => {
-      this.overlay.show();
+      this.mask.show();
       $(children).toggleClass("current");
       this.stopAnimation();
+
+      this.layer.setTitle(_content.title);
+      $(".ui__layer-title").addClass("visible");
+      if (id !== "daemons") {
+        $("#OS_daemon_7").addClass("daemon_7_still");
+      }
     }, (event) => {
-      this.overlay.hide();
+      this.mask.hide();
       $(children).toggleClass("current");
       this.runAnimation();
+
+      this.layer.setTitle("");
+      $(".ui__layer-title").removeClass("visible");
+      if (id !== "daemons") {
+        $("#OS_daemon_7").removeClass("daemon_7_still");
+      }
+    });
+  }
+
+  applyHoverInteraction() {
+    $.each(this._subSystems, (index, el) => {
+      this.hoverInteract(el.element, el.childs, index);
     });
   }
 
@@ -80,18 +119,27 @@ class UserInterface {
         text: box.name
       });
 
+      const _loader = $("<div>", {
+        class: "ui__box-loading",
+        html: "<span class='dot'></span><span class='dot'></span><span class='dot'></span>"
+      });
+
       const _content = $("<div>", {
         class: "ui__box-bubble-content",
         html: box.text
       });
 
-      const _bubble = $("<div>", {
-        class: `ui__box-bubble ${label}`,
-      })
-      .append(_content);
+      const _clear = $("<div class='clearfix'></div>");
 
-      const _box = $("<div />", {
-        class: "ui__box",
+      const _bubble = $("<div>", {
+        class: `ui__box-bubble loading ${label}`,
+      })
+      .append(_loader)
+      .append(_content)
+      .append(_clear);
+
+      const _box = $("<div>", {
+        class: "ui__box loading",
         style: `margin-top: ${top}px;`,
         "data-index": box.index
       })
@@ -106,37 +154,83 @@ class UserInterface {
   }
 
   showBubbles() {
-    const _bubbles = $(".ui__box");
-    let index = 0;
+    let index;
+    let bubbles;
 
     const lapseLoading = () => {
-      $(_bubbles[index]).fadeIn();
-      if (index >= _bubbles.length)
-        return;
-      index++;
-      setTimeout(lapseLoading, 2500);
+      this._lapseBubble = setTimeout(() => {
+        if (index >= bubbles.length) {
+          return;
+        }
+        $(bubbles[index])
+          .fadeIn()
+          .removeClass("loading");
+
+        this._lapseBubbleContent = setTimeout(function() {
+          $(".ui__box-bubble", bubbles[index]).removeClass("loading");
+          index++;
+          lapseLoading();
+        }, 2500);
+
+      }, 1250);
     };
 
     setTimeout(() => {
-      lapseLoading();
-    }, 0);
+        bubbles = $(".ui__box.loading");
+        index = 0;
+        lapseLoading();
+      }, 300
+    );
   }
+
+  showDialog(areaId) {
+    this._currentAreaId = areaId;
+    this.layer.show();
+
+    this.unfoldContent(areaId);
+    this.showBubbles();
+    this.stopAnimation();
+    $(`.${areaId}`).addClass("current");
+
+    if (areaId != "daemons") {
+      $("#OS_daemon_7").addClass("daemon_7_still");
+    }
+  }
+
+  hideDialog() {
+    $(".current").removeClass("current");
+    this.layer.hide();
+    this.mask.hide(this._currentAreaId);
+    this.runAnimation();
+
+    clearTimeout(this._lapseBubble);
+    clearTimeout(this._lapseBubbleContent);
+
+    if (this._currentAreaId !== "daemons") {
+      $("#OS_daemon_7").removeClass("daemon_7_still");
+    }
+    this.applyHoverInteraction();
+  };
 
   unfoldContent(areaId) {
     const _content = this.lang[areaId];
 
-    this.layer.setTitle(_content.title);
-
     _content.columns.forEach(boxes => {
       var _htmlBoxes = this.insertBox(boxes);
+      const left = boxes[0].left || 0;
 
       $(".ui__layer-content").append(
         $("<div>", {
-          class: "ui__layer-col"
+          class: "ui__layer-col",
+          style: `margin-left: ${left}px;`
         })
         .append(_htmlBoxes)
       );
     });
+
+    $(".ui__layer-content").append(
+      $("<div class='clearfix'></div>")
+    );
   }
 }
 
@@ -165,7 +259,7 @@ class Layer {
   }
 }
 
-class Overlay {
+class Mask {
   constructor() {
     this.element = $(".ui__overlay");
   }
@@ -173,10 +267,9 @@ class Overlay {
   show() {
     this.element.stop().fadeIn(80);
   }
-
   hide() {
     this.element.stop().fadeOut(80);
   }
-}
+};
 
 var UI = new UserInterface();

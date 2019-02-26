@@ -192,6 +192,7 @@ class LevelScene extends Phaser.Scene {
             this.ship.setAccelerationY(accel);
         } else {
             this.ship.setAccelerationY(0);
+            this.ship.body.setDrag(0, this.params.shipDrag);
         }
 
         /* Update variables */
@@ -277,6 +278,7 @@ class LevelScene extends Phaser.Scene {
         this._setShipCollisionBox();
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
+        this.ship.body.setAllowDrag(true);
     }
 
     createEnemy(type, position, scale) {

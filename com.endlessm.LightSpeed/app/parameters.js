@@ -68,6 +68,7 @@ var defaultParameters = {
     shipAsset: 'spaceship',
     shipSpeed: 500,
     shipSize: 50,
+    shipDrag: 1000,
     shipAcceleration: 500,
 
     /* Note, the code will appear exactly as indented here, with the correct

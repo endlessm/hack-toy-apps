@@ -60,7 +60,7 @@ var globalParameters = {
 var defaultParameters = {
     description: 'Rescue Astronauts\nAvoid asteroids',
 
-    scoreTarget: 5,
+    scoreTarget: 3,
     timeLimit: -1,
 
     astronautSize: 30,

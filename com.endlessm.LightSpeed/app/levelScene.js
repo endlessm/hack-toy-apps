@@ -112,23 +112,15 @@ class LevelScene extends Phaser.Scene {
         );
 
         /* Score Box */
-        this.createScoreBox('Level: 00 Rescued: 00');
+        this.createScoreBox('Level: 00 Rescued: 00/00');
         this.updateScore();
 
-        /* Update user functions when they change */
+        /* Listen to properties changes */
         this.game.events.on('global-property-change', (obj, property) => {
-            if (Object.is(this.params, obj) && property.endsWith('Code')) {
-                const func = getUserFunction(obj[property]);
-                const funcName = property.slice(0, -4);
-                var member;
-
-                if (property.startsWith('update') &&
-                    (member = funcName.slice(6).toLowerCase()) &&
-                    enemyTypes.indexOf(member) >= 0)
-                    this.updateEnemy[member] = func;
-                else if (funcName in this)
-                    this[funcName] = func;
-            }
+            if (Object.is(globalParameters, obj))
+                this.onGlobalParametersNotify(property);
+            else if (Object.is(this.params, obj))
+                this.onParametersNotify(property);
         });
 
         /* Pause game on space bar press */
@@ -219,6 +211,30 @@ class LevelScene extends Phaser.Scene {
     }
 
     /* Private functions */
+
+    /* This will be called each time something in globalParameters changes */
+    onGlobalParametersNotify(property) {
+        if (property === 'score')
+            this.updateScore();
+    }
+
+    /* This will be called each time something in this.params changes */
+    onParametersNotify(property) {
+        if (property === 'scoreTarget') {
+            this.updateScore();
+        } else if (property.endsWith('Code')) {
+            const func = getUserFunction(obj[property]);
+            const funcName = property.slice(0, -4);
+            var member;
+
+            if (property.startsWith('update') &&
+                (member = funcName.slice(6).toLowerCase()) &&
+                enemyTypes.indexOf(member) >= 0)
+                this.updateEnemy[member] = func;
+            else if (funcName in this)
+                this[funcName] = func;
+        }
+    }
 
     updateQuestData() {
         enemyTypes.forEach((type, ix) => {
@@ -329,10 +345,14 @@ class LevelScene extends Phaser.Scene {
     }
 
     updateScore() {
-        const level = `${globalParameters.currentLevel}`.padStart(2, ' ');
-        const score = `${globalParameters.score}`.padStart(2, ' ');
+        const level = globalParameters.currentLevel;
+        const score = globalParameters.score;
+        const target = this.params.scoreTarget;
 
-        this.scoreText.setText(`Level: ${level} Rescued: ${score}`);
+        this.scoreText.setText(`Level: ${level} Rescued: ${score}/${target}`);
+
+        /* Update position */
+        this.scoreText.x = (this.scoreBox.width - this.scoreText.width) / 2;
     }
 
     createScoreBox(text) {
@@ -343,6 +363,7 @@ class LevelScene extends Phaser.Scene {
         this.scoreBox = this.add.container(
             (game.config.width - w) / 2, 4,
             [new Utils.TransparentBox(this, w, h), this.scoreText]);
+        this.scoreBox.setSize(w, h);
 
         this.scoreBox.depth = 100;
     }

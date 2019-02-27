@@ -31,7 +31,8 @@ Object.freeze(enemyTypes);
  */
 var globalParameters = {
     availableLevels: 1,
-    currentLevel: 1,
+    currentLevel: 0,
+    nextLevel: 1,
 
     /* Level specific parameters */
     score: 0,

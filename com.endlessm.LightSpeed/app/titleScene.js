@@ -13,6 +13,9 @@ const kcode = [38, 38, 40, 40, 37, 39, 37, 39, 65, 66];
 class TitleScene extends Phaser.Scene {
     init() {
         void this;
+        globalParameters.currentLevel = 0;
+        globalParameters.playing = false;
+        globalParameters.paused = false;
     }
 
     preload() {

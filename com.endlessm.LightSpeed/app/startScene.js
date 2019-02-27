@@ -12,6 +12,7 @@ class StartScene extends Phaser.Scene {
     init() {
         void this;
         globalParameters.playing = false;
+        globalParameters.currentLevel = globalParameters.nextLevel || 1;
     }
 
     preload() {

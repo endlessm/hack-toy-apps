@@ -398,15 +398,23 @@ class LevelScene extends Phaser.Scene {
         if (globalParameters.score >= this.params.scoreTarget) {
             globalParameters.success = true;
 
-            /* Limit current level to available one */
-            if (globalParameters.currentLevel + 1 >= globalParameters.availableLevel) {
-                globalParameters.currentLevel = 0;
-                this.scene.start('title');
-            } else {
-                this.scene.launch('continue',
-                    `Level ${globalParameters.currentLevel + 1} Complete!`);
-                this.scene.pause();
-            }
+            /* Go back to title if this was the last level */
+            if (globalParameters.currentLevel < globalParameters.availableLevels)
+                globalParameters.nextLevel = globalParameters.currentLevel + 1;
+            else
+                globalParameters.nextLevel = 0;
+
+            /* Save game state when level is finished */
+            ToyApp.saveState({
+                availableLevels: globalParameters.availableLevels,
+                currentLevel: globalParameters.currentLevel,
+                nextLevel: globalParameters.nextLevel,
+                parameters: this.params
+            });
+
+            this.scene.launch('continue',
+                `Level ${globalParameters.currentLevel} Complete!`);
+            this.scene.pause();
         }
     }
 

@@ -115,6 +115,19 @@ window.reset = function() {
     if (i < 0 || i > levelParameters.length)
         return;
 
-    Object.assign(window[`globalLevel${i}Parameters`], levelParameters[i]);
+    Object.assign(levelParameters[i], defaultParameters);
+    Object.assign(levelParameters[i], defaultLevelParameters[i]);
+};
+
+window.loadState = function(state) {
+    const i = state.currentLevel;
+
+    /* Restore global parameters */
+    globalParameters.availableLevels = state.availableLevels;
+    globalParameters.nextLevel = state.nextLevel;
+    globalParameters.currentLevel = i;
+
+    /* Restore current level parameters */
+    Object.assign(levelParameters[i], state.parameters);
 };
 

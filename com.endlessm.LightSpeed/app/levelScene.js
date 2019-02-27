@@ -299,6 +299,9 @@ class LevelScene extends Phaser.Scene {
         /* Create enemy object */
         var obj = this.physics.add.sprite(position.x, position.y, type);
 
+        /* Add user data object to use in update function */
+        obj.userData = {};
+
         /* Add to enemy group */
         this.enemies[type].add(obj);
 
@@ -498,6 +501,7 @@ class LevelScene extends Phaser.Scene {
         var enemy = {
             position: this.userSpace.transformPoint(obj.x, obj.y),
             velocity: {x: vx, y: vy},
+            data: obj.userData,
         };
 
         /* Keep this in sync with COMMON_UPDATE_SCOPE in

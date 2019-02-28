@@ -142,11 +142,18 @@ class LevelScene extends Phaser.Scene {
         });
 
         this.cameras.main.on('camerafadeincomplete', () => {
-            if (globalParameters.playing)
+            if (globalParameters.playing) {
+                Sounds.play('lightspeed/timpani-start-win');
                 Sounds.playLoop('lightspeed/bg/level-loop1');
-            else
+            } else {
                 this.scene.pause();
+            }
         });
+
+        this.events.on('pause', () => {
+            this.playThrust(0);
+            Sounds.stop('lightspeed/bg/level-loop1');
+        }, this);
 
         this.events.on('shutdown', () => {
             Sounds.stop('lightspeed/bg/level-loop1');
@@ -171,6 +178,7 @@ class LevelScene extends Phaser.Scene {
             }
             return;
         } else if (this.physics.world.isPaused) {
+            Sounds.play('lightspeed/timpani-start-win');
             this.scene.stop('pause');
             this.physics.resume();
         }
@@ -181,14 +189,20 @@ class LevelScene extends Phaser.Scene {
         const accel = this.params.shipAcceleration;
 
         if (cursors.up.isDown) {
+            this.playThrust(-1);
+
             if (this.ship.body.velocity.y > 0)
                 this.ship.setVelocityY(0);
             this.ship.setAccelerationY(-accel);
         } else if (cursors.down.isDown) {
+            this.playThrust(1);
+
             if (this.ship.body.velocity.y < 0)
                 this.ship.setVelocityY(0);
             this.ship.setAccelerationY(accel);
         } else {
+            this.playThrust(0);
+
             this.ship.setAccelerationY(0);
             this.ship.body.setDrag(0, this.params.shipDrag);
         }
@@ -214,10 +228,37 @@ class LevelScene extends Phaser.Scene {
         this.runSpawnAstronaut();
         this.runUpdateEnemy();
 
+        this.checkAstronautPosition();
+        this.checkAsteroidPosition();
+
         this.updateQuestData();
     }
 
     /* Private functions */
+
+    playThrust(direction) {
+        if (direction < 0) {
+            if (!this._playingThrustUp) {
+                Sounds.stop('lightspeed/thrust-down');
+                this._playingThrustDown = false;
+                Sounds.playLoop('lightspeed/thrust-up');
+                this._playingThrustUp = true;
+            }
+        } else if (direction > 0) {
+            if (!this._playingThrustDown) {
+                Sounds.stop('lightspeed/thrust-up');
+                this._playingThrustUp = false;
+                Sounds.playLoop('lightspeed/thrust-down');
+                this._playingThrustDown = true;
+            }
+        } else if (this._playingThrustUp) {
+            Sounds.stop('lightspeed/thrust-up');
+            this._playingThrustUp = false;
+        } else if (this._playingThrustDown) {
+            Sounds.stop('lightspeed/thrust-down');
+            this._playingThrustDown = false;
+        }
+    }
 
     /* This will be called each time something in globalParameters changes */
     onGlobalParametersNotify(property) {
@@ -306,6 +347,8 @@ class LevelScene extends Phaser.Scene {
     createEnemy(type, position, scale) {
         /* Create enemy object */
         var obj = this.physics.add.sprite(position.x, position.y, type);
+
+        obj.enemyType = type;
 
         /* Add user data object to use in update function */
         obj.userData = {};
@@ -411,6 +454,38 @@ class LevelScene extends Phaser.Scene {
         scope.time = this.tick * 0.33;
 
         return scope;
+    }
+
+    checkAstronautPosition() {
+        const children = this.astronauts.getChildren();
+        const shipCenter = this.ship.body.center;
+        const x = this.ship.x;
+
+        for (const astronaut of children) {
+            /* FIXME: use a zone behind the ship to check if we missed the
+             * astronaut or not.
+             */
+            if (!astronaut._missed && x > astronaut.x &&
+                shipCenter.distance(astronaut.body.center) > astronaut.height) {
+                Sounds.play('lightspeed/astronaut-missed');
+                astronaut._missed = true;
+            }
+        }
+    }
+
+    checkAsteroidPosition() {
+        const children = this.enemies.asteroid.getChildren();
+        const x = this.ship.x;
+
+        for (const asteroid of children) {
+            /* FIXME: use a zone that follows the ship to test if the asteroid
+             * is near by the ship.
+             */
+            if (!asteroid._passed && x > asteroid.x + asteroid.displayWidth / 2) {
+                Sounds.play('lightspeed/asteroid-passing');
+                asteroid._passed = true;
+            }
+        }
     }
 
     checkLevelDone() {
@@ -585,6 +660,7 @@ class LevelScene extends Phaser.Scene {
         if (!globalParameters.playing)
             return;
 
+        Sounds.play('lightspeed/asteroid-crash');
         this.scene.launch('gameover');
         this.scene.pause();
     }
@@ -618,6 +694,9 @@ class LevelScene extends Phaser.Scene {
                 this.checkLevelDone();
             },
         });
+
+        /* Play thank you sound */
+        Sounds.play('lightspeed/astronaut-thanks');
     }
 }
 

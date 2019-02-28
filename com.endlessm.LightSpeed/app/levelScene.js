@@ -47,6 +47,11 @@ class LevelScene extends Phaser.Scene {
         /* Init scene variables */
         this.tick = 0;
 
+        /* Create userScope */
+        this.spawnAstronautScope = this.createScope();
+        this.spawnEnemyScope = this.createScope();
+        this.updateEnemyScope = {};
+
         /* Get user functions */
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
@@ -57,6 +62,7 @@ class LevelScene extends Phaser.Scene {
             this.updateEnemy[o] = getUserFunction(
                 data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
             );
+            this.updateEnemyScope[o] = this.createScope();
         }
     }
 
@@ -373,18 +379,22 @@ class LevelScene extends Phaser.Scene {
         this.scoreBox.depth = 100;
     }
 
-    getScope() {
+    createScope() {
         /* Keep this in sync with COMMON_SCOPE in
          * hack-toolbox-app/src/LightSpeed/controlpanel.js */
         return {
-            tick: this.tick,
-            time: this.tick * 0.33,
+            tick: 0,
+            time: 0,
+            ticks: 0,
             width: game.config.width,
             height: game.config.height,
             shipTypes,
             enemyTypes,
+            data: {},
 
-            random: (min, max) => Phaser.Math.RND.integerInRange(min, max),
+            random(min, max) {
+                return Phaser.Math.RND.integerInRange(min, max);
+            },
             sin(theta) {
                 return Math.sin(theta);
             },
@@ -392,6 +402,15 @@ class LevelScene extends Phaser.Scene {
                 return Math.cos(theta);
             },
         };
+    }
+
+    updateScope(scope) {
+        /* Keep this in sync with COMMON_SCOPE in
+         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
+        scope.tick = this.tick;
+        scope.time = this.tick * 0.33;
+
+        return scope;
     }
 
     checkLevelDone() {
@@ -422,8 +441,8 @@ class LevelScene extends Phaser.Scene {
         if (!this.spawnEnemy)
             return;
 
+        var scope = this.updateScope(this.spawnEnemyScope);
         var retval = null;
-        var scope = this.getScope();
 
         try {
             retval = this.spawnEnemy(scope);
@@ -482,10 +501,11 @@ class LevelScene extends Phaser.Scene {
         if (!this.spawnAstronaut)
             return;
 
+        var scope = this.updateScope(this.spawnAstronautScope);
         var retval = null;
 
         try {
-            retval = this.spawnAstronaut(this.getScope());
+            retval = this.spawnAstronaut(scope);
         } catch (e) {
             /* User function error! */
         }
@@ -508,16 +528,16 @@ class LevelScene extends Phaser.Scene {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
 
-        var enemy = {
+        /* Keep this in sync with COMMON_UPDATE_SCOPE in
+         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
+        const pos = this.userSpace.transformPoint(this.ship.x, this.ship.y);
+        scope.playerShipY = pos.y;
+        scope.enemy = {
             position: this.userSpace.transformPoint(obj.x, obj.y),
             velocity: {x: vx, y: vy},
             data: obj.userData,
         };
 
-        /* Keep this in sync with COMMON_UPDATE_SCOPE in
-         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
-        scope.playerShipY = this.userSpace.transformPoint(this.ship.x, this.ship.y).y;
-        scope.enemy = enemy;
         try {
             updateEnemy(scope);
         } catch (e) {
@@ -543,14 +563,14 @@ class LevelScene extends Phaser.Scene {
     }
 
     runUpdateEnemy() {
-        var scope = this.getScope();
-
         /* Iterate over enemy types */
         for (const o of enemyTypes) {
             const updateEnemy = this.updateEnemy[o];
 
             if (!updateEnemy)
                 continue;
+
+            var scope = this.updateScope(this.updateEnemyScope[o]);
 
             /* Iterate over enemies */
             const children = this.enemies[o].getChildren();

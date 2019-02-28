@@ -6,7 +6,7 @@
  */
 
 /* exported LevelScene */
-/* global enemyTypes, shipTypes */
+/* global ToyApp, enemyTypes, shipTypes */
 
 function getUserFunction(code) {
     if (!code)
@@ -406,10 +406,12 @@ class LevelScene extends Phaser.Scene {
 
             /* Save game state when level is finished */
             ToyApp.saveState({
+                /* Global state */
                 availableLevels: globalParameters.availableLevels,
-                currentLevel: globalParameters.currentLevel,
                 nextLevel: globalParameters.nextLevel,
-                parameters: this.params
+                /* Level state */
+                level: globalParameters.currentLevel,
+                parameters: this.params,
             });
 
             this.scene.launch('continue',

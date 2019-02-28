@@ -120,14 +120,20 @@ window.reset = function() {
 };
 
 window.loadState = function(state) {
-    const i = state.currentLevel;
+    /* Do some sanity checks before restoring game state */
+    if (typeof state === 'object' &&
+        typeof state.availableLevels === 'number' &&
+        typeof state.nextLevel === 'number' &&
+        typeof state.level === 'number' &&
+        typeof state.parameters === 'object' &&
+        state.nextLevel < state.availableLevels &&
+        state.level >= 0 && state.level <= state.availableLevels) {
+        /* Restore global parameters */
+        globalParameters.availableLevels = state.availableLevels;
+        globalParameters.nextLevel = state.nextLevel;
 
-    /* Restore global parameters */
-    globalParameters.availableLevels = state.availableLevels;
-    globalParameters.nextLevel = state.nextLevel;
-    globalParameters.currentLevel = i;
-
-    /* Restore current level parameters */
-    Object.assign(levelParameters[i], state.parameters);
+        /* Restore current level parameters */
+        Object.assign(levelParameters[state.level], state.parameters);
+    }
 };
 

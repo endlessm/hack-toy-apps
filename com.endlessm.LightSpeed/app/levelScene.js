@@ -224,7 +224,7 @@ class LevelScene extends Phaser.Scene {
         if (property === 'scoreTarget') {
             this.updateScore();
         } else if (property.endsWith('Code')) {
-            const func = getUserFunction(obj[property]);
+            const func = getUserFunction(this.params[property]);
             const funcName = property.slice(0, -4);
             var member;
 

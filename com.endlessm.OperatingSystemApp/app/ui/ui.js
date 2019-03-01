@@ -25,7 +25,7 @@ class UserInterface {
       const targetElement = $(event.currentTarget);
       $(targetElement).unbind("mouseleave");
       this.showDialog($(targetElement).data("id"));
-      this.mask.show($(targetElement).data("id"));
+      this.mask.show();
     });
 
     $(".ui__daemon").click((event) => {
@@ -200,7 +200,7 @@ class UserInterface {
   hideDialog() {
     $(".current").removeClass("current");
     this.layer.hide();
-    this.mask.hide(this._currentAreaId);
+    this.mask.hide();
     this.runAnimation();
 
     clearTimeout(this._lapseBubble);

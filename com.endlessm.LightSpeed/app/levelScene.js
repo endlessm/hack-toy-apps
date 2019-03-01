@@ -6,7 +6,8 @@
  */
 
 /* exported LevelScene */
-/* global ToyApp, enemyTypes, shipTypes */
+/* global ToyApp, enemyTypes, shipTypes, SpawnAstronautScope, SpawnEnemyScope,
+   UpdateEnemyScope */
 
 function getUserFunction(code) {
     if (!code)
@@ -48,8 +49,8 @@ class LevelScene extends Phaser.Scene {
         this.tick = 0;
 
         /* Create userScope */
-        this.spawnAstronautScope = this.createScope();
-        this.spawnEnemyScope = this.createScope();
+        this.spawnAstronautScope = new SpawnAstronautScope();
+        this.spawnEnemyScope = new SpawnEnemyScope();
         this.updateEnemyScope = {};
 
         /* Get user functions */
@@ -62,7 +63,7 @@ class LevelScene extends Phaser.Scene {
             this.updateEnemy[o] = getUserFunction(
                 data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
             );
-            this.updateEnemyScope[o] = this.createScope();
+            this.updateEnemyScope[o] = new UpdateEnemyScope();
         }
     }
 
@@ -422,40 +423,6 @@ class LevelScene extends Phaser.Scene {
         this.scoreBox.depth = 100;
     }
 
-    createScope() {
-        /* Keep this in sync with COMMON_SCOPE in
-         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
-        return {
-            tick: 0,
-            time: 0,
-            ticks: 0,
-            width: game.config.width,
-            height: game.config.height,
-            shipTypes,
-            enemyTypes,
-            data: {},
-
-            random(min, max) {
-                return Phaser.Math.RND.integerInRange(min, max);
-            },
-            sin(theta) {
-                return Math.sin(theta);
-            },
-            cos(theta) {
-                return Math.cos(theta);
-            },
-        };
-    }
-
-    updateScope(scope) {
-        /* Keep this in sync with COMMON_SCOPE in
-         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
-        scope.tick = this.tick;
-        scope.time = this.tick * 0.33;
-
-        return scope;
-    }
-
     checkAstronautPosition() {
         const children = this.astronauts.getChildren();
         const shipCenter = this.ship.body.center;
@@ -518,11 +485,13 @@ class LevelScene extends Phaser.Scene {
         if (!this.spawnEnemy)
             return;
 
-        var scope = this.updateScope(this.spawnEnemyScope);
+        var scope = this.spawnEnemyScope;
         var retval = null;
 
         try {
+            scope.update(this.tick);
             retval = this.spawnEnemy(scope);
+            scope.postUpdate(retval);
         } catch (e) {
             /* User function error! */
         }
@@ -578,11 +547,13 @@ class LevelScene extends Phaser.Scene {
         if (!this.spawnAstronaut)
             return;
 
-        var scope = this.updateScope(this.spawnAstronautScope);
+        var scope = this.spawnAstronautScope;
         var retval = null;
 
         try {
+            scope.update(this.tick);
             retval = this.spawnAstronaut(scope);
+            scope.postUpdate(retval);
         } catch (e) {
             /* User function error! */
         }
@@ -605,19 +576,19 @@ class LevelScene extends Phaser.Scene {
     callUpdateEnemy(updateEnemy, scope, obj) {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
-
-        /* Keep this in sync with COMMON_UPDATE_SCOPE in
-         * hack-toolbox-app/src/LightSpeed/controlpanel.js */
         const pos = this.userSpace.transformPoint(this.ship.x, this.ship.y);
-        scope.playerShipY = pos.y;
-        scope.enemy = {
+
+        var retval = null;
+        var enemy = {
             position: this.userSpace.transformPoint(obj.x, obj.y),
             velocity: {x: vx, y: vy},
             data: obj.userData,
         };
 
         try {
-            updateEnemy(scope);
+            scope.update(this.tick, pos.y, enemy);
+            retval = updateEnemy(scope);
+            scope.postUpdate(retval);
         } catch (e) {
             /* User function error! */
         }
@@ -648,7 +619,7 @@ class LevelScene extends Phaser.Scene {
             if (!updateEnemy)
                 continue;
 
-            var scope = this.updateScope(this.updateEnemyScope[o]);
+            var scope = this.updateEnemyScope[o];
 
             /* Iterate over enemies */
             const children = this.enemies[o].getChildren();

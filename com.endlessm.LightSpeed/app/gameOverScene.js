@@ -6,12 +6,10 @@
  */
 
 /* exported GameOverScene */
-/* global LevelChooser */
 
 class GameOverScene extends Phaser.Scene {
     init() {
         void this;
-        globalParameters.playing = false;
     }
 
     preload() {
@@ -31,14 +29,12 @@ class GameOverScene extends Phaser.Scene {
         var pad = this.add.zone(0, 0, 512, 310).setOrigin(0, 0);
         this.startMessage = this.add.text(0, 0, levelParams.description, fontConfig)
             .setOrigin(0.5, 0.5);
-        this.levelChooser = new LevelChooser(this, 'prev', 'next');
         var restartButton = new Utils.Button(this, 'button', 'RESTART');
 
         Phaser.Display.Align.In.Center(this.gameOverGlow, pad);
         Phaser.Display.Align.In.Center(gameOver, pad);
         Phaser.Display.Align.To.BottomCenter(this.startMessage, gameOver, 0, spacing);
-        Phaser.Display.Align.To.BottomCenter(this.levelChooser, this.startMessage, 0, spacing);
-        Phaser.Display.Align.To.BottomCenter(restartButton, this.levelChooser, 0, spacing);
+        Phaser.Display.Align.To.BottomCenter(restartButton, this.startMessage, 0, spacing);
 
         const w = pad.width;
         const h = restartButton.y + restartButton.height + spacing;
@@ -47,11 +43,7 @@ class GameOverScene extends Phaser.Scene {
         this.add.container(
             (game.config.width - w) / 2, (game.config.height - h) / 2,
             [bg, pad, this.gameOverGlow, gameOver, this.startMessage,
-                this.levelChooser, restartButton]);
-
-        this.levelChooser.on('level-changed', level => {
-            this.startMessage.setText(levelParameters[level].description);
-        });
+                restartButton]);
 
         /* Restart level on button click and enter */
         restartButton.on('pointerup', this.restartLevel.bind(this));
@@ -68,6 +60,9 @@ class GameOverScene extends Phaser.Scene {
 
         /* Rapid flickering effect end time */
         this.flickerTime = 0;
+
+        /* We are not playing anymore */
+        globalParameters.playing = false;
     }
 
     update(time) {
@@ -92,8 +87,7 @@ class GameOverScene extends Phaser.Scene {
     }
 
     restartLevel() {
-        const i = this.levelChooser.currentLevel;
-        globalParameters.currentLevel = i;
+        const i = globalParameters.currentLevel;
         globalParameters.playing = true;
         this.scene.get('level').scene.restart(levelParameters[i]);
         this.scene.stop();

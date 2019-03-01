@@ -12,19 +12,15 @@ class Layer {
     $(".ui__layer-content", this.element).empty();
   };
 
-  setTitle(text) {
-    var _text = text || "";
-    $(".ui__layer-title").text(_text);
-  };
-
   show() {
     this.element.show();
+    $(".ui__layer-close").show();
   }
 
   hide() {
     this.element.hide();
     this.emptyContent();
-    this.setTitle();
+    $(".ui__layer-close").hide();
   }
 }
 
@@ -76,10 +72,10 @@ UI.hover_interact = function(element, children, id) {
     $(children).addClass("current");
     UI.runAnimation = false;
 
-    UI.layer.setTitle(_content.title);
-    $(".ui__layer-title")
+    $(`.title-${id}`)
       .addClass("visible")
-      .addClass(`title-${id}`);
+      .addClass("normal")
+      .removeClass("hidden");
 
     if (id != "daemons") {
       $("#OS_daemon_7").addClass("daemon_7_still");
@@ -216,8 +212,11 @@ UI.showDialog = function(areaId) {
   UI.layer.show();
   Sounds.playLoop("operatingSystem/open");
 
-  $(".ui__layer-title")
-    .removeClass(`title-${areaId}`);
+  $(`.title-${areaId}`)
+    .removeClass("hidden")
+    .addClass("normal")
+    .addClass("pull")
+    .addClass("visible");
 
   UI.unfoldContent(areaId);
   UI.showBubbles();
@@ -234,6 +233,13 @@ UI.hideDialog = function() {
   UI.layer.hide();
   UI.mask.hide(UI.current);
   UI.runAnimation = true;
+
+  $(`.title-${UI.current}`)
+    .removeClass("visible")
+    .removeClass("normal")
+    .removeClass("pull")
+    .addClass("hidden");
+
   Sounds.playLoop("operatingSystem/close");
   Sounds.stop(`operatingSystem/${UI.current}`);
   Sounds.playLoop("system/background/front");

@@ -55,7 +55,6 @@
 
     <div id="file-system" class="ui__area" data-id="file"></div>
     <div id="file-daemon" class="ui__daemon" data-id="daemons"></div>
-    <img src="images/hovers/system_rays.png" class="ui__hover file">
     <div id="OS_daemon_2"
          class="Animation file"
          style="left: 73px; top: 444px;"
@@ -119,10 +118,21 @@
     <div id="mask-clock" class="clock_mask ui__mask hidden"></div>
     <div id="mask-daemons" class="daemons_mask ui__mask hidden"></div>
     <div id="mask-system" class="system_mask ui__mask hidden"></div>
-    <h1 class="ui__layer-title"></h1>
+
+    <button class="ui__layer-close"></button>
+    <h1 class="ui__layer-title title-cursor hidden">cursor</h1>
+    <h1 class="ui__layer-title title-window hidden">window manager</h1>
+    <h1 class="ui__layer-title title-memory hidden">memory manager</h1>
+    <h1 class="ui__layer-title title-file hidden">file system</h1>
+    <h1 class="ui__layer-title title-dev hidden">/dev/null</h1>
+    <h1 class="ui__layer-title title-kernel hidden">kernel</h1>
+    <h1 class="ui__layer-title title-clock hidden">kernel clock</h1>
+    <h1 class="ui__layer-title title-daemons hidden">daemon</h1>
+    <h1 class="ui__layer-title title-system hidden">operating system</h1>
+
+    <img src="images/hovers/file_rays.png" class="ui__hover memory">
 
     <div class="ui__layer">
-      <button class="ui__layer-close"></button>
       <div class="ui__layer-content"></div>
     </div>
     <script type="text/javascript" src="animation.js"></script>

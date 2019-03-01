@@ -30,23 +30,15 @@ class Layer {
 
 class Mask {
   show(maskClass) {
-    $(".ui__mask")
-      .addClass(`${maskClass}_mask`)
+    $(`#mask-${maskClass}`)
       .removeClass("hidden")
       .addClass("visible");
   }
 
   hide(maskClass, delay) {
-    delay = delay || 0;
-
-    $(".ui__mask")
+    $(`#mask-${maskClass}`)
       .addClass("hidden")
       .removeClass("visible");
-
-    lapseMask = setTimeout(function() {
-      $(".ui__mask")
-        .removeClass(`${maskClass}_mask`);
-    }, delay);
   }
 };
 
@@ -60,8 +52,8 @@ UI.subSystems = {
   "memory": {element: "#memory-manager", children: ".memory"},
   "file": {element: "#file-system", children: ".file"},
   "dev": {element: "#dev-null", children: ".dev"},
-  "kernel": {element: "#kernel", children: ".kernel"},
-  "clock": {element: "#clock", children: ".kernel-clock"},
+  "kernel": {element: "#kernel", children: null},
+  "clock": {element: "#clock", children: null},
   "daemons": {element: ".ui__daemon", children: ".Animation"},
   "system": {element: "#system", children: null},
 }
@@ -75,28 +67,33 @@ $(".bg-sys").hover(function() {
 UI.hover_interact = function(element, children, id) {
   var _content = UI.lang[id];
 
-  $(element).stop().hover(function(e) {
+  UI.hoverId = id;
+
+  $(element).hover(function(e) {
     UI.mask.show(id);
-    Sounds.stop("system/background/front");
     Sounds.playLoop(`operatingSystem/${id}`);
 
     $(children).addClass("current");
     UI.runAnimation = false;
 
     UI.layer.setTitle(_content.title);
-    $(".ui__layer-title").addClass("visible");
+    $(".ui__layer-title")
+      .addClass("visible")
+      .addClass(`title-${id}`);
 
     if (id != "daemons") {
       $("#OS_daemon_7").addClass("daemon_7_still");
     }
   }, function(e) {
-    UI.mask.hide(id, 500);
+    UI.mask.hide(id);
 
     Sounds.stop(`operatingSystem/${id}`);
     $(children).removeClass("current");
     UI.runAnimation = true;
-    UI.layer.setTitle("");
-    $(".ui__layer-title").removeClass("visible");
+    $(`.title-${id}`)
+      .addClass("hidden")
+      .removeClass("normal")
+      .removeClass("visible");
 
     if (id != "daemons") {
       $("#OS_daemon_7").removeClass("daemon_7_still");
@@ -190,11 +187,11 @@ UI.showBubbles = function() {
         .fadeIn()
         .removeClass("loading");
 
-      Sounds.play("operatingSystem/writing");
+      Sounds.playLoop("operatingSystem/writing");
 
       lapseBubbleContent = setTimeout(function() {
         $(".ui__box-bubble", UI.bubbles[UI.index]).removeClass("loading");
-        Sounds.play("operatingSystem/land");
+        Sounds.playLoop("operatingSystem/land");
         UI.index++;
         lapseLoading();
       }, 3000);
@@ -214,10 +211,13 @@ $.each(UI.subSystems, function(index, el) {
 });
 
 UI.showDialog = function(areaId) {
-  Sounds.play("operatingSystem/select");
+  Sounds.playLoop("operatingSystem/select");
   UI.current = areaId;
   UI.layer.show();
-  Sounds.play("operatingSystem/open");
+  Sounds.playLoop("operatingSystem/open");
+
+  $(".ui__layer-title")
+    .removeClass(`title-${areaId}`);
 
   UI.unfoldContent(areaId);
   UI.showBubbles();
@@ -234,9 +234,14 @@ UI.hideDialog = function() {
   UI.layer.hide();
   UI.mask.hide(UI.current);
   UI.runAnimation = true;
-  Sounds.play("operatingSystem/close");
+  Sounds.playLoop("operatingSystem/close");
   Sounds.stop(`operatingSystem/${UI.current}`);
-  Sounds.play("system/background/front");
+  Sounds.playLoop("system/background/front");
+
+  Sounds.stop("operatingSystem/writing");
+  Sounds.stop("operatingSystem/land");
+  Sounds.stop("operatingSystem/open");
+
   clearTimeout(lapseBubble);
   clearTimeout(lapseBubbleContent);
 
@@ -244,25 +249,29 @@ UI.hideDialog = function() {
     $("#OS_daemon_7").removeClass("daemon_7_still");
   }
 
-  $.each(UI.subSystems, function(index, el) {
-    UI.hover_interact(el.element, el.children, index);
-  });
+  $(".whole-title").hide();
 
+  UI.hover_interact(
+    UI.subSystems[UI.current].element,
+    UI.subSystems[UI.current].children,
+    UI.current
+  );
 };
 
 $(".whole").click(function(e) {
-  $(this).unbind("mouseleave");
+  $(this).unbind("mouseleave mouseenter");
   UI.showDialog($(this).data("id"));
   UI.mask.show($(this).data("id"));
+  $(".whole-title").show();
 });
 
 $(".ui__daemon").click(function(e) {
-  $(this).unbind("mouseleave");
+  $(".ui__daemon").unbind("mouseleave mouseenter");
   UI.showDialog($(this).data("id"));
 });
 
 $(".ui__area").click(function(e) {
-  $(this).unbind("mouseleave");
+  $(this).unbind("mouseleave mouseenter");
   UI.showDialog($(this).data("id"));
 });
 

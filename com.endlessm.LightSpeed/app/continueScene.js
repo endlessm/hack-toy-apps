@@ -55,6 +55,9 @@ class ContinueScene extends Phaser.Scene {
         /* Continue on button click and enter */
         this.input.keyboard.on('keyup_ENTER', this.nextLevel.bind(this));
         continueButton.on('pointerup', this.nextLevel.bind(this));
+
+        /* Play level finished sound */
+        Sounds.play('lightspeed/timpani-start-win');
     }
 
     nextLevel() {

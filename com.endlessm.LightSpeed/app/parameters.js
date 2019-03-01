@@ -61,7 +61,7 @@ var globalParameters = {
 var defaultParameters = {
     description: 'Rescue Astronauts\nAvoid asteroids',
 
-    scoreTarget: 3,
+    scoreTarget: 10,
     timeLimit: -1,
 
     astronautSize: 30,
@@ -76,10 +76,10 @@ var defaultParameters = {
      * function spawnAstronaut() { ... } declaration surrounding it. */
     spawnAstronautCode: `\
     ticks++;
-    if (ticks > 230) {
+    if (ticks > 60) {
         ticks = 0;
         return {
-            x: width + random(100, 400),
+            x: width + random(50, 1000),
             y: random(0, height)
         };
     }

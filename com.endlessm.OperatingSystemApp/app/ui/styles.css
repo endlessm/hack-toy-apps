@@ -176,14 +176,16 @@
   display: inline-block;
   font-family: Metropolis, sans-serif;
   font-size: 55px;
-  margin: 0 0 0 110px;
-  position: relative;
-  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
-  top: 93px;
-  z-index: 710;
+  margin: 0;
+  margin-left: 110px;
   opacity: 0;
+  position: absolute;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+  top: 65px;
   transition: visibility 0.9s ease-in-out, opacity 0.9s ease-in-out;
   visibility: hidden;
+  width: 600px;
+  z-index: 710;
 }
 
 .ui__layer-title.visible {

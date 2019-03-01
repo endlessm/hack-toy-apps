@@ -25,7 +25,7 @@ class UserInterface {
       const targetElement = $(event.currentTarget);
       $(targetElement).unbind("mouseleave");
       this.showDialog($(targetElement).data("id"));
-      this.mask.show();
+      this.mask.show($(targetElement).data("id"));
     });
 
     $(".ui__daemon").click((event) => {
@@ -74,7 +74,7 @@ class UserInterface {
     const _content = this.lang[id];
 
     $(element).hover((event) => {
-      this.mask.show();
+      this.mask.show(id);
       $(children).toggleClass("current");
       this.stopAnimation();
 
@@ -84,7 +84,7 @@ class UserInterface {
         $("#OS_daemon_7").addClass("daemon_7_still");
       }
     }, (event) => {
-      this.mask.hide();
+      this.mask.hide(id, 500);
       $(children).toggleClass("current");
       this.runAnimation();
 
@@ -264,11 +264,23 @@ class Mask {
     this.element = $(".ui__overlay");
   }
 
-  show() {
-    this.element.stop().fadeIn(80);
+  show(maskClass) {
+    $(".ui__mask")
+      .addClass(`${maskClass}_mask`)
+      .removeClass("hidden")
+      .addClass("visible");
   }
-  hide() {
-    this.element.stop().fadeOut(80);
+  hide(maskClass, delay) {
+    delay = delay || 0;
+
+     $(".ui__mask")
+      .addClass("hidden")
+      .removeClass("visible");
+
+    const lapseMask = setTimeout(function() {
+      $(".ui__mask")
+        .removeClass(`${maskClass}_mask`);
+    }, delay);
   }
 };
 

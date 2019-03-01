@@ -592,7 +592,8 @@ class LevelScene extends Phaser.Scene {
             var obj = this.physics.add.sprite(pos.x, pos.y, 'astronaut');
             this.astronauts.add(obj);
             obj.depth = 1;
-            obj.setVelocityX(-this.params.shipSpeed);
+            var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
+            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
             obj.setScale(this.params.astronautSize / 100);
 
             /* FIXME: improve colission shape */

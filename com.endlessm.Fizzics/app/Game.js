@@ -646,8 +646,8 @@ function Game()
             }
             else
             {
-                // TODO: Check for level.preset later
-                globalParameters.usePhysics_0       = true;
+                // Level 10 is "The End" with balls overlapping, so we don't want physics running there
+                globalParameters.usePhysics_0       =  (levelID != 10);
                 globalParameters.radius_0           = 50;
                 globalParameters.gravity_0          = 0.0
                 globalParameters.collision_0        = 0.9;

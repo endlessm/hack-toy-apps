@@ -5,7 +5,7 @@ function step(timestamp) {
     Animations.forEach(function(element) {
         var img = element._currentFrame;
 
-        if (!element.classList.contains("current") && !UI.runAnimation)
+        if (!element.classList.contains("current") && !UI.isAnimationRunning)
             return;
 
         if (!element._lastUpdated)

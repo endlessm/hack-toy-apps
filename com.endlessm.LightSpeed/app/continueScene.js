@@ -57,7 +57,7 @@ class ContinueScene extends Phaser.Scene {
         continueButton.on('pointerup', this.nextLevel.bind(this));
 
         /* Play level finished sound */
-        Sounds.play('lightspeed/timpani-start-win');
+        Sounds.play('lightspeed/level-complete');
     }
 
     nextLevel() {

@@ -264,11 +264,23 @@ class Mask {
     this.element = $(".ui__overlay");
   }
 
-  show() {
-    this.element.stop().fadeIn(80);
+  show(maskClass) {
+    $(".ui__mask")
+      .addClass(`${maskClass}_mask`)
+      .removeClass("hidden")
+      .addClass("visible");
   }
-  hide() {
-    this.element.stop().fadeOut(80);
+  hide(maskClass, delay) {
+    delay = delay || 0;
+
+     $(".ui__mask")
+      .addClass("hidden")
+      .removeClass("visible");
+
+    const lapseMask = setTimeout(function() {
+      $(".ui__mask")
+        .removeClass(`${maskClass}_mask`);
+    }, delay);
   }
 };
 

@@ -20,6 +20,11 @@ class UserInterface {
     }
     this.applyHoverInteraction();
 
+    $(".bg-sys").hover(function() {
+      Sounds.playLoop("system/background/front");
+    }, function() {
+      Sounds.terminate("system/background/front");
+    });
 
     $(".whole").click((event) => {
       const targetElement = $(event.currentTarget);
@@ -73,9 +78,12 @@ class UserInterface {
   hoverInteract(element, children, id) {
     const _content = this.lang[id];
 
-    $(element).hover((event) => {
+    $(element).stop().hover((event) => {
       this.mask.show(id);
-      $(children).toggleClass("current");
+      Sounds.terminate("system/background/front");
+      Sounds.playLoop(`operatingSystem/${id}`);
+
+      $(children).addClass("current");
       this.stopAnimation();
 
       this.layer.setTitle(_content.title);
@@ -85,7 +93,9 @@ class UserInterface {
       }
     }, (event) => {
       this.mask.hide(id, 500);
-      $(children).toggleClass("current");
+
+      Sounds.terminate(`operatingSystem/${id}`);
+      $(children).removeClass("current");
       this.runAnimation();
 
       this.layer.setTitle("");
@@ -166,8 +176,10 @@ class UserInterface {
           .fadeIn()
           .removeClass("loading");
 
+        Sounds.play("operatingSystem/writing");
         this._lapseBubbleContent = setTimeout(function() {
           $(".ui__box-bubble", bubbles[index]).removeClass("loading");
+          Sounds.play("operatingSystem/land");
           index++;
           lapseLoading();
         }, 2500);
@@ -184,8 +196,10 @@ class UserInterface {
   }
 
   showDialog(areaId) {
+    Sounds.play("operatingSystem/select");
     this._currentAreaId = areaId;
     this.layer.show();
+    Sounds.play("operatingSystem/open");
 
     this.unfoldContent(areaId);
     this.showBubbles();
@@ -202,6 +216,10 @@ class UserInterface {
     this.layer.hide();
     this.mask.hide();
     this.runAnimation();
+
+    Sounds.play("operatingSystem/close");
+    Sounds.terminate(`operatingSystem/${this._currentAreaId}`);
+    Sounds.play("system/background/front");
 
     clearTimeout(this._lapseBubble);
     clearTimeout(this._lapseBubbleContent);

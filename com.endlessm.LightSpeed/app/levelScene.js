@@ -32,10 +32,6 @@ class LevelScene extends Phaser.Scene {
     init(data) {
         this.params = data;
 
-        /* Reset Global game state */
-        globalParameters.success = false;
-        globalParameters.score = 0;
-
         /* Reset enemy counters */
         this.firstObjectOfType = [];
         for (let i = 0, n = enemyTypes.length; i < n; i++) {
@@ -159,6 +155,10 @@ class LevelScene extends Phaser.Scene {
         this.events.on('shutdown', () => {
             Sounds.stop('lightspeed/bg/level-loop1');
         }, this);
+
+        /* Reset Global game state */
+        globalParameters.success = false;
+        globalParameters.score = 0;
     }
 
     update() {

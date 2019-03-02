@@ -81,6 +81,9 @@ var game = new Phaser.Game(config);
         });
     }
 
+    /* Make object notify an event every time a property changes */
+    objectNotify(globalParameters);
+
     for (var i = 0, n = defaultLevelParameters.length; i < n; i++) {
         /* Dup default object */
         var defaults = Object.assign({}, defaultParameters);
@@ -105,7 +108,7 @@ window.flip = function() {
     globalParameters.flipped = !globalParameters.flipped;
 
     /* Pause game automatically when flipped */
-    if (globalParameters.flipped)
+    if (globalParameters.flipped && globalParameters.playing)
         globalParameters.paused = true;
 };
 

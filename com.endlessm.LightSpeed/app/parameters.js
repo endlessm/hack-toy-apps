@@ -75,9 +75,7 @@ var defaultParameters = {
     /* Note, the code will appear exactly as indented here, with the correct
      * function spawnAstronaut() { ... } declaration surrounding it. */
     spawnAstronautCode: `\
-    ticks++;
-    if (ticks > 60) {
-        ticks = 0;
+    if (ticksSinceSpawn > 60) {
         return {
             x: width + random(50, 1000),
             y: random(0, height)
@@ -86,9 +84,7 @@ var defaultParameters = {
 
     return null;`,
     spawnEnemyCode: `\
-    ticks++;
-    if (ticks > 40) {
-        ticks = 0;
+    if (ticksSinceSpawn > 40) {
         return null;
     }
     return null;`,
@@ -113,9 +109,7 @@ var defaultLevelParameters = [
     /* Level 1 */
     {
         spawnEnemyCode: `\
-    ticks++;
-    if (ticks > 40) {
-        ticks = 0;
+    if (ticksSinceSpawn > 40) {
         return {
             type: 'asteroid',
             x: width + random(100, 400),
@@ -130,9 +124,7 @@ var defaultLevelParameters = [
     {
         shipSpeed: 6000,
         spawnEnemyCode: `\
-    ticks++;
-    if (ticks > 40) {
-        ticks = 0;
+    if (ticksSinceSpawn > 40) {
         return {
             type: 'asteroid',
             x: width + random(100, 400),
@@ -146,9 +138,7 @@ var defaultLevelParameters = [
     /* Level 3 */
     {
         spawnEnemyCode: `\
-    ticks++;
-    if (ticks > 40) {
-        ticks = 0;
+    if (ticksSinceSpawn > 40) {
         return {
             type: 'asteroid',
             x: width + random(200, 500),

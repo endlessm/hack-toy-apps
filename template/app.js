@@ -34,5 +34,36 @@ window.Sounds = {
 
     stop(id) {
         window.webkit.messageHandlers.stopSound.postMessage(id);
-    },
+    }
 };
+
+var _soundItemId = 0;
+class SoundItem {
+    constructor(soundEventId) {
+        this.__id = _soundItemId++;
+        this.__cleaned = false;
+        this.name = soundEventId;
+    }
+
+    play() {
+        if (this.__cleaned)
+            return;
+        window.webkit.messageHandlers.playSoundItem.postMessage([this.name, this.__id]);
+    }
+
+    stop() {
+        if (this.__cleaned)
+            return;
+        window.webkit.messageHandlers.stopSoundItem.postMessage(this.__id);
+    }
+
+    clear() {
+        if (this.__cleaned)
+            return;
+        stop();
+        this.__cleaned = true;
+        window.webkit.messageHandlers.clearSoundItem.postMessage(this.__id);
+    }
+};
+
+window.SoundItem = SoundItem;

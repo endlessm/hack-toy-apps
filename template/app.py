@@ -1,5 +1,6 @@
 import gi
 import json
+import logging
 import os
 import sys
 gi.require_version('Gdk', '3.0')  # nopep8
@@ -12,7 +13,12 @@ from gi.repository import Gtk
 from gi.repository import WebKit2
 
 from soundserver import HackSoundServer
+from soundserver import HackSoundItem
 from gamestateservice import GameState
+
+
+_logger = logging.getLogger(__name__)
+
 
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
@@ -47,6 +53,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         use_load_notify = metadata.get('use-load-notify', False)
 
         self._played_async_sounds = {}
+        self._sound_items = {}
         self.connect('destroy', self._on_destroy)
 
         self.set_application(application)
@@ -91,6 +98,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
         self._manager_add_msg_handler(manager, 'stopSound', self._on_stop_sound)
+        self._manager_add_msg_handler(manager, 'playSoundItem', self._on_play_sound_item)
+        self._manager_add_msg_handler(manager, 'stopSoundItem', self._on_stop_sound_item)
+        self._manager_add_msg_handler(manager, 'clearSoundItem', self._on_clear_sound_item)
 
         # Inject custom JS on every page
         manager.add_script(
@@ -254,6 +264,46 @@ toy-app-window > overlay > revealer > frame {
         except KeyError:
             return  # sound did not exist, or already stopped
         HackSoundServer.update_properties(uuid, time_ms_val.to_int32(), props)
+
+    def _on_play_sound_item(self, manager, result):
+        val = result.get_js_value()
+        if (not val.is_array() or
+                val.object_get_property('length').to_int32() != 2):
+            raise ValueError('there should be 2 args')
+
+        sound_event_id = val.object_get_property_at_index(0)
+        sound_item_id = val.object_get_property_at_index(1)
+        if not sound_event_id.is_string():
+            raise ValueError('first arg should be string')
+        if not sound_item_id.is_number():
+            raise ValueError('second arg should be number')
+
+        sound_event_id = sound_event_id.to_string()
+        sound_item_id = sound_item_id.to_int32()
+        if sound_item_id not in self._sound_items:
+            self._sound_items[sound_item_id] = HackSoundItem(sound_event_id)
+        self._sound_items[sound_item_id].play()
+
+    def _on_stop_sound_item(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_number():
+            raise ValueError('arg should be number')
+        sound_item_id = val.to_int32()
+
+        if sound_item_id not in self._sound_items:
+            _logger.warning('sound item \'%s\' does not exist', sound_item_id)
+            return
+        self._sound_items[sound_item_id].stop()
+
+    def _on_clear_sound_item(self, manager, result):
+        val = result.get_js_value()
+        if not val.is_number():
+            raise ValueError('arg should be number')
+        sound_item_id = val.to_int32()
+
+        if sound_item_id not in self._sound_items:
+            raise ValueError('sound item id %s does not exist' % sound_item_id)
+        del self._sound_items[sound_item_id]
 
 
 ToyAppWindow.set_css_name('toy-app-window')

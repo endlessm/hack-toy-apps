@@ -75,9 +75,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         for sound_id in self._played_async_sounds:
             HackSoundServer.stop(self._played_async_sounds[sound_id])
 
-    def _manager_add_msg_handler(self, manager, msg, callback):
+    def _manager_add_msg_handler(self, manager, msg, callback, *args):
         manager.register_script_message_handler(msg)
-        manager.connect('script-message-received::%s' % msg, callback)
+        manager.connect('script-message-received::%s' % msg, callback, *args)
 
     def _setup_js(self):
         manager = self.view.get_user_content_manager()
@@ -91,6 +91,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
         self._manager_add_msg_handler(manager, 'stopSound', self._on_stop_sound)
+        self._manager_add_msg_handler(manager, 'terminateSound', self._on_stop_sound, True)
 
         # Inject custom JS on every page
         manager.add_script(
@@ -212,14 +213,17 @@ toy-app-window > overlay > revealer > frame {
             HackSoundServer.stop(uuid)
         self._played_async_sounds[sound_id] = result
 
-    def _on_stop_sound(self, manager, result):
+    def _on_stop_sound(self, manager, result, terminate=False):
         val = result.get_js_value()
         if not val.is_string():
             raise ValueError('arg should be string')
         uuid = self._played_async_sounds.get(val.to_string(), None)
         if uuid is None:
             return
-        HackSoundServer.stop(uuid)
+        if terminate:
+            HackSoundServer.terminate(uuid)
+        else:
+            HackSoundServer.stop(uuid)
         del self._played_async_sounds[val.to_string()]
 
     def _on_update_sound(self, manager, result):

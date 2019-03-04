@@ -35,4 +35,8 @@ window.Sounds = {
     stop(id) {
         window.webkit.messageHandlers.stopSound.postMessage(id);
     },
+
+    terminate(id) {
+        window.webkit.messageHandlers.terminateSound.postMessage(id);
+    },
 };

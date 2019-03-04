@@ -8,15 +8,15 @@ class UserInterface {
     this._isAnimationRunning = true;
     this._currentAreaId = null;
     this._subSystems = {
-      "cursor": {element: "#cursor", childs: ".cursor"},
-      "window": {element: "#window-manager", childs: ".window"},
-      "memory": {element: "#memory-manager", childs: ".memory"},
-      "file": {element: "#file-system", childs: ".file"},
-      "dev": {element: "#dev-null", childs: ".dev"},
-      "kernel": {element: "#kernel", childs: ".kernel"},
-      "clock": {element: "#clock", childs: ".kernel-clock"},
-      "daemons": {element: ".ui__daemon", childs: ".Animation"},
-      "system": {element: "#system", childs: null},
+      "cursor": {element: "#cursor", children: ".cursor"},
+      "window": {element: "#window-manager", children: ".window"},
+      "memory": {element: "#memory-manager", children: ".memory"},
+      "file": {element: "#file-system", children: ".file"},
+      "dev": {element: "#dev-null", children: ".dev"},
+      "kernel": {element: "#kernel", children: ".kernel"},
+      "clock": {element: "#clock", children: ".kernel-clock"},
+      "daemons": {element: ".ui__daemon", children: ".Animation"},
+      "system": {element: "#system", children: null},
     }
     this.applyHoverInteraction();
 
@@ -98,7 +98,7 @@ class UserInterface {
 
   applyHoverInteraction() {
     $.each(this._subSystems, (index, el) => {
-      this.hoverInteract(el.element, el.childs, index);
+      this.hoverInteract(el.element, el.children, index);
     });
   }
 

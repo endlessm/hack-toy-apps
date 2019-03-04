@@ -23,7 +23,7 @@ class UserInterface {
     $(".bg-sys").hover(function() {
       Sounds.playLoop("system/background/front");
     }, function() {
-      Sounds.stop("system/background/front");
+      Sounds.terminate("system/background/front");
     });
 
     $(".whole").click((event) => {
@@ -80,7 +80,7 @@ class UserInterface {
 
     $(element).stop().hover((event) => {
       this.mask.show(id);
-      Sounds.stop("system/background/front");
+      Sounds.terminate("system/background/front");
       Sounds.playLoop(`operatingSystem/${id}`);
 
       $(children).addClass("current");
@@ -94,7 +94,7 @@ class UserInterface {
     }, (event) => {
       this.mask.hide(id, 500);
 
-      Sounds.stop(`operatingSystem/${id}`);
+      Sounds.terminate(`operatingSystem/${id}`);
       $(children).removeClass("current");
       this.runAnimation();
 
@@ -218,7 +218,7 @@ class UserInterface {
     this.runAnimation();
 
     Sounds.play("operatingSystem/close");
-    Sounds.stop(`operatingSystem/${this._currentAreaId}`);
+    Sounds.terminate(`operatingSystem/${this._currentAreaId}`);
     Sounds.play("system/background/front");
 
     clearTimeout(this._lapseBubble);

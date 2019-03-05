@@ -174,12 +174,20 @@ class LevelScene extends Phaser.Scene {
              * updates working
              */
             if (!this.physics.world.isPaused) {
+                if (this._playingThrustUp)
+                    Sounds.updateSound('lightspeed/thrust-up', 500, {volume: 0});
+                if (this._playingThrustDown)
+                    Sounds.updateSound('lightspeed/thrust-down', 500, {volume: 0});
                 this.scene.launch('pause');
                 this.physics.pause();
             }
             return;
         } else if (this.physics.world.isPaused) {
             Sounds.play('lightspeed/timpani-start-win');
+            if (this._playingThrustUp)
+                Sounds.updateSound('lightspeed/thrust-up', 500, {volume: 1});
+            if (this._playingThrustDown)
+                Sounds.updateSound('lightspeed/thrust-down', 500, {volume: 1});
             this.scene.stop('pause');
             this.physics.resume();
         }

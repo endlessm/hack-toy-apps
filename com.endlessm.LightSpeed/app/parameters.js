@@ -30,8 +30,13 @@ Object.freeze(enemyTypes);
  * Global parameters exposed to the quests and toolbox
  */
 var globalParameters = {
+    /* Number of available levels */
     availableLevels: 1,
+
+    /* Current Level: read only property, 0 for title screen */
     currentLevel: 0,
+
+    /* Next that will be started */
     nextLevel: 1,
 
     /* Level specific parameters */
@@ -42,6 +47,11 @@ var globalParameters = {
 
     /* Communication with Clubhouse */
     flipped: false,
+
+    /* Quests can use this parameter to start any level at any time.
+     * NOTE: Setting this will stop any current level.
+     */
+    startLevel: 0,
 };
 
 /* We need counters and min/max Y coordinate reached for each enemy type,

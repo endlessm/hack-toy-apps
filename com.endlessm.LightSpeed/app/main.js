@@ -102,6 +102,24 @@ var game = new Phaser.Game(config);
     }
 }());
 
+/* Quests can start a level programatically */
+game.events.on('global-property-change', (obj, property) => {
+    if (Object.is(globalParameters, obj) && property === 'startLevel' &&
+        globalParameters.currentLevel !== globalParameters.startLevel) {
+        const i = globalParameters.startLevel;
+
+        /* Stop all active scenes just in case */
+        game.scene.getScenes(true).forEach(function(key) {
+            game.scene.stop(key);
+        });
+
+        globalParameters.currentLevel = i;
+        globalParameters.playing = true;
+        globalParameters.paused = false;
+        game.scene.start('level', levelParameters[i]);
+    }
+});
+
 /* External API */
 
 window.flip = function() {

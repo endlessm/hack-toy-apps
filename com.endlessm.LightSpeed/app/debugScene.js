@@ -25,6 +25,10 @@ class DebugScene extends Phaser.Scene {
         this.input.keyboard.on('keyup_D', () => {
             this.debugText.visible = !this.debugText.visible;
         }, this);
+
+        this.events.on('shutdown', () => {
+            this.input.keyboard.shutdown();
+        }, this);
     }
 
     update() {

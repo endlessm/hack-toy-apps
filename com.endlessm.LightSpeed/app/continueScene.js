@@ -47,6 +47,10 @@ class ContinueScene extends Phaser.Scene {
         this.input.keyboard.on('keyup_ENTER', this.nextLevel.bind(this));
         continueButton.on('pointerup', this.nextLevel.bind(this));
 
+        this.events.on('shutdown', () => {
+            this.input.keyboard.shutdown();
+        }, this);
+
         /* Play level finished sound */
         Sounds.play('lightspeed/level-complete');
 

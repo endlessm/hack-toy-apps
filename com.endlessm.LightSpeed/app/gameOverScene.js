@@ -52,6 +52,7 @@ class GameOverScene extends Phaser.Scene {
         this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
 
         this.events.on('shutdown', () => {
+            this.input.keyboard.shutdown();
             Sounds.stop('lightspeed/bg/zarathustra-whale');
         }, this);
 

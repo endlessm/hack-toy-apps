@@ -523,7 +523,8 @@ class LevelScene extends Phaser.Scene {
                 type = 'asteroid';
             var enemyTypeIndex = enemyTypes.indexOf(retval.type);
 
-            var obj = this.createEnemy(type, pos, retval.scale);
+            var scale = (retval.scale) ? retval.scale : scope.random(20, 80);
+            var obj = this.createEnemy(type, pos, scale);
 
             /* Increment global counter */
             if (this.firstObjectOfType[enemyTypeIndex] === null)

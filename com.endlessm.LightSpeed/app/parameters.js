@@ -104,7 +104,7 @@ var defaultParameters = {
 (function() {
     for (const o of enemyTypes) {
         const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
-        defaultParameters[func] = '';
+        defaultParameters[func] = 'enemy.position.y = enemy.position.y + 0;';
     }
 }());
 
@@ -119,53 +119,40 @@ var defaultLevelParameters = [
     /* Level 1 */
     {
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 40) {
-        return {
-            type: 'asteroid',
-            x: width + random(100, 400),
-            y: random(0, height),
-            scale: random(20, 60)
-        };
-    }
-    return null;`,
+    if (ticksSinceSpawn > 40) 
+        return 'asteroid';`,
     },
 
     /* Level 2 */
     {
         shipSpeed: 6000,
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 40) {
-        return {
-            type: 'asteroid',
-            x: width + random(100, 400),
-            y: random(0, height),
-            scale: random(20, 60)
-        };
-    }
-    return null;`,
+    if (ticksSinceSpawn > 20) 
+        return 'asteroid';`,
     },
 
     /* Level 3 */
     {
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 40) {
+    if (ticksSinceSpawn > 40)
         return {
             type: 'asteroid',
-            x: width + random(200, 500),
-            y: random(0, height),
             scale: 150
-        };
-    }
-    return null;`,
+        };`,
     },
 
     /* Level 4 */
     {
-        spawnEnemyCode: '   return null;',
+        spawnEnemyCode: `\
+    if (ticksSinceSpawn > 0) 
+        return null;`,
     },
 
     /* Level 5 */
     {
+        spawnEnemyCode: `\
+    if (ticksSinceSpawn > 40) 
+        return 'asteroid';`,
     },
 
     /* Level 6 */

@@ -72,6 +72,7 @@ class LevelScene extends Phaser.Scene {
         this.load.image('background', 'assets/background.jpg');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
+        this.load.image('particle', 'assets/particle.png');
         this.load.atlas('explosion-particles', 'assets/atlas/explosion-particles.png',
             'assets/atlas/explosion-particles.json');
         this.load.atlas('confetti-particles', 'assets/atlas/confetti-particles.png',
@@ -646,6 +647,15 @@ class LevelScene extends Phaser.Scene {
             /* FIXME: improve colission shape */
             obj.body.setAllowRotation(true);
             obj.body.setAngularVelocity(Phaser.Math.RND.integerInRange(-90, 90));
+
+            obj.particles = this.add.particles('particle');
+            obj.emitter = obj.particles.createEmitter({
+                speed: 100,
+                scale: {start: 0.6, end: 0},
+                blendMode: 'ADD',
+                lifespan: 1000,
+                tint: CONFETTI_COLORS,
+            }).startFollow(obj);
         }
     }
 
@@ -745,6 +755,9 @@ class LevelScene extends Phaser.Scene {
 
                 /* Confetti! */
                 ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
+                astronaut.emitter.stop();
+                astronaut.particles.destroy();
+                astronaut.destroy();
 
                 /* Check if we finished the level */
                 this.checkLevelDone();

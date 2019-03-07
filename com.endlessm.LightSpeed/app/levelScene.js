@@ -62,6 +62,8 @@ class LevelScene extends Phaser.Scene {
         this.load.image('background', 'assets/background.jpg');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
+        this.load.atlas('explosion-particles', 'assets/atlas/explosion-particles.png',
+            'assets/atlas/explosion-particles.json');
 
         /* Ship assets */
         for (const ship of shipTypes)
@@ -358,6 +360,33 @@ class LevelScene extends Phaser.Scene {
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
         this.ship.body.setAllowDrag(true);
+
+        /* Explosion */
+        var explosion = this.add.particles('explosion-particles');
+        this.ship.explosionEmitter = explosion.createEmitter({
+            frame: ['explosion-p1', 'explosion-p2', 'explosion-p3'],
+            speed: {min: -800, max: 800},
+            angle: {min: 0, max: 360},
+            scale: {start: 2, end: 0},
+            blendMode: 'SCREEN',
+            lifespan: 800,
+        });
+        this.ship.explodeCount = 3;
+        this.ship.explosionEmitter.stop();
+        explosion.depth = 101;
+
+        this.ship.explode = function (x, y) {
+            this.explosionEmitter.explode(768, x, y);
+            this.explodeCount--;
+
+            if (this.explodeCount <= 0) {
+                this.explodeCount = 3;
+                return;
+            }
+
+            this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
+                this.explode, [x, y], this);
+        };
     }
 
     createEnemy(type, position, scale) {
@@ -649,13 +678,16 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    onShipEnemyOverlap() {
+    onShipEnemyOverlap(ship, enemy) {
         if (!globalParameters.playing)
             return;
 
         globalParameters.playing = false;
         Sounds.play('lightspeed/asteroid-crash');
         this.scene.launch('gameover');
+
+        /* Make ship explode! */
+        ship.explode((ship.x + enemy.x) / 2, (ship.y + enemy.y) / 2);
     }
 
     onShipAstronautOverlap(ship, astronaut) {

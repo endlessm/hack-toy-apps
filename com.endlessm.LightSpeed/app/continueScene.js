@@ -14,43 +14,34 @@ class ContinueScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('confetti-full', 'assets/ui/confetti_full.png');
+        this.load.image('level-complete', 'assets/level-complete.png');
+        this.load.image('level-complete-glow', 'assets/level-complete-glow.png');
         Utils.load_button(this, 'prev');
         Utils.load_button(this, 'next');
         Utils.load_button(this, 'button');
     }
 
     create(message) {
-        const spacing = 32;
+        const spacing = 48;
 
-        var confetti = this.add.sprite(0, 0, 'confetti-full').setOrigin(0, 0);
-        var ship = this.add.image(0, 0, this.params.shipAsset).setOrigin(0.5, 0.5);
+        var pad = this.add.zone(0, 0, 512, 400).setOrigin(0, 0);
+        var levelComplete = this.add.sprite(0, 0, 'level-complete');
+        this.levelCompleteGlow = this.add.sprite(0, 0, 'level-complete-glow');
         var levelText = this.add.text(0, 0, message, fontConfig).setOrigin(0.5, 0.5);
         var continueButton = new Utils.Button(this, 'button', 'CONTINUE');
 
-        ship.rotation = Math.PI * 1.5;
-        ship.setScale(0.32);
-        this.tweens.add({
-            targets: ship,
-            scaleX: 0.64,
-            scaleY: 0.64,
-            duration: 600,
-            ease: 'Sine',
-            yoyo: true,
-            repeat: -1,
-        });
-
-        Phaser.Display.Align.In.Center(ship, confetti, 0, 30);
-        Phaser.Display.Align.To.BottomCenter(levelText, confetti, 0, spacing);
+        Phaser.Display.Align.In.Center(this.levelCompleteGlow, pad);
+        Phaser.Display.Align.In.Center(levelComplete, this.levelCompleteGlow);
+        Phaser.Display.Align.To.BottomCenter(levelText, this.levelCompleteGlow);
         Phaser.Display.Align.To.BottomCenter(continueButton, levelText, 0, spacing);
 
-        const w = confetti.width;
+        const w = 512;
         const h = continueButton.y + continueButton.height + spacing;
         var bg = new Utils.TransparentBox(this, w, h, 16);
 
         this.add.container(
             (game.config.width - w) / 2, (game.config.height - h) / 2,
-            [bg, confetti, ship, levelText, continueButton]);
+            [bg, pad, this.levelCompleteGlow, levelComplete, levelText, continueButton]);
 
         /* Continue on button click and enter */
         this.input.keyboard.on('keyup_ENTER', this.nextLevel.bind(this));
@@ -58,6 +49,16 @@ class ContinueScene extends Phaser.Scene {
 
         /* Play level finished sound */
         Sounds.play('lightspeed/level-complete');
+
+        this.flickTime = 0;
+    }
+
+    update(time) {
+        if (time < this.flickTime)
+            return;
+
+        this.flickTime = time + 500;
+        this.levelCompleteGlow.visible = !this.levelCompleteGlow.visible;
     }
 
     nextLevel() {

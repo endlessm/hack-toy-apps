@@ -119,7 +119,7 @@ var defaultLevelParameters = [
     /* Level 1 */
     {
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 40) 
+    if (ticksSinceSpawn > 70) 
         return 'asteroid';`,
     },
 
@@ -127,7 +127,7 @@ var defaultLevelParameters = [
     {
         shipSpeed: 6000,
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 20) 
+    if (ticksSinceSpawn > 40) 
         return 'asteroid';`,
     },
 

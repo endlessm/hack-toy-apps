@@ -552,8 +552,19 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
+    spawnedSomeEnemy() {
+        for (let i = 0, n = enemyTypes.length; i < n; i++) {
+            if (globalParameters[`enemyType${i}SpawnedCount`] > 0)
+                return true;
+        }
+        return false;
+    }
+
     runSpawnAstronaut() {
         if (!this.spawnAstronaut)
+            return;
+
+        if (!this.spawnedSomeEnemy())
             return;
 
         var scope = this.spawnAstronautScope;

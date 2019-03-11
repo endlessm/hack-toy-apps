@@ -208,7 +208,7 @@ function flip()
 function HackyBalls()
 {    
     var NUM_BALL_SPECIES          = 5;
-    var INTERACTION_RADIUS        = 200.0;
+    var INTERACTION_RADIUS        = 400.0;
     var MILLISECONDS_PER_UPDATE   = 10;
     var COLLISION_DISTANCE_FUDGE  = 10;
     var MAX_COLLISION_BALLS       = 10;

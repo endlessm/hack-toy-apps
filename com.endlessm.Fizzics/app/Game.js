@@ -329,7 +329,7 @@ function Game()
 
         else if ( _level == QUEST1 )
         {
-            posX = 1200;
+            posX = canvasID.width*0.3;
             parent.createBall( posX, 0.5 * canvasID.height, 1 );
             
             var num = 10;

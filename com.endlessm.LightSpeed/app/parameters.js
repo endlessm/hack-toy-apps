@@ -94,6 +94,10 @@ var defaultParameters = {
 
     return null;`,
     spawnEnemyCode: `\
+    // A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.
     if (ticksSinceSpawn > 40) {
         return null;
     }
@@ -104,7 +108,7 @@ var defaultParameters = {
 (function() {
     for (const o of enemyTypes) {
         const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
-        defaultParameters[func] = 'enemy.position.y = enemy.position.y + 0;';
+        defaultParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
     }
 }());
 
@@ -119,7 +123,11 @@ var defaultLevelParameters = [
     /* Level 1 */
     {
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 70) 
+    // A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.
+    if (ticksSinceSpawn > 70)
         return 'asteroid';`,
     },
 
@@ -127,13 +135,21 @@ var defaultLevelParameters = [
     {
         shipSpeed: 6000,
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 40) 
+    // A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.
+    if (ticksSinceSpawn > 40)
         return 'asteroid';`,
     },
 
     /* Level 3 */
     {
         spawnEnemyCode: `\
+    // A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.
     if (ticksSinceSpawn > 40)
         return {
             type: 'asteroid',
@@ -144,14 +160,22 @@ var defaultLevelParameters = [
     /* Level 4 */
     {
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 0) 
+    // A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.
+    if (ticksSinceSpawn > 0)
         return null;`,
     },
 
     /* Level 5 */
     {
         spawnEnemyCode: `\
-    if (ticksSinceSpawn > 40) 
+    // A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.
+    if (ticksSinceSpawn > 40)
         return 'asteroid';`,
     },
 

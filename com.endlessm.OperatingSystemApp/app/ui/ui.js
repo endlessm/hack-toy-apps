@@ -28,7 +28,7 @@ class UserInterface {
 
     $(".whole").click((event) => {
       const targetElement = $(event.currentTarget);
-      $(targetElement).unbind("mouseleave");
+      $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
       this.mask.show($(targetElement).data("id"));
       $(".whole-title").show();
@@ -36,13 +36,13 @@ class UserInterface {
 
     $(".ui__daemon").click((event) => {
       const targetElement = $(event.currentTarget);
-      $(targetElement).off("mouseleave");
+      $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
     });
 
     $(".ui__area").click((event) => {
       const targetElement = $(event.currentTarget);
-      $(targetElement).unbind("mouseleave");
+      $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
     });
 
@@ -229,7 +229,12 @@ class UserInterface {
       $("#OS_daemon_7").removeClass("daemon_7_still");
     }
     $(".whole-title").hide();
-    this.applyHoverInteraction();
+
+    this.hoverInteract(
+      this._subSystems[this._currentAreaId].element,
+      this._subSystems[this._currentAreaId].children,
+      this._currentAreaId
+    );
   };
 
   unfoldContent(areaId) {

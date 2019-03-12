@@ -110,6 +110,11 @@ var defaultParameters = {
         const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
         defaultParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
     }
+    defaultParameters['updateBeamCode'] = `\
+    if (playerShipY > enemy.position.y)
+        enemy.position.y = enemy.position.y + 5;
+    else if (playerShipY < enemy.position.y)
+        enemy.position.y = enemy.position.y - 5;`;
 }());
 
 /* Per Level defaults:

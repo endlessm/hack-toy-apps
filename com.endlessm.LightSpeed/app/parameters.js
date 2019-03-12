@@ -104,7 +104,7 @@ var defaultParameters = {
 (function() {
     for (const o of enemyTypes) {
         const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
-        defaultParameters[func] = 'enemy.position.y = enemy.position.y + 0;';
+        defaultParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
     }
 }());
 

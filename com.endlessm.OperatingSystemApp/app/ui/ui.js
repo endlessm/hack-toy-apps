@@ -31,6 +31,7 @@ class UserInterface {
       $(targetElement).unbind("mouseleave");
       this.showDialog($(targetElement).data("id"));
       this.mask.show($(targetElement).data("id"));
+      $(".whole-title").show();
     });
 
     $(".ui__daemon").click((event) => {
@@ -92,7 +93,7 @@ class UserInterface {
         $("#OS_daemon_7").addClass("daemon_7_still");
       }
     }, (event) => {
-      this.mask.hide(id, 500);
+      this.mask.hide(id);
 
       Sounds.terminate(`operatingSystem/${id}`);
       $(children).removeClass("current");
@@ -227,6 +228,7 @@ class UserInterface {
     if (this._currentAreaId !== "daemons") {
       $("#OS_daemon_7").removeClass("daemon_7_still");
     }
+    $(".whole-title").hide();
     this.applyHoverInteraction();
   };
 
@@ -283,22 +285,14 @@ class Mask {
   }
 
   show(maskClass) {
-    $(".ui__mask")
-      .addClass(`${maskClass}_mask`)
+    $(`#mask-${maskClass}`)
       .removeClass("hidden")
       .addClass("visible");
   }
-  hide(maskClass, delay) {
-    delay = delay || 0;
-
-     $(".ui__mask")
+  hide(maskClass) {
+    $(`#mask-${maskClass}`)
       .addClass("hidden")
       .removeClass("visible");
-
-    const lapseMask = setTimeout(function() {
-      $(".ui__mask")
-        .removeClass(`${maskClass}_mask`);
-    }, delay);
   }
 };
 

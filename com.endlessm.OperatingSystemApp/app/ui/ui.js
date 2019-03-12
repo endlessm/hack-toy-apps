@@ -13,8 +13,8 @@ class UserInterface {
       "memory": {element: "#memory-manager", children: ".memory"},
       "file": {element: "#file-system", children: ".file"},
       "dev": {element: "#dev-null", children: ".dev"},
-      "kernel": {element: "#kernel", children: ".kernel"},
-      "clock": {element: "#clock", children: ".kernel-clock"},
+      "kernel": {element: "#kernel", children: null},
+      "clock": {element: "#clock", children: null},
       "daemons": {element: ".ui__daemon", children: ".Animation"},
       "system": {element: "#system", children: null},
     }

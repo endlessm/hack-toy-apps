@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=LightSpeed
+Name=Lightspeed
 Type=Application
 Exec=com.endlessm.LightSpeed
 StartupNotify=true

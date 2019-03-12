@@ -25,7 +25,8 @@ class StartScene extends Phaser.Scene {
     create() {
         /* Reset Global game state */
         globalParameters.playing = false;
-        globalParameters.currentLevel = globalParameters.nextLevel || 1;
+        globalParameters.currentLevel =
+            globalParameters.nextLevel || globalParameters.availableLevels;
 
         const levelParams = levelParameters[globalParameters.currentLevel];
         const spacing = 16;

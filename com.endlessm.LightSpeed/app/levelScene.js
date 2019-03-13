@@ -126,12 +126,6 @@ class LevelScene extends Phaser.Scene {
                 this.onParametersNotify(property);
         });
 
-        /* Pause game on space bar press */
-        this.input.keyboard.on('keyup_SPACE', () => {
-            if (globalParameters.playing)
-                globalParameters.paused = true;
-        });
-
         /* Go back to title screen */
         this.input.keyboard.on('keyup_ESC', () => {
             if (globalParameters.playing)

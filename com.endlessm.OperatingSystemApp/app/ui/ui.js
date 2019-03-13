@@ -76,6 +76,18 @@ class UserInterface {
     return this._isAnimationRunning;
   }
 
+  getTitleByAreaId(areaId) {
+    return $(`.title-${areaId}`);
+  }
+
+  showTitle(areaId) {
+    this.getTitleByAreaId(areaId).addClass("visible").addClass("normal").removeClass("hidden");
+  }
+
+  hideTitle(areaId) {
+    this.getTitleByAreaId(areaId).addClass("hidden").removeClass("normal").removeClass("visible");
+  }
+
   hoverInteract(element, children, id) {
     const _content = this.lang[id];
 
@@ -86,9 +98,8 @@ class UserInterface {
 
       $(children).addClass("current");
       this.stopAnimation();
+      this.showTitle(id);
 
-      this.layer.setTitle(_content.title);
-      $(".ui__layer-title").addClass("visible");
       if (id !== "daemons") {
         $("#OS_daemon_7").addClass("daemon_7_still");
       }
@@ -98,9 +109,8 @@ class UserInterface {
       Sounds.terminate(`operatingSystem/${id}`);
       $(children).removeClass("current");
       this.runAnimation();
+      this.hideTitle(id);
 
-      this.layer.setTitle("");
-      $(".ui__layer-title").removeClass("visible");
       if (id !== "daemons") {
         $("#OS_daemon_7").removeClass("daemon_7_still");
       }
@@ -201,6 +211,7 @@ class UserInterface {
     this._currentAreaId = areaId;
     this.layer.show();
     Sounds.play("operatingSystem/open");
+    this.showTitle(areaId);
 
     this.unfoldContent(areaId);
     this.showBubbles();
@@ -215,8 +226,9 @@ class UserInterface {
   hideDialog() {
     $(".current").removeClass("current");
     this.layer.hide();
-    this.mask.hide();
+    this.mask.hide(this._currentAreaId);
     this.runAnimation();
+    this.hideTitle(this._currentAreaId);
 
     Sounds.play("operatingSystem/close");
     Sounds.terminate(`operatingSystem/${this._currentAreaId}`);
@@ -268,19 +280,15 @@ class Layer {
     $(".ui__layer-content", this.element).empty();
   };
 
-  setTitle(text) {
-    const _text = text || "";
-    $(".ui__layer-title").text(_text);
-  };
-
   show() {
     this.element.show();
+    $(".ui__layer-close").show();
   }
 
   hide() {
     this.element.hide();
     this.emptyContent();
-    this.setTitle();
+    $(".ui__layer-close").hide();
   }
 }
 

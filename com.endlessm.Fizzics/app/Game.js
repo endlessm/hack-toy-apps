@@ -6,6 +6,7 @@ var canvas = canvasID.getContext( '2d' );
 
 var QUEST0 =  1000; // Episode 1: Fizzics2
 var QUEST1 =  1001; // Episode 2: MakerIntro
+var QUEST2 =  1002; // Episode 2: MakerQuest
 
 var FONT_SIZE_SCALE = 0.45;
 var FONT_Y_SCALE    = 0.65;
@@ -299,6 +300,7 @@ function Game()
         gameState.numBonus  = 0;
         gameState.running   = true; 
         gameState.success   = false; 
+        globalParameters.flingCount = gameState.numFlings;
         _successScreen.enabled = false;
         
 
@@ -324,14 +326,27 @@ function Game()
             this.createBallCircle( parent, 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
 
             var period = 50; // how many time steps are used to run this test?
-            this.initializeGameState( period, 0, 0, collisionBalls, ballsWithSomeCollision  );
+            this.initializeGameState( period, 0, 0, collisionBalls, ballsWithSomeCollision );
         }
 
         else if ( _level == QUEST1 )
         {
-            posX = 1200;
+            posX = 200;
+            posY = 0.5*canvasID.height;
+            parent.createBall( posX, posY, 0 );
+            spacing = 80
+            for (var i=0; i<5; i++)
+            {
+                parent.createBall( posX + 150 + i*spacing, posY, 4 );
+            }
+            this.initializeGameState( 50, 0, 0, collisionBalls, ballsWithSomeCollision );
+        }
+        
+        else if ( _level == QUEST2 )
+        {
+            posX = canvasID.width*0.3;
             parent.createBall( posX, 0.5 * canvasID.height, 1 );
-            
+
             var num = 10;
             for (var i=0; i<num; i++)
             {
@@ -474,6 +489,61 @@ function Game()
         }
 
         else if ( levelID == QUEST1 )
+        {
+            globalParameters.backgroundImageIndex = 0;
+
+            globalParameters.radius_0           = 50.0;
+            globalParameters.gravity_0          = 0.0;
+            globalParameters.collision_0        = 0.2;
+            globalParameters.friction_0         = 1.0;
+            globalParameters.usePhysics_0       = true;
+            globalParameters.imageIndex_0       = 6;
+            globalParameters.socialForce_0_0    = 0.0;
+            globalParameters.socialForce_0_1    = 0.0;
+            globalParameters.socialForce_0_2    = 0.0;
+            globalParameters.touchDeath_0_0     = false;
+            globalParameters.touchDeath_0_1     = false;
+            globalParameters.touchDeath_0_2     = false;
+            globalParameters.deathEffect_0_0    = 0;
+            globalParameters.deathEffect_0_1    = 0;
+            globalParameters.deathEffect_0_2    = 0;
+
+            // parameters for species 1 balls
+            globalParameters.radius_1           = 50.0;
+            globalParameters.gravity_1          = 0.0;
+            globalParameters.collision_1        = 0.2;
+            globalParameters.friction_1         = 1.0;
+            globalParameters.usePhysics_1       = true;
+            globalParameters.imageIndex_1       = 1;
+            globalParameters.socialForce_1_0    =  0.0;
+            globalParameters.socialForce_1_1    =  0.0;
+            globalParameters.socialForce_1_2    =  0.0;
+            globalParameters.touchDeath_1_0     = false;
+            globalParameters.touchDeath_1_1     = false;
+            globalParameters.touchDeath_1_2     = false;
+            globalParameters.deathEffect_1_0    = 0;
+            globalParameters.deathEffect_1_1    = 0;
+            globalParameters.deathEffect_1_2    = 0;
+
+            // parameters for species 2 balls
+            globalParameters.radius_2           = 10.0;
+            globalParameters.gravity_2          = 0.0;
+            globalParameters.collision_2        = 0.0;
+            globalParameters.friction_2         = 0.0;
+            globalParameters.usePhysics_2       = false;
+            globalParameters.imageIndex_2       = 2;
+            globalParameters.socialForce_2_0    = 0.0;
+            globalParameters.socialForce_2_1    = 0.0;
+            globalParameters.socialForce_2_2    = 0.0;
+            globalParameters.touchDeath_2_0     = false;
+            globalParameters.touchDeath_2_1     = false;
+            globalParameters.touchDeath_2_2     = false;
+            globalParameters.deathEffect_2_0    = 0;
+            globalParameters.deathEffect_2_1    = 0;
+            globalParameters.deathEffect_2_2    = 0;
+        }
+
+        else if ( levelID == QUEST2 )
         {
             globalParameters.backgroundImageIndex = 0;
 
@@ -834,21 +904,21 @@ function Game()
         globalParameters.quest0Success = false;
         globalParameters.quest1Success = false;
         globalParameters.quest2Success = false;
+        globalParameters.flingCount = 0;
 
         for (var c=0; c<gameState.numCollisionsGoal; c++)
-        {                            
+        {
             collisionBalls[c] = NULL_BALL;
-        }            
+        }
 
         for (var i=0; i<MAX_BALLS; i++)
         {
             ballsWithSomeCollision[i] = false;
-        }        
+        }
         
         _score = 0;
         _ballDied = false;
-        gameState.numFlings = 0;
-    }    
+    }
     
     
     
@@ -886,7 +956,8 @@ function Game()
 
             globalParameters.type0BallCount = type0BallCount;
             globalParameters.type1BallCount = type1BallCount;
-            globalParameters.type2BallCount = type2BallCount;            
+            globalParameters.type2BallCount = type2BallCount;
+            globalParameters.flingCount = gameState.numFlings;
 
             if ( _level < _levelData.levels.length )
             {
@@ -944,6 +1015,10 @@ function Game()
                 {
                     globalParameters.quest1Success = this.isQuest1GoalReached();
                 }
+                if (!globalParameters.quest2Success)
+                {
+                    globalParameters.quest2Success = this.isQuest2GoalReached();
+                }
 
                 gameState.clock ++;
                 if ( gameState.clock > gameState.period )
@@ -994,8 +1069,14 @@ function Game()
     }
 
 
-    // Success: Whenever we have 10 green balls and 1 red ball, and all 10 green balls are touching the red ball at the same time
+    // Success: Collect all 5 diamonds without any flings
     this.isQuest1GoalReached = function()
+    {
+        return (gameState.numBonus >= 5*2);
+    }
+
+    // Success: Whenever we have 10 green balls and 1 red ball, and all 10 green balls are touching the red ball at the same time
+    this.isQuest2GoalReached = function()
     {
         // We need exactly 10 type 0 balls
         if (globalParameters.type0BallCount != 10)

@@ -52,6 +52,7 @@ var globalParameters =
     type0BallCount  : 0,
     type1BallCount  : 0,
     type2BallCount  : 0,
+    flingCount      : 0,
     score           : 0,
     currentLevel    : 0,
     flipped         : false,
@@ -1370,6 +1371,7 @@ function HackyBalls()
                 _flinger.fling();
                 
                 gameState.numFlings++;
+                globalParameters.flingCount = gameState.numFlings;
                 Sounds.stop( "fizzics/pullFling" );
                 Sounds.play( "fizzics/fling" );
                 Sounds.playLoop( _species[ _balls[ _flinger.getFlingingBall() ].getType() ].flySound );

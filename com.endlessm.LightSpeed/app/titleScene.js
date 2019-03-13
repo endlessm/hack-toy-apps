@@ -41,7 +41,7 @@ class TitleScene extends Phaser.Scene {
         var bg = this.add.image(centerX, centerY, 'background');
 
         /* Bottom text */
-        var text = this.add.text(0, 0, 'Press enter to start', fontConfig);
+        var text = this.add.text(0, 0, 'Press Enter to start.', fontConfig);
         Phaser.Display.Align.In.BottomCenter(text, bg, 0, -128);
         this.tweens.add({
             targets: text,

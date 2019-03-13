@@ -9,7 +9,7 @@
 
 class PauseScene extends Phaser.Scene {
     create() {
-        var text = this.add.text(16, 8, 'PAUSED', fontConfig);
+        var text = this.add.text(16, 8, 'Paused. Press Space to resume.', fontConfig);
         const w = text.width + 32;
         const h = text.height + 16;
         var bg = new Utils.TransparentBox(this, w, h);

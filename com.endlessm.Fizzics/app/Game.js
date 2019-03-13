@@ -351,7 +351,7 @@ function Game()
             for (var i=0; i<num; i++)
             {
                 var a = ( i / num ) * PI2;
-                var r = 130.0 + 30.0 * Math.random();
+                var r = 160.0;
                 var x = posX + r * Math.sin(a);
                 var y = 0.5 * canvasID.height + r * Math.cos(a);
                 parent.createBall( x, y, 0 );

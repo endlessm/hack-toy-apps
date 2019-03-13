@@ -211,16 +211,6 @@ body {
   z-index: 500;
 }
 
-.ui__layer-title.title-cursor,
-.ui__layer-title.title-daemons {
-  width: 140px;
-}
-
-.ui__layer-title.title-cursor.normal,
-.ui__layer-title.title-daemons.normal {
-  z-index: 700;
-}
-
 .ui__layer-content {
   margin-left: 20px;
   margin-top: 100px;

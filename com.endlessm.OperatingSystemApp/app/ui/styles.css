@@ -196,7 +196,7 @@ body {
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
   top: 65px;
   width: 480px;
-  z-index: 500;
+  z-index: 700;
 }
 
 .ui__layer-title.visible {
@@ -208,7 +208,7 @@ body {
 .ui__layer-title.hidden {
   opacity: 0;
   transition: opacity 0.5s ease-in-out, hidden 0.5s linear;
-  z-index: 500;
+  z-index: 700;
 }
 
 .ui__layer-content {

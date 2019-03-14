@@ -32,14 +32,7 @@ class LevelScene extends Phaser.Scene {
     init(data) {
         this.params = data;
 
-        /* Reset enemy counters */
-        this.firstObjectOfType = [];
-        for (let i = 0, n = enemyTypes.length; i < n; i++) {
-            globalParameters[`enemyType${i}SpawnedCount`] = 0;
-            globalParameters[`enemyType${i}MinY`] = +1e9;
-            globalParameters[`enemyType${i}MaxY`] = -1e9;
-            this.firstObjectOfType[i] = null;
-        }
+        this.resetQuestData();
 
         /* Init scene variables */
         this.tick = 0;
@@ -245,9 +238,21 @@ class LevelScene extends Phaser.Scene {
 
     onFlip() {
         this.saveData();
+        this.resetQuestData();
     }
 
     /* Private functions */
+
+    resetQuestData() {
+        /* Reset enemy counters */
+        this.firstObjectOfType = [];
+        for (let i = 0, n = enemyTypes.length; i < n; i++) {
+            globalParameters[`enemyType${i}SpawnedCount`] = 0;
+            globalParameters[`enemyType${i}MinY`] = +1e9;
+            globalParameters[`enemyType${i}MaxY`] = -1e9;
+            this.firstObjectOfType[i] = null;
+        }
+    }
 
     playThrust(direction) {
         if (direction < 0) {

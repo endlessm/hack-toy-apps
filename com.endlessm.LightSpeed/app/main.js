@@ -128,6 +128,9 @@ window.flip = function() {
     /* Pause game automatically when flipped */
     if (globalParameters.flipped && globalParameters.playing)
         globalParameters.paused = true;
+    if (!globalParameters.flipped) {
+        game.scene.getScene('level').onFlip();
+    }
 };
 
 window.reset = function() {

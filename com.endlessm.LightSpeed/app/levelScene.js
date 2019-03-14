@@ -243,6 +243,10 @@ class LevelScene extends Phaser.Scene {
         this.updateQuestData();
     }
 
+    onFlip() {
+        this.saveData();
+    }
+
     /* Private functions */
 
     playThrust(direction) {
@@ -463,6 +467,17 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
+    saveData() {
+        ToyApp.saveState({
+            /* Global state */
+            availableLevels: globalParameters.availableLevels,
+            nextLevel: globalParameters.nextLevel,
+            /* Level state */
+            level: globalParameters.currentLevel,
+            parameters: this.params,
+        });
+    }
+
     checkLevelDone() {
         if (globalParameters.score >= this.params.scoreTarget) {
             globalParameters.success = true;
@@ -474,14 +489,7 @@ class LevelScene extends Phaser.Scene {
                 globalParameters.nextLevel = 0;
 
             /* Save game state when level is finished */
-            ToyApp.saveState({
-                /* Global state */
-                availableLevels: globalParameters.availableLevels,
-                nextLevel: globalParameters.nextLevel,
-                /* Level state */
-                level: globalParameters.currentLevel,
-                parameters: this.params,
-            });
+            this.saveData();
 
             this.scene.launch('continue',
                 `Level ${globalParameters.currentLevel} Complete!`);

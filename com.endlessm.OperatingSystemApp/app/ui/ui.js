@@ -120,6 +120,7 @@ class UserInterface {
   applyHoverInteraction() {
     $.each(this._subSystems, (index, el) => {
       this.hoverInteract(el.element, el.children, index);
+      this.getTitleByAreaId(index).css({"pointer-events": "none"});
     });
   }
 
@@ -212,6 +213,7 @@ class UserInterface {
     this.layer.show();
     Sounds.play("operatingSystem/open");
     this.showTitle(areaId);
+    this.getTitleByAreaId(areaId).css({"pointer-events": "auto"});
 
     this.unfoldContent(areaId);
     this.showBubbles();
@@ -229,6 +231,7 @@ class UserInterface {
     this.mask.hide(this._currentAreaId);
     this.runAnimation();
     this.hideTitle(this._currentAreaId);
+    this.getTitleByAreaId(this._currentAreaId).css({"pointer-events": "none"});
 
     Sounds.play("operatingSystem/close");
     Sounds.terminate(`operatingSystem/${this._currentAreaId}`);

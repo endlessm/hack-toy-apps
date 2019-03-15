@@ -111,10 +111,11 @@ var defaultParameters = {
         defaultParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
     }
     defaultParameters['updateBeamCode'] = `\
-    if (playerShipY > enemy.position.y)
+    if (playerShipY > enemy.position.y) {
         enemy.position.y = enemy.position.y + 5;
-    else if (playerShipY < enemy.position.y)
-        enemy.position.y = enemy.position.y - 5;`;
+    } else if (playerShipY < enemy.position.y) {
+        enemy.position.y = enemy.position.y - 5;
+    }`;
 }());
 
 /* Per Level defaults:
@@ -132,8 +133,9 @@ var defaultLevelParameters = [
     // Every tick, the game decides what should happen next.
     // There are 30 ticks in one second!
     // So, for example, 60 ticks means two seconds.
-    if (ticksSinceSpawn > 70)
-        return 'asteroid';`,
+    if (ticksSinceSpawn > 70) {
+        return 'asteroid';
+    }`,
     },
 
     /* Level 2 */
@@ -144,8 +146,9 @@ var defaultLevelParameters = [
     // Every tick, the game decides what should happen next.
     // There are 30 ticks in one second!
     // So, for example, 60 ticks means two seconds.
-    if (ticksSinceSpawn > 40)
-        return 'asteroid';`,
+    if (ticksSinceSpawn > 40) {
+        return 'asteroid';
+    }`,
     },
 
     /* Level 3 */
@@ -155,11 +158,12 @@ var defaultLevelParameters = [
     // Every tick, the game decides what should happen next.
     // There are 30 ticks in one second!
     // So, for example, 60 ticks means two seconds.
-    if (ticksSinceSpawn > 40)
+    if (ticksSinceSpawn > 40) {
         return {
             type: 'asteroid',
             scale: 150
-        };`,
+        };
+    }`,
     },
 
     /* Level 4 */
@@ -169,8 +173,9 @@ var defaultLevelParameters = [
     // Every tick, the game decides what should happen next.
     // There are 30 ticks in one second!
     // So, for example, 60 ticks means two seconds.
-    if (ticksSinceSpawn > 0)
-        return null;`,
+    if (ticksSinceSpawn > 0) {
+        return null;
+    }`,
     },
 
     /* Level 5 */
@@ -180,8 +185,9 @@ var defaultLevelParameters = [
     // Every tick, the game decides what should happen next.
     // There are 30 ticks in one second!
     // So, for example, 60 ticks means two seconds.
-    if (ticksSinceSpawn > 40)
-        return 'asteroid';`,
+    if (ticksSinceSpawn > 40) {
+        return 'asteroid';
+    }`,
     },
 
     /* Level 6 */

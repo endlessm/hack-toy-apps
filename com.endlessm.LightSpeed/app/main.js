@@ -9,7 +9,7 @@
 
 /* global globalParameters, defaultLevelParameters, defaultParameters,
     levelParameters, ContinueScene, DebugScene, GameOverScene, LevelScene,
-    PauseScene, StartScene, TitleScene */
+    StartScene, TitleScene */
 
 const fontConfig = {
     color: 'white',
@@ -46,7 +46,6 @@ var config = {
         new LevelScene('level'),
         new StartScene('start'),
         new GameOverScene('gameover'),
-        new PauseScene('pause'),
         new ContinueScene('continue'),
         new DebugScene({key: 'debug', active: true}),
     ],
@@ -125,9 +124,10 @@ game.events.on('global-property-change', (obj, property) => {
 window.flip = function() {
     globalParameters.flipped = !globalParameters.flipped;
 
-    /* Pause game automatically when flipped */
-    if (globalParameters.flipped && globalParameters.playing)
-        globalParameters.paused = true;
+    if (globalParameters.playing)
+        /* Pause game automatically when flipped, and resume
+         * automatically when flipped back */
+        globalParameters.paused = globalParameters.flipped;
 };
 
 window.reset = function() {

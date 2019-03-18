@@ -31,7 +31,6 @@ class UserInterface {
       $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
       this.mask.show($(targetElement).data("id"));
-      $(".whole-title").show();
     });
 
     $(".ui__daemon").click((event) => {
@@ -262,7 +261,6 @@ class UserInterface {
     if (this._currentAreaId !== "daemons") {
       $("#OS_daemon_7").removeClass("daemon_7_still");
     }
-    $(".whole-title").hide();
 
     this.hoverInteract(
       this._subSystems[this._currentAreaId].element,

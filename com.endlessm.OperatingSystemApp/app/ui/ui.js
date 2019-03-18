@@ -64,6 +64,8 @@ class UserInterface {
         clearTimeout(this._lapseBubbleContent);
         this.showMessage(true);
         this.lapseLoading(100);
+      } else {
+        this.hideDialog();
       }
     });
   }

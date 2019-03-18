@@ -186,6 +186,7 @@ body {
 
 .ui__layer-title {
   color: #fff;
+  cursor: pointer;
   display: inline;
   font-family: Metropolis, sans-serif;
   font-size: 55px;
@@ -202,7 +203,7 @@ body {
 .ui__layer-title.visible {
   opacity: 1 !important;
   transition: opacity 1s ease-in-out;
-  z-index: 700;
+  z-index: 705;
 }
 
 .ui__layer-title.hidden {

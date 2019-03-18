@@ -47,6 +47,7 @@ class UserInterface {
     });
 
     $(".ui__layer-close").click(this.hideDialog.bind(this));
+    $(".ui__layer-title").click(this.hideDialog.bind(this));
 
     $(".ui__layer").on("click", (event) => {
       const classTarget = $(event.target).attr("class");

@@ -522,15 +522,15 @@ class LevelScene extends Phaser.Scene {
             if (typeof retval === 'string')
                 retval = {type: retval};
 
-            var type = retval.type || 'asteroid';
+            var type = retval.type;
+            /* Make sure type is a valid enemy */
+            if (!enemyTypes.includes(type))
+                return;
             var pos = this.userSpace.applyInverse(
                 retval.x || scope.width + scope.random(100, 400),
                 retval.y || scope.random(0, scope.height)
             );
 
-            /* Make sure type is a valid enemy */
-            if (!enemyTypes.includes(type))
-                type = 'asteroid';
             var enemyTypeIndex = enemyTypes.indexOf(retval.type);
 
             var scale = (retval.scale) ? retval.scale : scope.random(20, 80);

@@ -180,7 +180,7 @@ class UserInterface {
     let index;
     let bubbles;
 
-    const lapseLoading = () => {
+    const lapseLoading = (delay) => {
       this._lapseBubble = setTimeout(() => {
         if (index >= bubbles.length) {
           return;
@@ -194,18 +194,15 @@ class UserInterface {
           $(".ui__box-bubble", bubbles[index]).removeClass("loading");
           Sounds.play("operatingSystem/land");
           index++;
-          lapseLoading();
+          lapseLoading(2500);
         }, 2500);
 
-      }, 1250);
+      }, delay);
     };
 
-    setTimeout(() => {
-        bubbles = $(".ui__box.loading");
-        index = 0;
-        lapseLoading();
-      }, 300
-    );
+    bubbles = $(".ui__box.loading");
+    index = 0;
+    lapseLoading(0);
   }
 
   showDialog(areaId) {

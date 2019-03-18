@@ -21,7 +21,7 @@ class UserInterface {
     this.applyHoverInteraction();
 
     $(".bg-sys").hover(function() {
-      Sounds.playLoop("system/background/front");
+      Sounds.play("system/background/front");
     }, function() {
       Sounds.terminate("system/background/front");
     });
@@ -99,8 +99,7 @@ class UserInterface {
 
     $(element).stop().hover((event) => {
       this.mask.show(id);
-      Sounds.terminate("system/background/front");
-      Sounds.playLoop(`operatingSystem/${id}`);
+      Sounds.play(`operatingSystem/${id}`);
 
       $(children).addClass("current");
       this.stopAnimation();

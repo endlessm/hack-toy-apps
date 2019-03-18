@@ -15,6 +15,8 @@ class GameOverScene extends Phaser.Scene {
     preload() {
         this.load.image('game-over', 'assets/game-over.png');
         this.load.image('game-over-glow', 'assets/game-over-glow.png');
+
+        Utils.load_button(this, 'button');
     }
 
     create() {

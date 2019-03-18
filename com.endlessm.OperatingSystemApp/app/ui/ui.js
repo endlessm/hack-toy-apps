@@ -4,7 +4,7 @@ class UserInterface {
     this.layer = new Layer();
     this.mask = new Mask();
 
-    this._index = 0;
+    this._currentMessageIndex = 0;
     this._isAnimationRunning = true;
     this._currentAreaId = null;
     this._subSystems = {
@@ -51,17 +51,20 @@ class UserInterface {
 
     $(".ui__layer").on("click", (event) => {
       const classTarget = $(event.target).attr("class");
-      function isNotTarget(classTarget) {
-        return classTarget != "ui__layer" &&
-               classTarget != "clearfix" &&
-               classTarget != "ui__layer-col";
+
+      function isTarget(classTarget) {
+        return ["ui__layer", "ui__box", "clearfix", "ui__box-name", "ui__layer-col"].includes(classTarget);
       }
 
-      if (isNotTarget(classTarget)) {
+      if (!isTarget(classTarget)) {
         return false;
       }
 
-      this.hideDialog();
+      if (this._isShowBubbles) {
+        clearTimeout(this._lapseBubbleContent);
+        this.showMessage(true);
+        this.lapseLoading(100);
+      }
     });
   }
 
@@ -176,36 +179,52 @@ class UserInterface {
     return html;
   }
 
+  getMessageByIndex(index) {
+    return $(`.ui__box[data-index=${index}]`);
+  }
+
+  showMessage(cancelLapseLoading = false) {
+    this.getMessageByIndex(this._currentMessageIndex).find(".ui__box-bubble").removeClass("loading")
+    Sounds.play("operatingSystem/land");
+    this._currentMessageIndex++;
+    if (this._currentMessageIndex >= $(".ui__box").length) {
+      this._isShowBubbles = false;
+    }
+
+    if (!cancelLapseLoading) {
+      this.lapseLoading(1250);
+    }
+  }
+
+  lapseLoading(delay) {
+    this._lapseBubble = setTimeout(() => {
+      if (this._currentMessageIndex >= $(".ui__box").length) {
+        return;
+      }
+
+      if (delay == 0) {
+        this.getMessageByIndex(this._currentMessageIndex).fadeIn();
+      } else {
+        this.getMessageByIndex(this._currentMessageIndex).fadeIn('fast');
+      }
+
+      this.getMessageByIndex(this._currentMessageIndex).removeClass("loading");
+
+      Sounds.play("operatingSystem/writing");
+      this._lapseBubbleContent = setTimeout(() => {
+        this.showMessage();
+      }, 2500);
+
+    }, delay);
+  }
+
   showBubbles() {
-    let index;
-    let bubbles;
-
-    const lapseLoading = (delay) => {
-      this._lapseBubble = setTimeout(() => {
-        if (index >= bubbles.length) {
-          return;
-        }
-        $(bubbles[index])
-          .fadeIn()
-          .removeClass("loading");
-
-        Sounds.play("operatingSystem/writing");
-        this._lapseBubbleContent = setTimeout(function() {
-          $(".ui__box-bubble", bubbles[index]).removeClass("loading");
-          Sounds.play("operatingSystem/land");
-          index++;
-          lapseLoading(2500);
-        }, 2500);
-
-      }, delay);
-    };
-
-    bubbles = $(".ui__box.loading");
-    index = 0;
-    lapseLoading(0);
+    this._currentMessageIndex = 0;
+    this.lapseLoading(0);
   }
 
   showDialog(areaId) {
+    this._isShowBubbles = true;
     Sounds.play("operatingSystem/select");
     this._currentAreaId = areaId;
     this.layer.show();

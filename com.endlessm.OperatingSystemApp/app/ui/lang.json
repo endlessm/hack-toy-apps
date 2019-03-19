@@ -151,15 +151,15 @@ lang = {
       ],
       [
         {
-          "index": 4,
-          "name": "Riley",
-          "text": "Rad. That helps me wrap my mind around it! So this empty file gives an unwanted output stream a place to go.",
-        },
-        {
           "index": 3,
           "name": "Ada",
           "top": 140,
           "text": "Yes, let’s think of it this way: it’s sort of like a wastebasket within the file system, but things just keep moving through it."
+        },
+        {
+          "index": 4,
+          "name": "Riley",
+          "text": "Rad. That helps me wrap my mind around it! So this empty file gives an unwanted output stream a place to go.",
         }
       ],
       [

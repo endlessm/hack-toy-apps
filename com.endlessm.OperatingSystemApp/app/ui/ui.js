@@ -1,3 +1,6 @@
+ToyApp.getState('lock.OperatingSystemApp.2');
+console.log(dummyState);
+
 class UserInterface {
   constructor() {
     this.lang = lang;

@@ -1,3 +1,5 @@
+var dummyState;
+
 window.ToyApp = {
     loadNotify() {
         window.webkit.messageHandlers.ToyAppLoadNotify.postMessage({});
@@ -17,6 +19,11 @@ window.ToyApp = {
         }, 2);
         window.webkit.messageHandlers.ToyAppSaveState.postMessage(string);
     },
+
+    getState(key) {
+        console.log(key);
+        window.webkit.messageHandlers.ToyAppGetState.postMessage(key);
+    }
 };
 
 window.Sounds = {

@@ -83,6 +83,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager = self.view.get_user_content_manager()
 
         # Register message handlers
+        self._manager_add_msg_handler(manager, 'ToyAppGetState', self._on_get_state)
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
         self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
@@ -132,6 +133,19 @@ toy-app-window > overlay > revealer > frame {
         self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.revealer.set_reveal_child(False)
         GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
+
+    def _on_get_state(self, manager, result):
+        val = result.get_js_value()
+
+        print(val)
+
+        if val.is_undefined():
+            raise ValueError('needs state argument')
+
+        if not val.is_string():
+            raise ValueError('state arg should be string')
+
+        GameState.get('%s.State' % self.app_id, self._on_load_state)
 
     def _on_child_revealed(self, revealer, pspec):
         if not self.revealer.get_child_revealed():
@@ -186,6 +200,18 @@ toy-app-window > overlay > revealer > frame {
             json = GLib.strescape(val.unpack()[0])
             js = 'if(typeof loadState === "function"){loadState(JSON.parse("%s"));}' % json
             self.view.run_javascript(js);
+
+    def _on_load_state(self, proxy, result, user_data):
+        val = None;
+
+        try:
+            val = proxy.call_finish(result)
+        except GLib.Error as err:
+            print("Error loading game state: %s" % err.message)
+
+        if val is not None:
+            json = GLib.strescape(val.unpack()[0])
+            self.view.run_javascript('dummyState = %s;' % json);
 
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:

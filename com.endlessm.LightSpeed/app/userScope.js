@@ -86,7 +86,9 @@ class SpawnEnemyScope extends SpawnScope {
 class UpdateEnemyScope extends UserScope {
     constructor() {
         super();
-        this.playerShipY = 0;
+        this.playerShip = {
+            position: {x: 0, y: 0},
+        };
         this.enemy = {
             position: {x: 0, y: 0},
             velocity: {x: 0, y: 0},
@@ -94,9 +96,9 @@ class UpdateEnemyScope extends UserScope {
         };
     }
 
-    update(tick, playerShipY, enemy) {
+    update(tick, playerShip, enemy) {
         super.update(tick);
-        this.playerShipY = playerShipY;
+        this.playerShip = playerShip;
         this.enemy = enemy;
     }
 }

@@ -598,7 +598,6 @@ class LevelScene extends Phaser.Scene {
     callUpdateEnemy(updateEnemy, scope, obj) {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
-        const pos = this.userSpace.transformPoint(this.ship.x, this.ship.y);
 
         var retval = null;
         var enemy = {
@@ -606,9 +605,12 @@ class LevelScene extends Phaser.Scene {
             velocity: {x: vx, y: vy},
             data: obj.userData,
         };
+        var playerShip = {
+            position: this.userSpace.transformPoint(this.ship.x, this.ship.y),
+        };
 
         try {
-            scope.update(this.tick, pos.y, enemy);
+            scope.update(this.tick, playerShip, enemy);
             retval = updateEnemy(scope);
             scope.postUpdate(retval);
         } catch (e) {

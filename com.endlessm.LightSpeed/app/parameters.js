@@ -111,9 +111,9 @@ var defaultParameters = {
         defaultParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
     }
     defaultParameters['updateBeamCode'] = `\
-    if (playerShipY > enemy.position.y) {
+    if (playerShip.position.y > enemy.position.y) {
         enemy.position.y = enemy.position.y + 5;
-    } else if (playerShipY < enemy.position.y) {
+    } else if (playerShip.position.y < enemy.position.y) {
         enemy.position.y = enemy.position.y - 5;
     }`;
 }());

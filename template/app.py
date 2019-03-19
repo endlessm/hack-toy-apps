@@ -83,6 +83,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager = self.view.get_user_content_manager()
 
         # Register message handlers
+        self._manager_add_msg_handler(manager, 'ToyAppGetState', self._on_get_state)
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
         self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
@@ -132,6 +133,37 @@ toy-app-window > overlay > revealer > frame {
         self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.revealer.set_reveal_child(False)
         GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
+
+    def _on_get_state(self, manager, result):
+        val = result.get_js_value()
+
+        if (not val.is_array() or
+                val.object_get_property('length').to_int32() != 2):
+            raise ValueError('there should be 2 args')
+        caller_id = val.object_get_property_at_index(0)
+        key = val.object_get_property_at_index(1)
+
+        if not caller_id.is_number():
+            raise ValueError('first arg should be number')
+        if not key.is_string():
+            raise ValueError('state arg should be string')
+
+        def _result_handler(proxy, result, caller_id):
+            val = None
+
+            try:
+                val = proxy.call_finish(result)
+            except GLib.Error as err:
+                print("Error loading game state: %s" % err.message)
+
+            if val is not None:
+                unpacked = val.unpack()
+                dumped = json.dumps(unpacked[0])
+                tmpl = '__toyAppGetStateReturnValues[{}] = JSON.parse(\'{}\');'
+                js = tmpl.format(caller_id, dumped)
+                self.view.run_javascript(js);
+        state = GameState.get(key.to_string(), _result_handler,
+                              caller_id.to_int32())
 
     def _on_child_revealed(self, revealer, pspec):
         if not self.revealer.get_child_revealed():

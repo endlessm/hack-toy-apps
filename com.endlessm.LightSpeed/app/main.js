@@ -155,6 +155,10 @@ window.loadState = function(state) {
         /* Restore global parameters */
         globalParameters.availableLevels = state.availableLevels;
         globalParameters.nextLevel = state.nextLevel;
+        globalParameters.updateAsteroidCode = state.updateAsteroidCode;
+        globalParameters.updateSpinnerCode = state.updateSpinnerCode;
+        globalParameters.updateSquidCode = state.updateSquidCode;
+        globalParameters.updateBeamCode = state.updateBeamCode;
 
         /* Restore current level parameters */
         Object.assign(levelParameters[state.level], state.parameters);

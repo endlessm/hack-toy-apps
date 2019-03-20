@@ -46,11 +46,12 @@ class LevelScene extends Phaser.Scene {
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
 
-        /* We have one function for each enemy type */
+        /* We have one global function for each enemy type */
         this.updateEnemy = {};
         for (const o of enemyTypes) {
+            const capitalizedName = o.charAt(0).toUpperCase() + o.slice(1);
             this.updateEnemy[o] = getUserFunction(
-                data[`update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`]
+                globalParameters[`update${capitalizedName}Code`]
             );
             this.updateEnemyScope[o] = new UpdateEnemyScope();
         }
@@ -273,8 +274,15 @@ class LevelScene extends Phaser.Scene {
 
     /* This will be called each time something in globalParameters changes */
     onGlobalParametersNotify(property) {
-        if (property === 'score')
+        if (property === 'score') {
             this.updateScore();
+        } else if (property.endsWith('Code')) {
+            const func = getUserFunction(globalParameters[property]);
+            const enemyName = property.slice(6, -4).toLowerCase();
+
+            if (enemyTypes.includes(enemyName))
+                this.updateEnemy[enemyName] = func;
+        }
     }
 
     /* This will be called each time something in this.params changes */
@@ -284,13 +292,8 @@ class LevelScene extends Phaser.Scene {
         } else if (property.endsWith('Code')) {
             const func = getUserFunction(this.params[property]);
             const funcName = property.slice(0, -4);
-            var member;
 
-            if (property.startsWith('update') &&
-                (member = funcName.slice(6).toLowerCase()) &&
-                enemyTypes.indexOf(member) >= 0)
-                this.updateEnemy[member] = func;
-            else if (funcName in this)
+            if (funcName in this)
                 this[funcName] = func;
         }
     }
@@ -482,6 +485,12 @@ class LevelScene extends Phaser.Scene {
                 nextLevel: globalParameters.nextLevel,
                 /* Level state */
                 level: globalParameters.currentLevel,
+                /* Global user functions */
+                updateAsteroidCode: globalParameters.updateAsteroidCode,
+                updateSpinnerCode: globalParameters.updateSpinnerCode,
+                updateSquidCode: globalParameters.updateSquidCode,
+                updateBeamCode: globalParameters.updateBeamCode,
+                /* Per-level parameters */
                 parameters: this.params,
             });
 

@@ -12,10 +12,14 @@ var globalParameters =
 function flip()
 {
     globalParameters.flipped = !globalParameters.flipped;
-    if (globalParameters.flipped)
-        Sounds.stop('system/background/front');
-    else
+    if (globalParameters.flipped) {
+        Sounds.terminate('system/background/front');
+        Object.keys(UI._subSystems).forEach(id => {
+            Sounds.terminate(`operatingSystem/${id}`);
+        });
+    } else {
         Sounds.playLoop('system/background/front');
+    }
 }
 
 document.onmousedown = function(e)

@@ -52,19 +52,34 @@ var globalParameters = {
      * NOTE: Setting this will stop any current level.
      */
     startLevel: 0,
+
+    /* The beam gets a special update function, not the default one */
+    updateBeamCode: `\
+    if (playerShip.position.y > enemy.position.y) {
+        enemy.position.y = enemy.position.y + 5;
+    } else if (playerShip.position.y < enemy.position.y) {
+        enemy.position.y = enemy.position.y - 5;
+    }`,
 };
 
 /* We need counters and min/max Y coordinate reached for each enemy type,
  * for the clubhouse to read in order to determine if quests have been solved.
+ * We also define an update function for each enemy type except for ones which
+ * were already defined above.
  *
  * FIXME: can we add support for arrays in clippy!
  */
 (function() {
-    for (let i = 0, n = enemyTypes.length; i < n; i++) {
+    enemyTypes.forEach((name, i) => {
         globalParameters[`enemyType${i}SpawnedCount`] = 0;
         globalParameters[`enemyType${i}MinY`] = +1e9;
         globalParameters[`enemyType${i}MaxY`] = -1e9;
-    }
+
+        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+        const func = `update${capitalizedName}Code`;
+        if (typeof globalParameters[func] === 'undefined')
+            globalParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
+    });
 }());
 
 /* Level defaults values */
@@ -103,20 +118,6 @@ var defaultParameters = {
     }
     return null;`,
 };
-
-/* You can define an update function for each enemy type */
-(function() {
-    for (const o of enemyTypes) {
-        const func = `update${o.charAt(0).toUpperCase()}${o.slice(1)}Code`;
-        defaultParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
-    }
-    defaultParameters['updateBeamCode'] = `\
-    if (playerShip.position.y > enemy.position.y) {
-        enemy.position.y = enemy.position.y + 5;
-    } else if (playerShip.position.y < enemy.position.y) {
-        enemy.position.y = enemy.position.y - 5;
-    }`;
-}());
 
 /* Per Level defaults:
  * This parameters will override the ones defined in defaultParameters

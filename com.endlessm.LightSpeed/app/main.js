@@ -9,7 +9,7 @@
 
 /* global globalParameters, defaultLevelParameters, defaultParameters,
     levelParameters, ContinueScene, DebugScene, GameOverScene, LevelScene,
-    StartScene, TitleScene */
+    StartScene, TitleScene, ToyApp */
 
 const fontConfig = {
     color: 'white',
@@ -143,13 +143,31 @@ window.reset = function() {
     Object.assign(levelParameters[i], defaultLevelParameters[i]);
 };
 
+window.saveState = function() {
+    ToyApp.saveState({
+        /* Global state */
+        availableLevels: globalParameters.availableLevels,
+        nextLevel: globalParameters.nextLevel,
+        /* Level state */
+        level: globalParameters.currentLevel,
+        /* Global user functions */
+        updateAsteroidCode: globalParameters.updateAsteroidCode,
+        updateSpinnerCode: globalParameters.updateSpinnerCode,
+        updateSquidCode: globalParameters.updateSquidCode,
+        updateBeamCode: globalParameters.updateBeamCode,
+        /* Per-level parameters */
+        levelParameters,
+    });
+};
+
 window.loadState = function(state) {
     /* Do some sanity checks before restoring game state */
     if (typeof state === 'object' &&
         typeof state.availableLevels === 'number' &&
         typeof state.nextLevel === 'number' &&
         typeof state.level === 'number' &&
-        typeof state.parameters === 'object' &&
+        Array.isArray(state.levelParameters) &&
+        state.levelParameters.every(obj => typeof obj === 'object') &&
         state.nextLevel < state.availableLevels &&
         state.level >= 0 && state.level <= state.availableLevels) {
         /* Restore global parameters */
@@ -161,7 +179,9 @@ window.loadState = function(state) {
         globalParameters.updateBeamCode = state.updateBeamCode;
 
         /* Restore current level parameters */
-        Object.assign(levelParameters[state.level], state.parameters);
+        state.levelParameters.forEach((levelState, ix) => {
+            Object.assign(levelParameters[ix], levelState);
+        });
     }
 };
 

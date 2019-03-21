@@ -6,8 +6,8 @@
  */
 
 /* exported LevelScene */
-/* global ToyApp, enemyTypes, shipTypes, SpawnAstronautScope, SpawnEnemyScope,
-   UpdateEnemyScope */
+/* global enemyTypes, saveState, shipTypes, SpawnAstronautScope,
+SpawnEnemyScope, UpdateEnemyScope */
 
 function getUserFunction(code) {
     if (!code)
@@ -233,6 +233,7 @@ class LevelScene extends Phaser.Scene {
 
     onFlip() {
         this.resetQuestData();
+        saveState();
     }
 
     /* Private functions */
@@ -479,20 +480,7 @@ class LevelScene extends Phaser.Scene {
                 globalParameters.nextLevel = 0;
 
             /* Save game state when level is finished */
-            ToyApp.saveState({
-                /* Global state */
-                availableLevels: globalParameters.availableLevels,
-                nextLevel: globalParameters.nextLevel,
-                /* Level state */
-                level: globalParameters.currentLevel,
-                /* Global user functions */
-                updateAsteroidCode: globalParameters.updateAsteroidCode,
-                updateSpinnerCode: globalParameters.updateSpinnerCode,
-                updateSquidCode: globalParameters.updateSquidCode,
-                updateBeamCode: globalParameters.updateBeamCode,
-                /* Per-level parameters */
-                parameters: this.params,
-            });
+            saveState();
 
             this.scene.launch('continue',
                 `Level ${globalParameters.currentLevel} Complete!`);

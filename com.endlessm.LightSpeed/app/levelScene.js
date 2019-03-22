@@ -44,17 +44,20 @@ class LevelScene extends Phaser.Scene {
 
         this.resetQuestData();
 
-        /* Init scene variables */
-        this.tick = 0;
 
         /* Create userScope */
         this.spawnAstronautScope = new SpawnAstronautScope();
         this.spawnEnemyScope = new SpawnEnemyScope();
         this.updateEnemyScope = {};
 
+        /* Init scene variables */
+        this.tick = 0;
+        this.ticksUntilPowerupSpawn = this.spawnEnemyScope.random(50,150);
+
         /* Get user functions */
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
+        this.spawnPowerup = getUserFunction(data.spawnPowerupCode);
 
         /* We have one global function for each enemy type */
         this.updateEnemy = {};
@@ -77,6 +80,7 @@ class LevelScene extends Phaser.Scene {
             'assets/atlas/explosion-particles.json');
         this.load.atlas('confetti-particles', 'assets/atlas/confetti-particles.png',
             'assets/atlas/confetti-particles.json');
+        this.load.image('powerup', 'assets/powerup0.png');
 
         /* Ship assets */
         for (const ship of shipTypes)
@@ -103,6 +107,10 @@ class LevelScene extends Phaser.Scene {
         this.astronauts = this.physics.add.group();
         this.physics.add.overlap(this.ship, this.astronauts,
             this.onShipAstronautOverlap, null, this);
+
+        this.powerups = this.physics.add.group();
+        this.physics.add.overlap(this.ship, this.powerups,
+            this.onShipPowerupOverlap, null, this);
 
         this.enemies = {};
         for (const o of enemyTypes) {
@@ -168,6 +176,7 @@ class LevelScene extends Phaser.Scene {
         /* Execute spawn functions */
         this.runSpawnEnemy();
         this.runSpawnAstronaut();
+        this.runSpawnPowerup();
         this.runUpdateEnemy();
 
         this.checkAstronautPosition();
@@ -524,6 +533,42 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
+    runSpawnPowerup() {
+        if (!this.spawnPowerup)
+            return;
+
+        if (!this.spawnedSomeEnemy())
+            return;
+
+        this.ticksUntilPowerupSpawn--;
+        if (this.ticksUntilPowerupSpawn > 0)
+            return;
+
+        var scope = this.spawnAstronautScope;
+        var retval = null;
+
+        try {
+            scope.update(this.tick);
+            retval = this.spawnPowerup(scope);
+            scope.postUpdate(retval);
+        } catch (e) {
+            /* User function error! */
+        }
+
+        if (retval && retval > 0) {
+            var pos = this.userSpace.applyInverse(scope.width + scope.random(100, 400), 
+                                                  scope.random(0, scope.height));
+            var obj = this.physics.add.sprite(pos.x, pos.y, 'powerup');
+            this.powerups.add(obj);
+            obj.depth = 1;
+            var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
+            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
+            obj.setScale(0.5);
+        }
+
+        this.ticksUntilPowerupSpawn = scope.random(50,150);
+    }
+
     callUpdateEnemy(updateEnemy, scope, obj) {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
@@ -631,6 +676,11 @@ class LevelScene extends Phaser.Scene {
 
         /* Play thank you sound */
         Sounds.play('lightspeed/astronaut-thanks');
+    }
+    
+    onShipPowerupOverlap(ship, astronaut) {
+        if (!globalParameters.playing)
+            return;
     }
 }
 

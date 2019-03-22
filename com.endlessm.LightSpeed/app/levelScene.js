@@ -58,6 +58,7 @@ class LevelScene extends Phaser.Scene {
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
         this.spawnPowerup = getUserFunction(data.spawnPowerupCode);
+        this.handlePowerup = getUserFunction(data.handlePowerupCode);
 
         /* We have one global function for each enemy type */
         this.updateEnemy = {};
@@ -548,9 +549,7 @@ class LevelScene extends Phaser.Scene {
         var retval = null;
 
         try {
-            scope.update(this.tick);
             retval = this.spawnPowerup(scope);
-            scope.postUpdate(retval);
         } catch (e) {
             /* User function error! */
         }
@@ -678,9 +677,32 @@ class LevelScene extends Phaser.Scene {
         Sounds.play('lightspeed/astronaut-thanks');
     }
     
-    onShipPowerupOverlap(ship, astronaut) {
+    onShipPowerupOverlap(ship, powerup) {
         if (!globalParameters.playing)
             return;
+
+        var scope = this.spawnAstronautScope;
+        var retval = null;
+
+        try {
+            retval = this.handlePowerup(scope);
+        } catch (e) {
+            /* User function error! */
+        }
+        
+        this.powerups.remove(powerup);
+        this.physics.moveToObject(powerup, ship, 300);
+
+        this.tweens.add({
+            targets: powerup,
+            alpha: 0,
+            scaleX: 0.2,
+            scaleY: 0.2,
+            duration: 500,
+            onComplete: () => {
+                powerup.disableBody(true, true);
+            },
+        });
     }
 }
 

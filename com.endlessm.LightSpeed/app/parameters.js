@@ -122,6 +122,10 @@ var defaultParameters = {
         return null;
     }
     return null;`,
+    
+    spawnPowerupCode: `\
+    return 1;`,
+    handlePowerupCode: ` `,
 };
 
 /* Per Level defaults:

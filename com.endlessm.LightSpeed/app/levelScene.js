@@ -113,66 +113,33 @@ class LevelScene extends Phaser.Scene {
         this.updateScore();
 
         /* Listen to properties changes */
-        this.game.events.on('global-property-change', (obj, property) => {
-            if (Object.is(globalParameters, obj))
-                this.onGlobalParametersNotify(property);
-            else if (Object.is(this.params, obj))
-                this.onParametersNotify(property);
-        });
-
-        this.cameras.main.on('camerafadeincomplete', () => {
-            if (globalParameters.playing) {
-                Sounds.play('lightspeed/timpani-start-win');
-                Sounds.playLoop('lightspeed/bg/level-loop1');
-            } else {
-                this.scene.pause();
-            }
-        });
-
-        this.events.on('pause', () => {
-            this.playThrust(0);
-            Sounds.stop('lightspeed/bg/level-loop1');
-        }, this);
+        this.game.events.on('global-property-change',
+            this.onGlobalPropertyChange, this);
 
         this.events.on('shutdown', () => {
+            this.playThrust(0);
             Sounds.stop('lightspeed/bg/level-loop1');
+
+            this.input.keyboard.shutdown();
+            this.game.events.off('global-property-change',
+                this.onGlobalPropertyChange, this);
         }, this);
 
         /* Reset Global game state */
         globalParameters.success = false;
         globalParameters.score = 0;
+
+        this.updatePlayingState();
     }
 
     update() {
         /* Skip every other update */
         this.odd_tick = !this.odd_tick;
 
-        if (this.odd_tick)
+        if (this.odd_tick ||
+            globalParameters.paused ||
+            !globalParameters.playing)
             return;
-
-        /* Pause scene if param changed */
-        if (globalParameters.paused) {
-            /* Pause the physics engine instead of the scene to keep sprites
-             * updates working
-             */
-            if (!this.physics.world.isPaused) {
-                if (this._playingThrustUp)
-                    Sounds.updateSound('lightspeed/thrust-up', 500, {volume: 0});
-                if (this._playingThrustDown)
-                    Sounds.updateSound('lightspeed/thrust-down', 500, {volume: 0});
-                this.scene.launch('pause');
-                this.physics.pause();
-            }
-            return;
-        } else if (this.physics.world.isPaused) {
-            Sounds.play('lightspeed/timpani-start-win');
-            if (this._playingThrustUp)
-                Sounds.updateSound('lightspeed/thrust-up', 500, {volume: 1});
-            if (this._playingThrustDown)
-                Sounds.updateSound('lightspeed/thrust-down', 500, {volume: 1});
-            this.scene.stop('pause');
-            this.physics.resume();
-        }
 
         /* Input */
         var cursors = this.input.keyboard.createCursorKeys();
@@ -200,16 +167,6 @@ class LevelScene extends Phaser.Scene {
 
         /* Update variables */
         this.tick++;
-
-        /* Update any graphics that might have been changed by the toolbox */
-        if (this.ship.key !== this.params.shipAsset) {
-            this.ship.setTexture(this.params.shipAsset);
-            this._setShipCollisionBox();
-        }
-        this.ship.setScale(this.params.shipSize / 100);
-        this.astronauts.getChildren().forEach(astronaut => {
-            astronaut.setScale(this.params.astronautSize / 100);
-        });
 
         /* Check target score and time limit in case they were hacked */
         this.checkLevelDone();
@@ -267,10 +224,51 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
+    updatePausedState() {
+        if (globalParameters.paused) {
+            /* Pause the physics engine instead of the scene to keep sprites
+             * updates working
+             */
+            this.scene.launch('pause');
+            this.physics.pause();
+
+            this.playThrust(0);
+            Sounds.stop('lightspeed/bg/level-loop1');
+        } else {
+            this.physics.resume();
+            Sounds.playLoop('lightspeed/bg/level-loop1');
+        }
+    }
+
+    updatePlayingState() {
+        if (globalParameters.playing) {
+            this.physics.resume();
+            Sounds.play('lightspeed/timpani-start-win');
+            Sounds.playLoop('lightspeed/bg/level-loop1');
+        } else {
+            this.physics.pause();
+
+            this.playThrust(0);
+            Sounds.stop('lightspeed/timpani-start-win');
+            Sounds.stop('lightspeed/bg/level-loop1');
+        }
+    }
+
+    onGlobalPropertyChange(obj, property) {
+        if (Object.is(globalParameters, obj))
+            this.onGlobalParametersNotify(property);
+        else if (Object.is(this.params, obj))
+            this.onParametersNotify(property);
+    }
+
     /* This will be called each time something in globalParameters changes */
     onGlobalParametersNotify(property) {
         if (property === 'score') {
             this.updateScore();
+        } else if (property === 'paused') {
+            this.updatePausedState();
+        } else if (property === 'playing') {
+            this.updatePlayingState();
         } else if (property.endsWith('Code')) {
             const func = getUserFunction(globalParameters[property]);
             const enemyName = property.slice(6, -4).toLowerCase();
@@ -284,6 +282,15 @@ class LevelScene extends Phaser.Scene {
     onParametersNotify(property) {
         if (property === 'scoreTarget') {
             this.updateScore();
+        } else if (property === 'shipAsset') {
+            this.ship.setTexture(this.params.shipAsset);
+            this._setShipCollisionBox();
+        } else if (property === 'shipSize') {
+            this.ship.setScale(this.params.shipSize / 100);
+        } else if (property === 'astronautSize') {
+            this.astronauts.getChildren().forEach(astronaut => {
+                astronaut.setScale(this.params.astronautSize / 100);
+            });
         } else if (property.endsWith('Code')) {
             const func = getUserFunction(this.params[property]);
             const funcName = property.slice(0, -4);
@@ -478,7 +485,6 @@ class LevelScene extends Phaser.Scene {
 
             this.scene.launch('continue',
                 `Level ${globalParameters.currentLevel} Complete!`);
-            this.scene.pause();
         }
     }
 
@@ -647,9 +653,9 @@ class LevelScene extends Phaser.Scene {
         if (!globalParameters.playing)
             return;
 
+        globalParameters.playing = false;
         Sounds.play('lightspeed/asteroid-crash');
         this.scene.launch('gameover');
-        this.scene.pause();
     }
 
     onShipAstronautOverlap(ship, astronaut) {

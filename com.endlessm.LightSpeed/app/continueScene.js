@@ -9,8 +9,7 @@
 
 class ContinueScene extends Phaser.Scene {
     init() {
-        this.params = levelParameters[globalParameters.currentLevel];
-        globalParameters.playing = false;
+        void this;
     }
 
     preload() {
@@ -23,6 +22,9 @@ class ContinueScene extends Phaser.Scene {
 
     create(message) {
         const spacing = 48;
+
+        this.params = levelParameters[globalParameters.currentLevel];
+        globalParameters.playing = false;
 
         var pad = this.add.zone(0, 0, 512, 400).setOrigin(0, 0);
         var levelComplete = this.add.sprite(0, 0, 'level-complete');

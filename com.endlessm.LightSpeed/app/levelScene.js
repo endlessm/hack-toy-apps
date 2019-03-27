@@ -120,12 +120,6 @@ class LevelScene extends Phaser.Scene {
                 this.onParametersNotify(property);
         });
 
-        /* Go back to title screen */
-        this.input.keyboard.on('keyup_ESC', () => {
-            if (globalParameters.playing)
-                this.scene.start('title');
-        });
-
         this.cameras.main.on('camerafadeincomplete', () => {
             if (globalParameters.playing) {
                 Sounds.play('lightspeed/timpani-start-win');

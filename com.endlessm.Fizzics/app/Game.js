@@ -718,15 +718,20 @@ function Game()
                         globalParameters.gravity_0 = parseFloat(species.gravity);
                     if (species.radius)
                         globalParameters.radius_0 = parseFloat(species.radius);
+                    if (species.socialForce0)
+                        globalParameters.socialForce_0_0 = parseFloat(species.socialForce0);
+                    if (species.socialForce1)
+                        globalParameters.socialForce_0_1 = parseFloat(species.socialForce1);
+                    if (species.socialForce2)
+                        globalParameters.socialForce_0_2 = parseFloat(species.socialForce2);
+                    if (species.socialForce3)
+                        globalParameters.socialForce_0_3 = parseFloat(species.socialForce3);
+                    if (species.socialForce4)
+                        globalParameters.socialForce_0_4 = parseFloat(species.socialForce4);
                     /*
                     globalParameters.collision_0        = parseFloat( species.collision    );
                     globalParameters.friction_0         = parseFloat( species.friction     );
                     globalParameters.imageIndex_0       = parseInt  ( species.imageIndex   );
-                    globalParameters.socialForce_0_0    = parseFloat( species.socialForce0 );
-                    globalParameters.socialForce_0_1    = parseFloat( species.socialForce1 );
-                    globalParameters.socialForce_0_2    = parseFloat( species.socialForce2 );
-                    globalParameters.socialForce_0_3    = parseFloat( species.socialForce3 );
-                    globalParameters.socialForce_0_4    = parseFloat( species.socialForce4 );
                     globalParameters.touchDeath_0_0     = parseInt  ( species.touchDeath0  );
                     globalParameters.touchDeath_0_1     = parseInt  ( species.touchDeath1  );
                     globalParameters.touchDeath_0_2     = parseInt  ( species.touchDeath2  );
@@ -747,6 +752,16 @@ function Game()
                         globalParameters.gravity_1 = parseFloat(species.gravity);
                     if (species.radius)
                         globalParameters.radius_1 = parseFloat(species.radius);
+                    if (species.socialForce0)
+                        globalParameters.socialForce_1_0 = parseFloat(species.socialForce0);
+                    if (species.socialForce1)
+                        globalParameters.socialForce_1_1 = parseFloat(species.socialForce1);
+                    if (species.socialForce2)
+                        globalParameters.socialForce_1_2 = parseFloat(species.socialForce2);
+                    if (species.socialForce3)
+                        globalParameters.socialForce_1_3 = parseFloat(species.socialForce3);
+                    if (species.socialForce4)
+                        globalParameters.socialForce_1_4 = parseFloat(species.socialForce4);
                 }
                 if (level.species[2])
                 {
@@ -757,6 +772,16 @@ function Game()
                         globalParameters.gravity_2 = parseFloat(species.gravity);
                     if (species.radius)
                         globalParameters.radius_2 = parseFloat(species.radius);
+                    if (species.socialForce0)
+                        globalParameters.socialForce_2_0 = parseFloat(species.socialForce0);
+                    if (species.socialForce1)
+                        globalParameters.socialForce_2_1 = parseFloat(species.socialForce1);
+                    if (species.socialForce2)
+                        globalParameters.socialForce_2_2 = parseFloat(species.socialForce2);
+                    if (species.socialForce3)
+                        globalParameters.socialForce_2_3 = parseFloat(species.socialForce3);
+                    if (species.socialForce4)
+                        globalParameters.socialForce_2_4 = parseFloat(species.socialForce4);
                 }
                 if (level.species[3])
                 {
@@ -767,6 +792,16 @@ function Game()
                         globalParameters.gravity_3 = parseFloat(species.gravity);
                     if (species.radius)
                         globalParameters.radius_3 = parseFloat(species.radius);
+                    if (species.socialForce0)
+                        globalParameters.socialForce_3_0 = parseFloat(species.socialForce0);
+                    if (species.socialForce1)
+                        globalParameters.socialForce_3_1 = parseFloat(species.socialForce1);
+                    if (species.socialForce2)
+                        globalParameters.socialForce_3_2 = parseFloat(species.socialForce2);
+                    if (species.socialForce3)
+                        globalParameters.socialForce_3_3 = parseFloat(species.socialForce3);
+                    if (species.socialForce4)
+                        globalParameters.socialForce_3_4 = parseFloat(species.socialForce4);
                 }
                 if (level.species[4])
                 {
@@ -777,6 +812,16 @@ function Game()
                         globalParameters.gravity_4 = parseFloat(species.gravity);
                     if (species.radius)
                         globalParameters.radius_4 = parseFloat(species.radius);
+                    if (species.socialForce0)
+                        globalParameters.socialForce_4_0 = parseFloat(species.socialForce0);
+                    if (species.socialForce1)
+                        globalParameters.socialForce_4_1 = parseFloat(species.socialForce1);
+                    if (species.socialForce2)
+                        globalParameters.socialForce_4_2 = parseFloat(species.socialForce2);
+                    if (species.socialForce3)
+                        globalParameters.socialForce_4_3 = parseFloat(species.socialForce3);
+                    if (species.socialForce4)
+                        globalParameters.socialForce_4_4 = parseFloat(species.socialForce4);
                 }
             }
         }

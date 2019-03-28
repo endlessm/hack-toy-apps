@@ -8,8 +8,8 @@
 /* exported fontConfig, game */
 
 /* global globalParameters, defaultLevelParameters, defaultParameters,
-    levelParameters, ContinueScene, DebugScene, GameOverScene, LevelScene,
-    StartScene, TitleScene, ToyApp */
+    levelParameters, resetGlobalUserCode, ContinueScene, DebugScene,
+    GameOverScene, LevelScene, StartScene, TitleScene, ToyApp */
 
 const fontConfig = {
     color: 'white',
@@ -142,6 +142,8 @@ window.flip = function() {
 };
 
 window.reset = function() {
+    resetGlobalUserCode();
+
     const i = globalParameters.currentLevel;
 
     if (i < 0 || i > levelParameters.length)

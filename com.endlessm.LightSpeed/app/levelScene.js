@@ -5,8 +5,8 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported LevelScene */
-/* global enemyTypes, saveState, shipTypes, SpawnAstronautScope,
+/* exported LevelScene, CONFETTI_COLORS */
+/* global Ship, enemyTypes, saveState, shipTypes, SpawnAstronautScope,
 SpawnEnemyScope, UpdateEnemyScope */
 
 const CONFETTI_COLORS = [
@@ -97,7 +97,7 @@ class LevelScene extends Phaser.Scene {
         this.cameras.main.fadeIn(200);
 
         /* Ship */
-        this.createShip(256, centerY);
+        this.ship = new Ship(this, this.params.shipAsset, 256, centerY);
 
         /* Create objects groups */
         this.astronauts = this.physics.add.group();
@@ -132,7 +132,7 @@ class LevelScene extends Phaser.Scene {
             this.onGlobalPropertyChange, this);
 
         this.events.on('shutdown', () => {
-            this.playThrust(0);
+            this.ship.playThrust(0);
             Sounds.stop('lightspeed/bg/level-loop1');
 
             this.input.keyboard.shutdown();
@@ -156,32 +156,11 @@ class LevelScene extends Phaser.Scene {
             !globalParameters.playing)
             return;
 
-        /* Input */
-        var cursors = this.input.keyboard.createCursorKeys();
-
-        const accel = this.params.shipAcceleration;
-
-        if (cursors.up.isDown) {
-            this.playThrust(-1);
-
-            if (this.ship.body.velocity.y > 0)
-                this.ship.setVelocityY(0);
-            this.ship.setAccelerationY(-accel);
-        } else if (cursors.down.isDown) {
-            this.playThrust(1);
-
-            if (this.ship.body.velocity.y < 0)
-                this.ship.setVelocityY(0);
-            this.ship.setAccelerationY(accel);
-        } else {
-            this.playThrust(0);
-
-            this.ship.setAccelerationY(0);
-            this.ship.body.setDrag(0, this.params.shipDrag);
-        }
-
         /* Update variables */
         this.tick++;
+
+        /* Handle ship movement */
+        this.ship.handleInput(this.params.shipAcceleration, this.params.shipDrag);
 
         /* Check target score and time limit in case they were hacked */
         this.checkLevelDone();
@@ -215,30 +194,6 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    playThrust(direction) {
-        if (direction < 0) {
-            if (!this._playingThrustUp) {
-                Sounds.stop('lightspeed/thrust-down');
-                this._playingThrustDown = false;
-                Sounds.playLoop('lightspeed/thrust-up');
-                this._playingThrustUp = true;
-            }
-        } else if (direction > 0) {
-            if (!this._playingThrustDown) {
-                Sounds.stop('lightspeed/thrust-up');
-                this._playingThrustUp = false;
-                Sounds.playLoop('lightspeed/thrust-down');
-                this._playingThrustDown = true;
-            }
-        } else if (this._playingThrustUp) {
-            Sounds.stop('lightspeed/thrust-up');
-            this._playingThrustUp = false;
-        } else if (this._playingThrustDown) {
-            Sounds.stop('lightspeed/thrust-down');
-            this._playingThrustDown = false;
-        }
-    }
-
     updatePausedState() {
         if (globalParameters.paused) {
             /* Pause the physics engine instead of the scene to keep sprites
@@ -247,7 +202,7 @@ class LevelScene extends Phaser.Scene {
             this.scene.launch('pause');
             this.physics.pause();
 
-            this.playThrust(0);
+            this.ship.playThrust(0);
             Sounds.stop('lightspeed/bg/level-loop1');
         } else {
             this.physics.resume();
@@ -263,7 +218,7 @@ class LevelScene extends Phaser.Scene {
         } else {
             this.physics.pause();
 
-            this.playThrust(0);
+            this.ship.playThrust(0);
             Sounds.stop('lightspeed/timpani-start-win');
             Sounds.stop('lightspeed/bg/level-loop1');
         }
@@ -298,8 +253,7 @@ class LevelScene extends Phaser.Scene {
         if (property === 'scoreTarget') {
             this.updateScore();
         } else if (property === 'shipAsset') {
-            this.ship.setTexture(this.params.shipAsset);
-            this._setShipCollisionBox();
+            this.ship.setType(this.params.shipAsset);
         } else if (property === 'shipSize') {
             this.ship.setScale(this.params.shipSize / 100);
         } else if (property === 'astronautSize') {
@@ -327,95 +281,6 @@ class LevelScene extends Phaser.Scene {
                     Math.max(y, globalParameters[`enemyType${ix}MaxY`]);
             }
         });
-    }
-
-    _setShipCollisionBox() {
-        /* Make collision box smaller so that asteroids don't collide on the
-         * outer corners of the box where no ship is */
-        const scale = this.params.shipSize / 100;
-        this.ship.setScale(scale);
-
-        let ship_box_height;
-
-        switch (this.params.shipAsset) {
-        case 'spaceship':
-            ship_box_height = 264;
-            this.ship.setSize(326, ship_box_height).setOffset(132, 64);
-            break;
-        case 'daemon':
-            ship_box_height = 512;
-            this.ship.setCircle(256, 0, 0);
-            break;
-        case 'unicorn':
-            ship_box_height = 256;
-            this.ship.setSize(300, ship_box_height).setOffset(200, 128);
-            break;
-        default:
-            // FIXME add a "missing image" asset, TBD however we decide to
-            // indicate a runtime error in code
-            // eslint-disable-next-line no-console
-            console.error(`unexpected ship type ${this.params.shipAsset}`);
-            ship_box_height = 100;
-        }
-
-        /* Update world bounds to allow half the ship to be outside */
-        this.physics.world.setBounds(
-            0,
-            -(ship_box_height * scale) / 2,
-            game.config.width,
-            game.config.height + ship_box_height * scale
-        );
-    }
-
-    createShip(x, y) {
-        this.ship = this.physics.add.sprite(x, y, this.params.shipAsset);
-        this._setShipCollisionBox();
-        this.ship.setCollideWorldBounds(true);
-        this.ship.depth = 100;
-        this.ship.body.setAllowDrag(true);
-
-        /* Explosion */
-        var explosion = this.add.particles('explosion-particles');
-        this.ship.explosionEmitter = explosion.createEmitter({
-            frame: ['explosion-p1', 'explosion-p2', 'explosion-p3'],
-            speed: {min: -800, max: 800},
-            angle: {min: 0, max: 360},
-            scale: {start: 2, end: 0},
-            blendMode: 'SCREEN',
-            lifespan: 800,
-        });
-        this.ship.explodeCount = 3;
-        this.ship.explosionEmitter.stop();
-        explosion.depth = 101;
-
-        this.ship.explode = function (x, y) {
-            this.explosionEmitter.explode(768, x, y);
-            this.explodeCount--;
-
-            if (this.explodeCount <= 0) {
-                this.explodeCount = 3;
-                return;
-            }
-
-            this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
-                this.explode, [x, y], this);
-        };
-
-        /* Confetti */
-        var confetti = this.add.particles('confetti-particles');
-        this.ship.confettiEmitter = confetti.createEmitter({
-            frame: ['confetti-p1', 'confetti-p2', 'confetti-p3', 'confetti-p4',
-                'confetti-p5', 'confetti-p6'],
-            rotate: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130,
-                140, 150, 160, 180, 190, 200, 210, 220, 240, 250, 260, 270, 280,
-                290, 300, 310, 320, 330, 340, 350],
-            tint: CONFETTI_COLORS,
-            speed: {min: -500, max: 500},
-            angle: {min: 0, max: 360},
-            scale: {start: 1, end: 0.32},
-            lifespan: 600,
-        });
-        this.ship.confettiEmitter.stop();
     }
 
     createEnemy(type, position, scale) {

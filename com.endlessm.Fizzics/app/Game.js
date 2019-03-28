@@ -712,10 +712,11 @@ function Game()
                 if (level.species[0])
                 {
                     var species = level.species[0];
+                    if (species.physics)
+                        globalParameters.usePhysics_0 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_0 = parseFloat(species.gravity);
                     /*
-                    globalParameters.usePhysics_0       =           ( species.physics == "true" );
                     globalParameters.radius_0           = parseFloat( species.radius       );
                     globalParameters.collision_0        = parseFloat( species.collision    );
                     globalParameters.friction_0         = parseFloat( species.friction     );
@@ -739,24 +740,32 @@ function Game()
                 if (level.species[1])
                 {
                     var species = level.species[1];
+                    if (species.physics)
+                        globalParameters.usePhysics_1 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_1 = parseFloat(species.gravity);
                 }
                 if (level.species[2])
                 {
                     var species = level.species[2];
+                    if (species.physics)
+                        globalParameters.usePhysics_2 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_2 = parseFloat(species.gravity);
                 }
                 if (level.species[3])
                 {
                     var species = level.species[3];
+                    if (species.physics)
+                        globalParameters.usePhysics_3 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_3 = parseFloat(species.gravity);
                 }
                 if (level.species[4])
                 {
                     var species = level.species[4];
+                    if (species.physics)
+                        globalParameters.usePhysics_4 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_4 = parseFloat(species.gravity);
                 }

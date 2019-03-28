@@ -9,8 +9,7 @@
 
 class ContinueScene extends Phaser.Scene {
     init() {
-        this.params = levelParameters[globalParameters.currentLevel];
-        globalParameters.playing = false;
+        void this;
     }
 
     preload() {
@@ -23,6 +22,9 @@ class ContinueScene extends Phaser.Scene {
 
     create(message) {
         const spacing = 48;
+
+        this.params = levelParameters[globalParameters.currentLevel];
+        globalParameters.playing = false;
 
         var pad = this.add.zone(0, 0, 512, 400).setOrigin(0, 0);
         var levelComplete = this.add.sprite(0, 0, 'level-complete');
@@ -46,6 +48,10 @@ class ContinueScene extends Phaser.Scene {
         /* Continue on button click and enter */
         this.input.keyboard.on('keyup_ENTER', this.nextLevel.bind(this));
         continueButton.on('pointerup', this.nextLevel.bind(this));
+
+        this.events.on('shutdown', () => {
+            this.input.keyboard.shutdown();
+        }, this);
 
         /* Play level finished sound */
         Sounds.play('lightspeed/level-complete');

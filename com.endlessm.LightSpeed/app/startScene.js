@@ -70,6 +70,7 @@ class StartScene extends Phaser.Scene {
         this.scene.launch('level', levelParams);
 
         this.events.on('shutdown', () => {
+            this.input.keyboard.shutdown();
             Sounds.stop('lightspeed/bg/zarathustra-whale');
         }, this);
 

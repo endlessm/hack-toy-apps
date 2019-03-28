@@ -103,19 +103,27 @@ var game = new Phaser.Game(config);
 
 /* Quests can start a level programatically */
 game.events.on('global-property-change', (obj, property) => {
-    if (Object.is(globalParameters, obj) && property === 'startLevel' &&
-        globalParameters.currentLevel !== globalParameters.startLevel) {
-        const i = globalParameters.startLevel;
+    if (Object.is(globalParameters, obj) && property === 'startLevel') {
+        const startLevel = globalParameters.startLevel;
+
+        if (startLevel < 0 || startLevel > globalParameters.availableLevels)
+            return;
 
         /* Stop all active scenes just in case */
         game.scene.getScenes(true).forEach(function(key) {
             game.scene.stop(key);
         });
 
-        globalParameters.currentLevel = i;
-        globalParameters.playing = true;
+        globalParameters.currentLevel = startLevel;
         globalParameters.paused = false;
-        game.scene.start('level', levelParameters[i]);
+
+        if (startLevel) {
+            globalParameters.playing = true;
+            game.scene.start('level', levelParameters[startLevel]);
+        } else {
+            globalParameters.playing = false;
+            game.scene.start('title');
+        }
     }
 });
 

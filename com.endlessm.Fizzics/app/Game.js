@@ -716,8 +716,9 @@ function Game()
                         globalParameters.usePhysics_0 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_0 = parseFloat(species.gravity);
+                    if (species.radius)
+                        globalParameters.radius_0 = parseFloat(species.radius);
                     /*
-                    globalParameters.radius_0           = parseFloat( species.radius       );
                     globalParameters.collision_0        = parseFloat( species.collision    );
                     globalParameters.friction_0         = parseFloat( species.friction     );
                     globalParameters.imageIndex_0       = parseInt  ( species.imageIndex   );
@@ -744,6 +745,8 @@ function Game()
                         globalParameters.usePhysics_1 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_1 = parseFloat(species.gravity);
+                    if (species.radius)
+                        globalParameters.radius_1 = parseFloat(species.radius);
                 }
                 if (level.species[2])
                 {
@@ -752,6 +755,8 @@ function Game()
                         globalParameters.usePhysics_2 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_2 = parseFloat(species.gravity);
+                    if (species.radius)
+                        globalParameters.radius_2 = parseFloat(species.radius);
                 }
                 if (level.species[3])
                 {
@@ -760,6 +765,8 @@ function Game()
                         globalParameters.usePhysics_3 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_3 = parseFloat(species.gravity);
+                    if (species.radius)
+                        globalParameters.radius_3 = parseFloat(species.radius);
                 }
                 if (level.species[4])
                 {
@@ -768,6 +775,8 @@ function Game()
                         globalParameters.usePhysics_4 = (species.physics == "true");
                     if (species.gravity)
                         globalParameters.gravity_4 = parseFloat(species.gravity);
+                    if (species.radius)
+                        globalParameters.radius_4 = parseFloat(species.radius);
                 }
             }
         }

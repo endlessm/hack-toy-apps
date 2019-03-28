@@ -9,6 +9,16 @@
 /* global enemyTypes, saveState, shipTypes, SpawnAstronautScope,
 SpawnEnemyScope, UpdateEnemyScope */
 
+const CONFETTI_COLORS = [
+    0x1500ff,
+    0x93e51f,
+    0xe6481c,
+    0xb078fb,
+    0xfde82a,
+    0x00ffee,
+    0xff0099,
+];
+
 function getUserFunction(code) {
     if (!code)
         return null;
@@ -62,6 +72,11 @@ class LevelScene extends Phaser.Scene {
         this.load.image('background', 'assets/background.jpg');
         this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
+        this.load.image('particle', 'assets/particle.png');
+        this.load.atlas('explosion-particles', 'assets/atlas/explosion-particles.png',
+            'assets/atlas/explosion-particles.json');
+        this.load.atlas('confetti-particles', 'assets/atlas/confetti-particles.png',
+            'assets/atlas/confetti-particles.json');
 
         /* Ship assets */
         for (const ship of shipTypes)
@@ -358,6 +373,49 @@ class LevelScene extends Phaser.Scene {
         this.ship.setCollideWorldBounds(true);
         this.ship.depth = 100;
         this.ship.body.setAllowDrag(true);
+
+        /* Explosion */
+        var explosion = this.add.particles('explosion-particles');
+        this.ship.explosionEmitter = explosion.createEmitter({
+            frame: ['explosion-p1', 'explosion-p2', 'explosion-p3'],
+            speed: {min: -800, max: 800},
+            angle: {min: 0, max: 360},
+            scale: {start: 2, end: 0},
+            blendMode: 'SCREEN',
+            lifespan: 800,
+        });
+        this.ship.explodeCount = 3;
+        this.ship.explosionEmitter.stop();
+        explosion.depth = 101;
+
+        this.ship.explode = function (x, y) {
+            this.explosionEmitter.explode(768, x, y);
+            this.explodeCount--;
+
+            if (this.explodeCount <= 0) {
+                this.explodeCount = 3;
+                return;
+            }
+
+            this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
+                this.explode, [x, y], this);
+        };
+
+        /* Confetti */
+        var confetti = this.add.particles('confetti-particles');
+        this.ship.confettiEmitter = confetti.createEmitter({
+            frame: ['confetti-p1', 'confetti-p2', 'confetti-p3', 'confetti-p4',
+                'confetti-p5', 'confetti-p6'],
+            rotate: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130,
+                140, 150, 160, 180, 190, 200, 210, 220, 240, 250, 260, 270, 280,
+                290, 300, 310, 320, 330, 340, 350],
+            tint: CONFETTI_COLORS,
+            speed: {min: -500, max: 500},
+            angle: {min: 0, max: 360},
+            scale: {start: 1, end: 0.32},
+            lifespan: 600,
+        });
+        this.ship.confettiEmitter.stop();
     }
 
     createEnemy(type, position, scale) {
@@ -589,6 +647,15 @@ class LevelScene extends Phaser.Scene {
             /* FIXME: improve colission shape */
             obj.body.setAllowRotation(true);
             obj.body.setAngularVelocity(Phaser.Math.RND.integerInRange(-90, 90));
+
+            obj.particles = this.add.particles('particle');
+            obj.emitter = obj.particles.createEmitter({
+                speed: 100,
+                scale: {start: 0.6, end: 0},
+                blendMode: 'ADD',
+                lifespan: 1000,
+                tint: CONFETTI_COLORS,
+            }).startFollow(obj);
         }
     }
 
@@ -649,13 +716,16 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    onShipEnemyOverlap() {
+    onShipEnemyOverlap(ship, enemy) {
         if (!globalParameters.playing)
             return;
 
         globalParameters.playing = false;
         Sounds.play('lightspeed/asteroid-crash');
         this.scene.launch('gameover');
+
+        /* Make ship explode! */
+        ship.explode((ship.x + enemy.x) / 2, (ship.y + enemy.y) / 2);
     }
 
     onShipAstronautOverlap(ship, astronaut) {
@@ -682,6 +752,12 @@ class LevelScene extends Phaser.Scene {
             onComplete: () => {
                 /* Disable collected astronaut */
                 astronaut.disableBody(true, true);
+
+                /* Confetti! */
+                ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
+                astronaut.emitter.stop();
+                astronaut.particles.destroy();
+                astronaut.destroy();
 
                 /* Check if we finished the level */
                 this.checkLevelDone();

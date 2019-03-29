@@ -5,7 +5,8 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope */
+/* exported SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope,
+    SpawnPowerupScope, ActivatePowerupScope */
 /* global game, enemyTypes, shipTypes */
 
 /* Base Classes */
@@ -25,9 +26,10 @@ class UserScope {
         this.data = {};
     }
 
-    update(tick) {
-        this.tick = tick;
-        this.time = tick * 0.33;
+    update(data) {
+        this.tick = data.tick;
+        this.time = data.tick * 0.33;
+        return true;
     }
 
     postUpdate(retval) {
@@ -61,9 +63,10 @@ class SpawnScope extends UserScope {
         this.ticksSinceSpawn = 0;
     }
 
-    update(tick) {
-        super.update(tick);
+    update(data) {
+        super.update(data);
         this.ticksSinceSpawn++;
+        return true;
     }
 
     postUpdate(retval) {
@@ -77,6 +80,32 @@ class SpawnAstronautScope extends SpawnScope {
 }
 
 class SpawnEnemyScope extends SpawnScope {
+}
+
+class SpawnPowerupScope extends UserScope {
+    constructor() {
+        super();
+        this.tickDelay = 0;
+        this.tickCount = 0;
+    }
+
+    update(data) {
+        super.update(data);
+
+        /* Return false to stop function execution */
+        if (--this.tickDelay > 0)
+            return false;
+
+        this.tickCount++;
+        this.tickDelay = this.random(100, 300);
+
+        return true;
+    }
+
+    postUpdate(retval) {
+        if (retval)
+            this.tickCount = 0;
+    }
 }
 
 /*
@@ -96,10 +125,40 @@ class UpdateEnemyScope extends UserScope {
         };
     }
 
-    update(tick, playerShip, enemy) {
-        super.update(tick);
-        this.playerShip = playerShip;
-        this.enemy = enemy;
+    update(data) {
+        super.update(data);
+        this.playerShip = data.playerShip;
+        this.enemy = data.enemy;
+        return true;
+    }
+}
+
+class ActivatePowerupScope extends UserScope {
+    constructor() {
+        super();
+
+        this.ship = {
+            position: {x: 0, y: 0},
+            invulnerableTimer: 0,
+            shrinkTimer: 0,
+            attractTimer: 0,
+        };
+
+        this._blowUpEnemies = false;
+        this.powerUpType = 0;
+    }
+
+    update(data) {
+        this._blowUpEnemies = false;
+
+        super.update(data);
+        this.ship.position = data.shipPosition;
+        this.powerUpType = data.powerUpType;
+        return true;
+    }
+
+    blowUpEnemies(){
+        this._blowUpEnemies = true;
     }
 }
 

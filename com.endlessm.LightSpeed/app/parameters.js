@@ -6,7 +6,7 @@
  */
 
 /* exported enemyTypes, shipTypes, globalParameters, defaultParameters,
-    defaultLevelParameters, levelParameters */
+    defaultLevelParameters, levelParameters, resetGlobalUserCode */
 
 /* Global constants */
 var shipTypes = [
@@ -52,15 +52,23 @@ var globalParameters = {
      * NOTE: Setting this will stop any current level.
      */
     startLevel: 0,
+};
+
+function resetGlobalUserCode() {
+    enemyTypes.forEach(name => {
+        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+        const func = `update${capitalizedName}Code`;
+        globalParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
+    });
 
     /* The beam gets a special update function, not the default one */
-    updateBeamCode: `\
+    globalParameters.updateBeamCode = `\
     if (playerShip.position.y > enemy.position.y) {
         enemy.position.y = enemy.position.y + 5;
     } else if (playerShip.position.y < enemy.position.y) {
         enemy.position.y = enemy.position.y - 5;
-    }`,
-};
+    }`;
+}
 
 /* We need counters and min/max Y coordinate reached for each enemy type,
  * for the clubhouse to read in order to determine if quests have been solved.
@@ -74,12 +82,9 @@ var globalParameters = {
         globalParameters[`enemyType${i}SpawnedCount`] = 0;
         globalParameters[`enemyType${i}MinY`] = +1e9;
         globalParameters[`enemyType${i}MaxY`] = -1e9;
-
-        const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
-        const func = `update${capitalizedName}Code`;
-        if (typeof globalParameters[func] === 'undefined')
-            globalParameters[func] = '    enemy.position.y = enemy.position.y + 0;';
     });
+
+    resetGlobalUserCode();
 }());
 
 /* Level defaults values */

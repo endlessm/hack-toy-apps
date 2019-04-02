@@ -391,317 +391,147 @@ function Game()
     {
         return _levelData.levels.length;
     }
-      
+
+    // "Blank" defaults for all levels
+    this.defaultLevelParameters = (function() {
+        const defaultLevelParameters = {
+            backgroundImageIndex: 0,
+        };
+        for (let species = 0; species < 5; species++) {
+            Object.assign(defaultLevelParameters, {
+                [`usePhysics_${species}`]: false,
+                [`gravity_${species}`]: 0,
+                [`radius_${species}`]: 60,
+                [`collision_${species}`]: 0.2,
+                [`friction_${species}`]: 10,
+                [`imageIndex_${species}`]: species,
+                [`deathVisualGood_${species}`]: 0,
+                [`deathVisualBad_${species}`]: 0,
+                [`deathSoundGood_${species}`]: 0,
+                [`deathSoundBad_${species}`]: 0,
+            });
+            for (let target = 0; target < 5; target++) {
+                Object.assign(defaultLevelParameters, {
+                    [`socialForce_${species}_${target}`]: 0,
+                    [`touchDeath_${species}_${target}`]: 0,
+                });
+            }
+        }
+        return defaultLevelParameters;
+    })();
+
+    // Defaults for levels that are part of the main game (1 through "the end")
+    // These levels have ID < 1000, QUEST0 is the first non-main level
+    this.defaultMainLevelParameters = Object.assign({}, this.defaultLevelParameters, {
+        backgroundImageIndex: 2,
+
+        usePhysics_0: true,
+        radius_0: 50,
+        collision_0: 0.9,
+        friction_0: 5,
+        imageIndex_0: 6,
+        touchDeath_0_1: 1,
+        touchDeath_0_2: 2,
+        deathVisualBad_0: 1,
+        deathSoundGood_0: 4,
+        deathSoundBad_0: 6,
+
+        imageIndex_1: 8,
+
+        collision_2: 0.5,
+        imageIndex_2: 1,
+
+        imageIndex_3: 9,
+
+        usePhysics_4: true,
+        radius_4: 35,
+        imageIndex_4: 10,
+        touchDeath_4_0: 1,
+        deathVisualGood_4: 8,
+        deathSoundGood_4: 5,
+    });
 
     this.setLevelGlobalParams = function( levelID )
     {                
+        const levelParameters = {};
+        if (levelID < QUEST0)
+            Object.assign(levelParameters, this.defaultMainLevelParameters);
+        else
+            Object.assign(levelParameters, this.defaultLevelParameters);
+
         if ( levelID == QUEST0 )
         {
-            globalParameters.backgroundImageIndex = 0;
+            Object.assign(levelParameters, {
+                radius_0: 30,
+                gravity_0: 100,
+                friction_0: 1,
+                usePhysics_0: true,
 
-            globalParameters.radius_0       = 30.0;
-            globalParameters.gravity_0      = 100.0;
-            globalParameters.collision_0        = 0.2;
-            globalParameters.friction_0         = 1.0;
-            globalParameters.usePhysics_0       = true;
-            globalParameters.imageIndex_0       = 0;
-            globalParameters.socialForce_0_0    = 0.0;
-            globalParameters.socialForce_0_1    = 0.0;
-            globalParameters.socialForce_0_2    = 0.0;
-            globalParameters.touchDeath_0_0     = false;
-            globalParameters.touchDeath_0_1     = false;
-            globalParameters.touchDeath_0_2     = false;
-            globalParameters.deathEffect_0_0    = 0;
-            globalParameters.deathEffect_0_1    = 0;
-            globalParameters.deathEffect_0_2    = 0;
+                radius_1: 70,
+                gravity_1: 100,
+                friction_1: 5,
+                usePhysics_1: true,
 
-            // parameters for species 1 balls
-            globalParameters.radius_1       = 70.0;
-            globalParameters.gravity_1      = 100.0;
-            globalParameters.collision_1        = 0.2;
-            globalParameters.friction_1         = 5;
-            globalParameters.usePhysics_1       = true;
-            globalParameters.imageIndex_1       = 1;
-            globalParameters.socialForce_1_0    = 0.0;
-            globalParameters.socialForce_1_1    = 0.0;
-            globalParameters.socialForce_1_2    = 0.0;
-            globalParameters.touchDeath_1_0     = false;
-            globalParameters.touchDeath_1_1     = false;
-            globalParameters.touchDeath_1_2     = false;
-            globalParameters.deathEffect_1_0    = 0;
-            globalParameters.deathEffect_1_1    = 0;
-            globalParameters.deathEffect_1_2    = 0;
+                radius_2: 10,
+                gravity_2: 100,
+                friction_2: 1,
+                usePhysics_2: true,
 
-            // parameters for species 2 balls
-            globalParameters.radius_2       = 10.0;
-            globalParameters.gravity_2      = 100.0;
-            globalParameters.collision_2        = 0.2;
-            globalParameters.friction_2         = 1.0;
-            globalParameters.usePhysics_2       = true;
-            globalParameters.imageIndex_2       = 2;
-            globalParameters.socialForce_2_0    = 0.0;
-            globalParameters.socialForce_2_1    = 0.0;
-            globalParameters.socialForce_2_2    = 0.0;
-            globalParameters.touchDeath_2_0     = false;
-            globalParameters.touchDeath_2_1     = false;
-            globalParameters.touchDeath_2_2     = false;
-            globalParameters.deathEffect_2_0    = 0;
-            globalParameters.deathEffect_2_1    = 0;
-            globalParameters.deathEffect_2_2    = 0;
-            
-            // parameters for species 3 balls
-            globalParameters.radius_3             = 30.0;
-            globalParameters.gravity_3             = 0.0;
-            globalParameters.collision_3         = 0.2;
-            globalParameters.friction_3         = 2.0;
-            globalParameters.usePhysics_3         = true;
-            globalParameters.imageIndex_3        = 3;
-            globalParameters.socialForce_3_0     = -10.0;
-            globalParameters.socialForce_3_1     =  0.0;
-            globalParameters.socialForce_3_2     =  0.0;
-            globalParameters.touchDeath_3_0     = false;
-            globalParameters.touchDeath_3_1     = false;
-            globalParameters.touchDeath_3_2     = false;
-            globalParameters.deathEffect_3_0     = 2;
-            globalParameters.deathEffect_3_1     = 2;
-            globalParameters.deathEffect_3_2    = 2;
-                    
-            // parameters for species 4 balls
-            globalParameters.radius_4             = 30.0;
-            globalParameters.gravity_4             = 0.0;
-            globalParameters.collision_4         = 0.2;
-            globalParameters.friction_4         = 2.0;
-            globalParameters.usePhysics_4         = true;
-            globalParameters.imageIndex_4        = 4;
-            globalParameters.socialForce_4_0     = -10.0;
-            globalParameters.socialForce_4_1     =  0.0;
-            globalParameters.socialForce_4_2     =  0.0;
-            globalParameters.touchDeath_4_0     = false;
-            globalParameters.touchDeath_4_1     = false;
-            globalParameters.touchDeath_4_2     = false;
-            globalParameters.deathEffect_4_0     = 2;
-            globalParameters.deathEffect_4_1     = 2;
-            globalParameters.deathEffect_4_2    = 2;
+                radius_3: 30,
+                friction_3: 2,
+                usePhysics_2: true,
+                socialForce_3_0: -10,
+
+                radius_4: 30,
+                friction_4: 2,
+                usePhysics_4: true,
+                socialForce_4_0: -10,
+            });
         }
 
         else if ( levelID == QUEST1 )
         {
-            globalParameters.backgroundImageIndex = 0;
+            Object.assign(levelParameters, {
+                radius_0: 50,
+                friction_0: 1,
+                usePhysics_0: true,
+                imageIndex_0: 6,
 
-            globalParameters.radius_0           = 50.0;
-            globalParameters.gravity_0          = 0.0;
-            globalParameters.collision_0        = 0.2;
-            globalParameters.friction_0         = 1.0;
-            globalParameters.usePhysics_0       = true;
-            globalParameters.imageIndex_0       = 6;
-            globalParameters.socialForce_0_0    = 0.0;
-            globalParameters.socialForce_0_1    = 0.0;
-            globalParameters.socialForce_0_2    = 0.0;
-            globalParameters.touchDeath_0_0     = false;
-            globalParameters.touchDeath_0_1     = false;
-            globalParameters.touchDeath_0_2     = false;
-            globalParameters.deathEffect_0_0    = 0;
-            globalParameters.deathEffect_0_1    = 0;
-            globalParameters.deathEffect_0_2    = 0;
+                radius_1: 50,
+                friction_1: 1,
+                usePhysics_1: true,
 
-            // parameters for species 1 balls
-            globalParameters.radius_1           = 50.0;
-            globalParameters.gravity_1          = 0.0;
-            globalParameters.collision_1        = 0.2;
-            globalParameters.friction_1         = 1.0;
-            globalParameters.usePhysics_1       = true;
-            globalParameters.imageIndex_1       = 1;
-            globalParameters.socialForce_1_0    =  0.0;
-            globalParameters.socialForce_1_1    =  0.0;
-            globalParameters.socialForce_1_2    =  0.0;
-            globalParameters.touchDeath_1_0     = false;
-            globalParameters.touchDeath_1_1     = false;
-            globalParameters.touchDeath_1_2     = false;
-            globalParameters.deathEffect_1_0    = 0;
-            globalParameters.deathEffect_1_1    = 0;
-            globalParameters.deathEffect_1_2    = 0;
+                radius_2: 10,
+                collision_2: 0,
+                friction_2: 0,
 
-            // parameters for species 2 balls
-            globalParameters.radius_2           = 10.0;
-            globalParameters.gravity_2          = 0.0;
-            globalParameters.collision_2        = 0.0;
-            globalParameters.friction_2         = 0.0;
-            globalParameters.usePhysics_2       = false;
-            globalParameters.imageIndex_2       = 2;
-            globalParameters.socialForce_2_0    = 0.0;
-            globalParameters.socialForce_2_1    = 0.0;
-            globalParameters.socialForce_2_2    = 0.0;
-            globalParameters.touchDeath_2_0     = false;
-            globalParameters.touchDeath_2_1     = false;
-            globalParameters.touchDeath_2_2     = false;
-            globalParameters.deathEffect_2_0    = 0;
-            globalParameters.deathEffect_2_1    = 0;
-            globalParameters.deathEffect_2_2    = 0;
+                usePhysics_4: true,
+                radius_4: 35,
+                imageIndex_4: 10,
+                touchDeath_4_0: 1,
+                deathVisualGood_4: 8,
+                deathSoundGood_4: 5,
+            });
         }
 
         else if ( levelID == QUEST2 )
         {
-            globalParameters.backgroundImageIndex = 0;
+            Object.assign(levelParameters, {
+                radius_0: 30,
+                friction_0: 1,
+                usePhysics_0: true,
 
-            globalParameters.radius_0           = 30.0;
-            globalParameters.gravity_0          = 0.0;
-            globalParameters.collision_0        = 0.2;
-            globalParameters.friction_0         = 1.0;
-            globalParameters.usePhysics_0       = true;
-            globalParameters.imageIndex_0       = 0;
-            globalParameters.socialForce_0_0    = 0.0;
-            globalParameters.socialForce_0_1    = 0.0;
-            globalParameters.socialForce_0_2    = 0.0;
-            globalParameters.touchDeath_0_0     = false;
-            globalParameters.touchDeath_0_1     = false;
-            globalParameters.touchDeath_0_2     = false;
-            globalParameters.deathEffect_0_0    = 0;
-            globalParameters.deathEffect_0_1    = 0;
-            globalParameters.deathEffect_0_2    = 0;
+                radius_1: 50,
+                friction_1: 1,
+                usePhysics_1: true,
 
-            // parameters for species 1 balls
-            globalParameters.radius_1           = 50.0;
-            globalParameters.gravity_1          = 0.0;
-            globalParameters.collision_1        = 0.2;
-            globalParameters.friction_1         = 1.0;
-            globalParameters.usePhysics_1       = true;
-            globalParameters.imageIndex_1       = 1;
-            globalParameters.socialForce_1_0    =  0.0;
-            globalParameters.socialForce_1_1    =  0.0;
-            globalParameters.socialForce_1_2    =  0.0;
-            globalParameters.touchDeath_1_0     = false;
-            globalParameters.touchDeath_1_1     = false;
-            globalParameters.touchDeath_1_2     = false;
-            globalParameters.deathEffect_1_0    = 0;
-            globalParameters.deathEffect_1_1    = 0;
-            globalParameters.deathEffect_1_2    = 0;
-
-            // parameters for species 2 balls
-            globalParameters.radius_2           = 10.0;
-            globalParameters.gravity_2          = 0.0;
-            globalParameters.collision_2        = 0.0;
-            globalParameters.friction_2         = 0.0;
-            globalParameters.usePhysics_2       = false;
-            globalParameters.imageIndex_2       = 2;
-            globalParameters.socialForce_2_0    = 0.0;
-            globalParameters.socialForce_2_1    = 0.0;
-            globalParameters.socialForce_2_2    = 0.0;
-            globalParameters.touchDeath_2_0     = false;
-            globalParameters.touchDeath_2_1     = false;
-            globalParameters.touchDeath_2_2     = false;
-            globalParameters.deathEffect_2_0    = 0;
-            globalParameters.deathEffect_2_1    = 0;
-            globalParameters.deathEffect_2_2    = 0;
+                radius_2: 10,
+                collision_2: 0,
+                friction_2: 0,
+            });
         }
 
-        else
-        {
-            // TODO: Check for level.preset later
-            globalParameters.usePhysics_0       = true;
-            globalParameters.radius_0           = 50;
-            globalParameters.gravity_0          = 0.0
-            globalParameters.collision_0        = 0.9;
-            globalParameters.friction_0         = 5;
-            globalParameters.imageIndex_0       = 6;
-            globalParameters.socialForce_0_0    = 0;
-            globalParameters.socialForce_0_1    = 0;
-            globalParameters.socialForce_0_2    = 0;
-            globalParameters.socialForce_0_3    = 0;
-            globalParameters.socialForce_0_4    = 0;
-            globalParameters.touchDeath_0_0     = 0;
-            globalParameters.touchDeath_0_1     = 1;
-            globalParameters.touchDeath_0_2     = 2;
-            globalParameters.touchDeath_0_3     = 0;
-            globalParameters.touchDeath_0_4     = 0;
-            globalParameters.deathVisualGood_0  = 0;
-            globalParameters.deathVisualBad_0   = 1;
-            globalParameters.deathSoundGood_0   = 4;
-            globalParameters.deathSoundBad_0    = 6;
-
-            globalParameters.usePhysics_1       = false;
-            globalParameters.radius_1           = 60;
-            globalParameters.gravity_1          = 0.0
-            globalParameters.collision_1        = 0.2;
-            globalParameters.friction_1         = 10;
-            globalParameters.imageIndex_1       = 8;
-            globalParameters.socialForce_1_0    = 0;
-            globalParameters.socialForce_1_1    = 0;
-            globalParameters.socialForce_1_2    = 0;
-            globalParameters.socialForce_1_3    = 0;
-            globalParameters.socialForce_1_4    = 0;
-            globalParameters.touchDeath_1_0     = 0;
-            globalParameters.touchDeath_1_1     = 0;
-            globalParameters.touchDeath_1_2     = 0;
-            globalParameters.touchDeath_1_3     = 0;
-            globalParameters.touchDeath_1_4     = 0;
-            globalParameters.deathVisualGood_1  = 0;
-            globalParameters.deathVisualBad_1   = 0;
-            globalParameters.deathSoundGood_1   = 0;
-            globalParameters.deathSoundBad_1    = 0;
-
-            globalParameters.usePhysics_2       = false;
-            globalParameters.radius_2           = 60;
-            globalParameters.gravity_2          = 0.0
-            globalParameters.collision_2        = 0.5;
-            globalParameters.friction_2         = 10;
-            globalParameters.imageIndex_2       = 1;
-            globalParameters.socialForce_2_0    = 0;
-            globalParameters.socialForce_2_1    = 0;
-            globalParameters.socialForce_2_2    = 0;
-            globalParameters.socialForce_2_3    = 0;
-            globalParameters.socialForce_2_4    = 0;
-            globalParameters.touchDeath_2_0     = 0;
-            globalParameters.touchDeath_2_1     = 0;
-            globalParameters.touchDeath_2_2     = 0;
-            globalParameters.touchDeath_2_3     = 0;
-            globalParameters.touchDeath_2_4     = 0;
-            globalParameters.deathVisualGood_2  = 0;
-            globalParameters.deathVisualBad_2   = 0;
-            globalParameters.deathSoundGood_2   = 0;
-            globalParameters.deathSoundBad_2    = 0;
-
-            globalParameters.usePhysics_3       = false;
-            globalParameters.radius_3           = 60;
-            globalParameters.gravity_3          = 0.0
-            globalParameters.collision_3        = 0.2;
-            globalParameters.friction_3         = 10;
-            globalParameters.imageIndex_3       = 9;
-            globalParameters.socialForce_3_0    = 0;
-            globalParameters.socialForce_3_1    = 0;
-            globalParameters.socialForce_3_2    = 0;
-            globalParameters.socialForce_3_3    = 0;
-            globalParameters.socialForce_3_4    = 0;
-            globalParameters.touchDeath_3_0     = 0;
-            globalParameters.touchDeath_3_1     = 0;
-            globalParameters.touchDeath_3_2     = 0;
-            globalParameters.touchDeath_3_3     = 0;
-            globalParameters.touchDeath_3_4     = 0;
-            globalParameters.deathVisualGood_3  = 0;
-            globalParameters.deathVisualBad_3   = 0;
-            globalParameters.deathSoundGood_3   = 0;
-            globalParameters.deathSoundBad_3    = 0;
-
-            globalParameters.usePhysics_4       = true;
-            globalParameters.radius_4           = 35;
-            globalParameters.gravity_4          = 0.0
-            globalParameters.collision_4        = 0.2;
-            globalParameters.friction_4         = 10;
-            globalParameters.imageIndex_4       = 10;
-            globalParameters.socialForce_4_0    = 0;
-            globalParameters.socialForce_4_1    = 0;
-            globalParameters.socialForce_4_2    = 0;
-            globalParameters.socialForce_4_3    = 0;
-            globalParameters.socialForce_4_4    = 0;
-            globalParameters.touchDeath_4_0     = 1;
-            globalParameters.touchDeath_4_1     = 0;
-            globalParameters.touchDeath_4_2     = 0;
-            globalParameters.touchDeath_4_3     = 0;
-            globalParameters.touchDeath_4_4     = 0;
-            globalParameters.deathVisualGood_4  = 8;
-            globalParameters.deathVisualBad_4   = 0;
-            globalParameters.deathSoundGood_4   = 5;
-            globalParameters.deathSoundBad_4    = 0;
-        }
+        Object.assign(globalParameters, levelParameters);
     }
 
 

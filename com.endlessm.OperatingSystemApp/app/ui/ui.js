@@ -3,6 +3,8 @@ class UserInterface {
     this.lang = lang;
     this.layer = new Layer();
     this.mask = new Mask();
+    this.isHover = false;
+    this.isShowDialog = false;
 
     this._currentMessageIndex = 0;
     this._isAnimationRunning = true;
@@ -27,21 +29,27 @@ class UserInterface {
     });
 
     $(".whole").click((event) => {
+      if (this.isShowDialog) {
+        this.layer.element.trigger("click"); return;
+      }
       const targetElement = $(event.currentTarget);
-      $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
       this.mask.show($(targetElement).data("id"));
     });
 
     $(".ui__daemon").click((event) => {
+      if (this.isShowDialog) {
+        this.layer.element.trigger("click"); return;
+      }
       const targetElement = $(event.currentTarget);
-      $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
     });
 
     $(".ui__area").click((event) => {
+      if (this.isShowDialog) {
+        this.layer.element.trigger("click"); return;
+      }
       const targetElement = $(event.currentTarget);
-      $(targetElement).off("mouseleave mouseenter");
       this.showDialog($(targetElement).data("id"));
     });
 
@@ -96,10 +104,11 @@ class UserInterface {
   hoverInteract(element, children, id) {
     const _content = this.lang[id];
 
-    $(element).stop().hover((event) => {
+    $(element).hover((event) => {
       this.mask.show(id);
       Sounds.terminate("system/background/front");
       Sounds.playLoop(`operatingSystem/${id}`);
+      this.isHover = true;
 
       $(children).addClass("current");
       this.stopAnimation();
@@ -109,8 +118,11 @@ class UserInterface {
         $("#OS_daemon_7").addClass("daemon_7_still");
       }
     }, (event) => {
-      this.mask.hide(id);
+      this.isHover = false;
 
+      if (this.isShowDialog) return;
+
+      this.mask.hide(id);
       Sounds.terminate(`operatingSystem/${id}`);
       $(children).removeClass("current");
       this.runAnimation();
@@ -226,9 +238,14 @@ class UserInterface {
 
   showDialog(areaId) {
     this._isShowBubbles = true;
+    this.isShowDialog = true;
+
     Sounds.play("operatingSystem/select");
     this._currentAreaId = areaId;
     this.layer.show();
+
+    $(this._subSystems[areaId].element).css({"z-index": "710"});
+
     Sounds.play("operatingSystem/open");
     this.showTitle(areaId);
     this.getTitleByAreaId(areaId).css({"pointer-events": "auto"});
@@ -246,14 +263,19 @@ class UserInterface {
   hideDialog() {
     $(".current").removeClass("current");
     this.layer.hide();
-    this.mask.hide(this._currentAreaId);
     this.runAnimation();
-    this.hideTitle(this._currentAreaId);
     this.getTitleByAreaId(this._currentAreaId).css({"pointer-events": "none"});
-
     Sounds.play("operatingSystem/close");
-    Sounds.terminate(`operatingSystem/${this._currentAreaId}`);
-    Sounds.play("system/background/front");
+    this.isShowDialog = false;
+
+    $(this._subSystems[this._currentAreaId].element).removeAttr("style");
+
+    if (!this.isHover) {
+      this.mask.hide(this._currentAreaId);
+      this.hideTitle(this._currentAreaId);
+      Sounds.terminate(`operatingSystem/${this._currentAreaId}`);
+      Sounds.play("system/background/front");
+    }
 
     clearTimeout(this._lapseBubble);
     clearTimeout(this._lapseBubbleContent);
@@ -261,12 +283,6 @@ class UserInterface {
     if (this._currentAreaId !== "daemons") {
       $("#OS_daemon_7").removeClass("daemon_7_still");
     }
-
-    this.hoverInteract(
-      this._subSystems[this._currentAreaId].element,
-      this._subSystems[this._currentAreaId].children,
-      this._currentAreaId
-    );
   };
 
   unfoldContent(areaId) {

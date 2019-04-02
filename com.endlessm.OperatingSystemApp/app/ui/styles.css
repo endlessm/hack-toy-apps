@@ -418,15 +418,11 @@ body {
   display: block !important;
 }
 
-.ui__area:hover {
-  z-index: 600;
-}
-
 .ui__area {
   background-repeat: no-repeat;
   cursor: pointer;
   position: absolute;
-  z-index: 550;
+  z-index: 600;
 }
 
 .ui__hover {

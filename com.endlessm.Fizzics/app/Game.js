@@ -373,22 +373,18 @@ function Game()
     //-------------------------------------------
     this.applyLevel = function( level, parent )
     {
-        globalParameters.backgroundImageIndex = parseInt( level.background );
-        
-        for (var b=0; b<level.balls.length; b++ )
-        {
-            parent.createBall
-            ( 
-                parseInt  ( level.balls[b].x       ), 
-                parseInt  ( level.balls[b].y       ), 
-                parseInt  ( level.balls[b].species )
-            );         
-        }
-                    
-        gameState.testSpecies       = parseInt( level.testSpecies       );
-        gameState.collisionSpecies  = parseInt( level.collisionSpecies  );
-        gameState.numCollisionsGoal = parseInt( level.numCollisionsGoal );
-        gameState.numCollisions     = parseInt( level.numCollisions     );
+        globalParameters.backgroundImageIndex = level.background;
+
+        level.balls.forEach(({x, y, species}) => parent.createBall(x, y, species));
+
+        const {
+            testSpecies = NaN,
+            collisionSpecies = NaN,
+            numCollisionsGoal = NaN,
+            numCollisions = NaN,
+        } = level;
+        Object.assign(gameState, {testSpecies, collisionSpecies,
+            numCollisionsGoal, numCollisions});
     }
 
     this.getLevelCount = function()

@@ -315,18 +315,22 @@ function Game()
             this.setNextButtonEnabled(_level < localStorage.furthestLevel);
         }
 
-        if (_level < _levelData.levels.length)
-        {
-            this.applyLevel( _levelData.levels[_level], parent );
-        }        
-  
-        else if ( _level == QUEST0 )
-        {        
+        this.applyLevel(_level, parent);
+
+        if (_level >= QUEST0)
+            this.initializeGameState(collisionBalls, ballsWithSomeCollision);
+    };
+
+    // In this function we can create balls programmatically, for example if
+    // their positions need to depend on the canvas size. Balls created in this
+    // function will appear in addition to balls specified in the level's
+    // "balls" array in GameLevels.json.
+    // Some levels have "balls": [], and in those levels all the balls are
+    // created in this function.
+    this._placeBallsProgrammatically = function(_level, parent) {
+        if (_level === QUEST0) {
             var r = 300;
             this.createBallCircle( parent, 0.5 * canvasID.width, 0.5 * canvasID.height, 1, r, 20 );
-
-            var period = 50; // how many time steps are used to run this test?
-            this.initializeGameState( period, 0, 0, collisionBalls, ballsWithSomeCollision );
         }
 
         else if ( _level == QUEST1 )
@@ -339,7 +343,6 @@ function Game()
             {
                 parent.createBall( posX + 150 + i*spacing, posY, 4 );
             }
-            this.initializeGameState( 50, 0, 0, collisionBalls, ballsWithSomeCollision );
         }
         
         else if ( _level == QUEST2 )
@@ -356,14 +359,6 @@ function Game()
                 var y = 0.5 * canvasID.height + r * Math.cos(a);
                 parent.createBall( x, y, 0 );
             }
-
-            //------------------------------------------------------------------------
-            // set up the game state to detect collisions between species...
-            //------------------------------------------------------------------------
-            var period = 1;            // how many time steps are used to run this test?   
-            var collisionSpecies = 0;   // which species of balls do we care about for collisions?
-            var numCollisionsGoal = 10;     // how many unique balls do we want to test for collisions?
-            this.initializeGameState( period, collisionSpecies, numCollisionsGoal, collisionBalls, ballsWithSomeCollision );
         }
     }
 
@@ -371,26 +366,29 @@ function Game()
     
       
     //-------------------------------------------
-    this.applyLevel = function( level, parent )
-    {
-        globalParameters.backgroundImageIndex = level.background;
+    this.applyLevel = function(levelId, parent) {
+        const level = this.getLevelInfo(levelId);
 
         level.balls.forEach(({x, y, species}) => parent.createBall(x, y, species));
+        this._placeBallsProgrammatically(levelId, parent);
 
+        // set up the game state to detect collisions between species...
         const {
-            testSpecies = NaN,
-            collisionSpecies = NaN,
-            numCollisionsGoal = NaN,
-            numCollisions = NaN,
+            period = NaN, // how many time steps are used to run this test?
+            collisionSpecies = NaN,  // which species of balls do we care about for collisions?
+            numCollisionsGoal = NaN,  // how many unique balls do we want to test for collisions?
         } = level;
-        Object.assign(gameState, {testSpecies, collisionSpecies,
-            numCollisionsGoal, numCollisions});
+        Object.assign(gameState, {period, collisionSpecies, numCollisionsGoal});
     }
 
     this.getLevelCount = function()
     {
-        return _levelData.levels.length;
+        return _levelData.levels.filter(({ID}) => ID < QUEST0).length;
     }
+
+    this.getLevelInfo = function(levelId) {
+        return _levelData.levels.find(({ID}) => ID === levelId);
+    };
 
     // "Blank" defaults for all levels
     this.defaultLevelParameters = (function() {
@@ -454,82 +452,11 @@ function Game()
     this.setLevelGlobalParams = function( levelID )
     {                
         const levelParameters = {};
+        const {preset} = this.getLevelInfo(levelID);
         if (levelID < QUEST0)
-            Object.assign(levelParameters, this.defaultMainLevelParameters);
+            Object.assign(levelParameters, this.defaultMainLevelParameters, preset);
         else
-            Object.assign(levelParameters, this.defaultLevelParameters);
-
-        if ( levelID == QUEST0 )
-        {
-            Object.assign(levelParameters, {
-                radius_0: 30,
-                gravity_0: 100,
-                friction_0: 1,
-                usePhysics_0: true,
-
-                radius_1: 70,
-                gravity_1: 100,
-                friction_1: 5,
-                usePhysics_1: true,
-
-                radius_2: 10,
-                gravity_2: 100,
-                friction_2: 1,
-                usePhysics_2: true,
-
-                radius_3: 30,
-                friction_3: 2,
-                usePhysics_2: true,
-                socialForce_3_0: -10,
-
-                radius_4: 30,
-                friction_4: 2,
-                usePhysics_4: true,
-                socialForce_4_0: -10,
-            });
-        }
-
-        else if ( levelID == QUEST1 )
-        {
-            Object.assign(levelParameters, {
-                radius_0: 50,
-                friction_0: 1,
-                usePhysics_0: true,
-                imageIndex_0: 6,
-
-                radius_1: 50,
-                friction_1: 1,
-                usePhysics_1: true,
-
-                radius_2: 10,
-                collision_2: 0,
-                friction_2: 0,
-
-                usePhysics_4: true,
-                radius_4: 35,
-                imageIndex_4: 10,
-                touchDeath_4_0: 1,
-                deathVisualGood_4: 8,
-                deathSoundGood_4: 5,
-            });
-        }
-
-        else if ( levelID == QUEST2 )
-        {
-            Object.assign(levelParameters, {
-                radius_0: 30,
-                friction_0: 1,
-                usePhysics_0: true,
-
-                radius_1: 50,
-                friction_1: 1,
-                usePhysics_1: true,
-
-                radius_2: 10,
-                collision_2: 0,
-                friction_2: 0,
-            });
-        }
+            Object.assign(levelParameters, this.defaultLevelParameters, preset);
 
         Object.assign(globalParameters, levelParameters);
     }
@@ -545,8 +472,10 @@ function Game()
     //------------------------------
     this.getNextLevel = function()
     {           
-        if (_level == _levelData.levels.length-1)
-            return _levelData.levels.length-1;
+        const maxMainLevel = this.getLevelCount() - 1;
+
+        if (_level == maxMainLevel)
+            return maxMainLevel;
         return _level+1;
     }
     
@@ -595,13 +524,9 @@ function Game()
     }    
     
     //-------------------------------------------------------------------------------------------------------------------------
-    this.initializeGameState = function( period, collisionSpecies, numCollisionsGoal, collisionBalls, ballsWithSomeCollision )
-    {                
+    this.initializeGameState = function(collisionBalls, ballsWithSomeCollision) {
         gameState.testBall            = NULL_BALL;
         gameState.testSpecies         = 0;
-        gameState.period              = period;
-        gameState.collisionSpecies    = collisionSpecies;
-        gameState.numCollisionsGoal   = numCollisionsGoal;
         gameState.running             = true;
         gameState.clock               = 0;
         gameState.timeInLevel         = 0.0;
@@ -668,8 +593,7 @@ function Game()
             globalParameters.type2BallCount = type2BallCount;
             globalParameters.flingCount = gameState.numFlings;
 
-            if ( _level < _levelData.levels.length )
-            {
+            if (_level < QUEST0) {
                 if ( globalParameters.type0BallCount == 0
                 && !_ballDied
                 && _ballReachedGoal )

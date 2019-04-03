@@ -2,7 +2,7 @@
   "levels": [
     {
       "ID": 0,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -38,7 +38,7 @@
     },
     {
       "ID": 1,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -80,7 +80,7 @@
     },
     {
       "ID": 2,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -122,7 +122,7 @@
     },
     {
       "ID": 3,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -194,7 +194,7 @@
     },
     {
       "ID": 4,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -254,7 +254,7 @@
     },
     {
       "ID": 5,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -374,7 +374,7 @@
     },
     {
       "ID": 6,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -482,7 +482,7 @@
     },
     {
       "ID": 7,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -566,7 +566,7 @@
     },
     {
       "ID": 8,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -848,7 +848,7 @@
     },
     {
       "ID": 9,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -944,7 +944,7 @@
     },
     {
       "ID": 10,
-      "background": 2,
+      "preset": {},
       "balls": [
         {
           "ID": 0,
@@ -1199,6 +1199,87 @@
           "species": 0
         }
       ]
+    },
+    {
+      "ID": 1000,
+      "preset": {
+        "radius_0": 30,
+        "gravity_0": 100,
+        "friction_0": 1,
+        "usePhysics_0": true,
+
+        "radius_1": 70,
+        "gravity_1": 100,
+        "friction_1": 5,
+        "usePhysics_1": true,
+
+        "radius_2": 10,
+        "gravity_2": 100,
+        "friction_2": 1,
+        "usePhysics_2": true,
+
+        "radius_3": 30,
+        "friction_3": 2,
+        "usePhysics_2": true,
+        "socialForce_3_0": -10,
+
+        "radius_4": 30,
+        "friction_4": 2,
+        "usePhysics_4": true,
+        "socialForce_4_0": -10
+      },
+      "balls": [],
+      "period": 50,
+      "collisionSpecies": 0,
+      "numCollisionsGoal": 0
+    },
+    {
+      "ID": 1001,
+      "preset": {
+        "radius_0": 50,
+        "friction_0": 1,
+        "usePhysics_0": true,
+        "imageIndex_0": 6,
+
+        "radius_1": 50,
+        "friction_1": 1,
+        "usePhysics_1": true,
+
+        "radius_2": 10,
+        "collision_2": 0,
+        "friction_2": 0,
+
+        "usePhysics_4": true,
+        "radius_4": 35,
+        "imageIndex_4": 10,
+        "touchDeath_4_0": 1,
+        "deathVisualGood_4": 8,
+        "deathSoundGood_4": 5
+      },
+      "balls": [],
+      "period": 50,
+      "collisionSpecies": 0,
+      "numCollisionsGoal": 0
+    },
+    {
+      "ID": 1002,
+      "preset": {
+        "radius_0": 30,
+        "friction_0": 1,
+        "usePhysics_0": true,
+
+        "radius_1": 50,
+        "friction_1": 1,
+        "usePhysics_1": true,
+
+        "radius_2": 10,
+        "collision_2": 0,
+        "friction_2": 0
+      },
+      "balls": [],
+      "period": 1,
+      "collisionSpecies": 0,
+      "numCollisionsGoal": 10
     }
   ]
 }

@@ -1526,29 +1526,6 @@ function HackyBalls()
             return;
 
         console.log("Saving level");
-        out = '\n{\n';
-        out += '\t"ID": "X",\n';
-        out += '\t"background": "2",\n';
-
-        out += '\t"balls":\n';
-        out += '\t[\n';
-        for (var b=0; b<_numBalls; b++)
-        {
-            out += '\t\t{\n';
-            out += '\t\t\t"ID" : "' + b + '",\n';
-            var p = _balls[b].getPosition();
-            out += '\t\t\t"x" : "' + p.x + '",\n';
-            out += '\t\t\t"y" : "' + p.y + '",\n';
-            out += '\t\t\t"species" : "' + _balls[b].getType() + '"\n';
-            if (b == _numBalls-1)
-                out += '\t\t}\n';
-            else
-                out += '\t\t},\n';
-        }        
-        out += '\t]\n';
-
-        out += '}\n';
-        console.log(out);
 
         _savedBalls = new Array();
         _numSavedBalls = _numBalls;
@@ -1556,11 +1533,20 @@ function HackyBalls()
         {
             var info = {};
             var pos = _balls[i].getPosition(); 
+            info.ID = i;
             info.x = pos.x;
             info.y = pos.y;
             info.species = _balls[i].getType();
             _savedBalls.push(info);
         }
+
+        const out = {
+            ID: _game.getCurrentLevel(),
+            preset: {},
+            balls: _savedBalls,
+        };
+
+        console.log(JSON.stringify(out, null, 2));
     }
 
     this.restoreLevel = function()

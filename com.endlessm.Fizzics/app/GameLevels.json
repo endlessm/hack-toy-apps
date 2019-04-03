@@ -945,608 +945,608 @@
     {
       "ID": 10,
       "preset": {
-        "usePhysics_0": false
+        "radius_3": 50
       },
       "balls": [
         {
           "ID": 0,
           "x": 307,
           "y": 322,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 1,
           "x": 339,
           "y": 280,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 2,
           "x": 389,
           "y": 261,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 3,
           "x": 440,
           "y": 259,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 4,
           "x": 494,
           "y": 257,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 5,
           "x": 548,
           "y": 242,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 6,
           "x": 598.0309413215621,
           "y": 218.02321411872117,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 7,
           "x": 468,
           "y": 533,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 8,
           "x": 591.0313768275054,
           "y": 258.9609414140028,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 9,
           "x": 568,
           "y": 307,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 10,
           "x": 538.0286403382069,
           "y": 352.9692818522771,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 11,
           "x": 529.0267930450701,
           "y": 400.026353216617,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 12,
           "x": 517.9953313687107,
           "y": 446.025122190923,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 13,
           "x": 500,
           "y": 495,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 14,
           "x": 424,
           "y": 551,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 15,
           "x": 375,
           "y": 551,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 16,
           "x": 342,
           "y": 526,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 17,
           "x": 330,
           "y": 479,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 18,
           "x": 364,
           "y": 437,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 19,
           "x": 478,
           "y": 408,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 20,
           "x": 655,
           "y": 270,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 21,
           "x": 642,
           "y": 317,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 22,
           "x": 593,
           "y": 534,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 23,
           "x": 1140,
           "y": 476,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 24,
           "x": 797,
           "y": 392,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 25,
           "x": 618,
           "y": 439,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 26,
           "x": 604,
           "y": 483,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 27,
           "x": 632,
           "y": 366,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 28,
           "x": 658,
           "y": 406,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 29,
           "x": 889,
           "y": 504,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 30,
           "x": 706,
           "y": 395,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 31,
           "x": 723.0360652107971,
           "y": 437.0130657676419,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 32,
           "x": 708,
           "y": 486,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 33,
           "x": 710,
           "y": 531,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 34,
           "x": 839,
           "y": 363,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 35,
           "x": 898,
           "y": 412,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 36,
           "x": 783,
           "y": 435,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 37,
           "x": 783,
           "y": 487,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 38,
           "x": 807,
           "y": 520,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 39,
           "x": 850,
           "y": 531,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 40,
           "x": 874,
           "y": 366,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 41,
           "x": 623,
           "y": 403,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 42,
           "x": 809,
           "y": 464,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 43,
           "x": 859,
           "y": 443,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 44,
           "x": 1160,
           "y": 518,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 45,
           "x": 1016,
           "y": 518,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 46,
           "x": 1096,
           "y": 463,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 47,
           "x": 1050,
           "y": 487,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 48,
           "x": 993,
           "y": 558,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 49,
           "x": 1043,
           "y": 869,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 50,
           "x": 990,
           "y": 600,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 51,
           "x": 1030,
           "y": 622,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 52,
           "x": 1073,
           "y": 626,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 53,
           "x": 1127,
           "y": 623,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 54,
           "x": 1093,
           "y": 655,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 55,
           "x": 1003,
           "y": 706,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 56,
           "x": 965,
           "y": 740,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 57,
           "x": 943,
           "y": 787,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 58,
           "x": 949,
           "y": 836,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 59,
           "x": 990,
           "y": 868,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 60,
           "x": 1095,
           "y": 865,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 61,
           "x": 1142,
           "y": 843,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 62,
           "x": 1189,
           "y": 832,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 63,
           "x": 1241,
           "y": 834,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 64,
           "x": 1288,
           "y": 853,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 65,
           "x": 1209,
           "y": 619,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 66,
           "x": 1208,
           "y": 662,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 67,
           "x": 1197,
           "y": 709,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 68,
           "x": 1183,
           "y": 757,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 69,
           "x": 1236,
           "y": 643,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 70,
           "x": 1278,
           "y": 634,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 71,
           "x": 1317,
           "y": 661,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 72,
           "x": 1314,
           "y": 696,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 73,
           "x": 1303,
           "y": 740,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 74,
           "x": 1437,
           "y": 654,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 75,
           "x": 1400,
           "y": 672,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 76,
           "x": 1377,
           "y": 714,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 77,
           "x": 1391,
           "y": 759,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 78,
           "x": 1433,
           "y": 778,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 79,
           "x": 1475,
           "y": 763,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 80,
           "x": 1528,
           "y": 670,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 81,
           "x": 1531,
           "y": 628,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 82,
           "x": 1540,
           "y": 535,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 83,
           "x": 1562,
           "y": 489,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 84,
           "x": 1597,
           "y": 458,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 85,
           "x": 1635,
           "y": 472,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 86,
           "x": 1655,
           "y": 514,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 87,
           "x": 1533,
           "y": 579,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 88,
           "x": 1618,
           "y": 544,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 89,
           "x": 1498,
           "y": 545,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 90,
           "x": 1571,
           "y": 559,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 91,
           "x": 1487,
           "y": 658,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 92,
           "x": 1518,
           "y": 710,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 93,
           "x": 1514,
           "y": 757,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 94,
           "x": 1530,
           "y": 800,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 95,
           "x": 1049.9654034907137,
           "y": 681.973855697264,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 96,
           "x": 1314,
           "y": 772,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 97,
           "x": 1456,
           "y": 527,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 98,
           "x": 739,
           "y": 554,
-          "species": 0
+          "species": 3
         },
         {
           "ID": 99,
           "x": 419,
           "y": 414,
-          "species": 0
+          "species": 3
         }
       ]
     },

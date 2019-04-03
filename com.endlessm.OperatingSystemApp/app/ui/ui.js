@@ -20,11 +20,11 @@ class UserInterface {
     }
     this.applyHoverInteraction();
 
-    $(".bg-sys").hover(function() {
-      Sounds.playLoop("system/background/front");
-    }, function() {
-      Sounds.terminate("system/background/front");
-    });
+    // $(".bg-sys").hover(function() {
+    //   Sounds.playLoop("system/background/front");
+    // }, function() {
+    //   Sounds.terminate("system/background/front");
+    // });
 
     $(".whole").click((event) => {
       const targetElement = $(event.currentTarget);
@@ -98,8 +98,12 @@ class UserInterface {
 
     $(element).stop().hover((event) => {
       this.mask.show(id);
-      Sounds.terminate("system/background/front");
-      Sounds.playLoop(`operatingSystem/${id}`);
+      // Sounds.terminate("system/background/front");
+      // Sounds.playLoop(`operatingSystem/${id}`);
+
+      // Sounds.updateSound("operatingSystem/background-music", 100, {
+      //   volume:
+      // });
 
       $(children).addClass("current");
       this.stopAnimation();
@@ -111,7 +115,7 @@ class UserInterface {
     }, (event) => {
       this.mask.hide(id);
 
-      Sounds.terminate(`operatingSystem/${id}`);
+      // Sounds.terminate(`operatingSystem/${id}`);
       $(children).removeClass("current");
       this.runAnimation();
       this.hideTitle(id);

@@ -1,4 +1,4 @@
-var globalParameters = 
+var globalParameters =
 {
     flipped         : false,
     clicked         : false
@@ -13,12 +13,12 @@ function flip()
 {
     globalParameters.flipped = !globalParameters.flipped;
     if (globalParameters.flipped) {
-        Sounds.terminate('system/background/front');
-        Object.keys(UI._subSystems).forEach(id => {
-            Sounds.terminate(`operatingSystem/${id}`);
-        });
+        Sounds.terminate('operatingSystem/background-music');
+        // Object.keys(UI._subSystems).forEach(id => {
+        //     Sounds.terminate(`operatingSystem/${id}`);
+        // });
     } else {
-        Sounds.playLoop('system/background/front');
+        Sounds.playLoop('operatingSystem/background-music');
     }
 }
 
@@ -27,4 +27,4 @@ document.onmousedown = function(e)
     globalParameters.clicked = !globalParameters.clicked;
 }
 
-Sounds.playLoop('system/background/front');
+Sounds.playLoop('operatingSystem/background-music');

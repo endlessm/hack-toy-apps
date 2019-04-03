@@ -1220,7 +1220,7 @@
 
         "radius_3": 30,
         "friction_3": 2,
-        "usePhysics_2": true,
+        "usePhysics_3": true,
         "socialForce_3_0": -10,
 
         "radius_4": 30,

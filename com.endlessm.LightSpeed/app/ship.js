@@ -12,6 +12,9 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, type, x, y) {
         super(scene, x, y);
 
+        /* Timer events  */
+        this._timers = {};
+
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -20,6 +23,11 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         this.depth = 100;
 
         this.cursors = scene.input.keyboard.createCursorKeys();
+
+        /* Glow */
+        this.glow = scene.add.image(x, y, 'ship-glow');
+        this.glow.visible = false;
+        this.glow.depth = 101;
 
         /* Attraction zone */
         this.attractionZone = scene.add.zone(x, y);
@@ -61,6 +69,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     preUpdate() {
         /* Update attraction zone position */
         this.attractionZone.setPosition(this.x, this.y);
+        this.glow.setPosition(this.x, this.y);
     }
 
     playThrust(direction) {
@@ -116,6 +125,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         const scale = this.scene.params.shipSize / 100;
         this.setScale(scale);
         this.attractionZone.setScale(scale);
+        this.glow.setScale(scale);
 
         let ship_box_height;
 
@@ -151,6 +161,28 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             game.config.width,
             game.config.height + ship_box_height * scale
         );
+    }
+
+    enableGlow(tint) {
+        this.glow.tint = tint;
+        this.glow.visible = true;
+        this.glow.alpha = 0;
+        this.scene.tweens.add({
+            targets: this.glow,
+            alpha: 0.32,
+            duration: 100,
+        });
+    }
+
+    disableGlow() {
+        this.scene.tweens.add({
+            targets: this.glow,
+            alpha: 0,
+            duration: 100,
+            onComplete: () => {
+                this.glow.visible = false;
+            }
+        });
     }
 
     explode(count, x, y) {
@@ -195,5 +227,23 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             this.attractionZone.setScale(shipScale);
         }, null, this);
     }
+
+    invulnerable(delay) {
+        /* Remove old event */
+        if (this._timers.invulnerable)
+            this._timers.invulnerable.remove();
+
+        if (!this.isInvulnerable) {
+            this.isInvulnerable = true;
+            this.enableGlow(0xffea5f);
+        }
+
+        this._timers.invulnerable = this.scene.time.delayedCall(delay, () => {
+            this.isInvulnerable = false;
+            this.disableGlow();
+            delete this._timers.invulnerable;
+        }, null, this);
+    }
+
 }
 

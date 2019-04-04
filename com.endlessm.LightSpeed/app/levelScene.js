@@ -86,6 +86,7 @@ class LevelScene extends Phaser.Scene {
         /* Ship assets */
         for (const ship of shipTypes)
             this.load.image(ship, `assets/ships/${ship}.png`);
+        this.load.image('ship-glow', 'assets/ships/glow.png');
 
         /* Enemy assets */
         for (const enemy of enemyTypes)
@@ -616,7 +617,7 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipEnemyOverlap(attractionZone, enemy) {
-        if (!globalParameters.playing || this.shipInvulnerable)
+        if (!globalParameters.playing || this.ship.isInvulnerable)
             return;
 
         globalParameters.playing = false;
@@ -681,13 +682,6 @@ class LevelScene extends Phaser.Scene {
         this._blowUpEnemies = false;
     }
     
-    makeShipInvulnerable(delay) {
-        this.shipInvulnerable = true;
-        this.time.delayedCall(delay, () => {
-            this.shipInvulnerable = false;
-        }, null, this);
-    }
-
     runPowerupOverlap(powerUpType) {
         var scope = this.activatePowerupScope;
 
@@ -702,7 +696,7 @@ class LevelScene extends Phaser.Scene {
 
         /* Make ship invulnerable */
         if (scope.ship.invulnerableTimer)
-            this.makeShipInvulnerable(scope.ship.invulnerableTimer * 1000);
+            this.ship.invulnerable(scope.ship.invulnerableTimer * 1000);
 
         /* Shrink ship */
         if (scope.ship.shrinkTimer)

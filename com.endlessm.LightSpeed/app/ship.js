@@ -153,17 +153,13 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         );
     }
 
-    explode(x, y) {
-        this.explosionEmitter.explode(768, x, y);
-        this.explodeCount--;
+    explode(count, x, y) {
+        if (count)
+            this.explosionEmitter.explode(768, x, y);
 
-        if (this.explodeCount <= 0) {
-            this.explodeCount = 3;
-            return;
-        }
-
-        this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
-            this.explode, [x, y], this);
+        if (--count)
+            this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
+                this.explode, [count, x, y], this);
     }
 
     shrink(delay) {

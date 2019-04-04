@@ -624,7 +624,7 @@ class LevelScene extends Phaser.Scene {
         this.scene.launch('gameover');
 
         /* Make ship explode! */
-        this.ship.explode((this.ship.x + enemy.x) / 2, (this.ship.y + enemy.y) / 2);
+        this.ship.explode(3, (this.ship.x + enemy.x) / 2, (this.ship.y + enemy.y) / 2);
     }
 
     onShipAstronautOverlap(attractionZone, astronaut) {
@@ -670,13 +670,10 @@ class LevelScene extends Phaser.Scene {
     destroyEnemies() {
         /* Iterate over enemy types */
         for (const o of enemyTypes) {
-            /* Iterate over enemies
-             * TODO: add some vfx
-
+            /* Iterate over enemies */
             const children = this.enemies[o].getChildren();
             for (const obj of children)
-                obj.destroy();
-             */
+                this.ship.explode(1, obj.x, obj.y);
 
             this.enemies[o].clear(true, true);
         }

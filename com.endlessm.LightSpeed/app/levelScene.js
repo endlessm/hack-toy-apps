@@ -82,6 +82,8 @@ class LevelScene extends Phaser.Scene {
             'assets/atlas/explosion-particles.json');
         this.load.atlas('confetti-particles', 'assets/atlas/confetti-particles.png',
             'assets/atlas/confetti-particles.json');
+        this.load.atlas('stars-particles', 'assets/atlas/stars-particles.png',
+            'assets/atlas/stars-particles.json');
 
         /* Ship assets */
         for (const ship of shipTypes)
@@ -197,6 +199,14 @@ class LevelScene extends Phaser.Scene {
     }
 
     /* Private functions */
+    destroySprite(obj) {
+        obj.disableBody(true, true);
+        if (obj.emitter) {
+            obj.emitter.stop();
+            obj.particles.destroy();
+        }
+        obj.destroy();
+    }
 
     runWithScope(func, scope, data = {}) {
         var retval = null;
@@ -559,6 +569,18 @@ class LevelScene extends Phaser.Scene {
             var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
             obj.setVelocityX(-this.params.shipSpeed * speedFactor);
             obj.setScale(0.25);
+
+            if (retval === 2) {
+                obj.particles = this.add.particles('stars-particles');
+                obj.emitter = obj.particles.createEmitter({
+                    frame: ['stars-p1', 'stars-p2', 'stars-p3', 'stars-p4', 'stars-p5'],
+                    speed: 100,
+                    angle: {min: 0, max: 360},
+                    scale: {start: 1, end: 0},
+                    blendMode: 'SCREEN',
+                    lifespan: 1200,
+                }).startFollow(obj);
+            }
         }
     }
 
@@ -650,14 +672,9 @@ class LevelScene extends Phaser.Scene {
             scaleY: 0.2,
             duration: 500,
             onComplete: () => {
-                /* Disable collected astronaut */
-                astronaut.disableBody(true, true);
-
                 /* Confetti! */
                 this.ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
-                astronaut.emitter.stop();
-                astronaut.particles.destroy();
-                astronaut.destroy();
+                this.destroySprite(astronaut);
 
                 /* Check if we finished the level */
                 this.checkLevelDone();
@@ -722,7 +739,7 @@ class LevelScene extends Phaser.Scene {
             duration: 500,
             onComplete: () => {
                 this.runPowerupOverlap(powerup._type);
-                powerup.disableBody(true, true);
+                this.destroySprite(powerup);
             },
         });
     }

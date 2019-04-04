@@ -6,7 +6,8 @@
  */
 
 /* exported enemyTypes, shipTypes, globalParameters, defaultParameters,
-    defaultLevelParameters, levelParameters, resetGlobalUserCode */
+    defaultLevelParameters, levelParameters, resetGlobalUserCode,
+    powerupTypes */
 
 /* Global constants */
 var shipTypes = [
@@ -21,6 +22,13 @@ var enemyTypes = [
     'squid',
     'beam',
 ];
+
+var powerupTypes = [
+    'blowup',
+    'invincibility',
+    'upgrade',
+];
+
 
 /* Freeze constants */
 Object.freeze(shipTypes);
@@ -87,6 +95,12 @@ function resetGlobalUserCode() {
     resetGlobalUserCode();
 }());
 
+/* User functions tick explanation */
+const TICK_COMMENT = `// A tick is a short amount of time.
+    // Every tick, the game decides what should happen next.
+    // There are 30 ticks in one second!
+    // So, for example, 60 ticks means two seconds.`;
+
 /* Level defaults values */
 var defaultParameters = {
     description: 'Rescue Astronauts\nAvoid asteroids',
@@ -114,14 +128,15 @@ var defaultParameters = {
 
     return null;`,
     spawnEnemyCode: `\
-    // A tick is a short amount of time.
-    // Every tick, the game decides what should happen next.
-    // There are 30 ticks in one second!
-    // So, for example, 60 ticks means two seconds.
+    ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
         return null;
     }
     return null;`,
+    
+    spawnPowerupCode: '',
+
+    activatePowerupCode: '',
 };
 
 /* Per Level defaults:
@@ -135,10 +150,7 @@ var defaultLevelParameters = [
     /* Level 1 */
     {
         spawnEnemyCode: `\
-    // A tick is a short amount of time.
-    // Every tick, the game decides what should happen next.
-    // There are 30 ticks in one second!
-    // So, for example, 60 ticks means two seconds.
+    ${TICK_COMMENT}
     if (ticksSinceSpawn > 70) {
         return 'asteroid';
     }`,
@@ -148,10 +160,7 @@ var defaultLevelParameters = [
     {
         shipSpeed: 6000,
         spawnEnemyCode: `\
-    // A tick is a short amount of time.
-    // Every tick, the game decides what should happen next.
-    // There are 30 ticks in one second!
-    // So, for example, 60 ticks means two seconds.
+    ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
         return 'asteroid';
     }`,
@@ -160,10 +169,7 @@ var defaultLevelParameters = [
     /* Level 3 */
     {
         spawnEnemyCode: `\
-    // A tick is a short amount of time.
-    // Every tick, the game decides what should happen next.
-    // There are 30 ticks in one second!
-    // So, for example, 60 ticks means two seconds.
+    ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
         return {
             type: 'asteroid',
@@ -175,10 +181,7 @@ var defaultLevelParameters = [
     /* Level 4 */
     {
         spawnEnemyCode: `\
-    // A tick is a short amount of time.
-    // Every tick, the game decides what should happen next.
-    // There are 30 ticks in one second!
-    // So, for example, 60 ticks means two seconds.
+    ${TICK_COMMENT}
     if (ticksSinceSpawn > 0) {
         return null;
     }`,
@@ -187,10 +190,7 @@ var defaultLevelParameters = [
     /* Level 5 */
     {
         spawnEnemyCode: `\
-    // A tick is a short amount of time.
-    // Every tick, the game decides what should happen next.
-    // There are 30 ticks in one second!
-    // So, for example, 60 ticks means two seconds.
+    ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
         return 'asteroid';
     }`,
@@ -214,6 +214,79 @@ var defaultLevelParameters = [
 
     /* Level 10 */
     {
+    },
+
+    /* Level 11 */
+    {
+        spawnEnemyCode: `\
+    ${TICK_COMMENT}
+    if (ticksSinceSpawn > 40) {
+        return 'asteroid';
+    }`,
+
+        spawnPowerupCode: `\
+    ${TICK_COMMENT}
+    if (tickCount > 50)
+        return 0;`,
+    },
+
+    /* Level 12 */
+    {
+        spawnEnemyCode: `\
+    ${TICK_COMMENT}
+    if (ticksSinceSpawn > 40) {
+        return 'asteroid';
+    }`,
+
+        spawnPowerupCode: `\
+    ${TICK_COMMENT}
+    if (tickCount > 50)
+        return 0;`,
+    },
+
+    /* Level 13 */
+    {
+        spawnEnemyCode: `\
+    ${TICK_COMMENT}
+    if (ticksSinceSpawn > 40) {
+        return 'asteroid';
+    }`,
+
+        spawnPowerupCode: `\
+    ${TICK_COMMENT}
+    if (tickCount > 50)
+        return 3;
+
+    return 0;`,
+
+        activatePowerupCode: `\
+    if (powerUpType == 1)
+        ship.invulnerableTimer = 5;
+    else if (powerUpType == 2)
+        blowUpEnemies();`,
+    },
+
+    /* Level 14 */
+    {
+        spawnEnemyCode: `\
+    ${TICK_COMMENT}
+    if (ticksSinceSpawn > 40) {
+        return 'asteroid';
+    }`,
+
+        spawnPowerupCode: `\
+    ${TICK_COMMENT}
+    if (tickCount > 50) {
+        return random(1, 3);
+    }`,
+
+        spawnEnemyCode: `\
+    ${TICK_COMMENT}
+    if (ticksSinceSpawn > 40) {
+        var r = random(1,1);
+        if (r == 1)
+            return 'asteroid';
+    }`,
     },
 ];
 

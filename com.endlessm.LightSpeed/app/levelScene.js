@@ -44,17 +44,22 @@ class LevelScene extends Phaser.Scene {
 
         this.resetQuestData();
 
-        /* Init scene variables */
-        this.tick = 0;
 
         /* Create userScope */
         this.spawnAstronautScope = new SpawnAstronautScope();
         this.spawnEnemyScope = new SpawnEnemyScope();
+        this.spawnPowerupScope = new SpawnPowerupScope();
+        this.activatePowerupScope = new ActivatePowerupScope();
         this.updateEnemyScope = {};
+
+        /* Init scene variables */
+        this.tick = 0;
 
         /* Get user functions */
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
+        this.spawnPowerup = getUserFunction(data.spawnPowerupCode);
+        this.activatePowerup = getUserFunction(data.activatePowerupCode);
 
         /* We have one global function for each enemy type */
         this.updateEnemy = {};
@@ -85,6 +90,10 @@ class LevelScene extends Phaser.Scene {
         /* Enemy assets */
         for (const enemy of enemyTypes)
             this.load.image(enemy, `assets/enemies/${enemy}.png`);
+
+        /* Powerup assets */
+        for (const powerup of powerupTypes)
+            this.load.image(powerup, `assets/powerups/${powerup}.png`);
     }
 
     create() {
@@ -101,8 +110,12 @@ class LevelScene extends Phaser.Scene {
 
         /* Create objects groups */
         this.astronauts = this.physics.add.group();
-        this.physics.add.overlap(this.ship, this.astronauts,
+        this.physics.add.overlap(this.ship.attractionZone, this.astronauts,
             this.onShipAstronautOverlap, null, this);
+
+        this.powerups = this.physics.add.group();
+        this.physics.add.overlap(this.ship.attractionZone, this.powerups,
+            this.onShipPowerupOverlap, null, this);
 
         this.enemies = {};
         for (const o of enemyTypes) {
@@ -168,6 +181,7 @@ class LevelScene extends Phaser.Scene {
         /* Execute spawn functions */
         this.runSpawnEnemy();
         this.runSpawnAstronaut();
+        this.runSpawnPowerup();
         this.runUpdateEnemy();
 
         this.checkAstronautPosition();
@@ -182,6 +196,23 @@ class LevelScene extends Phaser.Scene {
     }
 
     /* Private functions */
+
+    runWithScope(func, scope, data = {}) {
+        var retval = null;
+        data.tick = this.tick;
+
+        try {
+            if (scope.update(data)) {
+                retval = func(scope);
+                scope.postUpdate(retval);
+            }
+        } catch (e) {
+            /* User function error! */
+            console.error(e);  // eslint-disable-line no-console
+        }
+
+        return retval;
+    }
 
     resetQuestData() {
         /* Reset enemy counters */
@@ -416,15 +447,7 @@ class LevelScene extends Phaser.Scene {
             return;
 
         var scope = this.spawnEnemyScope;
-        var retval = null;
-
-        try {
-            scope.update(this.tick);
-            retval = this.spawnEnemy(scope);
-            scope.postUpdate(retval);
-        } catch (e) {
-            /* User function error! */
-        }
+        var retval = this.runWithScope(this.spawnEnemy, scope);
 
         /*
          * Retval can be a string that defines the enemy type or an
@@ -490,15 +513,7 @@ class LevelScene extends Phaser.Scene {
             return;
 
         var scope = this.spawnAstronautScope;
-        var retval = null;
-
-        try {
-            scope.update(this.tick);
-            retval = this.spawnAstronaut(scope);
-            scope.postUpdate(retval);
-        } catch (e) {
-            /* User function error! */
-        }
+        var retval = this.runWithScope(this.spawnAstronaut, scope);
 
         if (retval) {
             var pos = this.userSpace.applyInverse(retval.x, retval.y);
@@ -524,6 +539,28 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
+    runSpawnPowerup() {
+        if (!this.spawnPowerup ||
+            !this.spawnedSomeEnemy())
+            return;
+
+        var scope = this.spawnPowerupScope;
+        var retval = this.runWithScope(this.spawnPowerup, scope);
+
+        if (retval > 0 && retval <= powerupTypes.length) {
+            const x = scope.width + scope.random(100, 400);
+            const y = scope.random(0, scope.height);
+
+            var obj = this.physics.add.sprite(x, y, powerupTypes[retval]);
+            this.powerups.add(obj);
+            obj._type = retval;
+            obj.depth = 1;
+            var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
+            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
+            obj.setScale(0.25);
+        }
+    }
+
     callUpdateEnemy(updateEnemy, scope, obj) {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
@@ -538,13 +575,10 @@ class LevelScene extends Phaser.Scene {
             position: this.userSpace.transformPoint(this.ship.x, this.ship.y),
         };
 
-        try {
-            scope.update(this.tick, playerShip, enemy);
-            retval = updateEnemy(scope);
-            scope.postUpdate(retval);
-        } catch (e) {
-            /* User function error! */
-        }
+        var retval = this.runWithScope(updateEnemy, scope, {
+            playerShip,
+            enemy
+        });
 
         /* Transform back from user space coordinates */
         const position = this.userSpace.applyInverse(enemy.position.x,
@@ -581,8 +615,8 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    onShipEnemyOverlap(ship, enemy) {
-        if (!globalParameters.playing)
+    onShipEnemyOverlap(attractionZone, enemy) {
+        if (!globalParameters.playing || this.shipInvulnerable)
             return;
 
         globalParameters.playing = false;
@@ -590,10 +624,10 @@ class LevelScene extends Phaser.Scene {
         this.scene.launch('gameover');
 
         /* Make ship explode! */
-        ship.explode((ship.x + enemy.x) / 2, (ship.y + enemy.y) / 2);
+        this.ship.explode((this.ship.x + enemy.x) / 2, (this.ship.y + enemy.y) / 2);
     }
 
-    onShipAstronautOverlap(ship, astronaut) {
+    onShipAstronautOverlap(attractionZone, astronaut) {
         if (!globalParameters.playing)
             return;
 
@@ -605,7 +639,7 @@ class LevelScene extends Phaser.Scene {
         this.astronauts.remove(astronaut);
 
         /* Make it move to the ship */
-        this.physics.moveToObject(astronaut, ship, 300);
+        this.physics.moveToObject(astronaut, this.ship, 300);
 
         /* while making it smaller and transparent */
         this.tweens.add({
@@ -619,7 +653,7 @@ class LevelScene extends Phaser.Scene {
                 astronaut.disableBody(true, true);
 
                 /* Confetti! */
-                ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
+                this.ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
                 astronaut.emitter.stop();
                 astronaut.particles.destroy();
                 astronaut.destroy();
@@ -631,6 +665,75 @@ class LevelScene extends Phaser.Scene {
 
         /* Play thank you sound */
         Sounds.play('lightspeed/astronaut-thanks');
+    }
+
+    destroyEnemies() {
+        /* Iterate over enemy types */
+        for (const o of enemyTypes) {
+            /* Iterate over enemies
+             * TODO: add some vfx
+
+            const children = this.enemies[o].getChildren();
+            for (const obj of children)
+                obj.destroy();
+             */
+
+            this.enemies[o].clear(true, true);
+        }
+
+        this._blowUpEnemies = false;
+    }
+    
+    makeShipInvulnerable(delay) {
+        this.shipInvulnerable = true;
+        this.time.delayedCall(delay, () => {
+            this.shipInvulnerable = false;
+        }, null, this);
+    }
+
+    runPowerupOverlap(powerUpType) {
+        var scope = this.activatePowerupScope;
+
+        this.runWithScope(this.activatePowerup, scope, {
+            shipPosition: this.userSpace.transformPoint(this.ship.x, this.ship.y),
+            powerUpType,
+        });
+
+        /* Check if we need to destroy enemies */
+        if (scope._blowUpEnemies)
+            this.destroyEnemies();
+
+        /* Make ship invulnerable */
+        if (scope.ship.invulnerableTimer)
+            this.makeShipInvulnerable(scope.ship.invulnerableTimer * 1000);
+
+        /* Shrink ship */
+        if (scope.ship.shrinkTimer)
+            this.ship.shrink(scope.ship.shrinkTimer * 1000);
+
+        /* Make attraction zone bigger */
+        if (scope.ship.attractTimer)
+            this.ship.increaseAttraction(scope.ship.attractTimer * 1000, 2);
+    }
+
+    onShipPowerupOverlap(attractionZone, powerup) {
+        if (!globalParameters.playing)
+            return;
+
+        this.powerups.remove(powerup);
+        this.physics.moveToObject(powerup, this.ship, 300);
+
+        this.tweens.add({
+            targets: powerup,
+            alpha: 0,
+            scaleX: 0.2,
+            scaleY: 0.2,
+            duration: 500,
+            onComplete: () => {
+                this.runPowerupOverlap(powerup._type);
+                powerup.disableBody(true, true);
+            },
+        });
     }
 }
 

@@ -10,7 +10,7 @@
 class DebugScene extends Phaser.Scene {
     create() {
         /* FPS counter */
-        this.debugText = this.add.text(8, 0, '', {
+        this.debugText1 = this.add.text(8, 0, '', {
             color: '#00ff00',
             shadow: {
                 color: 'black',
@@ -19,11 +19,23 @@ class DebugScene extends Phaser.Scene {
                 offsetY: 1,
             },
         });
-        this.debugText.visible = false;
+        this.debugText1.visible = false;
+
+        this.debugText2 = this.add.text(game.config.width/2, 48, '', {
+            color: '#00ff00',
+            shadow: {
+                color: 'black',
+                fill: true,
+                offsetX: 1,
+                offsetY: 1,
+            },
+        });
+        this.debugText2.visible = false;
 
         /* TODO: find a way to enable debug draw at runtime */
         this.input.keyboard.on('keyup_D', () => {
-            this.debugText.visible = !this.debugText.visible;
+            this.debugText1.visible = !this.debugText1.visible;
+            this.debugText2.visible = this.debugText1.visible;
         }, this);
 
         this.events.on('shutdown', () => {
@@ -32,16 +44,18 @@ class DebugScene extends Phaser.Scene {
     }
 
     update() {
-        if (this.debugText.visible) {
+        if (this.debugText1.visible) {
             const i = globalParameters.currentLevel;
 
-            this.debugText.setText(`
+            this.debugText1.setText(`
 fps: ${game.loop.actualFps.toFixed(1)}
 
 globalParameters = {
 ${DebugScene.object2string(globalParameters)}
-}
+}`
+            );
 
+            this.debugText2.setText(`
 levelParameters[${i}] = {
 ${DebugScene.object2string(levelParameters[i])}
 }`
@@ -50,7 +64,8 @@ ${DebugScene.object2string(levelParameters[i])}
     }
 
     static object2string(obj) {
-        return Object.entries(obj).map(([key, value]) => `\t${key}: ${value}`)
+        return Object.entries(obj).filter(([key, value]) => key[0] !== '_')
+            .map(([key, value]) => `\t${key}: ${value}`)
             .join('\n');
     }
 }

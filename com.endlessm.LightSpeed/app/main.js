@@ -110,8 +110,11 @@ game.events.on('global-property-change', (obj, property) => {
             return;
 
         /* Stop all active scenes just in case */
-        game.scene.getScenes(true).forEach(function(key) {
-            game.scene.stop(key);
+        game.scene.getScenes(true).forEach(function(scene) {
+            if (scene instanceof DebugScene)
+                return;
+
+            game.scene.stop(scene);
         });
 
         globalParameters.currentLevel = startLevel;

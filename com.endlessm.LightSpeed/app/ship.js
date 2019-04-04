@@ -21,6 +21,10 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
 
         this.cursors = scene.input.keyboard.createCursorKeys();
 
+        /* Attraction zone */
+        this.attractionZone = scene.add.zone(x, y);
+        scene.physics.world.enable(this.attractionZone);
+
         /* Explosion */
         var explosion = scene.add.particles('explosion-particles');
         this.explosionEmitter = explosion.createEmitter({
@@ -52,6 +56,11 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         this.confettiEmitter.stop();
 
         this.setType(type);
+    }
+
+    preUpdate() {
+        /* Update attraction zone position */
+        this.attractionZone.setPosition(this.x, this.y);
     }
 
     playThrust(direction) {
@@ -106,6 +115,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
          * outer corners of the box where no ship is */
         const scale = this.scene.params.shipSize / 100;
         this.setScale(scale);
+        this.attractionZone.setScale(scale);
 
         let ship_box_height;
 
@@ -130,6 +140,10 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             ship_box_height = 100;
         }
 
+        /* Update attraction zone size */
+        const radius = this.body.width * 0.8;
+        this.attractionZone.body.setCircle(radius, -radius, -radius);
+
         /* Update world bounds to allow half the ship to be outside */
         this.scene.physics.world.setBounds(
             0,
@@ -150,6 +164,40 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
 
         this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
             this.explode, [x, y], this);
+    }
+
+    shrink(delay) {
+        this.scene.tweens.add({
+            targets: this,
+            scaleX: 0.2,
+            scaleY: 0.2,
+            duration: 700,
+            ease: 'Elastic',
+            easeParams: [ 1.4, 0.6 ]
+        });
+
+        /* Restore ship size */
+        this.scene.time.delayedCall(delay, () => {
+            const scale = this.scene.params.shipSize / 100;
+            this.scene.tweens.add({
+                targets: this,
+                scaleX: scale,
+                scaleY: scale,
+                duration: 700,
+                ease: 'Elastic',
+                easeParams: [ 1.4, 0.6 ]
+            });
+        }, null, this);
+    }
+
+    increaseAttraction(delay, scale) {
+        const shipScale = this.scene.params.shipSize / 100;
+        this.attractionZone.setScale(shipScale * scale);
+
+        /* Restore ship attraction size */
+        this.scene.time.delayedCall(delay, () => {
+            this.attractionZone.setScale(shipScale);
+        }, null, this);
     }
 }
 

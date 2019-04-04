@@ -195,6 +195,12 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     }
 
     shrink(delay) {
+        /* Reset old event */
+        if (this._timers.shrink) {
+            this._timers.shrink.elapsed = 0;
+            return;
+        }
+
         this.scene.tweens.add({
             targets: this,
             scaleX: 0.2,
@@ -203,9 +209,10 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             ease: 'Elastic',
             easeParams: [ 1.4, 0.6 ]
         });
+        this.enableGlow(0x6dff36);
 
         /* Restore ship size */
-        this.scene.time.delayedCall(delay, () => {
+        this._timers.shrink = this.scene.time.delayedCall(delay, () => {
             const scale = this.scene.params.shipSize / 100;
             this.scene.tweens.add({
                 targets: this,
@@ -215,28 +222,38 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
                 ease: 'Elastic',
                 easeParams: [ 1.4, 0.6 ]
             });
+            this.disableGlow();
         }, null, this);
     }
 
     increaseAttraction(delay, scale) {
+        /* Reset old event */
+        if (this._timers.attraction) {
+            this._timers.attraction.elapsed = 0;
+            return;
+        }
+
         const shipScale = this.scene.params.shipSize / 100;
         this.attractionZone.setScale(shipScale * scale);
+        this.enableGlow(0x6dff36);
 
         /* Restore ship attraction size */
-        this.scene.time.delayedCall(delay, () => {
+        this._timers.attraction = this.scene.time.delayedCall(delay, () => {
             this.attractionZone.setScale(shipScale);
+            this.disableGlow();
+            delete this._timers.attraction;
         }, null, this);
     }
 
     invulnerable(delay) {
-        /* Remove old event */
-        if (this._timers.invulnerable)
-            this._timers.invulnerable.remove();
-
-        if (!this.isInvulnerable) {
-            this.isInvulnerable = true;
-            this.enableGlow(0xffea5f);
+        /* Reset old event */
+        if (this._timers.invulnerable) {
+            this._timers.invulnerable.elapsed = 0;
+            return;
         }
+
+        this.isInvulnerable = true;
+        this.enableGlow(0xffea5f);
 
         this._timers.invulnerable = this.scene.time.delayedCall(delay, () => {
             this.isInvulnerable = false;

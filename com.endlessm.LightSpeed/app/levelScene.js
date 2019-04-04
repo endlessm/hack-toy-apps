@@ -552,7 +552,7 @@ class LevelScene extends Phaser.Scene {
             const x = scope.width + scope.random(100, 400);
             const y = scope.random(0, scope.height);
 
-            var obj = this.physics.add.sprite(x, y, powerupTypes[retval]);
+            var obj = this.physics.add.sprite(x, y, powerupTypes[retval - 1]);
             this.powerups.add(obj);
             obj._type = retval;
             obj.depth = 1;

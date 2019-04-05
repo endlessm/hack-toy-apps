@@ -51,6 +51,12 @@ class UserScope {
         void this;
         return Math.cos(theta);
     }
+
+    pickOne() {
+        void this;
+        // eslint-disable-next-line prefer-rest-params
+        return arguments[Phaser.Math.RND.integerInRange(0, arguments.length - 1)];
+    }
 }
 
 /*

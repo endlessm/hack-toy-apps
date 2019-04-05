@@ -33,6 +33,7 @@ var powerupTypes = [
 /* Freeze constants */
 Object.freeze(shipTypes);
 Object.freeze(enemyTypes);
+Object.freeze(powerupTypes);
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -228,7 +229,7 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (tickCount > 50)
-        return 0;`,
+        return null;`,
     },
 
     /* Level 12 */
@@ -242,7 +243,7 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (tickCount > 50)
-        return 0;`,
+        return null;`,
     },
 
     /* Level 13 */
@@ -256,9 +257,9 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (tickCount > 50)
-        return 3;
+        return 'upgrade';
 
-    return 0;`,
+    return null;`,
     },
 
     /* Level 14 */
@@ -266,7 +267,7 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (tickCount > 50) {
-        return random(1, 3);
+        return pickOne('blowup', 'invincibility', 'upgrade');
     }`,
 
         spawnEnemyCode: `\

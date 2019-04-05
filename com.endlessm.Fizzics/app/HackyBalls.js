@@ -1534,8 +1534,8 @@ function HackyBalls()
             var info = {};
             var pos = _balls[i].getPosition(); 
             info.ID = i;
-            info.x = pos.x;
-            info.y = pos.y;
+            info.x = Math.round(pos.x);
+            info.y = Math.round(pos.y);
             info.species = _balls[i].getType();
             _savedBalls.push(info);
         }

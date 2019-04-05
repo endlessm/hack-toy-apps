@@ -49,6 +49,7 @@ var globalParameters =
     quest0Success   : false,
     quest1Success   : false,
     quest2Success   : false,
+    quest3Success: false,
     type0BallCount  : 0,
     type1BallCount  : 0,
     type2BallCount  : 0,

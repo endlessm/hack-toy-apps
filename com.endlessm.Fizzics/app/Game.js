@@ -7,6 +7,7 @@ var canvas = canvasID.getContext( '2d' );
 var QUEST0 =  1000; // Episode 1: Fizzics2
 var QUEST1 =  1001; // Episode 2: MakerIntro
 var QUEST2 =  1002; // Episode 2: MakerQuest
+var QUEST3 = 1003;  // Episode 3
 
 var FONT_SIZE_SCALE = 0.45;
 var FONT_Y_SCALE    = 0.65;
@@ -476,6 +477,8 @@ function Game()
 
         if (_level == maxMainLevel)
             return maxMainLevel;
+        if (_level === QUEST3)
+            return QUEST3;  // QUEST3 loops back to itself
         return _level+1;
     }
     
@@ -538,6 +541,7 @@ function Game()
         globalParameters.quest0Success = false;
         globalParameters.quest1Success = false;
         globalParameters.quest2Success = false;
+        globalParameters.quest3Success = false;
         globalParameters.flingCount = 0;
 
         for (var c=0; c<gameState.numCollisionsGoal; c++)
@@ -593,11 +597,14 @@ function Game()
             globalParameters.type2BallCount = type2BallCount;
             globalParameters.flingCount = gameState.numFlings;
 
-            if (_level < QUEST0) {
+            if (_level < QUEST0 || _level === QUEST3) {
                 if ( globalParameters.type0BallCount == 0
                 && !_ballDied
                 && _ballReachedGoal )
-                {   
+                {
+                    if (!globalParameters.quest3Success)
+                        globalParameters.quest3Success = this.isQuest3GoalReached();
+
                     gameState.running = false;
                     gameState.success = true;
                     globalParameters.levelSuccess = true;
@@ -612,7 +619,7 @@ function Game()
                 _ballReachedGoal = false;
             }
 
-            // Quest level
+            // Quest level that doesn't require getting orange balls to the goal
             else
             {
                 //----------------------------------
@@ -670,7 +677,7 @@ function Game()
                         ballsWithSomeCollision[i] = false;
                     }
                 }
-            }  
+            }
 
             globalParameters.score = _score;
             globalParameters.currentLevel = _level;
@@ -723,7 +730,11 @@ function Game()
             return true;
 
         return false;
-    }    
+    }
+
+    this.isQuest3GoalReached = function() {
+        return _ballReachedGoal && this.getScore() >= 50;
+    }
 
     this.getScore = function()
     {

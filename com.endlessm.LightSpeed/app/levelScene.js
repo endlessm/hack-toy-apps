@@ -565,19 +565,18 @@ class LevelScene extends Phaser.Scene {
         var scope = this.spawnPowerupScope;
         var retval = this.runWithScope(this.spawnPowerup, scope);
 
-        if (retval > 0 && retval <= powerupTypes.length) {
+        if (retval && powerupTypes.indexOf(retval) >= 0) {
             const x = scope.width + scope.random(100, 400);
             const y = scope.random(0, scope.height);
 
-            var obj = this.physics.add.sprite(x, y, powerupTypes[retval - 1]);
+            var obj = this.physics.add.sprite(x, y, retval);
             this.powerups.add(obj);
-            obj._type = retval;
             obj.depth = 1;
             var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
             obj.setVelocityX(-this.params.shipSpeed * speedFactor);
             obj.setScale(0.25);
 
-            if (retval === 2) {
+            if (retval === 'invincibility') {
                 obj.particles = this.add.particles('stars-particles');
                 obj.emitter = obj.particles.createEmitter({
                     frame: ['stars-p1', 'stars-p2', 'stars-p3', 'stars-p4', 'stars-p5'],
@@ -705,7 +704,10 @@ class LevelScene extends Phaser.Scene {
         this._blowUpEnemies = false;
     }
 
-    runPowerupOverlap(powerUpType) {
+    runActivatePowerup(powerUpType) {
+        if (!this.activatePowerup)
+            return;
+
         var scope = this.activatePowerupScope;
 
         this.runWithScope(this.activatePowerup, scope, {
@@ -744,7 +746,7 @@ class LevelScene extends Phaser.Scene {
             scaleY: 0.2,
             duration: 500,
             onComplete: () => {
-                this.runPowerupOverlap(powerup._type);
+                this.runActivatePowerup(powerup.texture);
                 this.destroySprite(powerup);
             },
         });

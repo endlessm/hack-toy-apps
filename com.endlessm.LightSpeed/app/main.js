@@ -168,6 +168,7 @@ window.saveState = function() {
         updateSpinnerCode: globalParameters.updateSpinnerCode,
         updateSquidCode: globalParameters.updateSquidCode,
         updateBeamCode: globalParameters.updateBeamCode,
+        activatePowerupCode: globalParameters.activatePowerupCode,
         /* Per-level parameters */
         levelParameters,
     });
@@ -190,6 +191,7 @@ window.loadState = function(state) {
         globalParameters.updateSpinnerCode = state.updateSpinnerCode;
         globalParameters.updateSquidCode = state.updateSquidCode;
         globalParameters.updateBeamCode = state.updateBeamCode;
+        globalParameters.activatePowerupCode = state.activatePowerupCode;
 
         /* Restore current level parameters */
         state.levelParameters.forEach((levelState, ix) => {

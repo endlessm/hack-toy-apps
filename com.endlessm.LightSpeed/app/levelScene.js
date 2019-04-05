@@ -60,7 +60,6 @@ class LevelScene extends Phaser.Scene {
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
         this.spawnPowerup = getUserFunction(data.spawnPowerupCode);
-        this.activatePowerup = getUserFunction(data.activatePowerupCode);
 
         /* We have one global function for each enemy type */
         this.updateEnemy = {};
@@ -71,6 +70,9 @@ class LevelScene extends Phaser.Scene {
             );
             this.updateEnemyScope[o] = new UpdateEnemyScope();
         }
+
+        /* Global powerup function */
+        this.activatePowerup = getUserFunction(globalParameters.activatePowerupCode);
     }
 
     preload() {
@@ -283,6 +285,8 @@ class LevelScene extends Phaser.Scene {
             this.updatePausedState();
         } else if (property === 'playing') {
             this.updatePlayingState();
+        } else if (property === 'activatePowerupCode') {
+            this.activatePowerup = getUserFunction(globalParameters.activatePowerupCode);
         } else if (property.endsWith('Code')) {
             const func = getUserFunction(globalParameters[property]);
             const enemyName = property.slice(6, -4).toLowerCase();

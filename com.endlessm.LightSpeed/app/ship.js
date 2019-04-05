@@ -181,7 +181,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             duration: 100,
             onComplete: () => {
                 this.glow.visible = false;
-            }
+            },
         });
     }
 
@@ -189,9 +189,10 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         if (count)
             this.explosionEmitter.explode(768, x, y);
 
-        if (--count)
+        if (count > 1) {
             this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
-                this.explode, [count, x, y], this);
+                this.explode, [count - 1, x, y], this);
+        }
     }
 
     shrink(delay) {
@@ -207,7 +208,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             scaleY: 0.2,
             duration: 700,
             ease: 'Elastic',
-            easeParams: [ 1.4, 0.6 ]
+            easeParams: [1.4, 0.6],
         });
         this.enableGlow(0x6dff36);
 
@@ -220,7 +221,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
                 scaleY: scale,
                 duration: 700,
                 ease: 'Elastic',
-                easeParams: [ 1.4, 0.6 ]
+                easeParams: [1.4, 0.6],
             });
             this.disableGlow();
         }, null, this);
@@ -261,6 +262,5 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             delete this._timers.invulnerable;
         }, null, this);
     }
-
 }
 

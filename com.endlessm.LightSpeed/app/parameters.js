@@ -133,7 +133,7 @@ var defaultParameters = {
         return null;
     }
     return null;`,
-    
+
     spawnPowerupCode: '',
 
     activatePowerupCode: '',
@@ -268,12 +268,6 @@ var defaultLevelParameters = [
 
     /* Level 14 */
     {
-        spawnEnemyCode: `\
-    ${TICK_COMMENT}
-    if (ticksSinceSpawn > 40) {
-        return 'asteroid';
-    }`,
-
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (tickCount > 50) {

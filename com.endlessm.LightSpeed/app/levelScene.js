@@ -6,8 +6,9 @@
  */
 
 /* exported LevelScene, CONFETTI_COLORS */
-/* global Ship, enemyTypes, saveState, shipTypes, SpawnAstronautScope,
-SpawnEnemyScope, UpdateEnemyScope */
+/* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
+    SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
+    ActivatePowerupScope */
 
 const CONFETTI_COLORS = [
     0x1500ff,
@@ -200,6 +201,7 @@ class LevelScene extends Phaser.Scene {
 
     /* Private functions */
     destroySprite(obj) {
+        void this;
         obj.disableBody(true, true);
         if (obj.emitter) {
             obj.emitter.stop();
@@ -487,7 +489,7 @@ class LevelScene extends Phaser.Scene {
 
             var enemyTypeIndex = enemyTypes.indexOf(retval.type);
 
-            var scale = (retval.scale) ? retval.scale : scope.random(20, 80);
+            var scale = retval.scale ? retval.scale : scope.random(20, 80);
             var obj = this.createEnemy(type, pos, scale);
 
             /* Increment global counter */
@@ -509,6 +511,7 @@ class LevelScene extends Phaser.Scene {
     }
 
     spawnedSomeEnemy() {
+        void this;
         for (let i = 0, n = enemyTypes.length; i < n; i++) {
             if (globalParameters[`enemyType${i}SpawnedCount`] > 0)
                 return true;
@@ -588,7 +591,6 @@ class LevelScene extends Phaser.Scene {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
 
-        var retval = null;
         var enemy = {
             position: this.userSpace.transformPoint(obj.x, obj.y),
             velocity: {x: vx, y: vy},
@@ -598,9 +600,9 @@ class LevelScene extends Phaser.Scene {
             position: this.userSpace.transformPoint(this.ship.x, this.ship.y),
         };
 
-        var retval = this.runWithScope(updateEnemy, scope, {
+        this.runWithScope(updateEnemy, scope, {
             playerShip,
-            enemy
+            enemy,
         });
 
         /* Transform back from user space coordinates */
@@ -698,7 +700,7 @@ class LevelScene extends Phaser.Scene {
 
         this._blowUpEnemies = false;
     }
-    
+
     runPowerupOverlap(powerUpType) {
         var scope = this.activatePowerupScope;
 

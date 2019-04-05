@@ -76,6 +76,8 @@ function resetGlobalUserCode() {
     } else if (playerShip.position.y < enemy.position.y) {
         enemy.position.y = enemy.position.y - 5;
     }`;
+
+    globalParameters.activatePowerupCode = '';
 }
 
 /* We need counters and min/max Y coordinate reached for each enemy type,
@@ -127,16 +129,15 @@ var defaultParameters = {
     }
 
     return null;`,
+
     spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
         return null;
     }
     return null;`,
-    
-    spawnPowerupCode: '',
 
-    activatePowerupCode: '',
+    spawnPowerupCode: '',
 };
 
 /* Per Level defaults:
@@ -258,22 +259,10 @@ var defaultLevelParameters = [
         return 3;
 
     return 0;`,
-
-        activatePowerupCode: `\
-    if (powerUpType == 1)
-        ship.invulnerableTimer = 5;
-    else if (powerUpType == 2)
-        blowUpEnemies();`,
     },
 
     /* Level 14 */
     {
-        spawnEnemyCode: `\
-    ${TICK_COMMENT}
-    if (ticksSinceSpawn > 40) {
-        return 'asteroid';
-    }`,
-
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (tickCount > 50) {

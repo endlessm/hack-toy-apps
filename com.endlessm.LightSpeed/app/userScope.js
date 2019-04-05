@@ -157,7 +157,7 @@ class ActivatePowerupScope extends UserScope {
         return true;
     }
 
-    blowUpEnemies(){
+    blowUpEnemies() {
         this._blowUpEnemies = true;
     }
 }

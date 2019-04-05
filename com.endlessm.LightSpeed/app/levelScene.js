@@ -6,8 +6,9 @@
  */
 
 /* exported LevelScene, CONFETTI_COLORS */
-/* global Ship, enemyTypes, saveState, shipTypes, SpawnAstronautScope,
-SpawnEnemyScope, UpdateEnemyScope */
+/* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
+    SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
+    ActivatePowerupScope */
 
 const CONFETTI_COLORS = [
     0x1500ff,
@@ -59,7 +60,6 @@ class LevelScene extends Phaser.Scene {
         this.spawnEnemy = getUserFunction(data.spawnEnemyCode);
         this.spawnAstronaut = getUserFunction(data.spawnAstronautCode);
         this.spawnPowerup = getUserFunction(data.spawnPowerupCode);
-        this.activatePowerup = getUserFunction(data.activatePowerupCode);
 
         /* We have one global function for each enemy type */
         this.updateEnemy = {};
@@ -70,6 +70,9 @@ class LevelScene extends Phaser.Scene {
             );
             this.updateEnemyScope[o] = new UpdateEnemyScope();
         }
+
+        /* Global powerup function */
+        this.activatePowerup = getUserFunction(globalParameters.activatePowerupCode);
     }
 
     preload() {
@@ -82,10 +85,13 @@ class LevelScene extends Phaser.Scene {
             'assets/atlas/explosion-particles.json');
         this.load.atlas('confetti-particles', 'assets/atlas/confetti-particles.png',
             'assets/atlas/confetti-particles.json');
+        this.load.atlas('stars-particles', 'assets/atlas/stars-particles.png',
+            'assets/atlas/stars-particles.json');
 
         /* Ship assets */
         for (const ship of shipTypes)
             this.load.image(ship, `assets/ships/${ship}.png`);
+        this.load.image('ship-glow', 'assets/ships/glow.png');
 
         /* Enemy assets */
         for (const enemy of enemyTypes)
@@ -196,6 +202,15 @@ class LevelScene extends Phaser.Scene {
     }
 
     /* Private functions */
+    destroySprite(obj) {
+        void this;
+        obj.disableBody(true, true);
+        if (obj.emitter) {
+            obj.emitter.stop();
+            obj.particles.destroy();
+        }
+        obj.destroy();
+    }
 
     runWithScope(func, scope, data = {}) {
         var retval = null;
@@ -270,6 +285,8 @@ class LevelScene extends Phaser.Scene {
             this.updatePausedState();
         } else if (property === 'playing') {
             this.updatePlayingState();
+        } else if (property === 'activatePowerupCode') {
+            this.activatePowerup = getUserFunction(globalParameters.activatePowerupCode);
         } else if (property.endsWith('Code')) {
             const func = getUserFunction(globalParameters[property]);
             const enemyName = property.slice(6, -4).toLowerCase();
@@ -476,7 +493,7 @@ class LevelScene extends Phaser.Scene {
 
             var enemyTypeIndex = enemyTypes.indexOf(retval.type);
 
-            var scale = (retval.scale) ? retval.scale : scope.random(20, 80);
+            var scale = retval.scale ? retval.scale : scope.random(20, 80);
             var obj = this.createEnemy(type, pos, scale);
 
             /* Increment global counter */
@@ -498,6 +515,7 @@ class LevelScene extends Phaser.Scene {
     }
 
     spawnedSomeEnemy() {
+        void this;
         for (let i = 0, n = enemyTypes.length; i < n; i++) {
             if (globalParameters[`enemyType${i}SpawnedCount`] > 0)
                 return true;
@@ -551,13 +569,25 @@ class LevelScene extends Phaser.Scene {
             const x = scope.width + scope.random(100, 400);
             const y = scope.random(0, scope.height);
 
-            var obj = this.physics.add.sprite(x, y, powerupTypes[retval]);
+            var obj = this.physics.add.sprite(x, y, powerupTypes[retval - 1]);
             this.powerups.add(obj);
             obj._type = retval;
             obj.depth = 1;
             var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
             obj.setVelocityX(-this.params.shipSpeed * speedFactor);
             obj.setScale(0.25);
+
+            if (retval === 2) {
+                obj.particles = this.add.particles('stars-particles');
+                obj.emitter = obj.particles.createEmitter({
+                    frame: ['stars-p1', 'stars-p2', 'stars-p3', 'stars-p4', 'stars-p5'],
+                    speed: 100,
+                    angle: {min: 0, max: 360},
+                    scale: {start: 1, end: 0},
+                    blendMode: 'SCREEN',
+                    lifespan: 1200,
+                }).startFollow(obj);
+            }
         }
     }
 
@@ -565,7 +595,6 @@ class LevelScene extends Phaser.Scene {
         const vx = obj.body.velocity.x + this.params.shipSpeed;
         const vy = -obj.body.velocity.y;
 
-        var retval = null;
         var enemy = {
             position: this.userSpace.transformPoint(obj.x, obj.y),
             velocity: {x: vx, y: vy},
@@ -575,9 +604,9 @@ class LevelScene extends Phaser.Scene {
             position: this.userSpace.transformPoint(this.ship.x, this.ship.y),
         };
 
-        var retval = this.runWithScope(updateEnemy, scope, {
+        this.runWithScope(updateEnemy, scope, {
             playerShip,
-            enemy
+            enemy,
         });
 
         /* Transform back from user space coordinates */
@@ -616,7 +645,7 @@ class LevelScene extends Phaser.Scene {
     }
 
     onShipEnemyOverlap(attractionZone, enemy) {
-        if (!globalParameters.playing || this.shipInvulnerable)
+        if (!globalParameters.playing || this.ship.isInvulnerable)
             return;
 
         globalParameters.playing = false;
@@ -624,7 +653,7 @@ class LevelScene extends Phaser.Scene {
         this.scene.launch('gameover');
 
         /* Make ship explode! */
-        this.ship.explode((this.ship.x + enemy.x) / 2, (this.ship.y + enemy.y) / 2);
+        this.ship.explode(3, (this.ship.x + enemy.x) / 2, (this.ship.y + enemy.y) / 2);
     }
 
     onShipAstronautOverlap(attractionZone, astronaut) {
@@ -649,14 +678,9 @@ class LevelScene extends Phaser.Scene {
             scaleY: 0.2,
             duration: 500,
             onComplete: () => {
-                /* Disable collected astronaut */
-                astronaut.disableBody(true, true);
-
                 /* Confetti! */
                 this.ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
-                astronaut.emitter.stop();
-                astronaut.particles.destroy();
-                astronaut.destroy();
+                this.destroySprite(astronaut);
 
                 /* Check if we finished the level */
                 this.checkLevelDone();
@@ -670,25 +694,15 @@ class LevelScene extends Phaser.Scene {
     destroyEnemies() {
         /* Iterate over enemy types */
         for (const o of enemyTypes) {
-            /* Iterate over enemies
-             * TODO: add some vfx
-
+            /* Iterate over enemies */
             const children = this.enemies[o].getChildren();
             for (const obj of children)
-                obj.destroy();
-             */
+                this.ship.explode(1, obj.x, obj.y);
 
             this.enemies[o].clear(true, true);
         }
 
         this._blowUpEnemies = false;
-    }
-    
-    makeShipInvulnerable(delay) {
-        this.shipInvulnerable = true;
-        this.time.delayedCall(delay, () => {
-            this.shipInvulnerable = false;
-        }, null, this);
     }
 
     runPowerupOverlap(powerUpType) {
@@ -705,7 +719,7 @@ class LevelScene extends Phaser.Scene {
 
         /* Make ship invulnerable */
         if (scope.ship.invulnerableTimer)
-            this.makeShipInvulnerable(scope.ship.invulnerableTimer * 1000);
+            this.ship.invulnerable(scope.ship.invulnerableTimer * 1000);
 
         /* Shrink ship */
         if (scope.ship.shrinkTimer)
@@ -731,7 +745,7 @@ class LevelScene extends Phaser.Scene {
             duration: 500,
             onComplete: () => {
                 this.runPowerupOverlap(powerup._type);
-                powerup.disableBody(true, true);
+                this.destroySprite(powerup);
             },
         });
     }

@@ -21,7 +21,7 @@ class DebugScene extends Phaser.Scene {
         });
         this.debugText1.visible = false;
 
-        this.debugText2 = this.add.text(game.config.width/2, 48, '', {
+        this.debugText2 = this.add.text(game.config.width / 2, 48, '', {
             color: '#00ff00',
             shadow: {
                 color: 'black',
@@ -64,7 +64,7 @@ ${DebugScene.object2string(levelParameters[i])}
     }
 
     static object2string(obj) {
-        return Object.entries(obj).filter(([key, value]) => key[0] !== '_')
+        return Object.entries(obj).filter(([key]) => key[0] !== '_')
             .map(([key, value]) => `\t${key}: ${value}`)
             .join('\n');
     }

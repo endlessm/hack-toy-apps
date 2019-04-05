@@ -6,7 +6,6 @@
  */
 
 /* exported Ship */
-/* global CONFETTI_COLORS */
 
 class Ship extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, type, x, y) {
@@ -32,36 +31,6 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         /* Attraction zone */
         this.attractionZone = scene.add.zone(x, y);
         scene.physics.world.enable(this.attractionZone);
-
-        /* Explosion */
-        var explosion = scene.add.particles('explosion-particles');
-        this.explosionEmitter = explosion.createEmitter({
-            frame: ['explosion-p1', 'explosion-p2', 'explosion-p3'],
-            speed: {min: -800, max: 800},
-            angle: {min: 0, max: 360},
-            scale: {start: 2, end: 0},
-            blendMode: 'SCREEN',
-            lifespan: 800,
-        });
-        this.explodeCount = 3;
-        this.explosionEmitter.stop();
-        explosion.depth = 101;
-
-        /* Confetti */
-        var confetti = scene.add.particles('confetti-particles');
-        this.confettiEmitter = confetti.createEmitter({
-            frame: ['confetti-p1', 'confetti-p2', 'confetti-p3', 'confetti-p4',
-                'confetti-p5', 'confetti-p6'],
-            rotate: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130,
-                140, 150, 160, 180, 190, 200, 210, 220, 240, 250, 260, 270, 280,
-                290, 300, 310, 320, 330, 340, 350],
-            tint: CONFETTI_COLORS,
-            speed: {min: -500, max: 500},
-            angle: {min: 0, max: 360},
-            scale: {start: 1, end: 0.32},
-            lifespan: 600,
-        });
-        this.confettiEmitter.stop();
 
         this.setType(type);
     }
@@ -183,16 +152,6 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
                 this.glow.visible = false;
             },
         });
-    }
-
-    explode(count, x, y) {
-        if (count)
-            this.explosionEmitter.explode(768, x, y);
-
-        if (count > 1) {
-            this.scene.time.delayedCall(Phaser.Math.RND.integerInRange(128, 512),
-                this.explode, [count - 1, x, y], this);
-        }
     }
 
     shrink(delay) {

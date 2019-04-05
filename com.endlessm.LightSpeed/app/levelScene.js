@@ -146,6 +146,9 @@ class LevelScene extends Phaser.Scene {
         this.createScoreBox('Level: 00 Rescued: 00/00');
         this.updateScore();
 
+        /* Create particles emitters */
+        this.createParticles();
+
         /* Listen to properties changes */
         this.game.events.on('global-property-change',
             this.onGlobalPropertyChange, this);
@@ -227,6 +230,39 @@ class LevelScene extends Phaser.Scene {
         }
 
         return retval;
+    }
+
+    createParticles() {
+        this.particles = {};
+
+        /* Explosion */
+        var explosion = this.add.particles('explosion-particles');
+        this.particles.explosion = explosion.createEmitter({
+            frame: ['explosion-p1', 'explosion-p2', 'explosion-p3'],
+            speed: {min: -800, max: 800},
+            angle: {min: 0, max: 360},
+            scale: {start: 2, end: 0},
+            blendMode: 'SCREEN',
+            lifespan: 800,
+        });
+        this.particles.explosion.stop();
+        explosion.depth = 101;
+
+        /* Confetti */
+        var confetti = this.add.particles('confetti-particles');
+        this.particles.confetti = confetti.createEmitter({
+            frame: ['confetti-p1', 'confetti-p2', 'confetti-p3', 'confetti-p4',
+                'confetti-p5', 'confetti-p6'],
+            rotate: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130,
+                140, 150, 160, 180, 190, 200, 210, 220, 240, 250, 260, 270, 280,
+                290, 300, 310, 320, 330, 340, 350],
+            tint: CONFETTI_COLORS,
+            speed: {min: -500, max: 500},
+            angle: {min: 0, max: 360},
+            scale: {start: 1, end: 0.32},
+            lifespan: 600,
+        });
+        this.particles.confetti.stop();
     }
 
     resetQuestData() {
@@ -652,7 +688,9 @@ class LevelScene extends Phaser.Scene {
         this.scene.launch('gameover');
 
         /* Make ship explode! */
-        this.ship.explode(3, (this.ship.x + enemy.x) / 2, (this.ship.y + enemy.y) / 2);
+        this.particles.explosion.explode(768, (this.ship.x + enemy.x) / 2,
+            (this.ship.y + enemy.y) / 2);
+        this.ship.visible = false;
     }
 
     onShipAstronautOverlap(attractionZone, astronaut) {
@@ -678,7 +716,7 @@ class LevelScene extends Phaser.Scene {
             duration: 500,
             onComplete: () => {
                 /* Confetti! */
-                this.ship.confettiEmitter.explode(256, astronaut.x, astronaut.y);
+                this.particles.confetti.explode(256, astronaut.x, astronaut.y);
                 this.destroySprite(astronaut);
 
                 /* Check if we finished the level */
@@ -696,7 +734,7 @@ class LevelScene extends Phaser.Scene {
             /* Iterate over enemies */
             const children = this.enemies[o].getChildren();
             for (const obj of children)
-                this.ship.explode(1, obj.x, obj.y);
+                this.particles.explosion.explode(768, obj.x, obj.y);
 
             this.enemies[o].clear(true, true);
         }

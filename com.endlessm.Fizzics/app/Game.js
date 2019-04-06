@@ -8,6 +8,7 @@ var QUEST0 =  1000; // Episode 1: Fizzics2
 var QUEST1 =  1001; // Episode 2: MakerIntro
 var QUEST2 =  1002; // Episode 2: MakerQuest
 var QUEST3 = 1003;  // Episode 3
+var QUEST4 = 1004;  // Episode 3
 
 var FONT_SIZE_SCALE = 0.45;
 var FONT_Y_SCALE    = 0.65;
@@ -542,6 +543,7 @@ function Game()
         globalParameters.quest1Success = false;
         globalParameters.quest2Success = false;
         globalParameters.quest3Success = false;
+        globalParameters.quest4Success = false;
         globalParameters.flingCount = 0;
 
         for (var c=0; c<gameState.numCollisionsGoal; c++)
@@ -570,7 +572,8 @@ function Game()
             var type0BallCount = 0;
             var type1BallCount = 0;
             var type2BallCount = 0;
-        
+            var type4BallCount = 0;
+
             gameState.testBall = NULL_BALL;
         
             for (var i=0; i<numBalls; i++)
@@ -587,6 +590,9 @@ function Game()
                     case 2:
                         type2BallCount++;
                         break;
+                    case 4:
+                        type4BallCount++;
+                        break;
                     default:
                         break;  
                 }   
@@ -595,6 +601,7 @@ function Game()
             globalParameters.type0BallCount = type0BallCount;
             globalParameters.type1BallCount = type1BallCount;
             globalParameters.type2BallCount = type2BallCount;
+            globalParameters.type4BallCount = type4BallCount;
             globalParameters.flingCount = gameState.numFlings;
 
             if (_level < QUEST0 || _level === QUEST3) {
@@ -659,6 +666,8 @@ function Game()
                 {
                     globalParameters.quest2Success = this.isQuest2GoalReached();
                 }
+                if (!globalParameters.quest4Success)
+                    globalParameters.quest4Success = this.isQuest4GoalReached();
 
                 gameState.clock ++;
                 if ( gameState.clock > gameState.period )
@@ -734,6 +743,14 @@ function Game()
 
     this.isQuest3GoalReached = function() {
         return _ballReachedGoal && this.getScore() >= 50;
+    }
+
+    this.isQuest4GoalReached = function() {
+        // At least the original number of gems have been collected, no newly
+        // added gems are left, and zero or one flings were used
+        return gameState.numBonus >= 36 &&
+            globalParameters.type4BallCount == 0 &&
+            gameState.numFlings <= 1;
     }
 
     this.getScore = function()

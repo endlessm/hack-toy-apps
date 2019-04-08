@@ -88,30 +88,7 @@ class SpawnAstronautScope extends SpawnScope {
 class SpawnEnemyScope extends SpawnScope {
 }
 
-class SpawnPowerupScope extends UserScope {
-    constructor() {
-        super();
-        this.tickDelay = 0;
-        this.tickCount = 0;
-    }
-
-    update(data) {
-        super.update(data);
-
-        /* Return false to stop function execution */
-        if (--this.tickDelay > 0)
-            return false;
-
-        this.tickCount++;
-        this.tickDelay = this.random(100, 300);
-
-        return true;
-    }
-
-    postUpdate(retval) {
-        if (retval)
-            this.tickCount = 0;
-    }
+class SpawnPowerupScope extends SpawnScope {
 }
 
 /*

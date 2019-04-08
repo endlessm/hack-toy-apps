@@ -228,7 +228,7 @@ var defaultLevelParameters = [
 
         spawnPowerupCode: `\
     ${TICK_COMMENT}
-    if (tickCount > 50)
+    if (ticksSinceSpawn > random(60, 240))
         return null;`,
     },
 
@@ -242,7 +242,7 @@ var defaultLevelParameters = [
 
         spawnPowerupCode: `\
     ${TICK_COMMENT}
-    if (tickCount > 50)
+    if (ticksSinceSpawn > random(60, 240))
         return null;`,
     },
 
@@ -256,7 +256,7 @@ var defaultLevelParameters = [
 
         spawnPowerupCode: `\
     ${TICK_COMMENT}
-    if (tickCount > 50)
+    if (ticksSinceSpawn > random(60, 240))
         return 'upgrade';
 
     return null;`,
@@ -266,7 +266,7 @@ var defaultLevelParameters = [
     {
         spawnPowerupCode: `\
     ${TICK_COMMENT}
-    if (tickCount > 50) {
+    if (ticksSinceSpawn > random(60, 240)) {
         return pickOne('blowup', 'invincibility', 'upgrade');
     }`,
 

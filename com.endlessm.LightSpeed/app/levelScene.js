@@ -729,6 +729,8 @@ class LevelScene extends Phaser.Scene {
     }
 
     destroyEnemies() {
+        Sounds.play('lightspeed/powerup/blowup');
+
         /* Iterate over enemy types */
         for (const o of enemyTypes) {
             /* Iterate over enemies */

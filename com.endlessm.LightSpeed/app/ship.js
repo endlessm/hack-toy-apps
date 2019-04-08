@@ -154,6 +154,17 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
+    enableUpgrade(color) {
+        this.enableGlow(color);
+        Sounds.play('lightspeed/powerup/upgrade');
+        Sounds.playLoop('lightspeed/bg/powerup/upgrade');
+    }
+
+    disableUpgrade() {
+        this.disableGlow();
+        Sounds.stop('lightspeed/bg/powerup/upgrade');
+    }
+
     shrink(delay) {
         /* Reset old event */
         if (this._timers.shrink) {
@@ -169,7 +180,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             ease: 'Elastic',
             easeParams: [1.4, 0.6],
         });
-        this.enableGlow(0x6dff36);
+        this.enableUpgrade(0x6dff36);
 
         /* Restore ship size */
         this._timers.shrink = this.scene.time.delayedCall(delay, () => {
@@ -182,7 +193,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
                 ease: 'Elastic',
                 easeParams: [1.4, 0.6],
             });
-            this.disableGlow();
+            this.disableUpgrade();
         }, null, this);
     }
 
@@ -195,12 +206,12 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
 
         const shipScale = this.scene.params.shipSize / 100;
         this.attractionZone.setScale(shipScale * scale);
-        this.enableGlow(0x6dff36);
+        this.enableUpgrade(0x6dff36);
 
         /* Restore ship attraction size */
         this._timers.attraction = this.scene.time.delayedCall(delay, () => {
             this.attractionZone.setScale(shipScale);
-            this.disableGlow();
+            this.disableUpgrade();
             delete this._timers.attraction;
         }, null, this);
     }
@@ -212,12 +223,16 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             return;
         }
 
+        Sounds.play('lightspeed/powerup/invulnerable');
+        Sounds.playLoop('lightspeed/bg/powerup/invulnerable');
+
         this.isInvulnerable = true;
         this.enableGlow(0xffea5f);
 
         this._timers.invulnerable = this.scene.time.delayedCall(delay, () => {
             this.isInvulnerable = false;
             this.disableGlow();
+            Sounds.stop('lightspeed/bg/powerup/invulnerable');
             delete this._timers.invulnerable;
         }, null, this);
     }

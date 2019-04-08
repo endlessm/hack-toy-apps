@@ -49,9 +49,12 @@ var globalParameters =
     quest0Success   : false,
     quest1Success   : false,
     quest2Success   : false,
+    quest3Success: false,
+    quest4Success: false,
     type0BallCount  : 0,
     type1BallCount  : 0,
     type2BallCount  : 0,
+    type4BallCount: 0,
     flingCount      : 0,
     score           : 0,
     currentLevel    : 0,
@@ -1534,8 +1537,8 @@ function HackyBalls()
             var info = {};
             var pos = _balls[i].getPosition(); 
             info.ID = i;
-            info.x = pos.x;
-            info.y = pos.y;
+            info.x = Math.round(pos.x);
+            info.y = Math.round(pos.y);
             info.species = _balls[i].getType();
             _savedBalls.push(info);
         }

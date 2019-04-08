@@ -25,7 +25,7 @@ var enemyTypes = [
 
 var powerupTypes = [
     'blowup',
-    'invincibility',
+    'invulnerable',
     'upgrade',
 ];
 
@@ -267,7 +267,7 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > random(60, 240)) {
-        return pickOne('blowup', 'invincibility', 'upgrade');
+        return pickOne('invulnerable', 'blowup', 'upgrade');
     }`,
 
         spawnEnemyCode: `\

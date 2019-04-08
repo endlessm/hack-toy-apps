@@ -612,7 +612,7 @@ class LevelScene extends Phaser.Scene {
             obj.setVelocityX(-this.params.shipSpeed * speedFactor);
             obj.setScale(0.25);
 
-            if (retval === 'invincibility') {
+            if (retval === 'invulnerable') {
                 obj.particles = this.add.particles('stars-particles');
                 obj.emitter = obj.particles.createEmitter({
                     frame: ['stars-p1', 'stars-p2', 'stars-p3', 'stars-p4', 'stars-p5'],

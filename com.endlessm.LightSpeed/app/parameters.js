@@ -32,6 +32,7 @@ var powerupTypes = [
 var upgradeTypes = [
     'shrink',
     'attraction',
+    'engine',
 ];
 
 /* Freeze constants */

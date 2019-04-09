@@ -776,6 +776,10 @@ class LevelScene extends Phaser.Scene {
         /* Make attraction zone bigger */
         if (scope.ship.attractTimer)
             this.ship.increaseAttraction(scope.ship.attractTimer * 1000, 2);
+
+        /* Enable engine boost */
+        if (scope.ship.engineTimer)
+            this.ship.engineUpgrade(scope.ship.engineTimer * 1000, 2);
     }
 
     onShipPowerupOverlap(attractionZone, powerup) {

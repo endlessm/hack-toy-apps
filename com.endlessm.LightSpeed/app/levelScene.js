@@ -8,7 +8,7 @@
 /* exported LevelScene, CONFETTI_COLORS */
 /* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
     SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
-    ActivatePowerupScope */
+    ActivatePowerupScope, resetGlobalCounters */
 
 const CONFETTI_COLORS = [
     0x1500ff,
@@ -266,14 +266,12 @@ class LevelScene extends Phaser.Scene {
     }
 
     resetQuestData() {
-        /* Reset enemy counters */
+        /* Reset counters */
+        resetGlobalCounters();
+
         this.firstObjectOfType = [];
-        for (let i = 0, n = enemyTypes.length; i < n; i++) {
-            globalParameters[`enemyType${i}SpawnedCount`] = 0;
-            globalParameters[`enemyType${i}MinY`] = +1e9;
-            globalParameters[`enemyType${i}MaxY`] = -1e9;
+        for (let i = 0, n = enemyTypes.length; i < n; i++)
             this.firstObjectOfType[i] = null;
-        }
     }
 
     updatePausedState() {
@@ -623,6 +621,9 @@ class LevelScene extends Phaser.Scene {
                     lifespan: 1200,
                 }).startFollow(obj);
             }
+
+            /* Increment powerup count */
+            globalParameters[`${retval}PowerupSpawnCount`]++;
         }
     }
 
@@ -729,6 +730,8 @@ class LevelScene extends Phaser.Scene {
     }
 
     destroyEnemies() {
+        globalParameters.blowupPowerupActivateCount++;
+
         Sounds.play('lightspeed/powerup/blowup');
 
         /* Iterate over enemy types */
@@ -745,6 +748,9 @@ class LevelScene extends Phaser.Scene {
     }
 
     runActivatePowerup(powerUpType) {
+        /* Increment powerup pickup count */
+        globalParameters[`${powerUpType}PowerupPickedCount`]++;
+
         if (!this.activatePowerup)
             return;
 
@@ -786,7 +792,7 @@ class LevelScene extends Phaser.Scene {
             scaleY: 0.2,
             duration: 500,
             onComplete: () => {
-                this.runActivatePowerup(powerup.texture);
+                this.runActivatePowerup(powerup.texture.key);
                 this.destroySprite(powerup);
             },
         });

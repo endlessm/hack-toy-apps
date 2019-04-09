@@ -128,7 +128,7 @@ class ActivatePowerupScope extends UserScope {
         };
 
         this._blowUpEnemies = false;
-        this.powerUpType = 0;
+        this.powerUpType = null;
     }
 
     update(data) {

@@ -7,7 +7,7 @@
 
 /* exported enemyTypes, shipTypes, globalParameters, defaultParameters,
     defaultLevelParameters, levelParameters, resetGlobalUserCode,
-    powerupTypes */
+    powerupTypes, upgradeTypes,resetGlobalCounters */
 
 /* Global constants */
 var shipTypes = [
@@ -29,11 +29,16 @@ var powerupTypes = [
     'upgrade',
 ];
 
+var upgradeTypes = [
+    'shrink',
+    'attraction',
+];
 
 /* Freeze constants */
 Object.freeze(shipTypes);
 Object.freeze(enemyTypes);
 Object.freeze(powerupTypes);
+Object.freeze(upgradeTypes);
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -78,7 +83,7 @@ function resetGlobalUserCode() {
         enemy.position.y = enemy.position.y - 5;
     }`;
 
-    globalParameters.activatePowerupCode = '';
+    globalParameters.activatePowerupCode = ``;
 }
 
 /* We need counters and min/max Y coordinate reached for each enemy type,
@@ -86,15 +91,29 @@ function resetGlobalUserCode() {
  * We also define an update function for each enemy type except for ones which
  * were already defined above.
  *
- * FIXME: can we add support for arrays in clippy!
+ * FIXME: we need support for arrays and object recursion in clippy!
  */
-(function() {
+
+function resetGlobalCounters() {
     enemyTypes.forEach((name, i) => {
         globalParameters[`enemyType${i}SpawnedCount`] = 0;
         globalParameters[`enemyType${i}MinY`] = +1e9;
         globalParameters[`enemyType${i}MaxY`] = -1e9;
     });
 
+    powerupTypes.forEach(name => {
+        globalParameters[`${name}PowerupSpawnCount`] = 0;
+        globalParameters[`${name}PowerupPickedCount`] = 0;
+        globalParameters[`${name}PowerupActivateCount`] = 0;
+    });
+
+    upgradeTypes.forEach(name => {
+        globalParameters[`${name}UpgradeActivateCount`] = 0;
+    });
+}
+
+(function() {
+    resetGlobalCounters();
     resetGlobalUserCode();
 }());
 
@@ -138,7 +157,7 @@ var defaultParameters = {
     }
     return null;`,
 
-    spawnPowerupCode: '',
+    spawnPowerupCode: ``,
 };
 
 /* Per Level defaults:

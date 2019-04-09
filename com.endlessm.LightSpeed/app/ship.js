@@ -166,6 +166,8 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     }
 
     shrink(delay) {
+        globalParameters.shrinkUpgradeActivateCountt++;
+
         /* Reset old event */
         if (this._timers.shrink) {
             this._timers.shrink.elapsed = 0;
@@ -194,10 +196,13 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
                 easeParams: [1.4, 0.6],
             });
             this.disableUpgrade();
+            delete this._timers.shrink;
         }, null, this);
     }
 
     increaseAttraction(delay, scale) {
+        globalParameters.attractionUpgradeActivateCountt++;
+
         /* Reset old event */
         if (this._timers.attraction) {
             this._timers.attraction.elapsed = 0;
@@ -217,6 +222,8 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     }
 
     invulnerable(delay) {
+        globalParameters.invulnerablePowerupActivateCount++;
+
         /* Reset old event */
         if (this._timers.invulnerable) {
             this._timers.invulnerable.elapsed = 0;

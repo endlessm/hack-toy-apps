@@ -78,15 +78,15 @@ class LevelScene extends Phaser.Scene {
     preload() {
         /* Common assets */
         this.load.image('background', 'assets/background.jpg');
-        this.load.image('particle', 'assets/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
-        this.load.image('particle', 'assets/particle.png');
+        this.load.image('particle', 'assets/particles/particle.png');
+        this.load.image('star', 'assets/particles/star.png');
+        this.load.image('dot', 'assets/particles/dot.png');
+        this.load.image('blowup-particle', 'assets/particles/blowup.png');
         this.load.atlas('explosion-particles', 'assets/atlas/explosion-particles.png',
             'assets/atlas/explosion-particles.json');
         this.load.atlas('confetti-particles', 'assets/atlas/confetti-particles.png',
             'assets/atlas/confetti-particles.json');
-        this.load.atlas('stars-particles', 'assets/atlas/stars-particles.png',
-            'assets/atlas/stars-particles.json');
 
         /* Ship assets */
         for (const ship of shipTypes)
@@ -247,6 +247,18 @@ class LevelScene extends Phaser.Scene {
         });
         this.particles.explosion.stop();
         explosion.depth = 101;
+
+        /* Blowup Explosion */
+        var blowup = this.add.particles('blowup-particle');
+        this.particles.blowup = blowup.createEmitter({
+            speed: {min: -800, max: 800},
+            angle: {min: 0, max: 360},
+            scale: {start: 2, end: 0},
+            blendMode: 'SCREEN',
+            lifespan: 800,
+        });
+        this.particles.blowup.stop();
+        blowup.depth = 101;
 
         /* Confetti */
         var confetti = this.add.particles('confetti-particles');
@@ -611,9 +623,8 @@ class LevelScene extends Phaser.Scene {
             obj.setScale(0.25);
 
             if (retval === 'invulnerable') {
-                obj.particles = this.add.particles('stars-particles');
+                obj.particles = this.add.particles('star');
                 obj.emitter = obj.particles.createEmitter({
-                    frame: ['stars-p1', 'stars-p2', 'stars-p3', 'stars-p4', 'stars-p5'],
                     speed: 100,
                     angle: {min: 0, max: 360},
                     scale: {start: 1, end: 0},
@@ -691,7 +702,7 @@ class LevelScene extends Phaser.Scene {
         /* Make ship explode! */
         this.particles.explosion.explode(768, (this.ship.x + enemy.x) / 2,
             (this.ship.y + enemy.y) / 2);
-        this.ship.visible = false;
+        this.ship.destroy();
     }
 
     onShipAstronautOverlap(attractionZone, astronaut) {
@@ -739,7 +750,7 @@ class LevelScene extends Phaser.Scene {
             /* Iterate over enemies */
             const children = this.enemies[o].getChildren();
             for (const obj of children)
-                this.particles.explosion.explode(768, obj.x, obj.y);
+                this.particles.blowup.explode(768, obj.x, obj.y);
 
             this.enemies[o].clear(true, true);
         }

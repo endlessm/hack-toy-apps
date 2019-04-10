@@ -7,6 +7,9 @@
 
 /* exported Ship */
 
+const UPGRADE_COLOR = 0x6dff36;
+const INVULNERABLE_COLOR = 0xffea5f;
+
 class Ship extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, type, x, y) {
         super(scene, x, y);
@@ -29,13 +32,53 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         /* Glow */
         this.glow = scene.add.image(x, y, 'ship-glow');
         this.glow.visible = false;
-        this.glow.depth = 101;
+        this.glow.depth = 99;
 
         /* Attraction zone */
         this.attractionZone = scene.add.zone(x, y);
         scene.physics.world.enable(this.attractionZone);
 
+        /* Particles */
+        this.particles = {};
+        var particleShape = new Phaser.Geom.Circle(0, 0, 200);
+
+        /* Stars */
+        this.particles.stars = scene.add.particles('star');
+        this.particles.stars.emitter = this.particles.stars.createEmitter({
+            emitZone: { type: 'random', source: particleShape },
+            scale: { start: 0.8, end: 0.2 },
+            alpha: { start: 1, end: 0 },
+            lifespan: 800,
+        }).startFollow(this);
+        this.particles.stars.emitter.stop();
+
+        /* Dots */
+        this.particles.dots = scene.add.particles('dot');
+        this.particles.dots.emitter = this.particles.dots.createEmitter({
+            emitZone: { type: 'random', source: particleShape },
+            scale: { start: 0.8, end: 0.2 },
+            alpha: { start: 1, end: 0 },
+            lifespan: 800   ,
+        }).startFollow(this);
+        this.particles.dots.emitter.stop();
+
+        /* Finaly set ship type */
         this.setType(type);
+
+        /* Cleanup on destroy event */
+        this.on('destroy', () => {
+            Object.keys(this.particles).forEach(prop => {
+                this.particles[prop].emitter.stop();
+                this.particles[prop].destroy();
+            });
+
+            Object.keys(this._timers).forEach(prop => {
+                this._timers[prop].destroy();
+            });
+
+            this.attractionZone.destroy();
+            this.glow.destroy();
+        }, this);
     }
 
     preUpdate() {
@@ -159,12 +202,14 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
 
     enableUpgrade(color) {
         this.enableGlow(color);
+        this.particles.dots.emitter.start();
         Sounds.play('lightspeed/powerup/upgrade');
         Sounds.playLoop('lightspeed/bg/powerup/upgrade');
     }
 
     disableUpgrade() {
         this.disableGlow();
+        this.particles.dots.emitter.stop();
         Sounds.stop('lightspeed/bg/powerup/upgrade');
     }
 
@@ -185,7 +230,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             ease: 'Elastic',
             easeParams: [1.4, 0.6],
         });
-        this.enableUpgrade(0x6dff36);
+        this.enableUpgrade(UPGRADE_COLOR);
 
         /* Restore ship size */
         this._timers.shrink = this.scene.time.delayedCall(delay, () => {
@@ -214,7 +259,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
 
         const shipScale = this.scene.params.shipSize / 100;
         this.attractionZone.setScale(shipScale * scale);
-        this.enableUpgrade(0x6dff36);
+        this.enableUpgrade(UPGRADE_COLOR);
 
         /* Restore ship attraction size */
         this._timers.attraction = this.scene.time.delayedCall(delay, () => {
@@ -234,7 +279,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.engineBoost = boost;
-        this.enableUpgrade(0x6dff36);
+        this.enableUpgrade(UPGRADE_COLOR);
 
         /* Restore engine boost */
         this._timers.engine = this.scene.time.delayedCall(delay, () => {
@@ -257,10 +302,12 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         Sounds.playLoop('lightspeed/bg/powerup/invulnerable');
 
         this.isInvulnerable = true;
-        this.enableGlow(0xffea5f);
+        this.enableGlow(INVULNERABLE_COLOR);
+        this.particles.stars.emitter.start();
 
         this._timers.invulnerable = this.scene.time.delayedCall(delay, () => {
             this.isInvulnerable = false;
+            this.particles.stars.emitter.stop();
             this.disableGlow();
             Sounds.stop('lightspeed/bg/powerup/invulnerable');
             delete this._timers.invulnerable;

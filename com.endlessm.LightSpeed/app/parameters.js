@@ -262,7 +262,7 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > random(60, 240))
-        return null;`,
+        return 'invulnerable';`,
     },
 
     /* Level 13 */

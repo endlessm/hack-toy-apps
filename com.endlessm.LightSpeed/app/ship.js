@@ -166,7 +166,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     }
 
     shrink(delay) {
-        globalParameters.shrinkUpgradeActivateCountt++;
+        globalParameters.shrinkUpgradeActivateCount++;
 
         /* Reset old event */
         if (this._timers.shrink) {
@@ -201,7 +201,7 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     }
 
     increaseAttraction(delay, scale) {
-        globalParameters.attractionUpgradeActivateCountt++;
+        globalParameters.attractionUpgradeActivateCount++;
 
         /* Reset old event */
         if (this._timers.attraction) {

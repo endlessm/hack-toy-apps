@@ -11,6 +11,9 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, type, x, y) {
         super(scene, x, y);
 
+        /* Engine upgrade multiplier */
+        this.engineBoost = 1;
+
         /* Timer events  */
         this._timers = {};
 
@@ -71,13 +74,13 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
 
             if (this.body.velocity.y > 0)
                 this.setVelocityY(0);
-            this.setAccelerationY(-accel);
+            this.setAccelerationY(-accel * this.engineBoost);
         } else if (this.cursors.down.isDown) {
             this.playThrust(1);
 
             if (this.body.velocity.y < 0)
                 this.setVelocityY(0);
-            this.setAccelerationY(accel);
+            this.setAccelerationY(accel * this.engineBoost);
         } else {
             this.playThrust(0);
 
@@ -218,6 +221,26 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
             this.attractionZone.setScale(shipScale);
             this.disableUpgrade();
             delete this._timers.attraction;
+        }, null, this);
+    }
+
+    engineUpgrade(delay, boost) {
+        globalParameters.engineUpgradeActivateCount++;
+
+        /* Reset old event */
+        if (this._timers.engine) {
+            this._timers.engine.elapsed = 0;
+            return;
+        }
+
+        this.engineBoost = boost;
+        this.enableUpgrade(0x6dff36);
+
+        /* Restore engine boost */
+        this._timers.engine = this.scene.time.delayedCall(delay, () => {
+            this.engineBoost = 1;
+            this.disableUpgrade();
+            delete this._timers.engine;
         }, null, this);
     }
 

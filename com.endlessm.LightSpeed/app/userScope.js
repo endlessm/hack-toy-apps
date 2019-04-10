@@ -125,6 +125,7 @@ class ActivatePowerupScope extends UserScope {
             invulnerableTimer: 0,
             shrinkTimer: 0,
             attractTimer: 0,
+            engineTimer: 0,
         };
 
         this._blowUpEnemies = false;

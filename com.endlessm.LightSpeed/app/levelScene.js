@@ -5,7 +5,7 @@
  * Author: Juan Pablo Ugarte <ugarte@endlessm.com>
  */
 
-/* exported LevelScene, CONFETTI_COLORS */
+/* exported LevelScene, CONFETTI_COLORS, ASTRONAUT_PARTICLE_COLORS */
 /* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
     SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
     ActivatePowerupScope, resetGlobalCounters */
@@ -18,6 +18,12 @@ const CONFETTI_COLORS = [
     0xfde82a,
     0x00ffee,
     0xff0099,
+];
+
+const ASTRONAUT_PARTICLE_COLORS = [
+    0x7cd7f7,
+    0x67ccf1,
+    0x00aeef,
 ];
 
 function getUserFunction(code) {
@@ -598,7 +604,7 @@ class LevelScene extends Phaser.Scene {
                 scale: {start: 0.6, end: 0},
                 blendMode: 'ADD',
                 lifespan: 1000,
-                tint: CONFETTI_COLORS,
+                tint: ASTRONAUT_PARTICLE_COLORS,
             }).startFollow(obj);
         }
     }

@@ -44,6 +44,12 @@ var globalParameters =
     createToolActive: false,
     deleteToolActive: false,
 
+    // Flags to force disabling a tool. Do not expose in the toolbox!
+    flingToolDisabled : false,
+    moveToolDisabled  : false,
+    createToolDisabled: false,
+    deleteToolDisabled: false,
+
     // Communication with Clubhouse
     preset          : 0,
     quest0Success   : false,
@@ -1247,7 +1253,15 @@ function HackyBalls()
         else if ( r == 2 ) { Sounds.play( soundNamePrefix + "c" ); }
     }
 
+    this._resetToolStatus = function () {
+        globalParameters.moveToolActive = false;
+        globalParameters.createToolActive = false;
+        globalParameters.deleteToolActive = false;
+        globalParameters.flingToolActive = true;
 
+        _currentTool = (globalParameters.flingToolDisabled) ? -1 : TOOL_FLING;
+        _tools.select(_currentTool);
+    }
 
     //------------------------------------
     this.setGameLevel = function( level )
@@ -1273,12 +1287,7 @@ function HackyBalls()
         _flinger.cancel(); 
         _grabbedBall = NULL_BALL;
 
-        globalParameters.moveToolActive = false;
-        globalParameters.createToolActive = false;
-        globalParameters.deleteToolActive = false;
-        globalParameters.flingToolActive = true;
-        _tools.select(TOOL_FLING);
-        _currentTool = TOOL_FLING;
+        this._resetToolStatus();
 
         _levelLoading = false;
 
@@ -1509,12 +1518,7 @@ function HackyBalls()
         else
         {
             console.log("Game mode");
-            globalParameters.moveToolActive = false;
-            globalParameters.createToolActive = false;
-            globalParameters.deleteToolActive = false;
-            globalParameters.flingToolActive = true;
-            _tools.select(TOOL_FLING);
-            _currentTool = TOOL_FLING;
+            this._resetToolStatus();
 
             for (var i=0; i<_numBalls; i++)
             {

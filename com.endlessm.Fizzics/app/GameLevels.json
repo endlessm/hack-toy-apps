@@ -945,7 +945,9 @@
     {
       "ID": 10,
       "preset": {
-        "radius_3": 50
+        "radius_3": 50,
+        "disableToolsOnlyInFurthestLevel": true,
+        "createToolDisabled": true
       },
       "balls": [
         {
@@ -1543,7 +1545,11 @@
       "preset": {
         "gravity_0": 20,
         "gravity_2": 20,
-        "usePhysics_2": true
+        "usePhysics_2": true,
+        "disableToolsOnlyInFurthestLevel": true,
+        "moveToolDisabled": true,
+        "createToolDisabled": false,
+        "deleteToolDisabled": true
       },
       "balls": [
         {
@@ -1676,7 +1682,13 @@
     },
     {
       "ID": 12,
-      "preset": {},
+      "preset": {
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "createToolDisabled": true,
+        "deleteToolDisabled": true
+       },
       "balls": [
         {
           "ID": 0,
@@ -1790,7 +1802,12 @@
     },
     {
       "ID": 13,
-      "preset": {},
+      "preset": {
+        "disableToolsOnlyInFurthestLevel": true,
+        "moveToolDisabled": true,
+        "createToolDisabled": true,
+        "deleteToolDisabled": true
+      },
       "balls": [
         {
           "ID": 0,
@@ -1917,7 +1934,12 @@
     {
       "ID": 14,
       "preset": {
-        "radius_3": 20
+        "radius_3": 20,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "createToolDisabled": true,
+        "deleteToolDisabled": true
       },
       "balls": [
         {

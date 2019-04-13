@@ -86,6 +86,7 @@ class TitleScene extends Phaser.Scene {
             scale: {start: 1, end: 0},
             blendMode: 'ADD',
             lifespan: 3000,
+            tint: ASTRONAUT_PARTICLE_COLORS,
         });
         emitter.startFollow(this.astronaut);
 

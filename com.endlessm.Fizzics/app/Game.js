@@ -455,10 +455,27 @@ function Game()
     {                
         const levelParameters = {};
         const {preset} = this.getLevelInfo(levelID);
+
+        // Enable tool disabling flags if disableToolsOnlyInFurthestLevel is
+        // true and we are in the furthest level!
+        if (levelID < localStorage.furthestLevel &&
+            preset.disableToolsOnlyInFurthestLevel) {
+            delete preset.flingToolDisabled;
+            delete preset.moveToolDisabled;
+            delete preset.createToolDisabled;
+            delete preset.deleteToolDisabled;
+        }
+
         if (levelID < QUEST0)
             Object.assign(levelParameters, this.defaultMainLevelParameters, preset);
         else
             Object.assign(levelParameters, this.defaultLevelParameters, preset);
+
+        /* Reset to default */
+        globalParameters.flingToolDisabled = false;
+        globalParameters.moveToolDisabled  = false;
+        globalParameters.createToolDisabled= false;
+        globalParameters.deleteToolDisabled= false;
 
         Object.assign(globalParameters, levelParameters);
     }

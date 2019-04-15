@@ -22,6 +22,7 @@ function Tools()
         this.image     = new Image();
         this.imageSelected = new Image();
         this.imagePath = "";
+        this.disabled  = false;
         this.selected  = false;
     }
 
@@ -112,7 +113,8 @@ function Tools()
             this.buttons[i].selected = false;
         
         // Select button
-        this.buttons[t].selected = true;
+        if (t >= 0 && t < NUM_TOOLS)
+            this.buttons[t].selected = true;
         
         this.buttons[ TOOL_SPECIES ].visible = ( t == TOOL_SPECIES ) ? true : ( t == TOOL_CREATE );
     }
@@ -130,7 +132,7 @@ function Tools()
             &&  ( y > this.buttons[t].position.y )
             &&  ( y < this.buttons[t].position.y + this.buttons[t].height ))
             {
-                if ( this.buttons[t].visible )
+                if ( this.buttons[t].visible && !this.buttons[t].disabled)
                 {
                     selectedTool = t;
                     this.select(t);
@@ -156,6 +158,11 @@ function Tools()
         this.buttons[ TOOL_CREATE   ].visible = globalParameters.createToolActive;
         this.buttons[ TOOL_DELETE   ].visible = globalParameters.deleteToolActive;
 
+        this.buttons[ TOOL_MOVE     ].disabled = globalParameters.moveToolDisabled;
+        this.buttons[ TOOL_FLING    ].disabled = globalParameters.flingToolDisabled;
+        this.buttons[ TOOL_CREATE   ].disabled = globalParameters.createToolDisabled;
+        this.buttons[ TOOL_DELETE   ].disabled = globalParameters.deleteToolDisabled;
+
         for (var i=0; i<this.numSpecies; i++)
             this.speciesImages[i].src = `images/ball-${globalParameters['imageIndex_'+i]}.png`;
     }
@@ -172,14 +179,14 @@ function Tools()
         for (var i = 0; i < NUM_TOOLS; i++)
         {
             const button = this.buttons[i];
-            if ( button.visible &&
+            if ( button.visible && !button.disabled &&
                  x > button.position.x && x < button.position.x + button.width &&
                  y > button.position.y && y < button.position.y + button.height)
                 return true;
         }
         return false;
     }
-    
+
     //--------------------------
     this.render = function()
     {            
@@ -191,6 +198,11 @@ function Tools()
 
             if ( b.visible )
             {
+                if (b.disabled) {
+                    canvas.globalCompositeOperation = 'multiply';
+                    canvas.globalAlpha = 0.5;
+                }
+
                 canvas.drawImageCached
                 (
                     b.selected ? b.imageSelected || b.image : b.image,
@@ -199,6 +211,11 @@ function Tools()
                     b.width,
                     b.height
                 );
+
+                if (b.disabled) {
+                    canvas.globalCompositeOperation = 'source-over';
+                    canvas.globalAlpha = 1;
+                }
 
                 if ( t == TOOL_SPECIES )
                 {

@@ -84,7 +84,10 @@ function resetGlobalUserCode() {
         enemy.position.y = enemy.position.y - 5;
     }`;
 
-    globalParameters.activatePowerupCode = ``;
+    globalParameters.activatePowerupCode = `\
+    if (powerUpType === 'invulnerable') {
+
+    }`;
 }
 
 /* We need counters and min/max Y coordinate reached for each enemy type,

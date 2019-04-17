@@ -296,9 +296,7 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        var r = random(1,1);
-        if (r == 1)
-            return 'asteroid';
+        return 'asteroid';
     }`,
     },
 ];

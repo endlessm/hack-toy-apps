@@ -85,7 +85,7 @@ function resetGlobalUserCode() {
     }`;
 
     globalParameters.activatePowerupCode = `\
-    if (powerUpType === 'invulnerable') {
+    if (powerUpType == 'invulnerable') {
 
     }`;
 }

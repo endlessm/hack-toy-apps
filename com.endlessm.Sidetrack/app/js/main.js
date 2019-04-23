@@ -18,7 +18,7 @@ const fontConfig = {
 
 // our game's configuration
 var config = {
-    title: 'Riley Maze',
+    title: 'Sidetrack',
     type: Phaser.AUTO,
     width: 1920,
     height: 1040,

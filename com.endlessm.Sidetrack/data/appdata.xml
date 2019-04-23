@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>com.endlessm.Sidetrack.desktop</id>
+  <metadata_license>CC0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <categories>
+    <category>Game</category>
+  </categories>
+  <name>Sidetrack</name>
+  <summary>Learn to design your own game</summary>
+
+  <description><p>Sidetrack lets you design the rules and elements of the game. Every feature of the game is flexible! You can change the game attributes such as background, ball size, gravity, and bounce. You can even change the sound and visual effects! It’s the first step in learning to create your own game.</p></description>
+
+  <screenshots>
+    <screenshot>
+      <image type="source">https://d3lapyynmdp1i9.cloudfront.net/screenshots/com.endlessm.Sidetrack/C/com.endlessm.Sidetrack-screenshot1.png</image>
+    </screenshot>
+  </screenshots>
+
+  <metadata>
+    <value key="GnomeSoftware::popular-background">https://d3lapyynmdp1i9.cloudfront.net/thumbnails/com.endlessm.Sidetrack/com.endlessm.Sidetrack-thumb.png</value>
+  </metadata>
+
+  <url type="homepage">http://www.endlessm.com</url>
+
+  <releases>
+    <release date="2018-10-16" version="0.0.0"/>
+  </releases>
+
+  <content_rating type="oars-1.1">
+  </content_rating>
+
+  <update_contact>code@endlessm.com</update_contact>
+</component>

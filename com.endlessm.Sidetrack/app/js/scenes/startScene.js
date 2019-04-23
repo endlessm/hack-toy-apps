@@ -20,7 +20,7 @@ class StartScene extends Phaser.Scene {
         // welcome text
         const gameW = this.sys.game.config.width;
         const gameH = this.sys.game.config.height;
-        const text = this.add.text(gameW / 2, gameH / 2 - 350, 'Riley Maze', {
+        const text = this.add.text(gameW / 2, gameH / 2 - 350, 'Sidetrack', {
             font: '80px Arial',
             fill: '#ffffff',
         });

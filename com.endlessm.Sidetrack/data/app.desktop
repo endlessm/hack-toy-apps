@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Sidetrack
+Type=Application
+Exec=com.endlessm.Sidetrack
+StartupNotify=true
+Icon=com.endlessm.Sidetrack
+Categories=Game;
+X-Endless-LaunchMaximized=true
+X-Endless-SplashBackground=com.endlessm.Sidetrack.jpg
+X-Endless-HackShader=Sidetrack

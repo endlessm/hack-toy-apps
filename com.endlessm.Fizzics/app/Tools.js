@@ -196,38 +196,38 @@ function Tools()
         {
             var b = this.buttons[t];
 
-            if ( b.visible )
+            if ( t == TOOL_SPECIES && !b.visible)
+                continue;
+
+            if (!b.visible || b.disabled) {
+                canvas.globalCompositeOperation = 'multiply';
+                canvas.globalAlpha = 0.5;
+            }
+
+            canvas.drawImageCached
+            (
+                b.selected ? b.imageSelected || b.image : b.image,
+                b.position.x,
+                b.position.y,
+                b.width,
+                b.height
+            );
+
+            if (!b.visible || b.disabled) {
+                canvas.globalCompositeOperation = 'source-over';
+                canvas.globalAlpha = 1;
+            }
+
+            if ( t == TOOL_SPECIES )
             {
-                if (b.disabled) {
-                    canvas.globalCompositeOperation = 'multiply';
-                    canvas.globalAlpha = 0.5;
-                }
-
-                canvas.drawImageCached
-                (
-                    b.selected ? b.imageSelected || b.image : b.image,
-                    b.position.x,
-                    b.position.y,
-                    b.width,
-                    b.height
-                );
-
-                if (b.disabled) {
-                    canvas.globalCompositeOperation = 'source-over';
-                    canvas.globalAlpha = 1;
-                }
-
-                if ( t == TOOL_SPECIES )
+                for (var s=0; s<this.numSpecies; s++)
                 {
-                    for (var s=0; s<this.numSpecies; s++)
-                    {
-                        var x = b.position.x + speciesImageMargin;
-                        var y = b.position.y + speciesImageMargin;
-                        
-                        canvas.drawImageCached( this.speciesImages[s],   x, y + speciesImageRadius * s,                    speciesImageRadius, speciesImageRadius );
-                        canvas.drawImageCached( this.speciesSelectImage, x, y + speciesImageRadius * this.selectedSpecies, speciesImageRadius, speciesImageRadius );
-                    }
-                }                
+                    var x = b.position.x + speciesImageMargin;
+                    var y = b.position.y + speciesImageMargin;
+
+                    canvas.drawImageCached( this.speciesImages[s],   x, y + speciesImageRadius * s,                    speciesImageRadius, speciesImageRadius );
+                    canvas.drawImageCached( this.speciesSelectImage, x, y + speciesImageRadius * this.selectedSpecies, speciesImageRadius, speciesImageRadius );
+                }
             }
         }      
     }              

@@ -1,5 +1,5 @@
 /* exported globalParameters, levelParameters,
-EMPTY, WALL, PIT, NONE, riley */
+EMPTY, WALL, PIT, NONE, ROBOTDOWN, ROBOTUP, riley */
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -11,6 +11,8 @@ EMPTY, WALL, PIT, NONE, riley */
 const EMPTY = 0;
 const WALL = 1;
 const PIT = 2;
+const ROBOTDOWN = 3;
+const ROBOTUP = 4;
 
 // game types
 const DEFAULTGAME = 0;
@@ -48,7 +50,7 @@ class riley {
 var globalParameters = {
     /* Number of available levels */
     // TODO: Where is this value being set? In Lightspeed, it's set to 0.
-    availableLevels: 14,
+    availableLevels: 24,
 
     /* Current Level: read only property, 0 for title screen */
     currentLevel: 0,
@@ -84,8 +86,6 @@ var defaultParameters = {
     playerYLocation: 0,
 
     gameType: DEFAULTGAME,
-    isDraggable: false,
-
     instructionCode: '',
 };
 
@@ -96,42 +96,83 @@ var defaultLevelParameters = [
     /* Title screen - Level 0 */
     {
     },
-
-    /* Level 1 */
     {
         level: 1,
         playerYLocation: 2,
         goalYLocation: 1,
     },
 
-    /* Level 2 */
     {
         level: 2,
         playerYLocation: 2,
         goalYLocation: 0,
     },
 
-    /* Level 3 */
     {
         level: 3,
         playerYLocation: 2,
     },
-    /* Level 4 */
     {
         level: 4,
         playerYLocation: 2,
+        goalYLocation: 3,
     },
-
-    /* Level 5 */
     {
         level: 5,
+        playerYLocation: 2,
+    },
+    {
+        level: 6,
         playerYLocation: 3,
         goalYLocation: 0,
     },
-
-    /* Level 6 */
     {
-        level: 6,
+        level: 7,
+        playerYLocation: 3,
+    },
+    {
+        level: 8,
+        playerYLocation: 3,
+    },
+    {
+        level: 9,
+        playerYLocation: 2,
+    },
+    {
+        level: 10,
+        playerYLocation: 2,
+    },
+    {
+        level: 11,
+        playerYLocation: 0,
+        goalYLocation: 4,
+    },
+    {
+        level: 12,
+        playerYLocation: 3,
+        goalYLocation: 1,
+    },
+    {
+        level: 13,
+        playerYLocation: 2,
+        goalYLocation: 1,
+    },
+    {
+        level: 14,
+        playerYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();`,
+    },
+    {
+        level: 15,
         goalYLocation: 4,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
@@ -145,13 +186,24 @@ var defaultLevelParameters = [
     riley.forward();
     riley.forward();`,
     },
-
-    /* Level 7 */
     {
-        level: 7,
+        level: 16,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.down();
+    riley.up();
+    riley.forward();
+    riley.forward();
+    riley.jump();`,
+    },
+    {
+        level: 17,
+        playerYLocation: 2,
+        gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.up();
     riley.up();
@@ -162,14 +214,11 @@ var defaultLevelParameters = [
     riley.up();
     riley.down();`,
     },
-
-    /* Level 8 */
     {
-        level: 8,
+        level: 18,
         goalYLocation: 3,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.forward();
     riley.up();
@@ -180,14 +229,11 @@ var defaultLevelParameters = [
     riley.jump();
     riley.down();`,
     },
-
-    /* Level 9 */
     {
-        level: 9,
+        level: 19,
         goalYLocation: 3,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.jump();
     riley.up();
@@ -198,13 +244,10 @@ var defaultLevelParameters = [
     riley.down();
     riley.forward();`,
     },
-
-    /* Level 10 */
     {
-        level: 10,
+        level: 20,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.down();
     riley.up();
@@ -215,13 +258,10 @@ var defaultLevelParameters = [
     riley.jump();
     riley.forward();`,
     },
-
-    /* Level 11 */
     {
-        level: 11,
+        level: 21,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.jump();
     riley.jump();
@@ -232,13 +272,10 @@ var defaultLevelParameters = [
     riley.down();
     riley.down();`,
     },
-
-    /* Level 12 */
     {
-        level: 12,
+        level: 22,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.forward();
     riley.down();
@@ -249,13 +286,10 @@ var defaultLevelParameters = [
     riley.up();
     riley.forward();`,
     },
-
-    /* Level 13 */
     {
-        level: 13,
+        level: 23,
         playerYLocation: 2,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.up();
     riley.up();
@@ -266,14 +300,11 @@ var defaultLevelParameters = [
     riley.down();
     riley.down();`,
     },
-
-    /* Level 14 */
     {
-        level: 14,
-        playerYLocation: 2,
+        level: 24,
+        playerYLocation: 3,
         goalYLocation: 0,
         gameType: PLAYTHRUGAME,
-        isDraggable: true,
         instructionCode: `\
     riley.forward();
     riley.jump();

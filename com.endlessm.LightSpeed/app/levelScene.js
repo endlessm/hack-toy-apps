@@ -26,6 +26,8 @@ const ASTRONAUT_PARTICLE_COLORS = [
     0x00aeef,
 ];
 
+const LEFT_BOUNDARY = -512;
+
 function getUserFunction(code) {
     if (!code)
         return null;
@@ -201,8 +203,7 @@ class LevelScene extends Phaser.Scene {
 
         this.checkAstronautPosition();
         this.checkAsteroidPosition();
-
-        this.updateQuestData();
+        this.checkPowerUpPosition();
     }
 
     onFlip() {
@@ -369,20 +370,6 @@ class LevelScene extends Phaser.Scene {
         }
     }
 
-    updateQuestData() {
-        enemyTypes.forEach((type, ix) => {
-            const obj = this.firstObjectOfType[ix];
-            if (obj) {
-                const {y} = this.userSpace.transformPoint(0, obj.y);
-
-                globalParameters[`enemyType${ix}MinY`] =
-                    Math.min(y, globalParameters[`enemyType${ix}MinY`]);
-                globalParameters[`enemyType${ix}MaxY`] =
-                    Math.max(y, globalParameters[`enemyType${ix}MaxY`]);
-            }
-        });
-    }
-
     createEnemy(type, position, scale) {
         /* Create enemy object */
         var obj = this.physics.add.sprite(position.x, position.y, type);
@@ -475,6 +462,11 @@ class LevelScene extends Phaser.Scene {
                 Sounds.play('lightspeed/astronaut-missed');
                 astronaut._missed = true;
             }
+
+            /* Destroy astronauts that are lost to prevent slowdown */
+            if (astronaut.x + astronaut.displayWidth < LEFT_BOUNDARY) {
+                this.destroySprite(astronaut);
+            }
         }
     }
 
@@ -489,6 +481,17 @@ class LevelScene extends Phaser.Scene {
             if (!asteroid._passed && x > asteroid.x + asteroid.displayWidth / 2) {
                 Sounds.play('lightspeed/asteroid-passing');
                 asteroid._passed = true;
+            }
+        }
+    }
+
+    checkPowerUpPosition() {
+        const children = this.powerups.getChildren();
+
+        for (const powerup of children) {
+            /* Destroy powerup that are lost to prevent slowdown */
+            if (powerup.x + powerup.displayWidth < LEFT_BOUNDARY) {
+                this.destroySprite(powerup);
             }
         }
     }
@@ -549,8 +552,12 @@ class LevelScene extends Phaser.Scene {
             var obj = this.createEnemy(type, pos, scale);
 
             /* Increment global counter */
-            if (this.firstObjectOfType[enemyTypeIndex] === null)
+            if (this.firstObjectOfType[enemyTypeIndex] === null) {
                 this.firstObjectOfType[enemyTypeIndex] = obj;
+                obj.enemyTypeIndex = enemyTypeIndex;
+                obj.isFirstOne = true;
+            }
+
             globalParameters[`enemyType${enemyTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */
@@ -692,8 +699,31 @@ class LevelScene extends Phaser.Scene {
 
             /* Iterate over enemies */
             const children = this.enemies[o].getChildren();
-            for (const obj of children)
+            for (const obj of children) {
                 this.callUpdateEnemy(updateEnemy, scope, obj);
+
+                if (obj.isFirstOne) {
+                    const index = obj.enemyTypeIndex;
+                    const y = obj.y;
+
+                    /* Update enemy type min/max globals */
+                    globalParameters[`enemyType${index}MinY`] =
+                        Math.min(y, globalParameters[`enemyType${index}MinY`]);
+                    globalParameters[`enemyType${index}MaxY`] =
+                        Math.max(y, globalParameters[`enemyType${index}MaxY`]);
+
+                    /* Destroy particles if object it out of screen */
+                    if (obj.emitter && obj.x + obj.displayWidth < 0) {
+                        obj.emitter.stop();
+                        obj.particles.destroy();
+                        delete obj.emitter;
+                        delete obj.particles;
+                    }
+                } else if (obj.x + obj.displayWidth < 0) {
+                    /* Destroy enemies that left the screen! */
+                    this.destroySprite(obj);
+                }
+            }
         }
     }
 

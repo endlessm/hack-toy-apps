@@ -1,7 +1,7 @@
 /* exported GameScene */
 
 /* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD,
-PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTDOWN, ROBOTUP */
+PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
 
 function getUserFunction(code) {
     if (!code)
@@ -168,27 +168,18 @@ class GameScene extends Phaser.Scene {
             this.playButton = this.add.sprite(x, y,
                 'playButton', 0).setInteractive({useHandCursor: true});
 
-            this.playButton.on('pointerover', function() {
-                this.playButton.setFrame(1);
-            }.bind(this));
 
-            this.playButton.on('pointerout', function() {
-                this.playButton.setFrame(0);
-            }.bind(this));
-
+            this.playButton.on('pointerover', () => this.playButton.setFrame(1));
+            this.playButton.on('pointerout', () => this.playButton.setFrame(0));
+            this.playButton.on('pointerup', () => this.playButton.setFrame(0));
             this.playButton.on('pointerdown', this.playButtonClick, this);
-
-            this.playButton.on('pointerup', function() {
-                this.playButton.setFrame(0);
-            }.bind(this));
 
             this.separator = this.add.sprite(x - this.tileLength, y,
                 'separator').setVisible(false);
 
-            // animation effect on level 14
-            // TODO - animation should only happen when user first hits level 14
+            // TODO: animation should only happen when FelixNet appears
             // if (this.params.level === 14) {
-            if (this.params.playLevel6Animation) {
+            if (this.params.felixNetAppearsAnimation) {
                 // hide the play button until animation is complete
                 this.playButton.setAlpha(0);
 
@@ -437,17 +428,17 @@ class GameScene extends Phaser.Scene {
             break;
         case 7:
             obstacles = [
-                new Obstacle(ROBOTDOWN, 2, 0),
-                new Obstacle(ROBOTDOWN, 4, 0),
-                new Obstacle(ROBOTDOWN, 6, 0),
+                new Obstacle(ROBOTA, 2, 0),
+                new Obstacle(ROBOTA, 4, 0),
+                new Obstacle(ROBOTA, 6, 0),
             ];
             break;
         case 8:
             obstacles = [
-                new Obstacle(ROBOTDOWN, 2, 0),
+                new Obstacle(ROBOTA, 2, 0),
                 new Obstacle(WALL, 3, 0),
-                new Obstacle(ROBOTDOWN, 4, 0),
-                new Obstacle(ROBOTDOWN, 6, 0),
+                new Obstacle(ROBOTA, 4, 0),
+                new Obstacle(ROBOTA, 6, 0),
                 new Obstacle(PIT, 5, 1),
                 new Obstacle(WALL, 0, 2),
                 new Obstacle(WALL, 3, 2),
@@ -461,48 +452,48 @@ class GameScene extends Phaser.Scene {
             obstacles = [
                 new Obstacle(WALL, 3, 0),
                 new Obstacle(WALL, 3, 1),
-                new Obstacle(ROBOTDOWN, 6, 1),
-                new Obstacle(ROBOTDOWN, 4, 2),
+                new Obstacle(ROBOTA, 6, 1),
+                new Obstacle(ROBOTA, 4, 2),
                 new Obstacle(WALL, 3, 3),
                 new Obstacle(WALL, 3, 4),
-                new Obstacle(ROBOTDOWN, 6, 4),
+                new Obstacle(ROBOTA, 6, 4),
             ];
             break;
         case 10:
             obstacles = [
-                new Obstacle(ROBOTUP, 6, 0),
-                new Obstacle(ROBOTDOWN, 3, 2),
-                new Obstacle(ROBOTDOWN, 3, 3),
-                new Obstacle(ROBOTUP, 1, 4),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(ROBOTA, 3, 2),
+                new Obstacle(ROBOTA, 3, 3),
+                new Obstacle(ROBOTB, 1, 4),
             ];
             break;
         case 11:
             obstacles = [
                 new Obstacle(WALL, 2, 0),
-                new Obstacle(ROBOTUP, 6, 0),
-                new Obstacle(ROBOTDOWN, 3, 2),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(ROBOTA, 3, 2),
                 new Obstacle(WALL, 4, 2),
-                new Obstacle(ROBOTDOWN, 3, 3),
+                new Obstacle(ROBOTA, 3, 3),
                 new Obstacle(PIT, 4, 3),
-                new Obstacle(ROBOTUP, 1, 4),
+                new Obstacle(ROBOTB, 1, 4),
                 new Obstacle(PIT, 4, 4),
             ];
             break;
         case 12:
             obstacles = [
-                new Obstacle(ROBOTDOWN, 2, 0),
-                new Obstacle(ROBOTUP, 5, 0),
-                new Obstacle(ROBOTDOWN, 2, 1),
-                new Obstacle(ROBOTUP, 5, 1),
-                new Obstacle(ROBOTDOWN, 2, 2),
-                new Obstacle(ROBOTUP, 5, 2),
-                new Obstacle(ROBOTUP, 5, 3),
-                new Obstacle(ROBOTDOWN, 2, 4),
+                new Obstacle(ROBOTA, 2, 0),
+                new Obstacle(ROBOTB, 5, 0),
+                new Obstacle(ROBOTA, 2, 1),
+                new Obstacle(ROBOTB, 5, 1),
+                new Obstacle(ROBOTA, 2, 2),
+                new Obstacle(ROBOTB, 5, 2),
+                new Obstacle(ROBOTB, 5, 3),
+                new Obstacle(ROBOTA, 2, 4),
             ];
             break;
         case 13:
             obstacles = [
-                new Obstacle(ROBOTUP, 2, 0),
+                new Obstacle(ROBOTB, 2, 0),
                 new Obstacle(PIT, 3, 0),
                 new Obstacle(PIT, 4, 0),
                 new Obstacle(PIT, 5, 0),
@@ -518,11 +509,11 @@ class GameScene extends Phaser.Scene {
                 new Obstacle(PIT, 3, 3),
                 new Obstacle(PIT, 4, 3),
                 new Obstacle(PIT, 5, 3),
-                new Obstacle(ROBOTDOWN, 6, 3),
+                new Obstacle(ROBOTA, 6, 3),
                 new Obstacle(PIT, 3, 4),
                 new Obstacle(PIT, 4, 4),
                 new Obstacle(PIT, 5, 4),
-                new Obstacle(ROBOTDOWN, 6, 4),
+                new Obstacle(ROBOTA, 6, 4),
             ];
             break;
         case 14:
@@ -696,7 +687,7 @@ class GameScene extends Phaser.Scene {
 
     placeRobots() {
         for (var i = 0; i < this.obstacles.length; i++) {
-            if (this.obstacles[i].type === ROBOTDOWN) {
+            if (this.obstacles[i].type === ROBOTA) {
                 if (this.obstacles[i].yPosition >= this.countY - 1)
                     this.obstacles[i].yPosition = 0;
                 else
@@ -705,7 +696,7 @@ class GameScene extends Phaser.Scene {
                     this.obstacles[i].yPosition * this.tileLength + this.yOffset;
             }
 
-            if (this.obstacles[i].type === ROBOTUP) {
+            if (this.obstacles[i].type === ROBOTB) {
                 if (this.obstacles[i].yPosition <= 0)
                     this.obstacles[i].yPosition = this.countY - 1;
                 else
@@ -826,14 +817,13 @@ class GameScene extends Phaser.Scene {
     }
 
     addDragInputs() {
-        this.input.on('dragstart', function(pointer, gameObject) {
-            gameObject.setTint(0xff0000);
-
+        this.input.on('dragstart', (pointer, gameObject) => {
             // so user can see the move they're dragging
             gameObject.setDepth(2);
+            gameObject.setTint(0xff0000);
         });
 
-        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
+        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
             gameObject.x = dragX;
             gameObject.y = dragY;
 
@@ -851,19 +841,13 @@ class GameScene extends Phaser.Scene {
                 this.separator.setVisible(true);
             else
                 this.separator.setVisible(false);
-        }.bind(this));
+        });
 
-        this.input.on('dragend', function(pointer, gameObject) {
+        this.input.on('dragend', (pointer, gameObject) => {
             gameObject.clearTint();
             gameObject.setDepth(1);
 
-            let index = 0;
-            for (let i = 0; i < this.arrSpriteMoves.length; i++) {
-                if (gameObject === this.arrSpriteMoves[i]) {
-                    index = i;
-                    break;
-                }
-            }
+            const index = this.arrSpriteMoves.indexOf(gameObject);
 
             if (this.separator.visible) {
                 this.arrSpriteMoves =
@@ -871,7 +855,7 @@ class GameScene extends Phaser.Scene {
                 this.separator.setVisible(false);
             }
 
-            var instructions = '';
+            var instructions = [];
 
             // Place the draggable move squares in correct spots
             let xMoveSquare = 0;
@@ -882,23 +866,20 @@ class GameScene extends Phaser.Scene {
                 this.arrSpriteMoves[i].y = yMoveSquare;
 
                 if (this.arrSpriteMoves[i].frame.name === FORWARD)
-                    instructions += 'riley.forward();\n';
+                    instructions.push('riley.forward();');
 
                 if (this.arrSpriteMoves[i].frame.name === UP)
-                    instructions += 'riley.up();\n';
+                    instructions.push('riley.up();');
 
                 if (this.arrSpriteMoves[i].frame.name === DOWN)
-                    instructions += 'riley.down();\n';
+                    instructions.push('riley.down();');
 
                 if (this.arrSpriteMoves[i].frame.name === JUMP)
-                    instructions += 'riley.jump();\n';
+                    instructions.push('riley.jump();');
             }
 
-            this.instructionCode = `\
-                ${instructions}`;
-
-            this.params.instructionCode = this.instructionCode;
-        }.bind(this));
+            this.params.instructionCode = instructions.join('\n ');
+        });
     }
 
     placeMoveSquares() {
@@ -1024,10 +1005,10 @@ class GameScene extends Phaser.Scene {
             if (this.obstacles[i].type === PIT)
                 sprite = this.add.sprite(x, y, 'pit');
 
-            if (this.obstacles[i].type === ROBOTDOWN)
+            if (this.obstacles[i].type === ROBOTA)
                 sprite = this.add.sprite(x, y, 'robots', 0);
 
-            if (this.obstacles[i].type === ROBOTUP)
+            if (this.obstacles[i].type === ROBOTB)
                 sprite = this.add.sprite(x, y, 'robots', 1);
 
             this.obstacles[i].sprite = sprite;

@@ -1,5 +1,5 @@
 /* exported globalParameters, levelParameters,
-EMPTY, WALL, PIT, NONE, ROBOTDOWN, ROBOTUP, riley */
+EMPTY, WALL, PIT, NONE, ROBOTA, ROBOTB, riley */
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -11,8 +11,8 @@ EMPTY, WALL, PIT, NONE, ROBOTDOWN, ROBOTUP, riley */
 const EMPTY = 0;
 const WALL = 1;
 const PIT = 2;
-const ROBOTDOWN = 3;
-const ROBOTUP = 4;
+const ROBOTA = 3;
+const ROBOTB = 4;
 
 // game types
 const DEFAULTGAME = 0;

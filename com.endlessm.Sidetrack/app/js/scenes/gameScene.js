@@ -1,7 +1,7 @@
 /* exported GameScene */
 
-/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD
-PLAYTHRUGAME, DEFAULTGAME, NONE */
+/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD,
+PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
 
 function getUserFunction(code) {
     if (!code)
@@ -22,11 +22,18 @@ function getUserFunction(code) {
     return retval;
 }
 
-class obstacle {
+class Obstacle {
     constructor(type, x, y) {
         this.type = type;
-        this.x = x;
-        this.y = y;
+        this.xPosition = x;
+        this.yPosition = y;
+        this.sprite = null;
+
+        // these are to determine which wall/pit image to use in spritesheet
+        this.sameLeftObstacle = false;
+        this.sameRightObstacle = false;
+        this.sameTopObstacle = false;
+        this.sameBottomObstacle = false;
     }
 }
 
@@ -48,12 +55,14 @@ class GameScene extends Phaser.Scene {
         this.playerYLocation = 0;
 
         // sprite tile placement
-        this.tileLength = 125;
+        this.tileLength = 128;
         this.xOffset = 450;
         this.yOffset = 180;
 
         this.tiles = [];
         this.tilesHash = {};
+
+        this.robots = [];
 
         // grid length and height
         this.countX = 9;
@@ -75,11 +84,9 @@ class GameScene extends Phaser.Scene {
 
         this.gameType = 0;
 
-        this.isDraggable = false;
-
         // we are not terminating
         this.isTerminating = false;
-        this.redBar = null;
+        this.separator = null;
 
         this.gameOverAnimation = 'game-over';
         this.levelCompleteAnimation = 'levelComplete';
@@ -103,9 +110,6 @@ class GameScene extends Phaser.Scene {
 
             if (this.params.gameType >= 0)
                 this.gameType = this.params.gameType;
-
-            if (this.params.isDraggable)
-                this.isDraggable = this.params.isDraggable;
         }
     }
 
@@ -136,7 +140,7 @@ class GameScene extends Phaser.Scene {
             this.player.anims.play('running');
 
         // we are reducing the width and height by 50%
-        this.player.setScale(0.5);
+        this.player.setScale(0.45);
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -162,15 +166,20 @@ class GameScene extends Phaser.Scene {
             this.controls.setVisible(false);
 
             this.playButton = this.add.sprite(x, y,
-                'playButton').setInteractive({useHandCursor: true})
-            .on('pointerdown', this.playButtonClick, this);
+                'playButton', 0).setInteractive({useHandCursor: true});
 
-            this.redBar = this.add.sprite(x - this.tileLength, y, 'redBar').setVisible(false);
 
-            // animation effect on level 6
-            // TODO - animation should only happen when user first hits level 6
-            // if (this.params.level === 6) {
-            if (this.params.playLevel6Animation) {
+            this.playButton.on('pointerover', () => this.playButton.setFrame(1));
+            this.playButton.on('pointerout', () => this.playButton.setFrame(0));
+            this.playButton.on('pointerup', () => this.playButton.setFrame(0));
+            this.playButton.on('pointerdown', this.playButtonClick, this);
+
+            this.separator = this.add.sprite(x - this.tileLength, y,
+                'separator').setVisible(false);
+
+            // TODO: animation should only happen when FelixNet appears
+            // if (this.params.level === 14) {
+            if (this.params.felixNetAppearsAnimation) {
                 // hide the play button until animation is complete
                 this.playButton.setAlpha(0);
 
@@ -232,8 +241,10 @@ class GameScene extends Phaser.Scene {
                 if (!isKeyboardPressOff)
                     this.handleMovements();
 
-                if (this.isMoving)
+                if (this.isMoving) {
+                    this.placeRobots();
                     this.placePlayer();
+                }
             }
         }
     }
@@ -268,239 +279,394 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    checkGameOver() {
-        const playerRect = this.player.getBounds();
-        // const goalRect = this.goal.getBounds();
+    checkGameOver(isPlayerJumping = false) {
+        // If player has reached final column
+        if (this.playerXLocation >= this.MAXMOVES) {
+            const playerRect = this.player.getBounds();
 
-        // get wrongExits
-        const wrongExits = this.wrongExits.getChildren();
+            // get wrongExits
+            const wrongExits = this.wrongExits.getChildren();
 
-        for (let i = 0; i < wrongExits.length; i++) {
-        // check wrong exit overlap
-            const wrongExitRect = wrongExits[i].getBounds();
+            for (let i = 0; i < wrongExits.length; i++) {
+            // check wrong exit overlap
+                const wrongExitRect = wrongExits[i].getBounds();
 
-            if (i !== this.goalYLocation &&
-            Phaser.Geom.Intersects.RectangleToRectangle(playerRect, wrongExitRect)) {
+                if (i !== this.goalYLocation &&
+                Phaser.Geom.Intersects.RectangleToRectangle(playerRect, wrongExitRect)) {
+                    this.gameLost();
+                    return;
+                }
+            }
+
+            // game won when Riley runs off screen
+            if (this.player.x > this.sys.game.config.width + 100)
+                this.gameWon();
+        } else {
+            const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
+
+            if (tmpObstacle) {
+                if (tmpObstacle.type === PIT && isPlayerJumping)
+                    return;
+
                 this.gameLost();
-                return;
             }
         }
-
-        // game won when Riley runs off screen
-        if (this.player.x > this.sys.game.config.width + 100)
-            this.gameWon();
     }
 
     playButtonClick() {
-        if (!this.isMoving)
+        if (!this.isMoving) {
             this.isMoving = true;
+            this.playButton.setFrame(2);
+        }
     }
 
-    getObstacles(level) {
+    getObstacle(x, y) {
+        let tmpObstacle = null;
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].xPosition === x &&
+                this.obstacles[i].yPosition === y) {
+                tmpObstacle = this.obstacles[i];
+                break;
+            }
+        }
+        return tmpObstacle;
+    }
+
+    // TODO: move obstacles to parameter.js
+    // eslint-disable-next-line complexity
+    setObstacles(level) {
         void this;
         let obstacles = [];
         switch (level) {
         case 1:
             obstacles = [
-                new obstacle(WALL, 4, 0),
-                new obstacle(WALL, 4, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 2, 1),
-                new obstacle(WALL, 3, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 3, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 6, 3),
-                new obstacle(WALL, 6, 4),
+                new Obstacle(WALL, 4, 0),
+                new Obstacle(WALL, 4, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 6, 3),
+                new Obstacle(WALL, 6, 4),
             ];
             break;
         case 2:
             obstacles = [
-                new obstacle(WALL, 4, 0),
-                new obstacle(WALL, 5, 0),
-                new obstacle(WALL, 2, 1),
-                new obstacle(WALL, 3, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 6, 1),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 3, 3),
-                new obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 4, 0),
+                new Obstacle(WALL, 5, 0),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 6, 1),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 4, 3),
             ];
             break;
         case 3:
             obstacles = [
-                new obstacle(WALL, 4, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 0, 2),
-                new obstacle(WALL, 1, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(WALL, 3, 3),
-                new obstacle(WALL, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 5, 3),
-                new obstacle(WALL, 2, 4),
-                new obstacle(WALL, 4, 4),
+                new Obstacle(WALL, 4, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 0, 2),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 2, 4),
+                new Obstacle(WALL, 4, 4),
             ];
             break;
         case 4:
             obstacles = [
-                new obstacle(PIT, 5, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 5, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(PIT, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 4, 3),
-                new obstacle(WALL, 5, 3),
-                new obstacle(PIT, 5, 4),
+                new Obstacle(WALL, 1, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 1, 3),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(PIT, 6, 3),
+                new Obstacle(WALL, 1, 4),
+                new Obstacle(PIT, 6, 4),
             ];
             break;
         case 5:
             obstacles = [
-                new obstacle(WALL, 1, 1),
-                new obstacle(PIT, 4, 1),
-                new obstacle(PIT, 6, 1),
-                new obstacle(WALL, 1, 2),
-                new obstacle(WALL, 2, 2),
-                new obstacle(PIT, 4, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(PIT, 2, 3),
-                new obstacle(WALL, 1, 4),
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 5, 4),
             ];
             break;
         case 6:
             obstacles = [
-                new obstacle(WALL, 3, 2),
-                new obstacle(WALL, 4, 2),
-                new obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(PIT, 4, 1),
+                new Obstacle(PIT, 6, 1),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(WALL, 2, 2),
+                new Obstacle(PIT, 4, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(PIT, 2, 3),
+                new Obstacle(WALL, 1, 4),
             ];
             break;
         case 7:
             obstacles = [
-                new obstacle(WALL, 4, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 0, 2),
-                new obstacle(WALL, 1, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(WALL, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 3, 3),
-                new obstacle(WALL, 5, 3),
-                new obstacle(WALL, 2, 4),
-                new obstacle(WALL, 4, 4),
+                new Obstacle(ROBOTA, 2, 0),
+                new Obstacle(ROBOTA, 4, 0),
+                new Obstacle(ROBOTA, 6, 0),
             ];
             break;
         case 8:
             obstacles = [
-                new obstacle(WALL, 1, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 2, 1),
-                new obstacle(WALL, 3, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 1, 3),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 3, 3),
-                new obstacle(PIT, 6, 3),
-                new obstacle(WALL, 1, 4),
-                new obstacle(PIT, 6, 4),
+                new Obstacle(ROBOTA, 2, 0),
+                new Obstacle(WALL, 3, 0),
+                new Obstacle(ROBOTA, 4, 0),
+                new Obstacle(ROBOTA, 6, 0),
+                new Obstacle(PIT, 5, 1),
+                new Obstacle(WALL, 0, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 0, 4),
+                new Obstacle(WALL, 3, 4),
+                new Obstacle(WALL, 5, 4),
             ];
             break;
         case 9:
             obstacles = [
-                new obstacle(WALL, 1, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 2, 1),
-                new obstacle(WALL, 3, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 1, 3),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 3, 3),
-                new obstacle(PIT, 6, 3),
-                new obstacle(WALL, 1, 4),
-                new obstacle(PIT, 6, 4),
+                new Obstacle(WALL, 3, 0),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(ROBOTA, 6, 1),
+                new Obstacle(ROBOTA, 4, 2),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 3, 4),
+                new Obstacle(ROBOTA, 6, 4),
             ];
             break;
         case 10:
             obstacles = [
-                new obstacle(PIT, 5, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 5, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(PIT, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 4, 3),
-                new obstacle(WALL, 5, 3),
-                new obstacle(PIT, 5, 4),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(ROBOTA, 3, 2),
+                new Obstacle(ROBOTA, 3, 3),
+                new Obstacle(ROBOTB, 1, 4),
             ];
             break;
         case 11:
             obstacles = [
-                new obstacle(PIT, 5, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 5, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(PIT, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 4, 3),
-                new obstacle(WALL, 5, 3),
-                new obstacle(PIT, 5, 4),
+                new Obstacle(WALL, 2, 0),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(ROBOTA, 3, 2),
+                new Obstacle(WALL, 4, 2),
+                new Obstacle(ROBOTA, 3, 3),
+                new Obstacle(PIT, 4, 3),
+                new Obstacle(ROBOTB, 1, 4),
+                new Obstacle(PIT, 4, 4),
             ];
             break;
         case 12:
             obstacles = [
-                new obstacle(PIT, 5, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 5, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(PIT, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 4, 3),
-                new obstacle(WALL, 5, 3),
-                new obstacle(PIT, 5, 4),
+                new Obstacle(ROBOTA, 2, 0),
+                new Obstacle(ROBOTB, 5, 0),
+                new Obstacle(ROBOTA, 2, 1),
+                new Obstacle(ROBOTB, 5, 1),
+                new Obstacle(ROBOTA, 2, 2),
+                new Obstacle(ROBOTB, 5, 2),
+                new Obstacle(ROBOTB, 5, 3),
+                new Obstacle(ROBOTA, 2, 4),
             ];
             break;
         case 13:
             obstacles = [
-                new obstacle(PIT, 5, 0),
-                new obstacle(WALL, 1, 1),
-                new obstacle(WALL, 4, 1),
-                new obstacle(WALL, 5, 1),
-                new obstacle(PIT, 2, 2),
-                new obstacle(WALL, 3, 2),
-                new obstacle(PIT, 5, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(WALL, 2, 3),
-                new obstacle(WALL, 4, 3),
-                new obstacle(WALL, 5, 3),
-                new obstacle(PIT, 5, 4),
+                new Obstacle(ROBOTB, 2, 0),
+                new Obstacle(PIT, 3, 0),
+                new Obstacle(PIT, 4, 0),
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(PIT, 0, 1),
+                new Obstacle(PIT, 1, 1),
+                new Obstacle(PIT, 0, 2),
+                new Obstacle(PIT, 1, 2),
+                new Obstacle(PIT, 3, 2),
+                new Obstacle(PIT, 4, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(PIT, 0, 3),
+                new Obstacle(PIT, 1, 3),
+                new Obstacle(PIT, 3, 3),
+                new Obstacle(PIT, 4, 3),
+                new Obstacle(PIT, 5, 3),
+                new Obstacle(ROBOTA, 6, 3),
+                new Obstacle(PIT, 3, 4),
+                new Obstacle(PIT, 4, 4),
+                new Obstacle(PIT, 5, 4),
+                new Obstacle(ROBOTA, 6, 4),
             ];
             break;
         case 14:
             obstacles = [
-                new obstacle(WALL, 1, 1),
-                new obstacle(PIT, 4, 1),
-                new obstacle(PIT, 6, 1),
-                new obstacle(WALL, 1, 2),
-                new obstacle(WALL, 2, 2),
-                new obstacle(PIT, 4, 2),
-                new obstacle(WALL, 6, 2),
-                new obstacle(PIT, 2, 3),
-                new obstacle(WALL, 1, 4),
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(PIT, 2, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 1, 3),
+                new Obstacle(PIT, 3, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 7, 3),
+                new Obstacle(WALL, 3, 4),
+            ];
+            break;
+        case 15:
+            obstacles = [
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(WALL, 4, 2),
+                new Obstacle(WALL, 5, 3),
+            ];
+            break;
+        case 16:
+            obstacles = [
+                new Obstacle(WALL, 3, 0),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(PIT, 3, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 3, 4),
+            ];
+            break;
+        case 17:
+            obstacles = [
+                new Obstacle(WALL, 4, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 0, 2),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(WALL, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 2, 4),
+                new Obstacle(WALL, 4, 4),
+            ];
+            break;
+        case 18:
+            obstacles = [
+                new Obstacle(WALL, 1, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 1, 3),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(PIT, 6, 3),
+                new Obstacle(WALL, 1, 4),
+                new Obstacle(PIT, 6, 4),
+            ];
+            break;
+        case 19:
+            obstacles = [
+                new Obstacle(WALL, 1, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 1, 3),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(PIT, 6, 3),
+                new Obstacle(WALL, 1, 4),
+                new Obstacle(PIT, 6, 4),
+            ];
+            break;
+        case 20:
+            obstacles = [
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 5, 4),
+            ];
+            break;
+        case 21:
+            obstacles = [
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 5, 4),
+            ];
+            break;
+        case 22:
+            obstacles = [
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 5, 4),
+            ];
+            break;
+        case 23:
+            obstacles = [
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 5, 4),
+            ];
+            break;
+        case 24:
+            obstacles = [
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(PIT, 4, 1),
+                new Obstacle(PIT, 6, 1),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(WALL, 2, 2),
+                new Obstacle(PIT, 4, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(PIT, 2, 3),
+                new Obstacle(WALL, 1, 4),
             ];
             break;
         default:
@@ -513,8 +679,30 @@ class GameScene extends Phaser.Scene {
     addObstacles(obstacles) {
         if (obstacles) {
             for (var i = 0; i < obstacles.length; i++) {
-                const tileKey = `${obstacles[i].x},${obstacles[i].y}`;
+                const tileKey = `${obstacles[i].xPosition},${obstacles[i].yPosition}`;
                 this.tilesHash[tileKey].obstacleType = obstacles[i].type;
+            }
+        }
+    }
+
+    placeRobots() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].type === ROBOTA) {
+                if (this.obstacles[i].yPosition >= this.countY - 1)
+                    this.obstacles[i].yPosition = 0;
+                else
+                    this.obstacles[i].yPosition++;
+                this.obstacles[i].sprite.y =
+                    this.obstacles[i].yPosition * this.tileLength + this.yOffset;
+            }
+
+            if (this.obstacles[i].type === ROBOTB) {
+                if (this.obstacles[i].yPosition <= 0)
+                    this.obstacles[i].yPosition = this.countY - 1;
+                else
+                    this.obstacles[i].yPosition--;
+                this.obstacles[i].sprite.y =
+                    this.obstacles[i].yPosition * this.tileLength + this.yOffset;
             }
         }
     }
@@ -571,56 +759,152 @@ class GameScene extends Phaser.Scene {
         if (!this.player.anims.isPlaying)
             this.player.anims.play('running');
 
-        const tile = this.tilesHash[`${this.playerXLocation},${this.playerYLocation}`];
-
-        if (tile && tile.obstacleType > 0) {
-            if (tile.obstacleType === PIT && isPlayerJumping)
-                return;
-
-            this.gameLost();
-        }
+        this.checkGameOver(isPlayerJumping);
     }
 
     placeTrail() {
         if (this.playerXLocation > 0) {
-            var trail = this.add.sprite(this.player.x, this.player.y, 'trail').setScale(0.5);
+            var trail = this.add.sprite(this.player.x, this.player.y, 'trail');
 
-            const previousMovement = this.moves[this.playerXLocation - 1];
+            const previousMovement = this.arrSpriteMoves[this.playerXLocation - 1].frame.name;
 
             if (previousMovement === FORWARD || previousMovement === JUMP) {
-                if (this.moves[this.playerXLocation] === UP)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP)
                     trail.setFrame(2);
-                if (this.moves[this.playerXLocation] === DOWN)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN)
                     trail.setFrame(1);
-                if (this.moves[this.playerXLocation] === FORWARD ||
-                    this.moves[this.playerXLocation] === JUMP)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === FORWARD ||
+                    this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP)
                     trail.setFrame(0);
             }
 
             if (previousMovement === UP) {
-                if (this.moves[this.playerXLocation] === UP)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP)
                     trail.setFrame(6);
-                if (this.moves[this.playerXLocation] === DOWN)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN)
                     trail.setFrame(8);
-                if (this.moves[this.playerXLocation] === FORWARD ||
-                    this.moves[this.playerXLocation] === JUMP)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === FORWARD ||
+                    this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP)
                     trail.setFrame(7);
             }
 
             if (previousMovement === DOWN) {
-                if (this.moves[this.playerXLocation] === UP)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP)
                     trail.setFrame(5);
-                if (this.moves[this.playerXLocation] === DOWN)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN)
                     trail.setFrame(3);
-                if (this.moves[this.playerXLocation] === FORWARD ||
-                    this.moves[this.playerXLocation] === JUMP)
+                if (this.arrSpriteMoves[this.playerXLocation].frame.name === FORWARD ||
+                    this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP)
                     trail.setFrame(4);
             }
         }
     }
 
+    drawTiles() {
+        const minTile = 0;
+        const maxTiles = 4;
+
+        let x;
+        let y;
+
+        for (let i = 0; i < this.tiles.length; i++) {
+            x = this.tiles[i].x * this.tileLength + this.xOffset;
+            y = this.tiles[i].y * this.tileLength + this.yOffset;
+
+            if (this.tiles[i].x < this.countX - 1)
+                this.add.sprite(x, y, 'tiles', Phaser.Math.Between(minTile, maxTiles));
+        }
+    }
+
+    addDragInputs() {
+        this.input.on('dragstart', (pointer, gameObject) => {
+            // so user can see the move they're dragging
+            gameObject.setDepth(2);
+            gameObject.setTint(0xff0000);
+        });
+
+        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+
+            let index = 0;
+            for (let i = 0; i < this.arrSpriteMoves.length; i++) {
+                if (gameObject === this.arrSpriteMoves[i]) {
+                    index = i;
+                    break;
+                }
+            }
+
+            this.setSeparatorPosition(gameObject);
+
+            if (index !== this.separator.position && this.separator.position !== index + 1)
+                this.separator.setVisible(true);
+            else
+                this.separator.setVisible(false);
+        });
+
+        this.input.on('dragend', (pointer, gameObject) => {
+            gameObject.clearTint();
+            gameObject.setDepth(1);
+
+            const index = this.arrSpriteMoves.indexOf(gameObject);
+
+            if (this.separator.visible) {
+                this.arrSpriteMoves =
+                    this.arrayMove(this.arrSpriteMoves, index, this.separator.position);
+                this.separator.setVisible(false);
+            }
+
+            var instructions = [];
+
+            // Place the draggable move squares in correct spots
+            let xMoveSquare = 0;
+            const yMoveSquare = this.countY * this.tileLength + this.yOffset + 20;
+            for (let i = 0; i <= this.MAXMOVES; i++) {
+                xMoveSquare = i * this.tileLength + this.xOffset;
+                this.arrSpriteMoves[i].x = xMoveSquare;
+                this.arrSpriteMoves[i].y = yMoveSquare;
+
+                if (this.arrSpriteMoves[i].frame.name === FORWARD)
+                    instructions.push('riley.forward();');
+
+                if (this.arrSpriteMoves[i].frame.name === UP)
+                    instructions.push('riley.up();');
+
+                if (this.arrSpriteMoves[i].frame.name === DOWN)
+                    instructions.push('riley.down();');
+
+                if (this.arrSpriteMoves[i].frame.name === JUMP)
+                    instructions.push('riley.jump();');
+            }
+
+            this.params.instructionCode = instructions.join('\n ');
+        });
+    }
+
+    placeMoveSquares() {
+        // add the move square below the tiles
+        const y = this.countY * this.tileLength + this.yOffset + 20;
+        let x;
+
+        for (let i = 0; i <= this.MAXMOVES; i++) {
+            x = i * this.tileLength + this.xOffset;
+            this.arrSpriteMoves.push(this.add.sprite(x, y, 'moveSquares', NONE));
+        }
+
+        // for playthru game types, the moves will be pre-populated
+        for (let i = 0; i < this.moves.length; i++) {
+            const moveSquare = this.arrSpriteMoves[i].setFrame(this.moves[i]);
+            // for playthru games, check if draggable is set
+            if (this.gameType === PLAYTHRUGAME) {
+                moveSquare.setInteractive({useHandCursor: true});
+                this.input.setDraggable(moveSquare);
+                moveSquare.dragDistanceThreshold = 16;
+            }
+        }
+    }
+
     placeEndingTiles() {
-        // TODO - get rid of magic numbers. Don't like the 160 value.
         const x = this.goalXLocation * this.tileLength + this.xOffset + 160;
 
         this.goal.x = x;
@@ -660,7 +944,6 @@ class GameScene extends Phaser.Scene {
         /* Restart level on button click and enter */
         restartIcon.on('pointerup', this.restartLevel.bind(this));
 
-
         // text background
         const textBg = this.add.graphics();
         textBg.fillStyle(0x000000, 0.7);
@@ -696,175 +979,57 @@ class GameScene extends Phaser.Scene {
             repeat: 4,
         });
 
-        this.obstacles = this.getObstacles(this.params.level);
-
-        // add obstacles
-        this.addObstacles(this.obstacles);
+        this.obstacles = this.setObstacles(this.params.level);
 
         /* Create userScope */
         this.userScope = new UserScope();
 
         /* Get user functions */
         this.instructionCode = getUserFunction(this.params.instructionCode);
-
         this.runInstruction();
 
-        // draw tiles
+        this.drawTiles();
+
         let x;
         let y;
+        let sprite;
 
-        const minTile = 0;
-        const maxTiles = 4;
+        // add obstacles
+        for (var i = 0; i < this.obstacles.length; i++) {
+            x = this.obstacles[i].xPosition * this.tileLength + this.xOffset;
+            y = this.obstacles[i].yPosition * this.tileLength + this.yOffset;
 
-        let leftWall;
-        let topWall;
-        let rightWall;
-        let bottomWall;
+            if (this.obstacles[i].type === WALL)
+                sprite = this.add.sprite(x, y, 'walls', 0);
 
-        let leftTile;
-        let rightTile;
-        let topTile;
-        let bottomTile;
+            if (this.obstacles[i].type === PIT)
+                sprite = this.add.sprite(x, y, 'pit');
 
-        for (let i = 0; i < this.tiles.length; i++) {
-            x = this.tiles[i].x * this.tileLength + this.xOffset;
-            y = this.tiles[i].y * this.tileLength + this.yOffset;
+            if (this.obstacles[i].type === ROBOTA)
+                sprite = this.add.sprite(x, y, 'robots', 0);
 
-            if (this.tiles[i].x < this.countX - 1)
-                this.add.sprite(x, y, 'tiles', Phaser.Math.Between(minTile, maxTiles));
+            if (this.obstacles[i].type === ROBOTB)
+                sprite = this.add.sprite(x, y, 'robots', 1);
 
-            if (this.tiles[i].obstacleType === WALL) {
-                leftWall = false;
-                topWall = false;
-                rightWall = false;
-                bottomWall = false;
+            this.obstacles[i].sprite = sprite;
 
-                leftTile = this.getTile(this.tiles[i].x - 1, this.tiles[i].y);
-                rightTile = this.getTile(this.tiles[i].x + 1, this.tiles[i].y);
-                topTile = this.getTile(this.tiles[i].x, this.tiles[i].y - 1);
-                bottomTile = this.getTile(this.tiles[i].x, this.tiles[i].y + 1);
-
-                if (leftTile && leftTile.obstacleType === WALL)
-                    leftWall = true;
-
-                if (rightTile && rightTile.obstacleType === WALL)
-                    rightWall = true;
-
-                if (topTile && topTile.obstacleType === WALL)
-                    topWall = true;
-
-                if (bottomTile && bottomTile.obstacleType === WALL)
-                    bottomWall = true;
-
-                this.setWallFrame(leftWall, rightWall, topWall, bottomWall, x, y);
+            // set wall and pit spritesheet frame
+            if (this.obstacles[i].type === WALL) {
+                this.setNeighboringObstacles(this.obstacles[i]);
+                GameScene.setSpritesheetFrame(this.obstacles[i]);
             }
-
-            if (this.tiles[i].obstacleType === PIT)
-                this.add.sprite(x, y, 'pit').setScale(0.5);
         }
 
         this.placeEndingTiles();
-
-        // add the move square below the tiles
-        y = this.countY * this.tileLength + this.yOffset + 20;
-
-        for (let i = 0; i <= this.MAXMOVES; i++) {
-            x = i * this.tileLength + this.xOffset;
-            this.arrSpriteMoves.push(this.add.sprite(x, y, 'moveSquares', NONE));
-        }
-
-        // for playthru game types, the moves will be pre-populated
-        for (let i = 0; i < this.moves.length; i++) {
-            const moveSquare = this.arrSpriteMoves[i].setFrame(this.moves[i]);
-            // for playthru games, check if draggable is set
-            if (this.isDraggable) {
-                moveSquare.setInteractive({useHandCursor: true});
-                this.input.setDraggable(moveSquare);
-                moveSquare.dragDistanceThreshold = 16;
-            }
-        }
-
-
-        this.input.on('dragstart', function(pointer, gameObject) {
-            gameObject.setTint(0xff0000);
-
-            // so user can see the move they're dragging
-            gameObject.setDepth(2);
-        });
-
-        this.input.on('drag', function(pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-
-            let index = 0;
-            for (let i = 0; i < this.arrSpriteMoves.length; i++) {
-                if (gameObject === this.arrSpriteMoves[i]) {
-                    index = i;
-                    break;
-                }
-            }
-
-            this.setRedBarPosition(gameObject);
-
-            if (index !== this.redBar.position && this.redBar.position !== index + 1)
-                this.redBar.setVisible(true);
-            else
-                this.redBar.setVisible(false);
-        }.bind(this));
-
-        this.input.on('dragend', function(pointer, gameObject) {
-            gameObject.clearTint();
-            gameObject.setDepth(1);
-
-            let index = 0;
-            for (let i = 0; i < this.arrSpriteMoves.length; i++) {
-                if (gameObject === this.arrSpriteMoves[i]) {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (this.redBar.visible) {
-                this.arrSpriteMoves =
-                    this.arrayMove(this.arrSpriteMoves, index, this.redBar.position);
-                this.redBar.setVisible(false);
-            }
-
-            var instructions = '';
-
-            // Place the draggable move squares in correct spots
-            let xMoveSquare = 0;
-            const yMoveSquare = this.countY * this.tileLength + this.yOffset + 20;
-            for (let i = 0; i <= this.MAXMOVES; i++) {
-                xMoveSquare = i * this.tileLength + this.xOffset;
-                this.arrSpriteMoves[i].x = xMoveSquare;
-                this.arrSpriteMoves[i].y = yMoveSquare;
-
-                if (this.arrSpriteMoves[i].frame.name === FORWARD)
-                    instructions += 'riley.forward();\n';
-
-                if (this.arrSpriteMoves[i].frame.name === UP)
-                    instructions += 'riley.up();\n';
-
-                if (this.arrSpriteMoves[i].frame.name === DOWN)
-                    instructions += 'riley.down();\n';
-
-                if (this.arrSpriteMoves[i].frame.name === JUMP)
-                    instructions += 'riley.jump();\n';
-            }
-
-            this.instructionCode = `\
-                ${instructions}`;
-
-            this.params.instructionCode = this.instructionCode;
-        }.bind(this));
+        this.placeMoveSquares();
+        this.addDragInputs();
 
         // create the starting tile
         this.add.sprite(this.playerXLocation * this.tileLength + this.xOffset - 170,
             this.playerYLocation * this.tileLength + this.yOffset, 'specialTiles', 0);
     }
 
-    setRedBarPosition(gameObject) {
+    setSeparatorPosition(gameObject) {
         const minX = this.tileLength + this.xOffset;
         const maxX = this.MAXMOVES * this.tileLength + this.xOffset;
         const halfTilelength = this.tileLength * 0.5;
@@ -872,54 +1037,54 @@ class GameScene extends Phaser.Scene {
         const offset = minX - halfTilelength;
 
         if (gameObject.x < offset) {
-            this.redBar.x = offset - this.tileLength;
-            this.redBar.position = 0;
+            this.separator.x = offset - this.tileLength;
+            this.separator.position = 0;
         }
 
         if (gameObject.x >= offset && gameObject.x < offset + this.tileLength) {
-            this.redBar.x = offset;
-            this.redBar.position = 1;
+            this.separator.x = offset;
+            this.separator.position = 1;
         }
 
         if (gameObject.x >= offset + this.tileLength &&
             gameObject.x < offset + this.tileLength * 2) {
-            this.redBar.x = offset + this.tileLength;
-            this.redBar.position = 2;
+            this.separator.x = offset + this.tileLength;
+            this.separator.position = 2;
         }
 
         if (gameObject.x >= offset + this.tileLength * 2 &&
             gameObject.x < offset + this.tileLength * 3) {
-            this.redBar.x = offset + this.tileLength * 2;
-            this.redBar.position = 3;
+            this.separator.x = offset + this.tileLength * 2;
+            this.separator.position = 3;
         }
 
         if (gameObject.x >= offset + this.tileLength * 3 &&
             gameObject.x < offset + this.tileLength * 4) {
-            this.redBar.x = offset + this.tileLength * 3;
-            this.redBar.position = 4;
+            this.separator.x = offset + this.tileLength * 3;
+            this.separator.position = 4;
         }
 
         if (gameObject.x >= offset + this.tileLength * 4 &&
             gameObject.x < offset + this.tileLength * 5) {
-            this.redBar.x = offset + this.tileLength * 4;
-            this.redBar.position = 5;
+            this.separator.x = offset + this.tileLength * 4;
+            this.separator.position = 5;
         }
 
         if (gameObject.x >= offset + this.tileLength * 5 &&
             gameObject.x < offset + this.tileLength * 6) {
-            this.redBar.x = offset + this.tileLength * 5;
-            this.redBar.position = 6;
+            this.separator.x = offset + this.tileLength * 5;
+            this.separator.position = 6;
         }
 
         if (gameObject.x >= offset + this.tileLength * 6 &&
             gameObject.x < offset + this.tileLength * 7) {
-            this.redBar.x = offset + this.tileLength * 6;
-            this.redBar.position = 7;
+            this.separator.x = offset + this.tileLength * 6;
+            this.separator.position = 7;
         }
 
         if (gameObject.x >= maxX) {
-            this.redBar.x = offset + this.tileLength * 7;
-            this.redBar.position = 8;
+            this.separator.x = offset + this.tileLength * 7;
+            this.separator.position = 8;
         }
     }
 
@@ -934,20 +1099,44 @@ class GameScene extends Phaser.Scene {
         return arr;
     }
 
-    setWallFrame(leftWall, rightWall, topWall, bottomWall, x, y) {
+    setNeighboringObstacles(obstacle) {
+        const leftObstacle = this.getObstacle(obstacle.xPosition - 1,
+            obstacle.yPosition);
+        const rightObstacle = this.getObstacle(obstacle.xPosition + 1,
+            obstacle.yPosition);
+        const topObstacle = this.getObstacle(obstacle.xPosition,
+            obstacle.yPosition - 1);
+        const bottomObstacle = this.getObstacle(obstacle.xPosition,
+            obstacle.yPosition + 1);
+
+        if (leftObstacle && leftObstacle.type === obstacle.type)
+            obstacle.sameLeftObstacle = true;
+
+        if (rightObstacle && rightObstacle.type === obstacle.type)
+            obstacle.sameRightObstacle = true;
+
+        if (topObstacle && topObstacle.type === obstacle.type)
+            obstacle.sameTopObstacle = true;
+
+        if (bottomObstacle && bottomObstacle.type === obstacle.type)
+            obstacle.sameBottomObstacle = true;
+    }
+
+    // sets spritesheet frame for walls and pits
+    static setSpritesheetFrame(obstacle) {
         let boolVal = 0;
         let spriteSheetFrame = 0;
 
-        if (leftWall)
+        if (obstacle.sameLeftObstacle)
             boolVal += 1000;
 
-        if (rightWall)
+        if (obstacle.sameRightObstacle)
             boolVal += 100;
 
-        if (topWall)
+        if (obstacle.sameTopObstacle)
             boolVal += 10;
 
-        if (bottomWall)
+        if (obstacle.sameBottomObstacle)
             boolVal += 1;
 
         switch (boolVal) {
@@ -1001,7 +1190,7 @@ class GameScene extends Phaser.Scene {
             break;
         }
 
-        this.add.sprite(x, y, 'walls', spriteSheetFrame).setScale(0.5);
+        obstacle.sprite.setFrame(spriteSheetFrame);
     }
 
     getTile(x, y) {

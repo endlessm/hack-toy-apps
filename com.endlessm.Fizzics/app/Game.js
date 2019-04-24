@@ -476,6 +476,13 @@ function Game()
         globalParameters.moveToolDisabled  = false;
         globalParameters.createToolDisabled= false;
         globalParameters.deleteToolDisabled= false;
+        Object.assign(globalParameters, {
+            createType0Disabled: false,
+            createType1Disabled: false,
+            createType2Disabled: false,
+            createType3Disabled: false,
+            createType4Disabled: false,
+        });
 
         Object.assign(globalParameters, levelParameters);
     }

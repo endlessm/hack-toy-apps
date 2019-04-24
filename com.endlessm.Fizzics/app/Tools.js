@@ -137,11 +137,16 @@ function Tools()
                     selectedTool = t;
                     this.select(t);
 
-                    if ( t == TOOL_SPECIES )
-                    {
-                        var h = ( y - this.buttons[t].position.y ) / this.buttons[t].height;        
-                        this.selectedSpecies = Math.floor( h * this.numSpecies );   
-                    }                
+                    if (t == TOOL_CREATE) {
+                        const firstAvailable =
+                            this.speciesImages.findIndex(img => !img.disabled);
+                        this.selectedSpecies = firstAvailable;
+                    } else if (t == TOOL_SPECIES) {
+                        var h = ( y - this.buttons[t].position.y ) / this.buttons[t].height;
+                        const speciesIndex = Math.floor(h * this.numSpecies);
+                        if (!this.speciesImages[speciesIndex].disabled)
+                            this.selectedSpecies = speciesIndex;
+                    }
                 } 
             }
         } 
@@ -163,8 +168,10 @@ function Tools()
         this.buttons[ TOOL_CREATE   ].disabled = globalParameters.createToolDisabled;
         this.buttons[ TOOL_DELETE   ].disabled = globalParameters.deleteToolDisabled;
 
-        for (var i=0; i<this.numSpecies; i++)
+        for (var i = 0; i < this.numSpecies; i++) {
             this.speciesImages[i].src = `images/ball-${globalParameters['imageIndex_'+i]}.png`;
+            this.speciesImages[i].disabled = globalParameters[`createType${i}Disabled`];
+        }
     }
     
     //------------------------------------
@@ -223,11 +230,26 @@ function Tools()
                     {
                         var x = b.position.x + speciesImageMargin;
                         var y = b.position.y + speciesImageMargin;
-                        
-                        canvas.drawImageCached( this.speciesImages[s],   x, y + speciesImageRadius * s,                    speciesImageRadius, speciesImageRadius );
-                        canvas.drawImageCached( this.speciesSelectImage, x, y + speciesImageRadius * this.selectedSpecies, speciesImageRadius, speciesImageRadius );
+
+                        const {globalCompositeOperation, globalAlpha} = canvas;
+                        if (this.speciesImages[s].disabled) {
+                            canvas.globalCompositeOperation = 'multiply';
+                            canvas.globalAlpha = 0.5;
+                        }
+                        try {
+                            canvas.drawImageCached(this.speciesImages[s],
+                                x, y + speciesImageRadius * s,
+                                speciesImageRadius,
+                                speciesImageRadius);
+                        } finally {
+                            Object.assign(canvas, {globalCompositeOperation, globalAlpha});
+                        }
                     }
-                }                
+                    canvas.drawImageCached(this.speciesSelectImage,
+                        x, y + speciesImageRadius * this.selectedSpecies,
+                        speciesImageRadius,
+                        speciesImageRadius);
+                }
             }
         }      
     }              

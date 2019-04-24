@@ -49,6 +49,11 @@ var globalParameters =
     moveToolDisabled  : false,
     createToolDisabled: false,
     deleteToolDisabled: false,
+    createType0Disabled: false,
+    createType1Disabled: false,
+    createType2Disabled: false,
+    createType3Disabled: false,
+    createType4Disabled: false,
 
     // Communication with Clubhouse
     preset          : 0,

@@ -36,13 +36,26 @@ class LoadingScene extends Phaser.Scene {
         // load assets
         this.load.image('background', 'assets/images/background.png');
         this.load.image('pit', 'assets/images/pit.png');
-        this.load.image('playButton', 'assets/images/playButton.png');
-        this.load.image('redBar', 'assets/images/redBar.png');
+        this.load.image('separator', 'assets/images/separator.png');
         this.load.image('restartIcon', 'assets/images/restartIcon.png');
 
+        this.load.spritesheet('playButton', 'assets/images/playButton.png', {
+            frameWidth: 148,
+            frameHeight: 148,
+            margin: 0,
+            spacing: 0,
+        });
+
+        this.load.spritesheet('robots', 'assets/images/robots.png', {
+            frameWidth: 49,
+            frameHeight: 89,
+            margin: 0,
+            spacing: 0,
+        });
+
         this.load.spritesheet('trail', 'assets/images/trail.png', {
-            frameWidth: 230,
-            frameHeight: 230,
+            frameWidth: 128,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
@@ -83,22 +96,22 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('walls', 'assets/images/walls.png', {
-            frameWidth: 245,
-            frameHeight: 270,
+            frameWidth: 128,
+            frameHeight: 144,
             margin: 0,
             spacing: 0,
         });
 
         this.load.spritesheet('tiles', 'assets/images/tiles.png', {
-            frameWidth: 120,
-            frameHeight: 120,
+            frameWidth: 128,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
 
         this.load.spritesheet('specialTiles', 'assets/images/specialTiles.png', {
-            frameWidth: 450,
-            frameHeight: 120,
+            frameWidth: 480,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });

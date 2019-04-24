@@ -205,23 +205,24 @@ function Tools()
 
             if ( b.visible )
             {
-                if (b.disabled) {
-                    canvas.globalCompositeOperation = 'multiply';
-                    canvas.globalAlpha = 0.5;
-                }
+                const insensitiveDrawParams = {
+                    globalCompositeOperation: 'multiply',
+                    globalAlpha: 0.5,
+                };
 
-                canvas.drawImageCached
-                (
-                    b.selected ? b.imageSelected || b.image : b.image,
-                    b.position.x,
-                    b.position.y,
-                    b.width,
-                    b.height
-                );
+                const {globalCompositeOperation, globalAlpha} = canvas;
+                if (b.disabled)
+                    Object.assign(canvas, insensitiveDrawParams);
 
-                if (b.disabled) {
-                    canvas.globalCompositeOperation = 'source-over';
-                    canvas.globalAlpha = 1;
+                try {
+                    canvas.drawImageCached(
+                        b.selected ? b.imageSelected || b.image : b.image,
+                        b.position.x,
+                        b.position.y,
+                        b.width,
+                        b.height);
+                } finally {
+                    Object.assign(canvas, {globalCompositeOperation, globalAlpha});
                 }
 
                 if ( t == TOOL_SPECIES )
@@ -232,10 +233,8 @@ function Tools()
                         var y = b.position.y + speciesImageMargin;
 
                         const {globalCompositeOperation, globalAlpha} = canvas;
-                        if (this.speciesImages[s].disabled) {
-                            canvas.globalCompositeOperation = 'multiply';
-                            canvas.globalAlpha = 0.5;
-                        }
+                        if (this.speciesImages[s].disabled)
+                            Object.assign(canvas, insensitiveDrawParams);
                         try {
                             canvas.drawImageCached(this.speciesImages[s],
                                 x, y + speciesImageRadius * s,

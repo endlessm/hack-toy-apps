@@ -2284,7 +2284,17 @@
     },
     {
       "ID": 16,
-      "preset": {},
+      "preset": {
+        "gravity_0": 50,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "deleteToolDisabled": true,
+        "createType0Disabled": true,
+        "createType1Disabled": true,
+        "createType2Disabled": true,
+        "createType4Disabled": true
+      },
       "balls": [
         {
           "ID": 0,
@@ -2392,7 +2402,18 @@
     },
     {
       "ID": 17,
-      "preset": {},
+      "preset": {
+        "gravity_0": 20,
+        "collision_0": 0.01,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "deleteToolDisabled": true,
+        "createType0Disabled": true,
+        "createType1Disabled": true,
+        "createType2Disabled": true,
+        "createType4Disabled": true
+      },
       "balls": [
         {
           "ID": 0,
@@ -2506,7 +2527,17 @@
     },
     {
       "ID": 18,
-      "preset": {},
+      "preset": {
+        "socialForce_4_4": 30,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "deleteToolDisabled": true,
+        "createType0Disabled": true,
+        "createType1Disabled": true,
+        "createType2Disabled": true,
+        "createType4Disabled": true
+      },
       "balls": [
         {
           "ID": 0,
@@ -2572,7 +2603,19 @@
     },
     {
       "ID": 19,
-      "preset": {},
+      "preset": {
+        "gravity_0": 30,
+        "usePhysics_1": true,
+        "socialForce_4_0": 30,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "deleteToolDisabled": true,
+        "createType0Disabled": true,
+        "createType1Disabled": true,
+        "createType2Disabled": true,
+        "createType4Disabled": true
+      },
       "balls": [
         {
           "ID": 0,
@@ -2680,7 +2723,25 @@
     },
     {
       "ID": 20,
-      "preset": {},
+      "preset": {
+        "gravity_0": 40,
+        "friction_0": 0,
+        "radius_0": 50,
+        "gravity_1": 20,
+        "friction_1": 5,
+        "collision_1": 0.01,
+        "usePhysics_4": true,
+        "friction_4": 5,
+        "collision_4": 0.5,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "deleteToolDisabled": true,
+        "createType0Disabled": true,
+        "createType1Disabled": true,
+        "createType2Disabled": true,
+        "createType4Disabled": true
+      },
       "balls": [
         {
           "ID": 0,
@@ -2812,7 +2873,23 @@
     },
     {
       "ID": 21,
-      "preset": {},
+      "preset": {
+        "gravity_0": -30,
+        "collision_1": 0.1,
+        "friction_0": 5,
+        "gravity_1": 30,
+        "collision_1": 0.1,
+        "friction_1": 5,
+        "usePhysics_1": true,
+        "disableToolsOnlyInFurthestLevel": true,
+        "flingToolDisabled": true,
+        "moveToolDisabled": true,
+        "deleteToolDisabled": true,
+        "createType0Disabled": true,
+        "createType1Disabled": true,
+        "createType2Disabled": true,
+        "createType4Disabled": true
+      },
       "balls": [
         {
           "ID": 0,

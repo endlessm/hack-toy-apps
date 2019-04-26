@@ -132,6 +132,7 @@ class GameScene extends Phaser.Scene {
 
         // create the player
         this.player = this.add.sprite(0, 0, 'riley');
+        this.player.setDepth(1);
 
         this.player.x = this.playerXLocation * this.tileLength + this.xOffset;
         this.player.y = this.playerYLocation * this.tileLength + this.yOffset;
@@ -1047,6 +1048,7 @@ class GameScene extends Phaser.Scene {
                 sprite = this.add.sprite(x, y, 'robots', 1);
 
             this.obstacles[i].sprite = sprite;
+            this.obstacles[i].sprite.setDepth(1);
 
             // set wall and pit spritesheet frame
             if (this.obstacles[i].type === WALL) {
@@ -1244,12 +1246,13 @@ class GameScene extends Phaser.Scene {
         var height = this.cameras.main.height;
 
         this.createModalBackground(width, height);
+        let modalTitle;
 
         if (this.anims.get(modalText)) {
-            var animationHeader = this.add.sprite(width / 2, height / 2 - 200, modalText);
-            animationHeader.anims.play(modalText);
+            modalTitle = this.add.sprite(width / 2, height / 2 - 200, modalText);
+            modalTitle.anims.play(modalText);
         } else {
-            this.add.text(width / 2, height / 2 - 300,
+            modalTitle = this.add.text(width / 2, height / 2 - 300,
                 modalText, fontConfig).setOrigin(0.5, 0.5);
         }
 
@@ -1265,8 +1268,10 @@ class GameScene extends Phaser.Scene {
             btn.setFrame(0);
         });
 
+        let btnText;
+
         if (modalText === 'game-over') {
-            this.add.text(width / 2, height / 2 + 50,
+            btnText = this.add.text(width / 2, height / 2 + 50,
                 'RESTART', fontConfig).setOrigin(0.5, 0.5);
 
             /* Restart level on button click and enter */
@@ -1274,18 +1279,23 @@ class GameScene extends Phaser.Scene {
             this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
             /* Goto next level on button click and enter */
         } else if (modalText === 'levelComplete') {
-            this.add.text(width / 2, height / 2 + 50,
+            btnText = this.add.text(width / 2, height / 2 + 50,
                 'CONTINUE', fontConfig).setOrigin(0.5, 0.5);
 
             btn.on('pointerup', this.continueLevel.bind(this));
             this.input.keyboard.on('keyup_ENTER', this.continueLevel.bind(this));
         } else {
-            this.add.text(width / 2, height / 2 + 50,
+            btnText = this.add.text(width / 2, height / 2 + 50,
                 'CLOSE', fontConfig).setOrigin(0.5);
 
             btn.on('pointerup', this.restartLevel.bind(this));
             this.input.keyboard.on('keyup_ENTER', this.restartLevel.bind(this));
         }
+
+        this.modal.setDepth(2);
+        modalTitle.setDepth(2);
+        btn.setDepth(2);
+        btnText.setDepth(2);
 
         /* We are not playing anymore */
         globalParameters.playing = false;

@@ -1,5 +1,5 @@
 /* exported globalParameters, levelParameters,
-EMPTY, WALL, PIT, NONE, ROBOTA, ROBOTB, riley */
+EMPTY, WALL, PIT, ROBOTA, ROBOTB */
 
 /*
  * Global parameters exposed to the quests and toolbox
@@ -18,39 +18,11 @@ const ROBOTB = 4;
 const DEFAULTGAME = 0;
 const PLAYTHRUGAME = 1;
 
-// move types
-const NONE = 0;
-const FORWARD = 1;
-const UP = 2;
-const DOWN = 3;
-const JUMP = 4;
-
-class riley {
-    constructor() {
-        this.moves = [];
-    }
-
-    forward() {
-        this.moves.push(FORWARD);
-    }
-
-    up() {
-        this.moves.push(UP);
-    }
-
-    down() {
-        this.moves.push(DOWN);
-    }
-
-    jump() {
-        this.moves.push(JUMP);
-    }
-}
 
 var globalParameters = {
     /* Number of available levels */
     // TODO: Where is this value being set? In Lightspeed, it's set to 0.
-    availableLevels: 24,
+    availableLevels: 25,
 
     /* Current Level: read only property, 0 for title screen */
     currentLevel: 0,
@@ -314,6 +286,20 @@ var defaultLevelParameters = [
     riley.up();
     riley.up();
     riley.up();`,
+    },
+    {
+        level: 25,
+        playerYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.jumpp();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();`,
     },
 ];
 

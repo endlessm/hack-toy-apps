@@ -2290,6 +2290,7 @@
         "flingToolDisabled": true,
         "moveToolDisabled": true,
         "deleteToolDisabled": true,
+        "createToolDisabled": true,
         "createType0Disabled": true,
         "createType1Disabled": true,
         "createType2Disabled": true,

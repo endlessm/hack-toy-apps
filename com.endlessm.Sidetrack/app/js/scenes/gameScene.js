@@ -62,8 +62,6 @@ class GameScene extends Phaser.Scene {
         this.tiles = [];
         this.tilesHash = {};
 
-        this.robots = [];
-
         // grid length and height
         this.countX = 9;
         this.countY = 5;
@@ -73,6 +71,9 @@ class GameScene extends Phaser.Scene {
         // capture moves
         this.arrSpriteMoves = [];
         this.moves = [];
+
+        // capture tiles player was on
+        this.arrTileHistory = [];
 
         // determine if riley is moving on keypress
         this.isMoving = false;
@@ -159,7 +160,6 @@ class GameScene extends Phaser.Scene {
 .setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
-            // TODO - get rid of magic numbers. Don't like the 5* value.
             const x = this.xOffset - this.tileLength - 50;
             const y = this.countY * this.tileLength + this.yOffset + 20;
 
@@ -340,7 +340,6 @@ class GameScene extends Phaser.Scene {
         switch (level) {
         case 1:
             obstacles = [
-                new Obstacle(WALL, 4, 0),
                 new Obstacle(WALL, 4, 0),
                 new Obstacle(WALL, 1, 1),
                 new Obstacle(WALL, 2, 1),
@@ -669,20 +668,20 @@ class GameScene extends Phaser.Scene {
                 new Obstacle(WALL, 1, 4),
             ];
             break;
+        case 25:
+            obstacles = [
+                new Obstacle(PIT, 3, 0),
+                new Obstacle(PIT, 3, 1),
+                new Obstacle(PIT, 3, 2),
+                new Obstacle(PIT, 3, 3),
+                new Obstacle(PIT, 3, 4),
+            ];
+            break;
         default:
             break;
         }
 
         return obstacles;
-    }
-
-    addObstacles(obstacles) {
-        if (obstacles) {
-            for (var i = 0; i < obstacles.length; i++) {
-                const tileKey = `${obstacles[i].xPosition},${obstacles[i].yPosition}`;
-                this.tilesHash[tileKey].obstacleType = obstacles[i].type;
-            }
-        }
     }
 
     placeRobots() {
@@ -755,6 +754,10 @@ class GameScene extends Phaser.Scene {
         this.player.x = this.playerXLocation * this.tileLength + this.xOffset;
         this.player.y = this.playerYLocation * this.tileLength + this.yOffset;
 
+        // place the final trail
+        if (this.playerXLocation === this.MAXMOVES)
+            this.placeTrail(true);
+
         // play animation if none is playing
         if (!this.player.anims.isPlaying)
             this.player.anims.play('running');
@@ -762,41 +765,68 @@ class GameScene extends Phaser.Scene {
         this.checkGameOver(isPlayerJumping);
     }
 
-    placeTrail() {
-        if (this.playerXLocation > 0) {
-            var trail = this.add.sprite(this.player.x, this.player.y, 'trail');
+    placeTrail(isFinalTrail = false) {
+        var trail = this.add.sprite(this.player.x, this.player.y, 'trail');
+        this.arrTileHistory.push(this.getTile(this.playerXLocation, this.playerYLocation));
 
-            const previousMovement = this.arrSpriteMoves[this.playerXLocation - 1].frame.name;
+        let currentYLocation = this.arrTileHistory[this.playerXLocation].y;
+        const newYLocation = this.arrTileHistory[this.playerXLocation + 1].y;
 
-            if (previousMovement === FORWARD || previousMovement === JUMP) {
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP)
-                    trail.setFrame(2);
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN)
-                    trail.setFrame(1);
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === FORWARD ||
-                    this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP)
-                    trail.setFrame(0);
-            }
+        let isMovementForward = currentYLocation === newYLocation;
+        let isMovementUp = currentYLocation > newYLocation;
+        let isMovementDown = currentYLocation < newYLocation;
 
-            if (previousMovement === UP) {
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP)
-                    trail.setFrame(6);
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN)
-                    trail.setFrame(8);
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === FORWARD ||
-                    this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP)
-                    trail.setFrame(7);
-            }
+        if (this.playerXLocation === 0) {
+            if (isMovementUp)
+                trail.setFrame(2);
+            else if (isMovementDown)
+                trail.setFrame(1);
+            else
+                // default move forward
+                trail.setFrame(0);
 
-            if (previousMovement === DOWN) {
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP)
-                    trail.setFrame(5);
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN)
-                    trail.setFrame(3);
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === FORWARD ||
-                    this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP)
-                    trail.setFrame(4);
-            }
+            return;
+        }
+
+        let prevYLocation = this.arrTileHistory[this.playerXLocation - 1].y;
+
+        if (isFinalTrail) {
+            isMovementForward = true;
+            isMovementUp = false;
+            isMovementDown = false;
+            currentYLocation = this.arrTileHistory[this.playerXLocation + 1].y;
+            prevYLocation = this.arrTileHistory[this.playerXLocation].y;
+        }
+
+        const isPreviousMovementForward = prevYLocation === currentYLocation;
+        const isPreviousMovementUp = prevYLocation > currentYLocation;
+        const isPreviousMovementDown = prevYLocation < currentYLocation;
+
+        if (isMovementForward) {
+            if (isPreviousMovementForward)
+                trail.setFrame(0);
+            if (isPreviousMovementUp)
+                trail.setFrame(7);
+            if (isPreviousMovementDown)
+                trail.setFrame(4);
+        }
+
+        if (isMovementUp) {
+            if (isPreviousMovementForward)
+                trail.setFrame(2);
+            if (isPreviousMovementUp)
+                trail.setFrame(6);
+            if (isPreviousMovementDown)
+                trail.setFrame(5);
+        }
+
+        if (isMovementDown) {
+            if (isPreviousMovementForward)
+                trail.setFrame(1);
+            if (isPreviousMovementUp)
+                trail.setFrame(8);
+            if (isPreviousMovementDown)
+                trail.setFrame(3);
         }
     }
 
@@ -811,7 +841,8 @@ class GameScene extends Phaser.Scene {
             x = this.tiles[i].x * this.tileLength + this.xOffset;
             y = this.tiles[i].y * this.tileLength + this.yOffset;
 
-            if (this.tiles[i].x < this.countX - 1)
+            // added this condition because starting location is a tile
+            if (this.tiles[i].x < this.countX - 1 && this.tiles[i].x >= 0)
                 this.add.sprite(x, y, 'tiles', Phaser.Math.Between(minTile, maxTiles));
         }
     }
@@ -959,6 +990,10 @@ class GameScene extends Phaser.Scene {
             this.tileKey = `${x},${y}`;
             this.obstacleType = 0;
         };
+
+        // starting tile
+        this.tiles.push(new this.Tile(this.playerXLocation, this.playerYLocation));
+        this.arrTileHistory.push(this.tiles[0]);
 
         for (let x = 0; x < this.countX; ++x) {
             for (let y = 0; y < this.countY; ++y)

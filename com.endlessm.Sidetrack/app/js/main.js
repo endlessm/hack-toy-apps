@@ -20,10 +20,14 @@ const fontConfig = {
 var config = {
     title: 'Sidetrack',
     type: Phaser.AUTO,
-    width: 1920,
-    height: 1040,
     pixelArt: false,
     backgroundColor: 'ffffff',
+    scale: {
+        scaleMode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1920,
+        height: 1040,
+    },
     scene: [
         new BootScene('Boot'),
         new LoadingScene('Loading'),

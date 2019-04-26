@@ -33,7 +33,7 @@ class StartScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         const leftArrow = this.add.sprite(gameW / 2 - 220,
-            gameH / 2 - 150, 'moveSquares', 5).setInteractive({useHandCursor: true});
+            gameH / 2 - 150, 'moveSquares', 7).setInteractive({useHandCursor: true});
 
         const rightArrow = this.add.sprite(gameW / 2 + 220,
             gameH / 2 - 150, 'moveSquares', 1).setInteractive({useHandCursor: true});

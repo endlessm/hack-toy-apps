@@ -1,6 +1,6 @@
 /* exported GameScene */
 
-/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD,
+/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH,
 PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
 
 function getUserFunction(code) {
@@ -157,8 +157,7 @@ class GameScene extends Phaser.Scene {
         }, this);
 
         this.controls = this.add.sprite(120, 750,
-            'controls').setOrigin(0)
-.setScale(0.7);
+            'controls').setOrigin(0).setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
             const x = this.xOffset - this.tileLength - 50;
@@ -280,7 +279,7 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    checkGameOver(isPlayerJumping = false) {
+    checkGameOver() {
         // If player has reached final column
         if (this.playerXLocation >= this.MAXMOVES) {
             const playerRect = this.player.getBounds();
@@ -304,14 +303,62 @@ class GameScene extends Phaser.Scene {
                 this.gameWon();
         } else {
             const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
+            const isJumping = this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP;
+            const isPushing = this.arrSpriteMoves[this.playerXLocation].frame.name === PUSH;
 
             if (tmpObstacle) {
-                if (tmpObstacle.type === PIT && isPlayerJumping)
+                if (tmpObstacle.type === PIT && isJumping)
                     return;
+
+                if (isPushing) {
+                    const tmpObstacle2 =
+                        this.getObstacle(this.playerXLocation + 1, this.playerYLocation);
+
+                    // cannot be an obstacle next to the obstacle you're pushing
+                    if (tmpObstacle && !tmpObstacle2) {
+                        this.pushObstacle(tmpObstacle);
+                        return;
+                    }
+                    // unless that obstacle is a pit
+                    if (tmpObstacle2 === PIT) {
+                        this.pushObstacle(tmpObstacle);
+                        return;
+                    }
+                }
 
                 this.gameLost();
             }
         }
+    }
+
+    pushObstacle(pushedObstacle) {
+        var nextObstacle;
+
+        for (var i = pushedObstacle.xPosition + 1; i <= this.MAXMOVES; i++) {
+            nextObstacle = this.getObstacle(i, pushedObstacle.yPosition);
+            if (nextObstacle)
+                break;
+        }
+
+        if (nextObstacle) {
+            if (nextObstacle.type === PIT) {
+                // push obstacle into PIT
+                pushedObstacle.xPosition = nextObstacle.xPosition;
+                this.setObstaclePosition(pushedObstacle);
+            } else {
+                pushedObstacle.xPosition = nextObstacle.xPosition - 1;
+                this.setObstaclePosition(pushedObstacle);
+            }
+        // obstacle pushed to last tile
+        } else {
+            pushedObstacle.xPosition = this.MAXMOVES;
+            this.setObstaclePosition(pushedObstacle);
+        }
+    }
+
+    setObstaclePosition(obstacle) {
+        obstacle.sprite.x = obstacle.xPosition * this.tileLength + this.xOffset;
+        obstacle.sprite.y = obstacle.yPosition * this.tileLength + this.yOffset;
     }
 
     playButtonClick() {
@@ -709,7 +756,6 @@ class GameScene extends Phaser.Scene {
 
     placePlayer() {
         this.playerXLocation++;
-        let isPlayerJumping = false;
 
         if (this.gameType === DEFAULTGAME) {
             this.arrSpriteMoves[this.playerXLocation]
@@ -726,9 +772,6 @@ class GameScene extends Phaser.Scene {
             if (this.moves[this.playerXLocation] === DOWN &&
                 this.playerYLocation < this.countY - 1)
                 this.playerYLocation += 1;
-
-            if (this.moves[this.playerXLocation] === JUMP)
-                isPlayerJumping = true;
         } else if (this.gameType === PLAYTHRUGAME) {
             if (this.arrSpriteMoves.length > this.playerXLocation) {
                 this.player.anims.play('running');
@@ -746,7 +789,6 @@ class GameScene extends Phaser.Scene {
                 if (this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP) {
                     this.player.anims.stop('running');
                     this.player.anims.play('jumping');
-                    isPlayerJumping = true;
                 }
             }
         }
@@ -763,7 +805,7 @@ class GameScene extends Phaser.Scene {
         if (!this.player.anims.isPlaying)
             this.player.anims.play('running');
 
-        this.checkGameOver(isPlayerJumping);
+        this.checkGameOver();
     }
 
     placeTrail(isFinalTrail = false) {

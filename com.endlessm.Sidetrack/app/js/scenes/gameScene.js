@@ -245,8 +245,7 @@ class GameScene extends Phaser.Scene {
                 if (!isKeyboardPressOff)
                     this.handleMovements();
 
-                if (this.isMoving) {
-                    this.placeRobots();
+                if (this.isMoving) {                    
                     this.placePlayer();
                 }
             }
@@ -314,17 +313,17 @@ class GameScene extends Phaser.Scene {
                 if (tmpObstacle.type === PIT && isJumping)
                     return;
 
-                if (isPushing) {
-                    const tmpObstacle2 =
+                if (isPushing && tmpObstacle.type !== PIT) {
+                    const tmpNextObstacle =
                         this.getObstacle(this.playerXLocation + 1, this.playerYLocation);
 
                     // cannot be an obstacle next to the obstacle you're pushing
-                    if (tmpObstacle && !tmpObstacle2) {
+                    if (tmpObstacle && !tmpNextObstacle) {
                         this.pushObstacle(tmpObstacle);
                         return;
                     }
                     // unless that obstacle is a pit
-                    if (tmpObstacle2 === PIT) {
+                    if (tmpNextObstacle === PIT) {
                         this.pushObstacle(tmpObstacle);
                         return;
                     }
@@ -406,6 +405,17 @@ class GameScene extends Phaser.Scene {
             }
         }
         return tmpObstacle;
+    }
+
+    getObstacleCountOnTile(x, y) {        
+        let obstacleCount = 0;
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].xPosition === x &&
+                this.obstacles[i].yPosition === y) {
+                obstacleCount++;
+            }
+        }
+        return obstacleCount;
     }
 
     // TODO: move obstacles to parameter.js
@@ -761,23 +771,50 @@ class GameScene extends Phaser.Scene {
     }
 
     placeRobots() {
+        let xPosition;
+        let yPosition;
+
+        let isRobotType = false;
+
         for (var i = 0; i < this.obstacles.length; i++) {
+            isRobotType = false;
+
             if (this.obstacles[i].type === ROBOTA) {
+                isRobotType = true;
                 if (this.obstacles[i].yPosition >= this.countY - 1)
-                    this.obstacles[i].yPosition = 0;
+                    yPosition = 0;
                 else
-                    this.obstacles[i].yPosition++;
-                this.obstacles[i].sprite.y =
-                    this.obstacles[i].yPosition * this.tileLength + this.yOffset;
+                    yPosition = this.obstacles[i].yPosition + 1;
             }
 
             if (this.obstacles[i].type === ROBOTB) {
+                isRobotType = true;
                 if (this.obstacles[i].yPosition <= 0)
-                    this.obstacles[i].yPosition = this.countY - 1;
+                    yPosition = this.countY - 1;
                 else
-                    this.obstacles[i].yPosition--;
-                this.obstacles[i].sprite.y =
-                    this.obstacles[i].yPosition * this.tileLength + this.yOffset;
+                    yPosition = this.obstacles[i].yPosition - 1;
+            }
+
+            if (isRobotType) {
+                xPosition = this.obstacles[i].xPosition;
+                this.obstacles[i].yPosition = yPosition;
+                this.setSpritePosition(this.obstacles[i].sprite, xPosition, yPosition);
+            }
+        }
+    }
+
+    checkRobotCollisions() {
+        // check if obstacle exists in new position
+        let obstacleCount;
+
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].type === ROBOTA ||
+                this.obstacles[i].type === ROBOTB) {
+                obstacleCount = this.getObstacleCountOnTile(this.obstacles[i].xPosition,
+                    this.obstacles[i].yPosition);
+
+                if (obstacleCount > 1)
+                    this.addExplosionSprite(this.obstacles[i]);
             }
         }
     }
@@ -785,6 +822,8 @@ class GameScene extends Phaser.Scene {
     placePlayer() {
         this.removeObstacle();
         this.removeAllExplosions();
+        this.placeRobots();
+        this.checkRobotCollisions();
         this.playerXLocation++;
 
         if (this.gameType === DEFAULTGAME) {
@@ -1114,13 +1153,12 @@ class GameScene extends Phaser.Scene {
                 sprite = this.add.sprite(x, y, 'pit');
 
             if (this.obstacles[i].type === ROBOTA)
-                sprite = this.add.sprite(x, y, 'robots', 0);
+                sprite = this.add.sprite(x, y, 'robots', 0).setDepth(1);
 
             if (this.obstacles[i].type === ROBOTB)
-                sprite = this.add.sprite(x, y, 'robots', 1);
+                sprite = this.add.sprite(x, y, 'robots', 1).setDepth(1);
 
             this.obstacles[i].sprite = sprite;
-            this.obstacles[i].sprite.setDepth(1);
 
             // set wall and pit spritesheet frame
             if (this.obstacles[i].type === WALL) {

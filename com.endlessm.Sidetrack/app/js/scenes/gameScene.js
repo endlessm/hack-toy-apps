@@ -34,6 +34,7 @@ class Obstacle {
         this.sameRightObstacle = false;
         this.sameTopObstacle = false;
         this.sameBottomObstacle = false;
+        this.isDestroyed = false;
     }
 }
 
@@ -61,6 +62,9 @@ class GameScene extends Phaser.Scene {
 
         this.tiles = [];
         this.tilesHash = {};
+
+        // array of explosion sprite for destroyed obstacles
+        this.explosions = [];
 
         // grid length and height
         this.countX = 9;
@@ -345,6 +349,7 @@ class GameScene extends Phaser.Scene {
                 // push obstacle into PIT
                 pushedObstacle.xPosition = nextObstacle.xPosition;
                 this.setObstaclePosition(pushedObstacle);
+                this.addExplosionSprite(pushedObstacle);
             } else {
                 pushedObstacle.xPosition = nextObstacle.xPosition - 1;
                 this.setObstaclePosition(pushedObstacle);
@@ -356,6 +361,29 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    addExplosionSprite(obstacle) {
+        obstacle.isDestroyed = true;
+        const explosion = this.add.sprite(obstacle.sprite.x,
+            obstacle.sprite.y, 'explosion').setDepth(2);
+        this.explosions.push(explosion);
+    }
+
+    removeAllExplosions() {
+        for (var i = 0; i < this.explosions.length; i++)
+            this.explosions[i].destroy();
+    }
+
+    removeObstacle() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].isDestroyed) {
+                this.obstacles[i].sprite.destroy();
+                this.obstacles.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    // TODO - consolidate setObstaclePosition to be used elsewhere
     setObstaclePosition(obstacle) {
         obstacle.sprite.x = obstacle.xPosition * this.tileLength + this.xOffset;
         obstacle.sprite.y = obstacle.yPosition * this.tileLength + this.yOffset;
@@ -755,6 +783,8 @@ class GameScene extends Phaser.Scene {
     }
 
     placePlayer() {
+        this.removeObstacle();
+        this.removeAllExplosions();
         this.playerXLocation++;
 
         if (this.gameType === DEFAULTGAME) {

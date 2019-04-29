@@ -275,7 +275,7 @@ var defaultLevelParameters = [
     riley.forward();
     riley.forward();
     riley.forward();
-    riley.forwardd();
+    riley.jumpp();
     riley.forward();
     riley.forward();
     riley.forward();
@@ -289,9 +289,9 @@ var defaultLevelParameters = [
         instructionCode: `\
     riley.down();
     riley.up();
-    riley.error();
+    riley.fooorward();
     riley.forward();
-    riley.error();
+    riley.Jump();
     riley.up();
     riley.jump();
     riley.down();`,
@@ -304,12 +304,12 @@ var defaultLevelParameters = [
         instructionCode: `\
     riley.forward();
     riley.up();
-    riley.error();
+    riley.Up();
     riley.down();
     riley.down();
     riley.forward();
     riley.down();
-    riley.error();`,
+    riley.Jump();`,
     },
     {
         level: 26,
@@ -317,14 +317,14 @@ var defaultLevelParameters = [
         goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();`,
+    riley.D0wn();
+    riley.upp();
+    riley.Jump();
+    riley.dovvn();
+    riley.farward();
+    riley.jmup();
+    riley.uP();
+    riley.forw();`,
     },
     {
         level: 27,
@@ -334,12 +334,12 @@ var defaultLevelParameters = [
         instructionCode: `\
     riley.forward();
     riley.down();
-    riley.error();
+    riley.x0wna_Kms();
     riley.down();
     riley.forward();
     riley.up();
     riley.up();
-    riley.error();`,
+    riley.pppasd();`,
     },
     {
         level: 28,
@@ -396,7 +396,7 @@ var defaultLevelParameters = [
     riley.forward();
     riley.forward();
     riley.forward();
-    riley.error();
+    riley._jump();
     riley.forward();
     riley.forward();`,
     },
@@ -412,7 +412,7 @@ var defaultLevelParameters = [
     riley.jump();
     riley.forward();
     riley.forward();
-    riley.error();
+    riley.gggggg();
     riley.down();`,
     },
     {
@@ -437,7 +437,7 @@ var defaultLevelParameters = [
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
-    riley.error();
+    riley.move_wall_away();
     riley.forward();
     riley.forward();
     riley.forward();
@@ -451,13 +451,13 @@ var defaultLevelParameters = [
         goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
-    riley.error();
+    riley.shove_objects();
     riley.forward();
     riley.forward();
     riley.forward();
     riley.forward();
     riley.forward();
-    riley.error();
+    riley.shove_walls_and_robots();
     riley.down();`,
     },
     {
@@ -483,7 +483,7 @@ var defaultLevelParameters = [
     riley.down();
     riley.down();
     riley.down();
-    riley.error();
+    riley.move_it();
     riley.down();
     riley.forward();
     riley.forward();
@@ -514,7 +514,7 @@ var defaultLevelParameters = [
     riley.push();
     riley.jump();
     riley.forward();
-    riley.error();
+    riley.Down();
     riley.down();
     riley.push();
     riley.up();`,
@@ -524,15 +524,6 @@ var defaultLevelParameters = [
         playerYLocation: 2,
         goalYLocation: 2,
         gameType: PLAYTHRUGAME,
-        instructionCode: `\
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();
-    riley.error();`,
     },
     {
         level: 41,

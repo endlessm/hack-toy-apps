@@ -2285,16 +2285,7 @@
     {
       "ID": 16,
       "preset": {
-        "gravity_0": 50,
-        "disableToolsOnlyInFurthestLevel": true,
-        "flingToolDisabled": true,
-        "moveToolDisabled": true,
-        "deleteToolDisabled": true,
-        "createToolDisabled": true,
-        "createType0Disabled": true,
-        "createType1Disabled": true,
-        "createType2Disabled": true,
-        "createType4Disabled": true
+        "gravity_0": 50
       },
       "balls": [
         {
@@ -2405,15 +2396,7 @@
       "ID": 17,
       "preset": {
         "gravity_0": 20,
-        "collision_0": 0.01,
-        "disableToolsOnlyInFurthestLevel": true,
-        "flingToolDisabled": true,
-        "moveToolDisabled": true,
-        "deleteToolDisabled": true,
-        "createType0Disabled": true,
-        "createType1Disabled": true,
-        "createType2Disabled": true,
-        "createType4Disabled": true
+        "collision_0": 0.01
       },
       "balls": [
         {
@@ -2529,15 +2512,7 @@
     {
       "ID": 18,
       "preset": {
-        "socialForce_4_4": 30,
-        "disableToolsOnlyInFurthestLevel": true,
-        "flingToolDisabled": true,
-        "moveToolDisabled": true,
-        "deleteToolDisabled": true,
-        "createType0Disabled": true,
-        "createType1Disabled": true,
-        "createType2Disabled": true,
-        "createType4Disabled": true
+        "socialForce_4_4": 30
       },
       "balls": [
         {
@@ -2607,15 +2582,7 @@
       "preset": {
         "gravity_0": 30,
         "usePhysics_1": true,
-        "socialForce_4_0": 30,
-        "disableToolsOnlyInFurthestLevel": true,
-        "flingToolDisabled": true,
-        "moveToolDisabled": true,
-        "deleteToolDisabled": true,
-        "createType0Disabled": true,
-        "createType1Disabled": true,
-        "createType2Disabled": true,
-        "createType4Disabled": true
+        "socialForce_4_0": 30
       },
       "balls": [
         {
@@ -2733,15 +2700,7 @@
         "collision_1": 0.01,
         "usePhysics_4": true,
         "friction_4": 5,
-        "collision_4": 0.5,
-        "disableToolsOnlyInFurthestLevel": true,
-        "flingToolDisabled": true,
-        "moveToolDisabled": true,
-        "deleteToolDisabled": true,
-        "createType0Disabled": true,
-        "createType1Disabled": true,
-        "createType2Disabled": true,
-        "createType4Disabled": true
+        "collision_4": 0.5
       },
       "balls": [
         {
@@ -2881,15 +2840,7 @@
         "gravity_1": 30,
         "collision_1": 0.1,
         "friction_1": 5,
-        "usePhysics_1": true,
-        "disableToolsOnlyInFurthestLevel": true,
-        "flingToolDisabled": true,
-        "moveToolDisabled": true,
-        "deleteToolDisabled": true,
-        "createType0Disabled": true,
-        "createType1Disabled": true,
-        "createType2Disabled": true,
-        "createType4Disabled": true
+        "usePhysics_1": true
       },
       "balls": [
         {

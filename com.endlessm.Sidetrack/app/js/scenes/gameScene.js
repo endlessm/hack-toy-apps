@@ -138,8 +138,7 @@ class GameScene extends Phaser.Scene {
         this.player = this.add.sprite(0, 0, 'riley');
         this.player.setDepth(1);
 
-        this.player.x = this.playerXLocation * this.tileLength + this.xOffset;
-        this.player.y = this.playerYLocation * this.tileLength + this.yOffset;
+        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
 
         // play animation if none is playing
         if (!this.player.anims.isPlaying)
@@ -160,8 +159,7 @@ class GameScene extends Phaser.Scene {
                 this.onGlobalPropertyChange, this);
         }, this);
 
-        this.controls = this.add.sprite(120, 750,
-            'controls').setOrigin(0).setScale(0.7);
+        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0).setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
             const x = this.xOffset - this.tileLength - 50;
@@ -245,9 +243,8 @@ class GameScene extends Phaser.Scene {
                 if (!isKeyboardPressOff)
                     this.handleMovements();
 
-                if (this.isMoving) {                    
+                if (this.isMoving)
                     this.placePlayer();
-                }
             }
         }
     }
@@ -347,16 +344,19 @@ class GameScene extends Phaser.Scene {
             if (nextObstacle.type === PIT) {
                 // push obstacle into PIT
                 pushedObstacle.xPosition = nextObstacle.xPosition;
-                this.setObstaclePosition(pushedObstacle);
+                this.setSpritePosition(pushedObstacle.sprite,
+                    pushedObstacle.xPosition, pushedObstacle.yPosition);
                 this.addExplosionSprite(pushedObstacle);
             } else {
                 pushedObstacle.xPosition = nextObstacle.xPosition - 1;
-                this.setObstaclePosition(pushedObstacle);
+                this.setSpritePosition(pushedObstacle.sprite,
+                    pushedObstacle.xPosition, pushedObstacle.yPosition);
             }
         // obstacle pushed to last tile
         } else {
             pushedObstacle.xPosition = this.MAXMOVES;
-            this.setObstaclePosition(pushedObstacle);
+            this.setSpritePosition(pushedObstacle.sprite,
+                pushedObstacle.xPosition, pushedObstacle.yPosition);
         }
     }
 
@@ -382,10 +382,9 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    // TODO - consolidate setObstaclePosition to be used elsewhere
-    setObstaclePosition(obstacle) {
-        obstacle.sprite.x = obstacle.xPosition * this.tileLength + this.xOffset;
-        obstacle.sprite.y = obstacle.yPosition * this.tileLength + this.yOffset;
+    setSpritePosition(sprite, x, y, xPadding = 0, yPadding = 0) {
+        sprite.x = x * this.tileLength + this.xOffset + xPadding;
+        sprite.y = y * this.tileLength + this.yOffset + yPadding;
     }
 
     playButtonClick() {
@@ -1119,8 +1118,7 @@ class GameScene extends Phaser.Scene {
         }
 
         this.placeTrail();
-        this.player.x = this.playerXLocation * this.tileLength + this.xOffset;
-        this.player.y = this.playerYLocation * this.tileLength + this.yOffset;
+        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
 
         // place the final trail
         if (this.playerXLocation === this.MAXMOVES)
@@ -1257,12 +1255,8 @@ class GameScene extends Phaser.Scene {
             var instructions = [];
 
             // Place the draggable move squares in correct spots
-            let xMoveSquare = 0;
-            const yMoveSquare = this.countY * this.tileLength + this.yOffset + 20;
             for (let i = 0; i <= this.MAXMOVES; i++) {
-                xMoveSquare = i * this.tileLength + this.xOffset;
-                this.arrSpriteMoves[i].x = xMoveSquare;
-                this.arrSpriteMoves[i].y = yMoveSquare;
+                this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, 0, 20);
 
                 if (this.arrSpriteMoves[i].frame.name === FORWARD)
                     instructions.push('riley.forward();');
@@ -1283,12 +1277,12 @@ class GameScene extends Phaser.Scene {
 
     placeMoveSquares() {
         // add the move square below the tiles
-        const y = this.countY * this.tileLength + this.yOffset + 20;
-        let x;
+        let sprite;
 
         for (let i = 0; i <= this.MAXMOVES; i++) {
-            x = i * this.tileLength + this.xOffset;
-            this.arrSpriteMoves.push(this.add.sprite(x, y, 'moveSquares', NONE));
+            sprite = this.add.sprite(0, 0, 'moveSquares', NONE);
+            this.setSpritePosition(sprite, i, this.countY, 0, 20);
+            this.arrSpriteMoves.push(sprite);
         }
 
         // for playthru game types, the moves will be pre-populated
@@ -1304,16 +1298,13 @@ class GameScene extends Phaser.Scene {
     }
 
     placeEndingTiles() {
-        const x = this.goalXLocation * this.tileLength + this.xOffset + 160;
-
-        this.goal.x = x;
-        this.goal.y = this.goalYLocation * this.tileLength + this.yOffset;
+        this.setSpritePosition(this.goal, this.goalXLocation,
+            this.goalYLocation, 160, 0);
 
         const wrongExits = this.wrongExits.getChildren();
 
         for (var i = 0; i < wrongExits.length; i++) {
-            wrongExits[i].x = x;
-            wrongExits[i].y = i * this.tileLength + this.yOffset;
+            this.setSpritePosition(wrongExits[i], this.goalXLocation, i, 160);
 
             // wrong exit sprite sheet frame
             wrongExits[i].setFrame(2);
@@ -1393,28 +1384,25 @@ class GameScene extends Phaser.Scene {
 
         this.drawTiles();
 
-        let x;
-        let y;
         let sprite;
 
         // add obstacles
         for (var i = 0; i < this.obstacles.length; i++) {
-            x = this.obstacles[i].xPosition * this.tileLength + this.xOffset;
-            y = this.obstacles[i].yPosition * this.tileLength + this.yOffset;
-
             if (this.obstacles[i].type === WALL)
-                sprite = this.add.sprite(x, y, 'walls', 0);
+                sprite = this.add.sprite(0, 0, 'walls', 0);
 
             if (this.obstacles[i].type === PIT)
-                sprite = this.add.sprite(x, y, 'pit');
+                sprite = this.add.sprite(0, 0, 'pit');
 
             if (this.obstacles[i].type === ROBOTA)
-                sprite = this.add.sprite(x, y, 'robots', 0).setDepth(1);
+                sprite = this.add.sprite(0, 0, 'robots', 0).setDepth(1);
 
             if (this.obstacles[i].type === ROBOTB)
-                sprite = this.add.sprite(x, y, 'robots', 1).setDepth(1);
+                sprite = this.add.sprite(0, 0, 'robots', 1).setDepth(1);
 
             this.obstacles[i].sprite = sprite;
+            this.setSpritePosition(this.obstacles[i].sprite, this.obstacles[i].xPosition,
+                this.obstacles[i].yPosition);
 
             // set wall and pit spritesheet frame
             if (this.obstacles[i].type === WALL) {
@@ -1428,8 +1416,8 @@ class GameScene extends Phaser.Scene {
         this.addDragInputs();
 
         // create the starting tile
-        this.add.sprite(this.playerXLocation * this.tileLength + this.xOffset - 170,
-            this.playerYLocation * this.tileLength + this.yOffset, 'specialTiles', 0);
+        this.setSpritePosition(this.add.sprite(0, 0, 'specialTiles', 0),
+            this.playerXLocation, this.playerYLocation, -170);
     }
 
     setSeparatorPosition(gameObject) {

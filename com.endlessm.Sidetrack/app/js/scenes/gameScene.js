@@ -1,6 +1,6 @@
 /* exported GameScene */
 
-/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH,
+/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH, ERROR,
 PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
 
 function getUserFunction(code) {
@@ -1269,6 +1269,12 @@ class GameScene extends Phaser.Scene {
 
                 if (this.arrSpriteMoves[i].frame.name === JUMP)
                     instructions.push('riley.jump();');
+
+                if (this.arrSpriteMoves[i].frame.name === PUSH)
+                    instructions.push('riley.push();');
+
+                if (this.arrSpriteMoves[i].frame.name === ERROR)
+                    instructions.push('riley.error();');
             }
 
             this.params.instructionCode = instructions.join('\n ');

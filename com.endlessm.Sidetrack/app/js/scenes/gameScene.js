@@ -1,6 +1,6 @@
 /* exported GameScene */
 
-/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD,
+/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH, ERROR,
 PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
 
 function getUserFunction(code) {
@@ -34,6 +34,7 @@ class Obstacle {
         this.sameRightObstacle = false;
         this.sameTopObstacle = false;
         this.sameBottomObstacle = false;
+        this.isDestroyed = false;
     }
 }
 
@@ -61,6 +62,9 @@ class GameScene extends Phaser.Scene {
 
         this.tiles = [];
         this.tilesHash = {};
+
+        // array of explosion sprite for destroyed obstacles
+        this.explosions = [];
 
         // grid length and height
         this.countX = 9;
@@ -111,6 +115,9 @@ class GameScene extends Phaser.Scene {
 
             if (this.params.gameType >= 0)
                 this.gameType = this.params.gameType;
+
+            if (this.params.level >= 0)
+                globalParameters.currentLevel = this.params.level;
         }
     }
 
@@ -134,8 +141,7 @@ class GameScene extends Phaser.Scene {
         this.player = this.add.sprite(0, 0, 'riley');
         this.player.setDepth(1);
 
-        this.player.x = this.playerXLocation * this.tileLength + this.xOffset;
-        this.player.y = this.playerYLocation * this.tileLength + this.yOffset;
+        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
 
         // play animation if none is playing
         if (!this.player.anims.isPlaying)
@@ -156,9 +162,7 @@ class GameScene extends Phaser.Scene {
                 this.onGlobalPropertyChange, this);
         }, this);
 
-        this.controls = this.add.sprite(120, 750,
-            'controls').setOrigin(0)
-.setScale(0.7);
+        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0).setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
             const x = this.xOffset - this.tileLength - 50;
@@ -205,7 +209,7 @@ class GameScene extends Phaser.Scene {
         }
 
         /* Reset Global game state */
-        globalParameters.success = false;
+        globalParameters.success = true;
         globalParameters.score = 0;
     }
 
@@ -242,10 +246,8 @@ class GameScene extends Phaser.Scene {
                 if (!isKeyboardPressOff)
                     this.handleMovements();
 
-                if (this.isMoving) {
-                    this.placeRobots();
+                if (this.isMoving)
                     this.placePlayer();
-                }
             }
         }
     }
@@ -280,7 +282,7 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    checkGameOver(isPlayerJumping = false) {
+    checkGameOver() {
         // If player has reached final column
         if (this.playerXLocation >= this.MAXMOVES) {
             const playerRect = this.player.getBounds();
@@ -304,14 +306,88 @@ class GameScene extends Phaser.Scene {
                 this.gameWon();
         } else {
             const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
+            const isJumping = this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP;
+            const isPushing = this.arrSpriteMoves[this.playerXLocation].frame.name === PUSH;
 
             if (tmpObstacle) {
-                if (tmpObstacle.type === PIT && isPlayerJumping)
+                if (tmpObstacle.type === PIT && isJumping)
                     return;
+
+                if (isPushing && tmpObstacle.type !== PIT) {
+                    const tmpNextObstacle =
+                        this.getObstacle(this.playerXLocation + 1, this.playerYLocation);
+
+                    // cannot be an obstacle next to the obstacle you're pushing
+                    if (tmpObstacle && !tmpNextObstacle) {
+                        this.pushObstacle(tmpObstacle);
+                        return;
+                    }
+                    // unless that obstacle is a pit
+                    if (tmpNextObstacle === PIT) {
+                        this.pushObstacle(tmpObstacle);
+                        return;
+                    }
+                }
 
                 this.gameLost();
             }
         }
+    }
+
+    pushObstacle(pushedObstacle) {
+        var nextObstacle;
+
+        for (var i = pushedObstacle.xPosition + 1; i <= this.MAXMOVES; i++) {
+            nextObstacle = this.getObstacle(i, pushedObstacle.yPosition);
+            if (nextObstacle)
+                break;
+        }
+
+        if (nextObstacle) {
+            if (nextObstacle.type === PIT) {
+                // push obstacle into PIT
+                pushedObstacle.xPosition = nextObstacle.xPosition;
+                this.setSpritePosition(pushedObstacle.sprite,
+                    pushedObstacle.xPosition, pushedObstacle.yPosition);
+                this.addExplosionSprite(pushedObstacle);
+            } else {
+                pushedObstacle.xPosition = nextObstacle.xPosition - 1;
+                this.setSpritePosition(pushedObstacle.sprite,
+                    pushedObstacle.xPosition, pushedObstacle.yPosition);
+            }
+        // obstacle pushed to last tile
+        } else {
+            pushedObstacle.xPosition = this.MAXMOVES;
+            this.setSpritePosition(pushedObstacle.sprite,
+                pushedObstacle.xPosition, pushedObstacle.yPosition);
+        }
+    }
+
+    addExplosionSprite(obstacle) {
+        obstacle.isDestroyed = true;
+        const explosion = this.add.sprite(obstacle.sprite.x,
+            obstacle.sprite.y, 'explosion').setDepth(2);
+        this.explosions.push(explosion);
+    }
+
+    removeAllExplosions() {
+        for (var i = 0; i < this.explosions.length; i++)
+            this.explosions[i].destroy();
+    }
+
+    removeObstacle() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].isDestroyed) {
+                this.obstacles[i].sprite.destroy();
+                this.obstacles.splice(i, 1);
+                i--;
+            }
+        }
+    }
+
+    setSpritePosition(sprite, x, y, xPadding = 0, yPadding = 0) {
+        sprite.x = x * this.tileLength + this.xOffset + xPadding;
+        sprite.y = y * this.tileLength + this.yOffset + yPadding;
     }
 
     playButtonClick() {
@@ -331,6 +407,17 @@ class GameScene extends Phaser.Scene {
             }
         }
         return tmpObstacle;
+    }
+
+    getObstacleCountOnTile(x, y) {        
+        let obstacleCount = 0;
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].xPosition === x &&
+                this.obstacles[i].yPosition === y) {
+                obstacleCount++;
+            }
+        }
+        return obstacleCount;
     }
 
     // TODO: move obstacles to parameter.js
@@ -374,9 +461,9 @@ class GameScene extends Phaser.Scene {
                 new Obstacle(WALL, 0, 2),
                 new Obstacle(WALL, 1, 2),
                 new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 3, 3),
                 new Obstacle(WALL, 5, 2),
                 new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 3, 3),
                 new Obstacle(WALL, 5, 3),
                 new Obstacle(WALL, 2, 4),
                 new Obstacle(WALL, 4, 4),
@@ -518,9 +605,11 @@ class GameScene extends Phaser.Scene {
             break;
         case 14:
             obstacles = [
+                new Obstacle(ROBOTA, 0, 0),
                 new Obstacle(PIT, 5, 0),
                 new Obstacle(PIT, 2, 1),
                 new Obstacle(WALL, 4, 1),
+                new Obstacle(ROBOTB, 6, 1),
                 new Obstacle(WALL, 1, 3),
                 new Obstacle(PIT, 3, 3),
                 new Obstacle(WALL, 5, 3),
@@ -530,9 +619,11 @@ class GameScene extends Phaser.Scene {
             break;
         case 15:
             obstacles = [
+                new Obstacle(ROBOTA, 6, 1),
                 new Obstacle(WALL, 3, 2),
                 new Obstacle(WALL, 4, 2),
                 new Obstacle(WALL, 5, 3),
+                new Obstacle(ROBOTB, 0, 4),
             ];
             break;
         case 16:
@@ -584,6 +675,7 @@ class GameScene extends Phaser.Scene {
                 new Obstacle(WALL, 2, 1),
                 new Obstacle(WALL, 3, 1),
                 new Obstacle(PIT, 2, 2),
+                new Obstacle(ROBOTA, 4, 2),
                 new Obstacle(WALL, 1, 3),
                 new Obstacle(WALL, 2, 3),
                 new Obstacle(WALL, 3, 3),
@@ -594,69 +686,33 @@ class GameScene extends Phaser.Scene {
             break;
         case 20:
             obstacles = [
-                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 0, 1),
                 new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
                 new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(PIT, 2, 2),
+                new Obstacle(ROBOTB, 5, 1),
+                new Obstacle(WALL, 2, 2),
                 new Obstacle(WALL, 3, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 2),
+                new Obstacle(ROBOTB, 5, 2),
+                new Obstacle(WALL, 3, 3),
                 new Obstacle(WALL, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 5, 4),
             ];
             break;
         case 21:
             obstacles = [
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 5, 1),
+                new Obstacle(ROBOTB, 4, 0),
+                new Obstacle(WALL, 6, 1),
                 new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 4, 3),
+                new Obstacle(PIT, 4, 2),
+                new Obstacle(WALL, 5, 2),
                 new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 5, 4),
+                new Obstacle(ROBOTB, 6, 3),
+                new Obstacle(WALL, 2, 4),
             ];
             break;
         case 22:
-            obstacles = [
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 5, 4),
-            ];
-            break;
-        case 23:
-            obstacles = [
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 5, 4),
-            ];
-            break;
-        case 24:
             obstacles = [
                 new Obstacle(WALL, 1, 1),
                 new Obstacle(PIT, 4, 1),
@@ -669,13 +725,300 @@ class GameScene extends Phaser.Scene {
                 new Obstacle(WALL, 1, 4),
             ];
             break;
-        case 25:
+        case 23:
             obstacles = [
                 new Obstacle(PIT, 3, 0),
                 new Obstacle(PIT, 3, 1),
                 new Obstacle(PIT, 3, 2),
                 new Obstacle(PIT, 3, 3),
                 new Obstacle(PIT, 3, 4),
+            ];
+            break;
+        case 24:
+            obstacles = [
+                new Obstacle(WALL, 0, 1),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(PIT, 6, 1),
+                new Obstacle(WALL, 0, 2),
+                new Obstacle(ROBOTA, 3, 2),
+                new Obstacle(PIT, 4, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 6, 3),
+                new Obstacle(WALL, 6, 4),
+            ];
+            break;
+        case 25:
+            obstacles = [
+                new Obstacle(ROBOTB, 0, 0),
+                new Obstacle(ROBOTB, 1, 0),
+                new Obstacle(ROBOTB, 2, 0),
+                new Obstacle(ROBOTA, 4, 0),
+                new Obstacle(ROBOTA, 7, 0),
+                new Obstacle(ROBOTA, 3, 1),
+                new Obstacle(ROBOTA, 4, 1),
+                new Obstacle(ROBOTA, 5, 1),
+                new Obstacle(ROBOTA, 6, 1),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 3, 4),
+            ];
+            break;
+        case 26:
+            obstacles = [
+                new Obstacle(WALL, 0, 0),
+                new Obstacle(PIT, 4, 0),
+                new Obstacle(WALL, 5, 0),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(PIT, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(PIT, 4, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 1, 4),
+                new Obstacle(ROBOTA, 3, 4),
+            ];
+            break;
+        case 27:
+            obstacles = [
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(PIT, 2, 2),
+                new Obstacle(WALL, 3, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(PIT, 6, 3),
+            ];
+            break;
+        case 28:
+            obstacles = [
+                new Obstacle(WALL, 2, 0),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 2, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 2, 4),
+            ];
+            break;
+        case 29:
+            obstacles = [
+                new Obstacle(WALL, 0, 0),
+                new Obstacle(WALL, 6, 0),
+                new Obstacle(WALL, 0, 1),
+                new Obstacle(ROBOTA, 4, 1),
+                new Obstacle(WALL, 6, 1),
+                new Obstacle(WALL, 0, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 0, 3),
+                new Obstacle(WALL, 6, 3),
+                new Obstacle(WALL, 0, 4),
+                new Obstacle(WALL, 6, 4),
+            ];
+            break;
+        case 30:
+            obstacles = [
+                new Obstacle(WALL, 0, 0),
+                new Obstacle(WALL, 1, 0),
+                new Obstacle(WALL, 5, 0),
+                new Obstacle(WALL, 6, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 6, 1),
+                new Obstacle(WALL, 0, 2),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(WALL, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 5, 4),
+                new Obstacle(WALL, 6, 4),
+            ];
+            break;
+        case 31:
+            obstacles = [
+                new Obstacle(ROBOTA, 1, 0),
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(ROBOTA, 6, 0),
+                new Obstacle(ROBOTB, 3, 1),
+                new Obstacle(PIT, 5, 1),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(PIT, 5, 3),
+                new Obstacle(PIT, 5, 4),
+                new Obstacle(ROBOTB, 7, 4),
+            ];
+            break;
+        case 32:
+            obstacles = [
+                new Obstacle(ROBOTB, 1, 0),
+                new Obstacle(WALL, 5, 0),
+                new Obstacle(WALL, 6, 0),
+                new Obstacle(WALL, 6, 1),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(ROBOTA, 3, 3),
+                new Obstacle(WALL, 6, 3),
+                new Obstacle(PIT, 5, 4),
+                new Obstacle(PIT, 6, 4),
+            ];
+            break;
+        case 33:
+            obstacles = [
+                new Obstacle(WALL, 1, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(ROBOTB, 4, 1),
+                new Obstacle(PIT, 7, 1),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(ROBOTB, 5, 2),
+                new Obstacle(PIT, 7, 2),
+                new Obstacle(WALL, 1, 3),
+                new Obstacle(PIT, 7, 3),
+                new Obstacle(WALL, 1, 4),
+            ];
+            break;
+        case 34:
+            obstacles = [
+                new Obstacle(WALL, 1, 0),
+                new Obstacle(PIT, 1, 1),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(ROBOTB, 5, 1),
+                new Obstacle(PIT, 6, 1),
+                new Obstacle(WALL, 1, 2),
+                new Obstacle(ROBOTB, 5, 2),
+                new Obstacle(PIT, 1, 3),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(PIT, 6, 3),
+                new Obstacle(WALL, 1, 4),
+            ];
+            break;
+        case 35:
+            obstacles = [
+                new Obstacle(ROBOTA, 0, 0),
+                new Obstacle(WALL, 6, 0),
+                new Obstacle(WALL, 6, 1),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 6, 3),
+                new Obstacle(WALL, 7, 3),
+            ];
+            break;
+        case 36:
+            obstacles = [
+                new Obstacle(PIT, 1, 0),
+                new Obstacle(PIT, 2, 0),
+                new Obstacle(ROBOTA, 5, 0),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(ROBOTA, 5, 1),
+                new Obstacle(ROBOTA, 5, 2),
+                new Obstacle(WALL, 6, 2),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(PIT, 1, 4),
+                new Obstacle(PIT, 2, 4),
+            ];
+            break;
+        case 37:
+            obstacles = [
+                new Obstacle(WALL, 2, 0),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(ROBOTA, 3, 2),
+                new Obstacle(WALL, 4, 2),
+                new Obstacle(ROBOTA, 3, 3),
+                new Obstacle(PIT, 4, 3),
+                new Obstacle(ROBOTB, 1, 4),
+                new Obstacle(PIT, 4, 4),
+            ];
+            break;
+        case 38:
+            obstacles = [
+                new Obstacle(ROBOTA, 0, 0),
+                new Obstacle(ROBOTA, 1, 0),
+                new Obstacle(ROBOTA, 2, 0),
+                new Obstacle(PIT, 4, 0),
+                new Obstacle(PIT, 5, 0),
+                new Obstacle(ROBOTA, 0, 1),
+                new Obstacle(ROBOTA, 1, 1),
+                new Obstacle(PIT, 4, 1),
+                new Obstacle(PIT, 5, 1),
+                new Obstacle(ROBOTB, 3, 2),
+                new Obstacle(WALL, 4, 2),
+                new Obstacle(WALL, 5, 2),
+                new Obstacle(ROBOTB, 3, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(WALL, 4, 4),
+                new Obstacle(WALL, 5, 4),
+                new Obstacle(ROBOTB, 6, 4),
+                new Obstacle(ROBOTB, 7, 4),
+            ];
+            break;
+        case 39:
+            obstacles = [
+                new Obstacle(WALL, 5, 0),
+                new Obstacle(ROBOTA, 6, 0),
+                new Obstacle(ROBOTA, 7, 0),
+                new Obstacle(WALL, 2, 1),
+                new Obstacle(WALL, 3, 1),
+                new Obstacle(ROBOTB, 4, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(ROBOTA, 6, 1),
+                new Obstacle(PIT, 3, 2),
+                new Obstacle(ROBOTB, 4, 2),
+                new Obstacle(PIT, 5, 2),
+                new Obstacle(WALL, 3, 3),
+                new Obstacle(ROBOTA, 1, 4),
+                new Obstacle(ROBOTB, 2, 4),
+                new Obstacle(WALL, 3, 4),
+                new Obstacle(WALL, 5, 4),
+                new Obstacle(ROBOTA, 6, 4),
+            ];
+            break;
+        case 40:
+            obstacles = [
+                new Obstacle(PIT, 0, 0),
+                new Obstacle(PIT, 1, 0),
+                new Obstacle(WALL, 5, 0),
+                new Obstacle(PIT, 0, 1),
+                new Obstacle(PIT, 1, 1),
+                new Obstacle(WALL, 5, 1),
+                new Obstacle(ROBOTA, 7, 1),
+                new Obstacle(WALL, 5, 2),
+                new Obstacle(ROBOTB, 0, 3),
+                new Obstacle(ROBOTB, 1, 3),
+                new Obstacle(WALL, 2, 3),
+                new Obstacle(PIT, 3, 3),
+                new Obstacle(PIT, 4, 3),
+                new Obstacle(WALL, 5, 3),
+                new Obstacle(ROBOTB, 7, 3),
+                new Obstacle(ROBOTB, 0, 4),
+                new Obstacle(ROBOTB, 1, 4),
+                new Obstacle(WALL, 2, 4),
+                new Obstacle(ROBOTA, 3, 4),
+                new Obstacle(ROBOTA, 4, 4),
+                new Obstacle(WALL, 5, 4),
+            ];
+            break;
+        case 41:
+            obstacles = [
+                new Obstacle(ROBOTA, 0, 0),
+                new Obstacle(ROBOTA, 1, 0),
+                new Obstacle(WALL, 4, 0),
+                new Obstacle(ROBOTB, 6, 0),
+                new Obstacle(WALL, 1, 1),
+                new Obstacle(WALL, 4, 1),
+                new Obstacle(ROBOTA, 5, 1),
+                new Obstacle(ROBOTB, 6, 1),
+                new Obstacle(ROBOTB, 7, 1),
+                new Obstacle(ROBOTB, 2, 2),
+                new Obstacle(WALL, 4, 2),
+                new Obstacle(ROBOTB, 3, 3),
+                new Obstacle(WALL, 4, 3),
+                new Obstacle(ROBOTA, 5, 3),
+                new Obstacle(WALL, 4, 4),
+                new Obstacle(ROBOTB, 6, 4),
             ];
             break;
         default:
@@ -686,30 +1029,60 @@ class GameScene extends Phaser.Scene {
     }
 
     placeRobots() {
+        let xPosition;
+        let yPosition;
+
+        let isRobotType = false;
+
         for (var i = 0; i < this.obstacles.length; i++) {
+            isRobotType = false;
+
             if (this.obstacles[i].type === ROBOTA) {
+                isRobotType = true;
                 if (this.obstacles[i].yPosition >= this.countY - 1)
-                    this.obstacles[i].yPosition = 0;
+                    yPosition = 0;
                 else
-                    this.obstacles[i].yPosition++;
-                this.obstacles[i].sprite.y =
-                    this.obstacles[i].yPosition * this.tileLength + this.yOffset;
+                    yPosition = this.obstacles[i].yPosition + 1;
             }
 
             if (this.obstacles[i].type === ROBOTB) {
+                isRobotType = true;
                 if (this.obstacles[i].yPosition <= 0)
-                    this.obstacles[i].yPosition = this.countY - 1;
+                    yPosition = this.countY - 1;
                 else
-                    this.obstacles[i].yPosition--;
-                this.obstacles[i].sprite.y =
-                    this.obstacles[i].yPosition * this.tileLength + this.yOffset;
+                    yPosition = this.obstacles[i].yPosition - 1;
+            }
+
+            if (isRobotType) {
+                xPosition = this.obstacles[i].xPosition;
+                this.obstacles[i].yPosition = yPosition;
+                this.setSpritePosition(this.obstacles[i].sprite, xPosition, yPosition);
+            }
+        }
+    }
+
+    checkRobotCollisions() {
+        // check if obstacle exists in new position
+        let obstacleCount;
+
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].type === ROBOTA ||
+                this.obstacles[i].type === ROBOTB) {
+                obstacleCount = this.getObstacleCountOnTile(this.obstacles[i].xPosition,
+                    this.obstacles[i].yPosition);
+
+                if (obstacleCount > 1)
+                    this.addExplosionSprite(this.obstacles[i]);
             }
         }
     }
 
     placePlayer() {
+        this.removeObstacle();
+        this.removeAllExplosions();
+        this.placeRobots();
+        this.checkRobotCollisions();
         this.playerXLocation++;
-        let isPlayerJumping = false;
 
         if (this.gameType === DEFAULTGAME) {
             this.arrSpriteMoves[this.playerXLocation]
@@ -726,9 +1099,6 @@ class GameScene extends Phaser.Scene {
             if (this.moves[this.playerXLocation] === DOWN &&
                 this.playerYLocation < this.countY - 1)
                 this.playerYLocation += 1;
-
-            if (this.moves[this.playerXLocation] === JUMP)
-                isPlayerJumping = true;
         } else if (this.gameType === PLAYTHRUGAME) {
             if (this.arrSpriteMoves.length > this.playerXLocation) {
                 this.player.anims.play('running');
@@ -746,14 +1116,12 @@ class GameScene extends Phaser.Scene {
                 if (this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP) {
                     this.player.anims.stop('running');
                     this.player.anims.play('jumping');
-                    isPlayerJumping = true;
                 }
             }
         }
 
         this.placeTrail();
-        this.player.x = this.playerXLocation * this.tileLength + this.xOffset;
-        this.player.y = this.playerYLocation * this.tileLength + this.yOffset;
+        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
 
         // place the final trail
         if (this.playerXLocation === this.MAXMOVES)
@@ -763,7 +1131,7 @@ class GameScene extends Phaser.Scene {
         if (!this.player.anims.isPlaying)
             this.player.anims.play('running');
 
-        this.checkGameOver(isPlayerJumping);
+        this.checkGameOver();
     }
 
     placeTrail(isFinalTrail = false) {
@@ -890,12 +1258,8 @@ class GameScene extends Phaser.Scene {
             var instructions = [];
 
             // Place the draggable move squares in correct spots
-            let xMoveSquare = 0;
-            const yMoveSquare = this.countY * this.tileLength + this.yOffset + 20;
             for (let i = 0; i <= this.MAXMOVES; i++) {
-                xMoveSquare = i * this.tileLength + this.xOffset;
-                this.arrSpriteMoves[i].x = xMoveSquare;
-                this.arrSpriteMoves[i].y = yMoveSquare;
+                this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, 0, 20);
 
                 if (this.arrSpriteMoves[i].frame.name === FORWARD)
                     instructions.push('riley.forward();');
@@ -908,6 +1272,12 @@ class GameScene extends Phaser.Scene {
 
                 if (this.arrSpriteMoves[i].frame.name === JUMP)
                     instructions.push('riley.jump();');
+
+                if (this.arrSpriteMoves[i].frame.name === PUSH)
+                    instructions.push('riley.push();');
+
+                if (this.arrSpriteMoves[i].frame.name === ERROR)
+                    instructions.push('riley.error();');
             }
 
             this.params.instructionCode = instructions.join('\n ');
@@ -916,12 +1286,12 @@ class GameScene extends Phaser.Scene {
 
     placeMoveSquares() {
         // add the move square below the tiles
-        const y = this.countY * this.tileLength + this.yOffset + 20;
-        let x;
+        let sprite;
 
         for (let i = 0; i <= this.MAXMOVES; i++) {
-            x = i * this.tileLength + this.xOffset;
-            this.arrSpriteMoves.push(this.add.sprite(x, y, 'moveSquares', NONE));
+            sprite = this.add.sprite(0, 0, 'moveSquares', NONE);
+            this.setSpritePosition(sprite, i, this.countY, 0, 20);
+            this.arrSpriteMoves.push(sprite);
         }
 
         // for playthru game types, the moves will be pre-populated
@@ -937,16 +1307,13 @@ class GameScene extends Phaser.Scene {
     }
 
     placeEndingTiles() {
-        const x = this.goalXLocation * this.tileLength + this.xOffset + 160;
-
-        this.goal.x = x;
-        this.goal.y = this.goalYLocation * this.tileLength + this.yOffset;
+        this.setSpritePosition(this.goal, this.goalXLocation,
+            this.goalYLocation, 160, 0);
 
         const wrongExits = this.wrongExits.getChildren();
 
         for (var i = 0; i < wrongExits.length; i++) {
-            wrongExits[i].x = x;
-            wrongExits[i].y = i * this.tileLength + this.yOffset;
+            this.setSpritePosition(wrongExits[i], this.goalXLocation, i, 160);
 
             // wrong exit sprite sheet frame
             wrongExits[i].setFrame(2);
@@ -1026,29 +1393,25 @@ class GameScene extends Phaser.Scene {
 
         this.drawTiles();
 
-        let x;
-        let y;
         let sprite;
 
         // add obstacles
         for (var i = 0; i < this.obstacles.length; i++) {
-            x = this.obstacles[i].xPosition * this.tileLength + this.xOffset;
-            y = this.obstacles[i].yPosition * this.tileLength + this.yOffset;
-
             if (this.obstacles[i].type === WALL)
-                sprite = this.add.sprite(x, y, 'walls', 0);
+                sprite = this.add.sprite(0, 0, 'walls', 0);
 
             if (this.obstacles[i].type === PIT)
-                sprite = this.add.sprite(x, y, 'pit');
+                sprite = this.add.sprite(0, 0, 'pit');
 
             if (this.obstacles[i].type === ROBOTA)
-                sprite = this.add.sprite(x, y, 'robots', 0);
+                sprite = this.add.sprite(0, 0, 'robots', 0).setDepth(1);
 
             if (this.obstacles[i].type === ROBOTB)
-                sprite = this.add.sprite(x, y, 'robots', 1);
+                sprite = this.add.sprite(0, 0, 'robots', 1).setDepth(1);
 
             this.obstacles[i].sprite = sprite;
-            this.obstacles[i].sprite.setDepth(1);
+            this.setSpritePosition(this.obstacles[i].sprite, this.obstacles[i].xPosition,
+                this.obstacles[i].yPosition);
 
             // set wall and pit spritesheet frame
             if (this.obstacles[i].type === WALL) {
@@ -1062,8 +1425,8 @@ class GameScene extends Phaser.Scene {
         this.addDragInputs();
 
         // create the starting tile
-        this.add.sprite(this.playerXLocation * this.tileLength + this.xOffset - 170,
-            this.playerYLocation * this.tileLength + this.yOffset, 'specialTiles', 0);
+        this.setSpritePosition(this.add.sprite(0, 0, 'specialTiles', 0),
+            this.playerXLocation, this.playerYLocation, -170);
     }
 
     setSeparatorPosition(gameObject) {
@@ -1327,6 +1690,7 @@ class GameScene extends Phaser.Scene {
     gameLost() {
         // initiated game over sequence
         this.isTerminating = true;
+        globalParameters.success = false;
 
         // shake camera
         this.cameras.main.shake(500);
@@ -1342,7 +1706,6 @@ class GameScene extends Phaser.Scene {
         this.isTerminating = true;
 
         globalParameters.success = true;
-        globalParameters.currentLevel = this.params.level;
 
         /* Go back to title if this was the last level */
         if (globalParameters.currentLevel < globalParameters.availableLevels)

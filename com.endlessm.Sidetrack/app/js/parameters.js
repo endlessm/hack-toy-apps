@@ -22,7 +22,7 @@ const PLAYTHRUGAME = 1;
 var globalParameters = {
     /* Number of available levels */
     // TODO: Where is this value being set? In Lightspeed, it's set to 0.
-    availableLevels: 25,
+    availableLevels: 41,
 
     /* Current Level: read only property, 0 for title screen */
     currentLevel: 0,
@@ -51,7 +51,7 @@ var defaultParameters = {
 
     // goal location
     goalXLocation: 8,
-    goalYLocation: 2,
+    goalYLocation: 0,
 
     // player location
     playerXLocation: -1,
@@ -77,12 +77,12 @@ var defaultLevelParameters = [
     {
         level: 2,
         playerYLocation: 2,
-        goalYLocation: 0,
     },
 
     {
         level: 3,
         playerYLocation: 2,
+        goalYLocation: 2,
     },
     {
         level: 4,
@@ -92,31 +92,34 @@ var defaultLevelParameters = [
     {
         level: 5,
         playerYLocation: 2,
+        goalYLocation: 2,
     },
     {
         level: 6,
         playerYLocation: 3,
-        goalYLocation: 0,
     },
     {
         level: 7,
         playerYLocation: 3,
+        goalYLocation: 2,
     },
     {
         level: 8,
         playerYLocation: 3,
+        goalYLocation: 2,
     },
     {
         level: 9,
         playerYLocation: 2,
+        goalYLocation: 2,
     },
     {
         level: 10,
         playerYLocation: 2,
+        goalYLocation: 2,
     },
     {
         level: 11,
-        playerYLocation: 0,
         goalYLocation: 4,
     },
     {
@@ -132,6 +135,7 @@ var defaultLevelParameters = [
     {
         level: 14,
         playerYLocation: 2,
+        goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
@@ -145,8 +149,8 @@ var defaultLevelParameters = [
     },
     {
         level: 15,
-        goalYLocation: 4,
         playerYLocation: 2,
+        goalYLocation: 4,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
@@ -161,6 +165,7 @@ var defaultLevelParameters = [
     {
         level: 16,
         playerYLocation: 2,
+        goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
@@ -175,6 +180,7 @@ var defaultLevelParameters = [
     {
         level: 17,
         playerYLocation: 2,
+        goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.up();
@@ -188,8 +194,8 @@ var defaultLevelParameters = [
     },
     {
         level: 18,
-        goalYLocation: 3,
         playerYLocation: 2,
+        goalYLocation: 3,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
@@ -203,8 +209,8 @@ var defaultLevelParameters = [
     },
     {
         level: 19,
-        goalYLocation: 3,
         playerYLocation: 2,
+        goalYLocation: 3,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.jump();
@@ -218,64 +224,37 @@ var defaultLevelParameters = [
     },
     {
         level: 20,
-        playerYLocation: 2,
+        playerYLocation: 1,
+        goalYLocation: 4,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
-    riley.down();
-    riley.up();
-    riley.up();
-    riley.down();
     riley.forward();
-    riley.jump();
-    riley.jump();
-    riley.forward();`,
+    riley.forward();
+    riley.forward();
+    riley.down();
+    riley.down();
+    riley.down();
+    riley.down();
+    riley.down();`,
     },
     {
         level: 21,
-        playerYLocation: 2,
+        playerYLocation: 4,
+        goalYLocation: 1,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.jump();
     riley.jump();
     riley.jump();
-    riley.jump();
     riley.up();
     riley.up();
-    riley.down();
+    riley.up();
+    riley.up();
     riley.down();`,
     },
     {
         level: 22,
-        playerYLocation: 2,
-        gameType: PLAYTHRUGAME,
-        instructionCode: `\
-    riley.forward();
-    riley.down();
-    riley.jump();
-    riley.down();
-    riley.forward();
-    riley.up();
-    riley.up();
-    riley.forward();`,
-    },
-    {
-        level: 23,
-        playerYLocation: 2,
-        gameType: PLAYTHRUGAME,
-        instructionCode: `\
-    riley.up();
-    riley.up();
-    riley.jump();
-    riley.down();
-    riley.down();
-    riley.down();
-    riley.down();
-    riley.down();`,
-    },
-    {
-        level: 24,
         playerYLocation: 3,
-        goalYLocation: 0,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
@@ -288,8 +267,9 @@ var defaultLevelParameters = [
     riley.up();`,
     },
     {
-        level: 25,
+        level: 23,
         playerYLocation: 2,
+        goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.forward();
@@ -300,6 +280,264 @@ var defaultLevelParameters = [
     riley.forward();
     riley.forward();
     riley.forward();`,
+    },
+    {
+        level: 24,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.down();
+    riley.up();
+    riley.fooorward();
+    riley.forward();
+    riley.Jump();
+    riley.up();
+    riley.jump();
+    riley.down();`,
+    },
+    {
+        level: 25,
+        playerYLocation: 3,
+        goalYLocation: 4,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.up();
+    riley.Up();
+    riley.down();
+    riley.down();
+    riley.forward();
+    riley.down();
+    riley.Jump();`,
+    },
+    {
+        level: 26,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.D0wn();
+    riley.upp();
+    riley.Jump();
+    riley.dovvn();
+    riley.farward();
+    riley.jmup();
+    riley.uP();
+    riley.forw();`,
+    },
+    {
+        level: 27,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.down();
+    riley.x0wna_Kms();
+    riley.down();
+    riley.forward();
+    riley.up();
+    riley.up();
+    riley.pppasd();`,
+    },
+    {
+        level: 28,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.jump();
+    riley.forward();
+    riley.up();
+    riley.forward();
+    riley.forward();
+    riley.down();`,
+    },
+    {
+        level: 29,
+        playerYLocation: 3,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.jump();
+    riley.up();
+    riley.up();
+    riley.forward();
+    riley.jump();
+    riley.forward();
+    riley.jump();
+    riley.up();`,
+    },
+    {
+        level: 30,
+        playerYLocation: 1,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.jump();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.jump();
+    riley.jump();
+    riley.down();`,
+    },
+    {
+        level: 31,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley._jump();
+    riley.forward();
+    riley.forward();`,
+    },
+    {
+        level: 32,
+        playerYLocation: 3,
+        goalYLocation: 3,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.jump();
+    riley.up();
+    riley.jump();
+    riley.forward();
+    riley.forward();
+    riley.gggggg();
+    riley.down();`,
+    },
+    {
+        level: 33,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();`,
+    },
+    {
+        level: 34,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.move_wall_away();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();`,
+    },
+    {
+        level: 35,
+        playerYLocation: 1,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.shove_objects();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.shove_walls_and_robots();
+    riley.down();`,
+    },
+    {
+        level: 36,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();`,
+    },
+    {
+        level: 37,
+        goalYLocation: 4,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.down();
+    riley.down();
+    riley.down();
+    riley.move_it();
+    riley.down();
+    riley.forward();
+    riley.forward();
+    riley.jump();`,
+    },
+    {
+        level: 38,
+        playerYLocation: 2,
+        goalYLocation: 3,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.up();
+    riley.push();
+    riley.jump();
+    riley.jump();
+    riley.down();
+    riley.down();`,
+    },
+    {
+        level: 39,
+        playerYLocation: 3,
+        goalYLocation: 1,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.up();
+    riley.push();
+    riley.jump();
+    riley.forward();
+    riley.Down();
+    riley.down();
+    riley.push();
+    riley.up();`,
+    },
+    {
+        level: 40,
+        playerYLocation: 2,
+        goalYLocation: 2,
+        gameType: PLAYTHRUGAME,
+    },
+    {
+        level: 41,
+        goalYLocation: 4,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.down();
+    riley.down();
+    riley.push();
+    riley.push();
+    riley.down();
+    riley.down();`,
     },
 ];
 

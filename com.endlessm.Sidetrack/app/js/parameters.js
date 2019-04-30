@@ -180,7 +180,7 @@ var defaultLevelParameters = [
     {
         level: 17,
         playerYLocation: 2,
-        goalYLocation: 4,
+        goalYLocation: 2,
         gameType: PLAYTHRUGAME,
         instructionCode: `\
     riley.up();

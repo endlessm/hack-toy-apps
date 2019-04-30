@@ -115,6 +115,9 @@ class GameScene extends Phaser.Scene {
 
             if (this.params.gameType >= 0)
                 this.gameType = this.params.gameType;
+
+            if (this.params.level >= 0)
+                globalParameters.currentLevel = this.params.level;
         }
     }
 
@@ -206,7 +209,7 @@ class GameScene extends Phaser.Scene {
         }
 
         /* Reset Global game state */
-        globalParameters.success = false;
+        globalParameters.success = true;
         globalParameters.score = 0;
     }
 
@@ -1687,6 +1690,7 @@ class GameScene extends Phaser.Scene {
     gameLost() {
         // initiated game over sequence
         this.isTerminating = true;
+        globalParameters.success = false;
 
         // shake camera
         this.cameras.main.shake(500);
@@ -1702,7 +1706,6 @@ class GameScene extends Phaser.Scene {
         this.isTerminating = true;
 
         globalParameters.success = true;
-        globalParameters.currentLevel = this.params.level;
 
         /* Go back to title if this was the last level */
         if (globalParameters.currentLevel < globalParameters.availableLevels)

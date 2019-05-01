@@ -162,7 +162,8 @@ class GameScene extends Phaser.Scene {
                 this.onGlobalPropertyChange, this);
         }, this);
 
-        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0).setScale(0.7);
+        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0)
+.setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
             const x = this.xOffset - this.tileLength - 50;
@@ -409,13 +410,12 @@ class GameScene extends Phaser.Scene {
         return tmpObstacle;
     }
 
-    getObstacleCountOnTile(x, y) {        
+    getObstacleCountOnTile(x, y) {
         let obstacleCount = 0;
         for (var i = 0; i < this.obstacles.length; i++) {
             if (this.obstacles[i].xPosition === x &&
-                this.obstacles[i].yPosition === y) {
+                this.obstacles[i].yPosition === y)
                 obstacleCount++;
-            }
         }
         return obstacleCount;
     }

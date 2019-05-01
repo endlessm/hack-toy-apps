@@ -1727,10 +1727,9 @@ class GameScene extends Phaser.Scene {
 
     /* This will be called each time something in globalParameters changes */
     onGlobalParametersNotify(property) {
-        if (property.endsWith('Code')) {
-            this.instructionCode = getUserFunction(globalParameters[property]);
-            this.runInstruction();
-        }
+        // TODO - add cutscene calls from quest
+        // Property names: controlsCutscene and escapeCutscene
+        // It's separate phab task
     }
 
     /* This will be called each time something in this.params changes */

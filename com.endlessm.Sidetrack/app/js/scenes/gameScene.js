@@ -148,14 +148,10 @@ class GameScene extends Phaser.Scene {
                 this.onGlobalPropertyChange, this);
         }, this);
 
-        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0)
-.setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
             const x = this.xOffset - this.tileLength - 50;
             const y = this.countY * this.tileLength + this.yOffset + 20;
-
-            this.controls.setVisible(false);
 
             this.playButton = this.add.sprite(x, y,
                 'playButton', 0).setInteractive({useHandCursor: true});
@@ -175,24 +171,70 @@ class GameScene extends Phaser.Scene {
                 // hide the play button until animation is complete
                 this.playButton.setAlpha(0);
 
-                // play the destroy control animation
-                this.controls.setVisible(true);
-                this.controls.anims.play('controls');
+                // TODO: add animation when assets received
 
-                this.controls.on('animationcomplete', function() {
-                    this.controls.setVisible(false);
-                    // fade in play button
-                    this.tweens.add({
-                        targets: [this.playButton],
-                        duration: 2000,
-                        alpha: 1,
-                        onComplete: () => {
-                            var modalText = 'What was that?';
-                            this.showModal(modalText);
-                        },
-                    });
-                }.bind(this));
+                // this.controls = this.add.sprite(120,
+                // 750, 'controls').setOrigin(0).setScale(0.7);
+                // play the destroy control animation
+                // this.controls.setVisible(true);
+                // this.controls.anims.play('controls');
+
+                // this.controls.on('animationcomplete', function() {
+                //     this.controls.setVisible(false);
+                //     // fade in play button
+                //     this.tweens.add({
+                //         targets: [this.playButton],
+                //         duration: 2000,
+                //         alpha: 1,
+                //         onComplete: () => {
+                //             var modalText = 'What was that?';
+                //             this.showModal(modalText);
+                //         },
+                //     });
+                // }.bind(this));
             }
+        } else {
+            const scaleX = 0.5;
+            const scaleY = 0.5;
+
+            this.fowardKeyButton = new Button(this, 0, 0, 'moveSquares', 1, 7,
+                scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(FORWARD);
+                    }
+                });
+
+            this.upKeyButton = new Button(this, 0, 0, 'moveSquares', 2, 7,
+                scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(UP);
+                    }
+                });
+
+            this.downKeyButton = new Button(this, 0, 0, 'moveSquares', 3, 7,
+                scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(DOWN);
+                    }
+                });
+
+            this.spacebarButton = new Button(this, 0, 0, 'spaceBar', 0, 1,
+                scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(JUMP);
+                        this.player.anims.stop('running');
+                        this.player.anims.play('jumping');
+                    }
+                });
+
+            this.setSpritePosition(this.fowardKeyButton, -1, this.countY, 0, 50);
+            this.setSpritePosition(this.upKeyButton, -1, this.countY, 0, -20);
+            this.setSpritePosition(this.downKeyButton, -1, this.countY, 0, 120);
+            this.setSpritePosition(this.spacebarButton, -1, this.countY, -100, 50);
         }
 
         /* Reset Global game state */
@@ -220,6 +262,7 @@ class GameScene extends Phaser.Scene {
                 isKeyboardPressOff = true;
 
                 if (this.isMoving) {
+                    this.playButton.setFrame(2);
                     this.tick++;
 
                     if (this.tick >= 10) {
@@ -380,7 +423,7 @@ class GameScene extends Phaser.Scene {
     playButtonClick() {
         if (!this.isMoving) {
             this.isMoving = true;
-            this.playButton.setFrame(2);
+            this.playButton.setFrame(3);
         }
     }
 

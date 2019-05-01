@@ -40,9 +40,16 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('restartIcon', 'assets/images/restartIcon.png');
         this.load.image('explosion', 'assets/images/explosion.png');
 
+        this.load.spritesheet('spaceBar', 'assets/images/spaceBar.png', {
+            frameWidth: 268,
+            frameHeight: 168,
+            margin: 0,
+            spacing: 0,
+        });
+
         this.load.spritesheet('playButton', 'assets/images/playButton.png', {
-            frameWidth: 148,
-            frameHeight: 148,
+            frameWidth: 179,
+            frameHeight: 177,
             margin: 0,
             spacing: 0,
         });
@@ -90,8 +97,8 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('moveSquares', 'assets/images/moveSquares.png', {
-            frameWidth: 115,
-            frameHeight: 115,
+            frameWidth: 159,
+            frameHeight: 158,
             margin: 0,
             spacing: 0,
         });

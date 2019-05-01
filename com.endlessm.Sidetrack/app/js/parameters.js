@@ -16,6 +16,8 @@ var globalParameters = {
     // TODO: Where is this value being set? In Lightspeed, it's set to 0.
     availableLevels: 41,
 
+    highestAchievedLevel: 1,
+
     /* Current Level: read only property, 0 for title screen */
     currentLevel: 0,
 

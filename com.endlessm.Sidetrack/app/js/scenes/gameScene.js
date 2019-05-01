@@ -789,8 +789,7 @@ class GameScene extends Phaser.Scene {
 
         this.nextLevelButton = new Button(this, gameW / 2 + 200, gameH / 2 + 3,
             'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
-                // TODO - verify that this is the functionality we want
-                if (globalParameters.currentLevel + 1 <= globalParameters.availableLevels)
+                if (globalParameters.currentLevel + 1 <= globalParameters.highestAchievedLevel)
                     this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
             });
 
@@ -1201,6 +1200,9 @@ class GameScene extends Phaser.Scene {
             globalParameters.nextLevel = globalParameters.currentLevel + 1;
         else
             globalParameters.nextLevel = 0;
+
+        if (globalParameters.nextLevel > globalParameters.highestAchievedLevel)
+            globalParameters.highestAchievedLevel = globalParameters.nextLevel;
 
         saveState();
 

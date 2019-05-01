@@ -71,7 +71,8 @@ class GameScene extends Phaser.Scene {
         this.keyIsDown = false;
 
         // play thru game delay
-        this.tick = 0;
+        this.tickReset = 120;
+        this.tick = this.tickReset;
 
         this.gameType = 0;
 
@@ -262,7 +263,7 @@ class GameScene extends Phaser.Scene {
                     this.playButton.setFrame(2);
                     this.tick++;
 
-                    if (this.tick >= 10) {
+                    if (this.tick >= this.tickReset) {
                         this.tick = 0;
                         this.placePlayer();
                     }
@@ -752,7 +753,7 @@ class GameScene extends Phaser.Scene {
         const gameW = this.sys.game.config.width;
         const gameH = 100;
         const text = this.add.text(gameW / 2, gameH / 2, `Level ${this.levelNumber}`, {
-            font: '40px Arial',
+            font: 'bold 30pt Metropolis',
             fill: '#ffffff',
         });
         text.setOrigin(0.5, 0.5);
@@ -770,6 +771,16 @@ class GameScene extends Phaser.Scene {
         textBg.fillStyle(0x000000, 0.7);
         textBg.fillRect(gameW / 2 - text.width / 2 - 20, gameH / 2 - text.height / 2 - 10,
             text.width + 120, text.height + 20);
+
+        const yStepNumber = this.countY * this.tileLength + this.yOffset + 120;
+        let xStepNumber;
+        for (let i = 0; i <= this.MAXMOVES; i++) {
+            xStepNumber = i * this.tileLength + this.xOffset;
+            this.add.text(xStepNumber, yStepNumber, i, {
+                font: '30pt Metropolis-Medium',
+                fill: '#53edf9',
+            }).setOrigin(0.5);
+        }
     }
 
     createLevel() {

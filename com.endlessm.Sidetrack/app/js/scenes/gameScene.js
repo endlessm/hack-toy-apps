@@ -2,7 +2,7 @@
 
 /* global saveState, UserInstructionsCodeScope, UserLevelCodeScope,
 WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH, ERROR,
-PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
+PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB, Button */
 
 function getUserFunction(code) {
     if (!code)
@@ -557,7 +557,8 @@ class GameScene extends Phaser.Scene {
                 rileyMove.setFrame(highlightedSquare);
 
                 this.stepTextHighlighter.setVisible(true);
-                this.stepTextHighlighter.x = this.playerXLocation * this.tileLength + this.xOffset;
+                this.stepTextHighlighter.x =
+                    this.playerXLocation * this.tileLength + this.xOffset;
                 this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 120;
             }
         }
@@ -782,6 +783,27 @@ class GameScene extends Phaser.Scene {
     displayLevelUI() {
         const gameW = this.sys.game.config.width;
         const gameH = 100;
+
+        const scaleX = 0.4;
+        const scaleY = 0.4;
+
+        this.nextLevelButton = new Button(this, gameW / 2 + 200, gameH / 2 + 3,
+            'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
+                // TODO - verify that this is the functionality we want
+                if (globalParameters.currentLevel + 1 <= globalParameters.availableLevels)
+                    this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
+            });
+
+        this.previousLevelButton = new Button(this, gameW / 2 - 120, gameH / 2 + 3,
+            'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
+                if (globalParameters.currentLevel > 1)
+                    this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
+            });
+
+        this.nextLevelButton.setDepth(1);
+        this.previousLevelButton.setDepth(1);
+        this.previousLevelButton.flipX = true;
+
         const text = this.add.text(gameW / 2, gameH / 2, `Level ${this.levelNumber}`, {
             font: 'bold 30pt Metropolis',
             fill: '#ffffff',
@@ -799,8 +821,8 @@ class GameScene extends Phaser.Scene {
         // text background
         const textBg = this.add.graphics();
         textBg.fillStyle(0x000000, 0.7);
-        textBg.fillRect(gameW / 2 - text.width / 2 - 20, gameH / 2 - text.height / 2 - 10,
-            text.width + 120, text.height + 20);
+        textBg.fillRect(this.previousLevelButton.x - 50, gameH / 2 - text.height / 2 - 10,
+            text.width + 295, text.height + 20);
 
         const yStepNumber = this.countY * this.tileLength + this.yOffset + 120;
         let xStepNumber;

@@ -85,7 +85,7 @@ function resetGlobalUserCode() {
     }`;
 
     globalParameters.activatePowerupCode = `\
-    if (powerUpType === 'invulnerable') {
+    if (powerUpType === invulnerable) {
 
     }`;
 }
@@ -177,7 +177,7 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 70) {
-        return 'asteroid';
+        return asteroid;
     }`,
     },
 
@@ -187,7 +187,7 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        return 'asteroid';
+        return asteroid;
     }`,
     },
 
@@ -197,7 +197,7 @@ var defaultLevelParameters = [
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
         return {
-            type: 'asteroid',
+            type: asteroid,
             scale: 150
         };
     }`,
@@ -217,7 +217,7 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        return 'asteroid';
+        return asteroid;
     }`,
     },
 
@@ -246,7 +246,7 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        return 'asteroid';
+        return asteroid;
     }`,
 
         spawnPowerupCode: `\
@@ -260,13 +260,13 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        return 'asteroid';
+        return asteroid;
     }`,
 
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > random(60, 240))
-        return 'invulnerable';`,
+        return invulnerable;`,
     },
 
     /* Level 13 */
@@ -274,13 +274,13 @@ var defaultLevelParameters = [
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        return 'asteroid';
+        return asteroid;
     }`,
 
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > random(60, 240))
-        return 'upgrade';
+        return upgrade;
 
     return null;`,
     },
@@ -290,13 +290,13 @@ var defaultLevelParameters = [
         spawnPowerupCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > random(60, 240)) {
-        return pickOne('invulnerable', 'blowup', 'upgrade');
+        return pickOne(invulnerable, blowup, upgrade);
     }`,
 
         spawnEnemyCode: `\
     ${TICK_COMMENT}
     if (ticksSinceSpawn > 40) {
-        return 'asteroid';
+        return asteroid;
     }`,
     },
 ];

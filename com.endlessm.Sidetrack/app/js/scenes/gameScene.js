@@ -660,9 +660,11 @@ class GameScene extends Phaser.Scene {
 
     addDragInputs() {
         this.input.on('dragstart', (pointer, gameObject) => {
+            const gameObjectFrame = gameObject.moveType + this.moveSquareOffset * 2;
+
             // so user can see the move they're dragging
             gameObject.setDepth(2);
-            gameObject.setTint(0xff0000);
+            gameObject.setFrame(gameObjectFrame);
         });
 
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
@@ -686,7 +688,7 @@ class GameScene extends Phaser.Scene {
         });
 
         this.input.on('dragend', (pointer, gameObject) => {
-            gameObject.clearTint();
+            gameObject.setFrame(gameObject.moveType);
             gameObject.setDepth(1);
 
             const index = this.arrSpriteMoves.indexOf(gameObject);
@@ -746,6 +748,10 @@ class GameScene extends Phaser.Scene {
 
             // for playthru games, check if draggable is set
             if (this.gameType === PLAYTHRUGAME) {
+                moveSquare.on('pointerover', () =>
+                    moveSquare.setFrame(moveSquare.moveType + this.moveSquareOffset));
+                moveSquare.on('pointerout', () => moveSquare.setFrame(moveSquare.moveType));
+
                 moveSquare.setInteractive({useHandCursor: true});
                 this.input.setDraggable(moveSquare);
                 moveSquare.dragDistanceThreshold = 16;
@@ -895,7 +901,7 @@ class GameScene extends Phaser.Scene {
         const maxX = this.MAXMOVES * this.tileLength + this.xOffset;
         const halfTilelength = this.tileLength * 0.5;
 
-        const offset = minX - halfTilelength;
+        const offset = minX - halfTilelength + 2;
 
         if (gameObject.x < offset) {
             this.separator.x = offset - this.tileLength;

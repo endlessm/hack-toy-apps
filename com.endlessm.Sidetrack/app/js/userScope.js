@@ -38,6 +38,7 @@ class Obstacle {
 class riley {
     constructor() {
         this.moves = [];
+        this._badPropertyNames = [];
     }
 
     forward() {
@@ -69,6 +70,8 @@ const handler = {
     get(target, name, receiver) {
         if (name in target)
             return Reflect.get(target, name, receiver);
+
+        target._badPropertyNames.push(name);
         return target.error;
     },
 };

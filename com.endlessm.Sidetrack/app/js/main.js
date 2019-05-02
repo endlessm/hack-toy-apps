@@ -1,7 +1,7 @@
 /* exported fontConfig, game */
 
 /*  global globalParameters, defaultLevelParameters, defaultParameters,
-    BootScene, LoadingScene, HomeScene, StartScene, GameScene, ToyApp */
+    BootScene, LoadingScene, GameScene, ToyApp */
 
 const fontConfig = {
     color: 'white',
@@ -31,8 +31,6 @@ var config = {
     scene: [
         new BootScene('Boot'),
         new LoadingScene('Loading'),
-        new HomeScene('Home'),
-        new StartScene('Start'),
         new GameScene('Game'),
     ],
 };
@@ -106,9 +104,6 @@ game.events.on('global-property-change', (obj, property) => {
         if (startLevel) {
             globalParameters.playing = true;
             game.scene.start('Game', levelParameters[startLevel]);
-        } else {
-            globalParameters.playing = false;
-            game.scene.start('Home');
         }
     }
 });

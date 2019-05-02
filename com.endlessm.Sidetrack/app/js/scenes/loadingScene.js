@@ -199,6 +199,14 @@ class LoadingScene extends Phaser.Scene {
             });
         }
 
-        this.scene.start('Home');
+        this.startLevel();
+    }
+
+    startLevel() {
+        globalParameters.currentLevel = globalParameters.highestAchievedLevel;
+        globalParameters.playing = true;
+        globalParameters.paused = false;
+
+        this.scene.start('Game', levelParameters[globalParameters.currentLevel]);
     }
 }

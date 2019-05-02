@@ -1162,7 +1162,7 @@ class GameScene extends Phaser.Scene {
             globalParameters.playing = true;
             this.scene.restart(levelParameters[globalParameters.nextLevel]);
         } else {
-            this.scene.start('Home');
+            this.scene.restart(levelParameters[globalParameters.highestAchievedLevel]);
         }
     }
 

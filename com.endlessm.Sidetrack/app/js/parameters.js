@@ -49,6 +49,9 @@ var defaultParameters = {
     playerXLocation: -1,
     playerYLocation: 0,
 
+    robotADirection: 'down',
+    robotBDirection: 'up',
+
     gameType: DEFAULTGAME,
     instructionCode: '',
     levelCode: '',

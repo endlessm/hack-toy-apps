@@ -82,6 +82,9 @@ class GameScene extends Phaser.Scene {
         this.gameOverAnimation = 'game-over';
         this.levelCompleteAnimation = 'levelComplete';
 
+        this.robotADirection = 'down';
+        this.robotBDirection = 'up';
+
         // few sanity checks to make sure data is coming through
         if (this.params) {
             if (this.params.level > 0)
@@ -104,6 +107,11 @@ class GameScene extends Phaser.Scene {
 
             if (this.params.level >= 0)
                 globalParameters.currentLevel = this.params.level;
+
+            this.robotADirection =
+                this.getRobotDirection(this.params.robotADirection, ROBOTA);
+            this.robotBDirection =
+                this.getRobotDirection(this.params.robotBDirection, ROBOTB);
         }
     }
 
@@ -411,27 +419,36 @@ class GameScene extends Phaser.Scene {
         let yPosition;
 
         let isRobotType = false;
+        let robotDirection = '';
 
         for (var i = 0; i < this.obstacles.length; i++) {
             isRobotType = false;
 
             if (this.obstacles[i].type === ROBOTA) {
                 isRobotType = true;
-                if (this.obstacles[i].yPosition >= this.countY - 1)
-                    yPosition = 0;
-                else
-                    yPosition = this.obstacles[i].yPosition + 1;
+                robotDirection = this.robotADirection;
             }
 
             if (this.obstacles[i].type === ROBOTB) {
                 isRobotType = true;
-                if (this.obstacles[i].yPosition <= 0)
-                    yPosition = this.countY - 1;
-                else
-                    yPosition = this.obstacles[i].yPosition - 1;
+                robotDirection = this.robotBDirection;
             }
 
             if (isRobotType) {
+                if (robotDirection === 'up') {
+                    if (this.obstacles[i].yPosition <= 0)
+                        yPosition = this.countY - 1;
+                    else
+                        yPosition = this.obstacles[i].yPosition - 1;
+                }
+
+                if (robotDirection === 'down') {
+                    if (this.obstacles[i].yPosition >= this.countY - 1)
+                        yPosition = 0;
+                    else
+                        yPosition = this.obstacles[i].yPosition + 1;
+                }
+
                 xPosition = this.obstacles[i].xPosition;
                 this.obstacles[i].yPosition = yPosition;
                 this.setSpritePosition(this.obstacles[i].sprite, xPosition, yPosition);
@@ -453,6 +470,39 @@ class GameScene extends Phaser.Scene {
                     this.addExplosionSprite(this.obstacles[i]);
             }
         }
+    }
+
+    setRobotsFrame() {
+        for (var i = 0; i < this.obstacles.length; i++) {
+            if (this.obstacles[i].type === ROBOTA) {
+                if (this.robotADirection === 'down')
+                    this.obstacles[i].setFrame(0);
+                else
+                    this.obstacles[i].setFrame(1);
+            }
+
+            if (this.obstacles[i].type === ROBOTB) {
+                if (this.robotBDirection === 'down')
+                    this.obstacles[i].setFrame(2);
+                else
+                    this.obstacles[i].setFrame(3);
+            }
+        }
+    }
+
+    getRobotDirection(direction, type) {
+        let defaultDirection = '';
+
+        if (type === ROBOTA)
+            defaultDirection = 'down';
+
+        if (type === ROBOTB)
+            defaultDirection = 'up';
+
+        if (direction === 'up' || direction === 'down')
+            return direction;
+        else
+            return defaultDirection;
     }
 
     placePlayer() {
@@ -782,11 +832,17 @@ class GameScene extends Phaser.Scene {
             if (this.obstacles[i].type === PIT)
                 sprite = this.add.sprite(0, 0, 'pit');
 
-            if (this.obstacles[i].type === ROBOTA)
+            if (this.obstacles[i].type === ROBOTA) {
                 sprite = this.add.sprite(0, 0, 'robots', 0).setDepth(1);
+                if (this.robotADirection === 'up')
+                    sprite.setFrame(1);
+            }
 
-            if (this.obstacles[i].type === ROBOTB)
-                sprite = this.add.sprite(0, 0, 'robots', 1).setDepth(1);
+            if (this.obstacles[i].type === ROBOTB) {
+                sprite = this.add.sprite(0, 0, 'robots', 3).setDepth(1);
+                if (this.robotBDirection === 'down')
+                    sprite.setFrame(2);
+            }
 
             this.obstacles[i].sprite = sprite;
             this.setSpritePosition(this.obstacles[i].sprite, this.obstacles[i].xPosition,
@@ -1127,6 +1183,12 @@ class GameScene extends Phaser.Scene {
         } else if (property === 'levelCode') {
             this.levelCode = getUserFunction(this.params.levelCode);
             this.runObstacles();
+        } else if (property === 'robotADirection') {
+            this.robotADirection = this.getRobotDirection(this.params.robotADirection, ROBOTA);
+            this.setRobotsFrame();
+        } else if (property === 'robotBDirection') {
+            this.robotBDirection = this.getRobotDirection(this.params.robotBDirection, ROBOTB);
+            this.setRobotsFrame();
         }
     }
 

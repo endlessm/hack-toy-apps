@@ -6,7 +6,7 @@
  */
 
 /* exported TitleScene */
-/* global Logo, shipTypes */
+/* global Logo, shipTypes, ASTRONAUT_PARTICLE_COLORS */
 
 const kcode = [38, 38, 40, 40, 37, 39, 37, 39, 65, 66];
 

@@ -464,9 +464,8 @@ class LevelScene extends Phaser.Scene {
             }
 
             /* Destroy astronauts that are lost to prevent slowdown */
-            if (astronaut.x + astronaut.displayWidth < LEFT_BOUNDARY) {
+            if (astronaut.x + astronaut.displayWidth < LEFT_BOUNDARY)
                 this.destroySprite(astronaut);
-            }
         }
     }
 
@@ -490,9 +489,8 @@ class LevelScene extends Phaser.Scene {
 
         for (const powerup of children) {
             /* Destroy powerup that are lost to prevent slowdown */
-            if (powerup.x + powerup.displayWidth < LEFT_BOUNDARY) {
+            if (powerup.x + powerup.displayWidth < LEFT_BOUNDARY)
                 this.destroySprite(powerup);
-            }
         }
     }
 

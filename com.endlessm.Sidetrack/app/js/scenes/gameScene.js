@@ -1,6 +1,7 @@
 /* exported GameScene */
 
-/* global saveState, UserScope, WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH, ERROR,
+/* global saveState, UserInstructionsCodeScope, UserLevelCodeScope,
+WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH, ERROR,
 PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
 
 function getUserFunction(code) {
@@ -11,7 +12,7 @@ function getUserFunction(code) {
 
     try {
         // eslint-disable-next-line no-new-func
-        retval = new Function('scope', `with(scope){\n${code}\nreturn riley.moves;}`);
+        retval = new Function('scope', `with(scope){\n${code}\n}`);
     } catch (e) {
         retval = null;
         if (!(e instanceof SyntaxError || e instanceof ReferenceError))
@@ -20,22 +21,6 @@ function getUserFunction(code) {
     }
 
     return retval;
-}
-
-class Obstacle {
-    constructor(type, x, y) {
-        this.type = type;
-        this.xPosition = x;
-        this.yPosition = y;
-        this.sprite = null;
-
-        // these are to determine which wall/pit image to use in spritesheet
-        this.sameLeftObstacle = false;
-        this.sameRightObstacle = false;
-        this.sameTopObstacle = false;
-        this.sameBottomObstacle = false;
-        this.isDestroyed = false;
-    }
 }
 
 class GameScene extends Phaser.Scene {
@@ -65,6 +50,7 @@ class GameScene extends Phaser.Scene {
 
         // array of explosion sprite for destroyed obstacles
         this.explosions = [];
+        this.obstacles = [];
 
         // grid length and height
         this.countX = 9;
@@ -162,7 +148,8 @@ class GameScene extends Phaser.Scene {
                 this.onGlobalPropertyChange, this);
         }, this);
 
-        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0).setScale(0.7);
+        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0)
+.setScale(0.7);
 
         if (this.gameType === PLAYTHRUGAME) {
             const x = this.xOffset - this.tileLength - 50;
@@ -409,623 +396,14 @@ class GameScene extends Phaser.Scene {
         return tmpObstacle;
     }
 
-    getObstacleCountOnTile(x, y) {        
+    getObstacleCountOnTile(x, y) {
         let obstacleCount = 0;
         for (var i = 0; i < this.obstacles.length; i++) {
             if (this.obstacles[i].xPosition === x &&
-                this.obstacles[i].yPosition === y) {
+                this.obstacles[i].yPosition === y)
                 obstacleCount++;
-            }
         }
         return obstacleCount;
-    }
-
-    // TODO: move obstacles to parameter.js
-    // eslint-disable-next-line complexity
-    setObstacles(level) {
-        void this;
-        let obstacles = [];
-        switch (level) {
-        case 1:
-            obstacles = [
-                new Obstacle(WALL, 4, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 6, 3),
-                new Obstacle(WALL, 6, 4),
-            ];
-            break;
-        case 2:
-            obstacles = [
-                new Obstacle(WALL, 4, 0),
-                new Obstacle(WALL, 5, 0),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 6, 1),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 4, 3),
-            ];
-            break;
-        case 3:
-            obstacles = [
-                new Obstacle(WALL, 4, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 0, 2),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(WALL, 2, 4),
-                new Obstacle(WALL, 4, 4),
-            ];
-            break;
-        case 4:
-            obstacles = [
-                new Obstacle(WALL, 1, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 1, 3),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(PIT, 6, 3),
-                new Obstacle(WALL, 1, 4),
-                new Obstacle(PIT, 6, 4),
-            ];
-            break;
-        case 5:
-            obstacles = [
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 5, 4),
-            ];
-            break;
-        case 6:
-            obstacles = [
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(PIT, 4, 1),
-                new Obstacle(PIT, 6, 1),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(WALL, 2, 2),
-                new Obstacle(PIT, 4, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(PIT, 2, 3),
-                new Obstacle(WALL, 1, 4),
-            ];
-            break;
-        case 7:
-            obstacles = [
-                new Obstacle(ROBOTA, 2, 0),
-                new Obstacle(ROBOTA, 4, 0),
-                new Obstacle(ROBOTA, 6, 0),
-            ];
-            break;
-        case 8:
-            obstacles = [
-                new Obstacle(ROBOTA, 2, 0),
-                new Obstacle(WALL, 3, 0),
-                new Obstacle(ROBOTA, 4, 0),
-                new Obstacle(ROBOTA, 6, 0),
-                new Obstacle(PIT, 5, 1),
-                new Obstacle(WALL, 0, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(WALL, 0, 4),
-                new Obstacle(WALL, 3, 4),
-                new Obstacle(WALL, 5, 4),
-            ];
-            break;
-        case 9:
-            obstacles = [
-                new Obstacle(WALL, 3, 0),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(ROBOTA, 6, 1),
-                new Obstacle(ROBOTA, 4, 2),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 3, 4),
-                new Obstacle(ROBOTA, 6, 4),
-            ];
-            break;
-        case 10:
-            obstacles = [
-                new Obstacle(ROBOTB, 6, 0),
-                new Obstacle(ROBOTA, 3, 2),
-                new Obstacle(ROBOTA, 3, 3),
-                new Obstacle(ROBOTB, 1, 4),
-            ];
-            break;
-        case 11:
-            obstacles = [
-                new Obstacle(WALL, 2, 0),
-                new Obstacle(ROBOTB, 6, 0),
-                new Obstacle(ROBOTA, 3, 2),
-                new Obstacle(WALL, 4, 2),
-                new Obstacle(ROBOTA, 3, 3),
-                new Obstacle(PIT, 4, 3),
-                new Obstacle(ROBOTB, 1, 4),
-                new Obstacle(PIT, 4, 4),
-            ];
-            break;
-        case 12:
-            obstacles = [
-                new Obstacle(ROBOTA, 2, 0),
-                new Obstacle(ROBOTB, 5, 0),
-                new Obstacle(ROBOTA, 2, 1),
-                new Obstacle(ROBOTB, 5, 1),
-                new Obstacle(ROBOTA, 2, 2),
-                new Obstacle(ROBOTB, 5, 2),
-                new Obstacle(ROBOTB, 5, 3),
-                new Obstacle(ROBOTA, 2, 4),
-            ];
-            break;
-        case 13:
-            obstacles = [
-                new Obstacle(ROBOTB, 2, 0),
-                new Obstacle(PIT, 3, 0),
-                new Obstacle(PIT, 4, 0),
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(PIT, 0, 1),
-                new Obstacle(PIT, 1, 1),
-                new Obstacle(PIT, 0, 2),
-                new Obstacle(PIT, 1, 2),
-                new Obstacle(PIT, 3, 2),
-                new Obstacle(PIT, 4, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(PIT, 0, 3),
-                new Obstacle(PIT, 1, 3),
-                new Obstacle(PIT, 3, 3),
-                new Obstacle(PIT, 4, 3),
-                new Obstacle(PIT, 5, 3),
-                new Obstacle(ROBOTA, 6, 3),
-                new Obstacle(PIT, 3, 4),
-                new Obstacle(PIT, 4, 4),
-                new Obstacle(PIT, 5, 4),
-                new Obstacle(ROBOTA, 6, 4),
-            ];
-            break;
-        case 14:
-            obstacles = [
-                new Obstacle(ROBOTA, 0, 0),
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(PIT, 2, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(ROBOTB, 6, 1),
-                new Obstacle(WALL, 1, 3),
-                new Obstacle(PIT, 3, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 7, 3),
-                new Obstacle(WALL, 3, 4),
-            ];
-            break;
-        case 15:
-            obstacles = [
-                new Obstacle(ROBOTA, 6, 1),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 4, 2),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(ROBOTB, 0, 4),
-            ];
-            break;
-        case 16:
-            obstacles = [
-                new Obstacle(WALL, 3, 0),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(PIT, 3, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 3, 4),
-            ];
-            break;
-        case 17:
-            obstacles = [
-                new Obstacle(WALL, 4, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 0, 2),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(WALL, 2, 4),
-                new Obstacle(WALL, 4, 4),
-            ];
-            break;
-        case 18:
-            obstacles = [
-                new Obstacle(WALL, 1, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 1, 3),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(PIT, 6, 3),
-                new Obstacle(WALL, 1, 4),
-                new Obstacle(PIT, 6, 4),
-            ];
-            break;
-        case 19:
-            obstacles = [
-                new Obstacle(WALL, 1, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(ROBOTA, 4, 2),
-                new Obstacle(WALL, 1, 3),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(PIT, 6, 3),
-                new Obstacle(WALL, 1, 4),
-                new Obstacle(PIT, 6, 4),
-            ];
-            break;
-        case 20:
-            obstacles = [
-                new Obstacle(WALL, 0, 1),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(ROBOTB, 5, 1),
-                new Obstacle(WALL, 2, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(WALL, 4, 2),
-                new Obstacle(ROBOTB, 5, 2),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 4, 3),
-            ];
-            break;
-        case 21:
-            obstacles = [
-                new Obstacle(ROBOTB, 4, 0),
-                new Obstacle(WALL, 6, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(PIT, 4, 2),
-                new Obstacle(WALL, 5, 2),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(ROBOTB, 6, 3),
-                new Obstacle(WALL, 2, 4),
-            ];
-            break;
-        case 22:
-            obstacles = [
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(PIT, 4, 1),
-                new Obstacle(PIT, 6, 1),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(WALL, 2, 2),
-                new Obstacle(PIT, 4, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(PIT, 2, 3),
-                new Obstacle(WALL, 1, 4),
-            ];
-            break;
-        case 23:
-            obstacles = [
-                new Obstacle(PIT, 3, 0),
-                new Obstacle(PIT, 3, 1),
-                new Obstacle(PIT, 3, 2),
-                new Obstacle(PIT, 3, 3),
-                new Obstacle(PIT, 3, 4),
-            ];
-            break;
-        case 24:
-            obstacles = [
-                new Obstacle(WALL, 0, 1),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(PIT, 6, 1),
-                new Obstacle(WALL, 0, 2),
-                new Obstacle(ROBOTA, 3, 2),
-                new Obstacle(PIT, 4, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 6, 3),
-                new Obstacle(WALL, 6, 4),
-            ];
-            break;
-        case 25:
-            obstacles = [
-                new Obstacle(ROBOTB, 0, 0),
-                new Obstacle(ROBOTB, 1, 0),
-                new Obstacle(ROBOTB, 2, 0),
-                new Obstacle(ROBOTA, 4, 0),
-                new Obstacle(ROBOTA, 7, 0),
-                new Obstacle(ROBOTA, 3, 1),
-                new Obstacle(ROBOTA, 4, 1),
-                new Obstacle(ROBOTA, 5, 1),
-                new Obstacle(ROBOTA, 6, 1),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 3, 4),
-            ];
-            break;
-        case 26:
-            obstacles = [
-                new Obstacle(WALL, 0, 0),
-                new Obstacle(PIT, 4, 0),
-                new Obstacle(WALL, 5, 0),
-                new Obstacle(ROBOTB, 6, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(PIT, 5, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(PIT, 4, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(WALL, 1, 4),
-                new Obstacle(ROBOTA, 3, 4),
-            ];
-            break;
-        case 27:
-            obstacles = [
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(PIT, 2, 2),
-                new Obstacle(WALL, 3, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(PIT, 6, 3),
-            ];
-            break;
-        case 28:
-            obstacles = [
-                new Obstacle(WALL, 2, 0),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 2, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 2, 4),
-            ];
-            break;
-        case 29:
-            obstacles = [
-                new Obstacle(WALL, 0, 0),
-                new Obstacle(WALL, 6, 0),
-                new Obstacle(WALL, 0, 1),
-                new Obstacle(ROBOTA, 4, 1),
-                new Obstacle(WALL, 6, 1),
-                new Obstacle(WALL, 0, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 0, 3),
-                new Obstacle(WALL, 6, 3),
-                new Obstacle(WALL, 0, 4),
-                new Obstacle(WALL, 6, 4),
-            ];
-            break;
-        case 30:
-            obstacles = [
-                new Obstacle(WALL, 0, 0),
-                new Obstacle(WALL, 1, 0),
-                new Obstacle(WALL, 5, 0),
-                new Obstacle(WALL, 6, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 6, 1),
-                new Obstacle(WALL, 0, 2),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(WALL, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(WALL, 5, 4),
-                new Obstacle(WALL, 6, 4),
-            ];
-            break;
-        case 31:
-            obstacles = [
-                new Obstacle(ROBOTA, 1, 0),
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(ROBOTA, 6, 0),
-                new Obstacle(ROBOTB, 3, 1),
-                new Obstacle(PIT, 5, 1),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(PIT, 5, 3),
-                new Obstacle(PIT, 5, 4),
-                new Obstacle(ROBOTB, 7, 4),
-            ];
-            break;
-        case 32:
-            obstacles = [
-                new Obstacle(ROBOTB, 1, 0),
-                new Obstacle(WALL, 5, 0),
-                new Obstacle(WALL, 6, 0),
-                new Obstacle(WALL, 6, 1),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(ROBOTA, 3, 3),
-                new Obstacle(WALL, 6, 3),
-                new Obstacle(PIT, 5, 4),
-                new Obstacle(PIT, 6, 4),
-            ];
-            break;
-        case 33:
-            obstacles = [
-                new Obstacle(WALL, 1, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(ROBOTB, 4, 1),
-                new Obstacle(PIT, 7, 1),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(ROBOTB, 5, 2),
-                new Obstacle(PIT, 7, 2),
-                new Obstacle(WALL, 1, 3),
-                new Obstacle(PIT, 7, 3),
-                new Obstacle(WALL, 1, 4),
-            ];
-            break;
-        case 34:
-            obstacles = [
-                new Obstacle(WALL, 1, 0),
-                new Obstacle(PIT, 1, 1),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(ROBOTB, 5, 1),
-                new Obstacle(PIT, 6, 1),
-                new Obstacle(WALL, 1, 2),
-                new Obstacle(ROBOTB, 5, 2),
-                new Obstacle(PIT, 1, 3),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(PIT, 6, 3),
-                new Obstacle(WALL, 1, 4),
-            ];
-            break;
-        case 35:
-            obstacles = [
-                new Obstacle(ROBOTA, 0, 0),
-                new Obstacle(WALL, 6, 0),
-                new Obstacle(WALL, 6, 1),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 6, 3),
-                new Obstacle(WALL, 7, 3),
-            ];
-            break;
-        case 36:
-            obstacles = [
-                new Obstacle(PIT, 1, 0),
-                new Obstacle(PIT, 2, 0),
-                new Obstacle(ROBOTA, 5, 0),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(ROBOTA, 5, 1),
-                new Obstacle(ROBOTA, 5, 2),
-                new Obstacle(WALL, 6, 2),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(PIT, 1, 4),
-                new Obstacle(PIT, 2, 4),
-            ];
-            break;
-        case 37:
-            obstacles = [
-                new Obstacle(WALL, 2, 0),
-                new Obstacle(ROBOTB, 6, 0),
-                new Obstacle(ROBOTA, 3, 2),
-                new Obstacle(WALL, 4, 2),
-                new Obstacle(ROBOTA, 3, 3),
-                new Obstacle(PIT, 4, 3),
-                new Obstacle(ROBOTB, 1, 4),
-                new Obstacle(PIT, 4, 4),
-            ];
-            break;
-        case 38:
-            obstacles = [
-                new Obstacle(ROBOTA, 0, 0),
-                new Obstacle(ROBOTA, 1, 0),
-                new Obstacle(ROBOTA, 2, 0),
-                new Obstacle(PIT, 4, 0),
-                new Obstacle(PIT, 5, 0),
-                new Obstacle(ROBOTA, 0, 1),
-                new Obstacle(ROBOTA, 1, 1),
-                new Obstacle(PIT, 4, 1),
-                new Obstacle(PIT, 5, 1),
-                new Obstacle(ROBOTB, 3, 2),
-                new Obstacle(WALL, 4, 2),
-                new Obstacle(WALL, 5, 2),
-                new Obstacle(ROBOTB, 3, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(WALL, 4, 4),
-                new Obstacle(WALL, 5, 4),
-                new Obstacle(ROBOTB, 6, 4),
-                new Obstacle(ROBOTB, 7, 4),
-            ];
-            break;
-        case 39:
-            obstacles = [
-                new Obstacle(WALL, 5, 0),
-                new Obstacle(ROBOTA, 6, 0),
-                new Obstacle(ROBOTA, 7, 0),
-                new Obstacle(WALL, 2, 1),
-                new Obstacle(WALL, 3, 1),
-                new Obstacle(ROBOTB, 4, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(ROBOTA, 6, 1),
-                new Obstacle(PIT, 3, 2),
-                new Obstacle(ROBOTB, 4, 2),
-                new Obstacle(PIT, 5, 2),
-                new Obstacle(WALL, 3, 3),
-                new Obstacle(ROBOTA, 1, 4),
-                new Obstacle(ROBOTB, 2, 4),
-                new Obstacle(WALL, 3, 4),
-                new Obstacle(WALL, 5, 4),
-                new Obstacle(ROBOTA, 6, 4),
-            ];
-            break;
-        case 40:
-            obstacles = [
-                new Obstacle(PIT, 0, 0),
-                new Obstacle(PIT, 1, 0),
-                new Obstacle(WALL, 5, 0),
-                new Obstacle(PIT, 0, 1),
-                new Obstacle(PIT, 1, 1),
-                new Obstacle(WALL, 5, 1),
-                new Obstacle(ROBOTA, 7, 1),
-                new Obstacle(WALL, 5, 2),
-                new Obstacle(ROBOTB, 0, 3),
-                new Obstacle(ROBOTB, 1, 3),
-                new Obstacle(WALL, 2, 3),
-                new Obstacle(PIT, 3, 3),
-                new Obstacle(PIT, 4, 3),
-                new Obstacle(WALL, 5, 3),
-                new Obstacle(ROBOTB, 7, 3),
-                new Obstacle(ROBOTB, 0, 4),
-                new Obstacle(ROBOTB, 1, 4),
-                new Obstacle(WALL, 2, 4),
-                new Obstacle(ROBOTA, 3, 4),
-                new Obstacle(ROBOTA, 4, 4),
-                new Obstacle(WALL, 5, 4),
-            ];
-            break;
-        case 41:
-            obstacles = [
-                new Obstacle(ROBOTA, 0, 0),
-                new Obstacle(ROBOTA, 1, 0),
-                new Obstacle(WALL, 4, 0),
-                new Obstacle(ROBOTB, 6, 0),
-                new Obstacle(WALL, 1, 1),
-                new Obstacle(WALL, 4, 1),
-                new Obstacle(ROBOTA, 5, 1),
-                new Obstacle(ROBOTB, 6, 1),
-                new Obstacle(ROBOTB, 7, 1),
-                new Obstacle(ROBOTB, 2, 2),
-                new Obstacle(WALL, 4, 2),
-                new Obstacle(ROBOTB, 3, 3),
-                new Obstacle(WALL, 4, 3),
-                new Obstacle(ROBOTA, 5, 3),
-                new Obstacle(WALL, 4, 4),
-                new Obstacle(ROBOTB, 6, 4),
-            ];
-            break;
-        default:
-            break;
-        }
-
-        return obstacles;
     }
 
     placeRobots() {
@@ -1359,6 +737,16 @@ class GameScene extends Phaser.Scene {
             this.obstacleType = 0;
         };
 
+        this.userInstructionsCodeScope = new UserInstructionsCodeScope();
+        this.userLevelCodeScope = new UserLevelCodeScope();
+
+        /* Get user functions */
+        this.instructionCode = getUserFunction(this.params.instructionCode);
+        this.runInstruction();
+
+        this.levelCode = getUserFunction(this.params.levelCode);
+        this.runObstacles();
+
         // starting tile
         this.tiles.push(new this.Tile(this.playerXLocation, this.playerYLocation));
         this.arrTileHistory.push(this.tiles[0]);
@@ -1381,15 +769,6 @@ class GameScene extends Phaser.Scene {
             key: 'specialTiles',
             repeat: 4,
         });
-
-        this.obstacles = this.setObstacles(this.params.level);
-
-        /* Create userScope */
-        this.userScope = new UserScope();
-
-        /* Get user functions */
-        this.instructionCode = getUserFunction(this.params.instructionCode);
-        this.runInstruction();
 
         this.drawTiles();
 
@@ -1727,10 +1106,9 @@ class GameScene extends Phaser.Scene {
 
     /* This will be called each time something in globalParameters changes */
     onGlobalParametersNotify(property) {
-        if (property.endsWith('Code')) {
-            this.instructionCode = getUserFunction(globalParameters[property]);
-            this.runInstruction();
-        }
+        // TODO - add cutscene calls from quest
+        // Property names: controlsCutscene and escapeCutscene
+        // It's separate phab task
     }
 
     /* This will be called each time something in this.params changes */
@@ -1743,12 +1121,12 @@ class GameScene extends Phaser.Scene {
             this.playerXLocation = this.params.playerXLocation;
         } else if (property === 'playerYLocation') {
             this.playerYLocation = this.params.playerYLocation;
-        } else if (property.endsWith('Code')) {
-            const func = getUserFunction(this.params[property]);
-            const funcName = property.slice(0, -4);
-
-            if (funcName in this)
-                this[funcName] = func;
+        } else if (property === 'instructionCode') {
+            this.instructionCode = getUserFunction(this.params.instructionCode);
+            this.runInstruction();
+        } else if (property === 'levelCode') {
+            this.levelCode = getUserFunction(this.params.levelCode);
+            this.runObstacles();
         }
     }
 
@@ -1756,17 +1134,31 @@ class GameScene extends Phaser.Scene {
         if (!this.instructionCode)
             return;
 
-        var scope = this.userScope;
-        var retval = null;
+        var scope = this.userInstructionsCodeScope;
 
         try {
-            retval = this.instructionCode(scope);
+            this.instructionCode(scope);
+            this.moves = scope.riley.moves;
         } catch (e) {
             /* User function error! */
+            console.error(e);  // eslint-disable-line no-console
         }
+    }
 
-        if (retval && Array.isArray(retval))
+    runObstacles() {
+        if (!this.levelCode)
+            return;
 
-            this.moves = retval;
+        var scope = this.userLevelCodeScope;
+
+        try {
+            this.levelCode(scope);
+            this.obstacles = scope.obstacles;
+            this.playerYLocation = scope.rileyPosition;
+            this.goalYLocation = scope.goalPosition;
+        } catch (e) {
+            /* User function error! */
+            console.error(e);  // eslint-disable-line no-console
+        }
     }
 }

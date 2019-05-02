@@ -2,7 +2,7 @@
 
 /* global saveState, UserInstructionsCodeScope, UserLevelCodeScope,
 WALL, PIT, UP, DOWN, JUMP, FORWARD, PUSH, ERROR,
-PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB */
+PLAYTHRUGAME, DEFAULTGAME, NONE, ROBOTA, ROBOTB, Button */
 
 function getUserFunction(code) {
     if (!code)
@@ -71,7 +71,14 @@ class GameScene extends Phaser.Scene {
         this.keyIsDown = false;
 
         // play thru game delay
-        this.tick = 0;
+        this.tickReset = 120;
+        this.tick = this.tickReset;
+
+        // to calculate which frame to use for the move arrows spritesheet
+        // if images added or removed, this value needs to be updated
+        this.moveSquareOffset = 7;
+
+        this.stepTextHighlighter = null;
 
         this.gameType = 0;
 
@@ -138,6 +145,7 @@ class GameScene extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
         /* Listen to properties changes */
         this.game.events.on('global-property-change',
@@ -148,23 +156,14 @@ class GameScene extends Phaser.Scene {
                 this.onGlobalPropertyChange, this);
         }, this);
 
-        this.controls = this.add.sprite(120, 750, 'controls').setOrigin(0)
-.setScale(0.7);
-
         if (this.gameType === PLAYTHRUGAME) {
+            this.playButton = new Button(this, 0, 0, 'playButton', 0, 1,
+                1, 1, this.playButtonClick.bind(this));
+
+            this.setSpritePosition(this.playButton, -1, this.countY, -75, 20);
+
             const x = this.xOffset - this.tileLength - 50;
             const y = this.countY * this.tileLength + this.yOffset + 20;
-
-            this.controls.setVisible(false);
-
-            this.playButton = this.add.sprite(x, y,
-                'playButton', 0).setInteractive({useHandCursor: true});
-
-
-            this.playButton.on('pointerover', () => this.playButton.setFrame(1));
-            this.playButton.on('pointerout', () => this.playButton.setFrame(0));
-            this.playButton.on('pointerup', () => this.playButton.setFrame(0));
-            this.playButton.on('pointerdown', this.playButtonClick, this);
 
             this.separator = this.add.sprite(x - this.tileLength, y,
                 'separator').setVisible(false);
@@ -175,24 +174,70 @@ class GameScene extends Phaser.Scene {
                 // hide the play button until animation is complete
                 this.playButton.setAlpha(0);
 
-                // play the destroy control animation
-                this.controls.setVisible(true);
-                this.controls.anims.play('controls');
+                // TODO: add animation when assets received
 
-                this.controls.on('animationcomplete', function() {
-                    this.controls.setVisible(false);
-                    // fade in play button
-                    this.tweens.add({
-                        targets: [this.playButton],
-                        duration: 2000,
-                        alpha: 1,
-                        onComplete: () => {
-                            var modalText = 'What was that?';
-                            this.showModal(modalText);
-                        },
-                    });
-                }.bind(this));
+                // this.controls = this.add.sprite(120,
+                // 750, 'controls').setOrigin(0).setScale(0.7);
+                // play the destroy control animation
+                // this.controls.setVisible(true);
+                // this.controls.anims.play('controls');
+
+                // this.controls.on('animationcomplete', function() {
+                //     this.controls.setVisible(false);
+                //     // fade in play button
+                //     this.tweens.add({
+                //         targets: [this.playButton],
+                //         duration: 2000,
+                //         alpha: 1,
+                //         onComplete: () => {
+                //             var modalText = 'What was that?';
+                //             this.showModal(modalText);
+                //         },
+                //     });
+                // }.bind(this));
             }
+        } else {
+            const scaleX = 0.5;
+            const scaleY = 0.5;
+
+            this.fowardKeyButton = new Button(this, 0, 0, 'moveSquares', 1,
+                this.moveSquareOffset, scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(FORWARD);
+                    }
+                });
+
+            this.upKeyButton = new Button(this, 0, 0, 'moveSquares', 2,
+                this.moveSquareOffset, scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(UP);
+                    }
+                });
+
+            this.downKeyButton = new Button(this, 0, 0, 'moveSquares', 3,
+                this.moveSquareOffset, scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(DOWN);
+                    }
+                });
+
+            this.spacebarButton = new Button(this, 0, 0, 'spaceBar', 0, 1,
+                scaleX, scaleY, () => {
+                    if (!this.isMoving) {
+                        this.isMoving = true;
+                        this.moves.push(JUMP);
+                        this.player.anims.stop('running');
+                        this.player.anims.play('jumping');
+                    }
+                });
+
+            this.setSpritePosition(this.fowardKeyButton, -1, this.countY, 0, 50);
+            this.setSpritePosition(this.upKeyButton, -1, this.countY, 0, -20);
+            this.setSpritePosition(this.downKeyButton, -1, this.countY, 0, 120);
+            this.setSpritePosition(this.spacebarButton, -1, this.countY, -100, 50);
         }
 
         /* Reset Global game state */
@@ -210,6 +255,9 @@ class GameScene extends Phaser.Scene {
         // only happens if player is in last column or game type is playthrough
         let isKeyboardPressOff = false;
 
+        if (!isKeyboardPressOff)
+            this.handleMovements();
+
         // move Riley at gamespeed when at last tile
         if (this.playerXLocation >= this.MAXMOVES) {
             this.player.x += this.playerSpeed;
@@ -217,12 +265,11 @@ class GameScene extends Phaser.Scene {
             this.checkGameOver();
         } else {
             if (this.gameType === PLAYTHRUGAME) {
-                isKeyboardPressOff = true;
-
                 if (this.isMoving) {
+                    this.playButton.setFrame(2);
                     this.tick++;
 
-                    if (this.tick >= 10) {
+                    if (this.tick >= this.tickReset) {
                         this.tick = 0;
                         this.placePlayer();
                     }
@@ -230,9 +277,6 @@ class GameScene extends Phaser.Scene {
             }
 
             if (this.gameType === DEFAULTGAME) {
-                if (!isKeyboardPressOff)
-                    this.handleMovements();
-
                 if (this.isMoving)
                     this.placePlayer();
             }
@@ -240,31 +284,38 @@ class GameScene extends Phaser.Scene {
     }
 
     handleMovements() {
-        if (this.cursors.right.isUp && this.cursors.up.isUp &&
-            this.cursors.down.isUp && this.spaceBar.isUp)
-            this.keyIsDown = false;
-
-        if (!this.keyIsDown) {
-            if (this.cursors.right.isDown && this.playerXLocation < this.MAXMOVES) {
-                this.moves.push(FORWARD);
+        if (this.gameType === PLAYTHRUGAME) {
+            if (this.enterKey.isDown && !this.isMoving) {
                 this.isMoving = true;
+                this.playButton.setFrame(3);
             }
+        } else {
+            if (this.cursors.right.isUp && this.cursors.up.isUp &&
+                this.cursors.down.isUp && this.spaceBar.isUp)
+                this.keyIsDown = false;
 
-            if (this.cursors.up.isDown && this.playerXLocation < this.MAXMOVES) {
-                this.moves.push(UP);
-                this.isMoving = true;
-            }
+            if (!this.keyIsDown) {
+                if (this.cursors.right.isDown && this.playerXLocation < this.MAXMOVES) {
+                    this.moves.push(FORWARD);
+                    this.isMoving = true;
+                }
 
-            if (this.cursors.down.isDown && this.playerXLocation < this.MAXMOVES) {
-                this.moves.push(DOWN);
-                this.isMoving = true;
-            }
+                if (this.cursors.up.isDown && this.playerXLocation < this.MAXMOVES) {
+                    this.moves.push(UP);
+                    this.isMoving = true;
+                }
 
-            if (this.spaceBar.isDown && this.playerXLocation < this.MAXMOVES) {
-                this.moves.push(JUMP);
-                this.isMoving = true;
-                this.player.anims.stop('running');
-                this.player.anims.play('jumping');
+                if (this.cursors.down.isDown && this.playerXLocation < this.MAXMOVES) {
+                    this.moves.push(DOWN);
+                    this.isMoving = true;
+                }
+
+                if (this.spaceBar.isDown && this.playerXLocation < this.MAXMOVES) {
+                    this.moves.push(JUMP);
+                    this.isMoving = true;
+                    this.player.anims.stop('running');
+                    this.player.anims.play('jumping');
+                }
             }
         }
     }
@@ -293,8 +344,8 @@ class GameScene extends Phaser.Scene {
                 this.gameWon();
         } else {
             const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
-            const isJumping = this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP;
-            const isPushing = this.arrSpriteMoves[this.playerXLocation].frame.name === PUSH;
+            const isJumping = this.arrSpriteMoves[this.playerXLocation].moveType === JUMP;
+            const isPushing = this.arrSpriteMoves[this.playerXLocation].moveType === PUSH;
 
             if (tmpObstacle) {
                 if (tmpObstacle.type === PIT && isJumping)
@@ -380,7 +431,7 @@ class GameScene extends Phaser.Scene {
     playButtonClick() {
         if (!this.isMoving) {
             this.isMoving = true;
-            this.playButton.setFrame(2);
+            this.playButton.setFrame(3);
         }
     }
 
@@ -462,9 +513,11 @@ class GameScene extends Phaser.Scene {
         this.checkRobotCollisions();
         this.playerXLocation++;
 
+        const rileyMove = this.arrSpriteMoves[this.playerXLocation];
+
         if (this.gameType === DEFAULTGAME) {
-            this.arrSpriteMoves[this.playerXLocation]
-            .setFrame(this.moves[this.playerXLocation]);
+            rileyMove.setFrame(this.moves[this.playerXLocation]);
+            rileyMove.moveType = this.moves[this.playerXLocation];
 
             this.keyIsDown = true;
             this.isMoving = false;
@@ -478,23 +531,35 @@ class GameScene extends Phaser.Scene {
                 this.playerYLocation < this.countY - 1)
                 this.playerYLocation += 1;
         } else if (this.gameType === PLAYTHRUGAME) {
+            for (var i = 0; i < this.playerXLocation; i++)
+                this.arrSpriteMoves[i].setFrame(this.arrSpriteMoves[i].moveType);
+
+            // highlight the move Riley is on
+            const highlightedSquare = rileyMove.moveType + this.moveSquareOffset * 3;
+
             if (this.arrSpriteMoves.length > this.playerXLocation) {
                 this.player.anims.play('running');
                 this.player.anims.stop('jumping');
 
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === UP &&
+                if (rileyMove.moveType === UP &&
                     this.playerYLocation > 0)
                     this.playerYLocation -= 1;
 
-                // handle down movements
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === DOWN &&
+                if (rileyMove.moveType === DOWN &&
                     this.playerYLocation < this.countY - 1)
                     this.playerYLocation += 1;
 
-                if (this.arrSpriteMoves[this.playerXLocation].frame.name === JUMP) {
+                if (rileyMove.moveType === JUMP) {
                     this.player.anims.stop('running');
                     this.player.anims.play('jumping');
                 }
+
+                rileyMove.setFrame(highlightedSquare);
+
+                this.stepTextHighlighter.setVisible(true);
+                this.stepTextHighlighter.x =
+                    this.playerXLocation * this.tileLength + this.xOffset;
+                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 120;
             }
         }
 
@@ -596,9 +661,11 @@ class GameScene extends Phaser.Scene {
 
     addDragInputs() {
         this.input.on('dragstart', (pointer, gameObject) => {
+            const gameObjectFrame = gameObject.moveType + this.moveSquareOffset * 2;
+
             // so user can see the move they're dragging
             gameObject.setDepth(2);
-            gameObject.setTint(0xff0000);
+            gameObject.setFrame(gameObjectFrame);
         });
 
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
@@ -622,7 +689,7 @@ class GameScene extends Phaser.Scene {
         });
 
         this.input.on('dragend', (pointer, gameObject) => {
-            gameObject.clearTint();
+            gameObject.setFrame(gameObject.moveType);
             gameObject.setDepth(1);
 
             const index = this.arrSpriteMoves.indexOf(gameObject);
@@ -639,22 +706,22 @@ class GameScene extends Phaser.Scene {
             for (let i = 0; i <= this.MAXMOVES; i++) {
                 this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, 0, 20);
 
-                if (this.arrSpriteMoves[i].frame.name === FORWARD)
+                if (this.arrSpriteMoves[i].moveType === FORWARD)
                     instructions.push('riley.forward();');
 
-                if (this.arrSpriteMoves[i].frame.name === UP)
+                if (this.arrSpriteMoves[i].moveType === UP)
                     instructions.push('riley.up();');
 
-                if (this.arrSpriteMoves[i].frame.name === DOWN)
+                if (this.arrSpriteMoves[i].moveType === DOWN)
                     instructions.push('riley.down();');
 
-                if (this.arrSpriteMoves[i].frame.name === JUMP)
+                if (this.arrSpriteMoves[i].moveType === JUMP)
                     instructions.push('riley.jump();');
 
-                if (this.arrSpriteMoves[i].frame.name === PUSH)
+                if (this.arrSpriteMoves[i].moveType === PUSH)
                     instructions.push('riley.push();');
 
-                if (this.arrSpriteMoves[i].frame.name === ERROR)
+                if (this.arrSpriteMoves[i].moveType === ERROR)
                     instructions.push('riley.error();');
             }
 
@@ -674,9 +741,18 @@ class GameScene extends Phaser.Scene {
 
         // for playthru game types, the moves will be pre-populated
         for (let i = 0; i < this.moves.length; i++) {
+            // sets the initial sprite frame
             const moveSquare = this.arrSpriteMoves[i].setFrame(this.moves[i]);
+
+            // stores the moveType since sprite frames will change
+            moveSquare.moveType = this.moves[i];
+
             // for playthru games, check if draggable is set
             if (this.gameType === PLAYTHRUGAME) {
+                moveSquare.on('pointerover', () =>
+                    moveSquare.setFrame(moveSquare.moveType + this.moveSquareOffset));
+                moveSquare.on('pointerout', () => moveSquare.setFrame(moveSquare.moveType));
+
                 moveSquare.setInteractive({useHandCursor: true});
                 this.input.setDraggable(moveSquare);
                 moveSquare.dragDistanceThreshold = 16;
@@ -707,8 +783,28 @@ class GameScene extends Phaser.Scene {
     displayLevelUI() {
         const gameW = this.sys.game.config.width;
         const gameH = 100;
+
+        const scaleX = 0.4;
+        const scaleY = 0.4;
+
+        this.nextLevelButton = new Button(this, gameW / 2 + 200, gameH / 2 + 3,
+            'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
+                if (globalParameters.currentLevel + 1 <= globalParameters.highestAchievedLevel)
+                    this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
+            });
+
+        this.previousLevelButton = new Button(this, gameW / 2 - 120, gameH / 2 + 3,
+            'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
+                if (globalParameters.currentLevel > 1)
+                    this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
+            });
+
+        this.nextLevelButton.setDepth(1);
+        this.previousLevelButton.setDepth(1);
+        this.previousLevelButton.flipX = true;
+
         const text = this.add.text(gameW / 2, gameH / 2, `Level ${this.levelNumber}`, {
-            font: '40px Arial',
+            font: 'bold 30pt Metropolis',
             fill: '#ffffff',
         });
         text.setOrigin(0.5, 0.5);
@@ -724,8 +820,21 @@ class GameScene extends Phaser.Scene {
         // text background
         const textBg = this.add.graphics();
         textBg.fillStyle(0x000000, 0.7);
-        textBg.fillRect(gameW / 2 - text.width / 2 - 20, gameH / 2 - text.height / 2 - 10,
-            text.width + 120, text.height + 20);
+        textBg.fillRect(this.previousLevelButton.x - 50, gameH / 2 - text.height / 2 - 10,
+            text.width + 295, text.height + 20);
+
+        const yStepNumber = this.countY * this.tileLength + this.yOffset + 120;
+        let xStepNumber;
+        for (let i = 0; i <= this.MAXMOVES; i++) {
+            xStepNumber = i * this.tileLength + this.xOffset;
+            this.add.text(xStepNumber, yStepNumber, i, {
+                font: '30pt Metropolis-Medium',
+                fill: '#53edf9',
+            }).setOrigin(0.5);
+        }
+
+        this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight', 1);
+        this.stepTextHighlighter.setVisible(false).alpha = 0.4;
     }
 
     createLevel() {
@@ -813,7 +922,7 @@ class GameScene extends Phaser.Scene {
         const maxX = this.MAXMOVES * this.tileLength + this.xOffset;
         const halfTilelength = this.tileLength * 0.5;
 
-        const offset = minX - halfTilelength;
+        const offset = minX - halfTilelength + 2;
 
         if (gameObject.x < offset) {
             this.separator.x = offset - this.tileLength;
@@ -1091,6 +1200,9 @@ class GameScene extends Phaser.Scene {
             globalParameters.nextLevel = globalParameters.currentLevel + 1;
         else
             globalParameters.nextLevel = 0;
+
+        if (globalParameters.nextLevel > globalParameters.highestAchievedLevel)
+            globalParameters.highestAchievedLevel = globalParameters.nextLevel;
 
         saveState();
 

@@ -62,6 +62,8 @@ class GameScene extends Phaser.Scene {
         this.arrSpriteMoves = [];
         this.moves = [];
 
+        this.badPropertyNames = [];
+
         // capture tiles player was on
         this.arrTileHistory = [];
 
@@ -721,8 +723,8 @@ class GameScene extends Phaser.Scene {
                 if (this.arrSpriteMoves[i].moveType === PUSH)
                     instructions.push('riley.push();');
 
-                if (this.arrSpriteMoves[i].moveType === ERROR)
-                    instructions.push('riley.error();');
+                if (this.arrSpriteMoves[i].frame.name === ERROR)
+                    instructions.push(`riley.${this.arrSpriteMoves[i].badPropertyName}();`);
             }
 
             this.params.instructionCode = instructions.join('\n ');
@@ -756,6 +758,9 @@ class GameScene extends Phaser.Scene {
                 moveSquare.setInteractive({useHandCursor: true});
                 this.input.setDraggable(moveSquare);
                 moveSquare.dragDistanceThreshold = 16;
+
+                if (this.moves[i] === ERROR)
+                    moveSquare.badPropertyName = this.badPropertyNames.shift() || 'error';
             }
         }
     }
@@ -1251,6 +1256,7 @@ class GameScene extends Phaser.Scene {
         try {
             this.instructionCode(scope);
             this.moves = scope.riley.moves;
+            this.badPropertyNames = scope.riley._badPropertyNames;
         } catch (e) {
             /* User function error! */
             console.error(e);  // eslint-disable-line no-console

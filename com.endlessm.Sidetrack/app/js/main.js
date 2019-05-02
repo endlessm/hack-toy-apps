@@ -133,8 +133,8 @@ window.reset = function() {
     if (i < 1 || i >= levelParameters.length)
         return;
 
-    Object.assign(levelParameters[i], defaultParameters);
-    Object.assign(levelParameters[i], defaultLevelParameters[i]);
+    const defaults = Object.assign({}, defaultParameters, defaultLevelParameters[i]);
+    Object.assign(levelParameters[i], defaults);
 };
 
 window.saveState = function() {

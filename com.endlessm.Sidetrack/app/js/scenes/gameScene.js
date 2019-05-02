@@ -11,7 +11,7 @@ function getUserFunction(code) {
 
     try {
         // eslint-disable-next-line no-new-func
-        retval = new Function('scope', `with(scope){\n${code}\nreturn riley.moves;}`);
+        retval = new Function('scope', `with(scope){\n${code}\n}`);
     } catch (e) {
         retval = null;
         if (!(e instanceof SyntaxError || e instanceof ReferenceError))
@@ -1756,16 +1756,13 @@ class GameScene extends Phaser.Scene {
             return;
 
         var scope = this.userScope;
-        var retval = null;
 
         try {
-            retval = this.instructionCode(scope);
+            this.instructionCode(scope);
+            this.moves = scope.riley.moves;
         } catch (e) {
             /* User function error! */
+            console.error(e);  // eslint-disable-line no-console
         }
-
-        if (retval && Array.isArray(retval))
-
-            this.moves = retval;
     }
 }

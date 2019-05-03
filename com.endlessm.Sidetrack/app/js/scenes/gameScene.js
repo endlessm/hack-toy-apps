@@ -1236,6 +1236,32 @@ class GameScene extends Phaser.Scene {
         this.modal.fillRoundedRect(width / 2 - 270, height / 2 - 350, 512, 510, 8);
     }
 
+    playControlsCutscene() {
+        // TODO: https://phabricator.endlessm.com/T26461
+        // For now, just wait for 5 seconds
+        setTimeout(() => {
+            // These should actually be set by the quest script.
+            globalParameters.currentLevel = 14;
+            globalParameters.availableLevels = 40;
+
+            this.scene.restart(levelParameters[globalParameters.currentLevel]);
+            globalParameters.controlsCutscene = false;
+        }, 5000);
+    }
+
+    playEscapeCutscene() {
+        // TODO: https://phabricator.endlessm.com/T26445
+        // For now, just wait for 5 seconds
+        setTimeout(() => {
+            // These should actually be set by the quest script.
+            globalParameters.currentLevel = 41;
+            globalParameters.availableLevels = 50;
+
+            this.scene.restart(levelParameters[globalParameters.currentLevel]);
+            globalParameters.escapeCutscene = false;
+        }, 5000);
+    }
+
     gameLost() {
         // initiated game over sequence
         this.isTerminating = true;
@@ -1279,9 +1305,10 @@ class GameScene extends Phaser.Scene {
 
     /* This will be called each time something in globalParameters changes */
     onGlobalParametersNotify(property) {
-        // TODO - add cutscene calls from quest
-        // Property names: controlsCutscene and escapeCutscene
-        // It's separate phab task
+        if (property === 'controlsCutscene' && globalParameters.controlsCutscene)
+            this.playControlsCutscene();
+        else if (property === 'escapeCutscene' && globalParameters.escapeCutscene)
+            this.playEscapeCutscene();
     }
 
     /* This will be called each time something in this.params changes */

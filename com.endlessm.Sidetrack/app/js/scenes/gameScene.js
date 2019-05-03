@@ -529,16 +529,16 @@ class GameScene extends Phaser.Scene {
         for (var i = 0; i < this.obstacles.length; i++) {
             if (this.obstacles[i].type === ROBOTA) {
                 if (this.robotADirection === 'down')
-                    this.obstacles[i].setFrame(0);
+                    this.obstacles[i].sprite.setFrame(0);
                 else
-                    this.obstacles[i].setFrame(1);
+                    this.obstacles[i].sprite.setFrame(1);
             }
 
             if (this.obstacles[i].type === ROBOTB) {
                 if (this.robotBDirection === 'down')
-                    this.obstacles[i].setFrame(2);
+                    this.obstacles[i].sprite.setFrame(2);
                 else
-                    this.obstacles[i].setFrame(3);
+                    this.obstacles[i].sprite.setFrame(3);
             }
         }
     }

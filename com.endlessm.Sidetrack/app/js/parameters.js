@@ -12,9 +12,8 @@ const PLAYTHRUGAME = 1;
 
 
 var globalParameters = {
-    /* Number of available levels */
-    // TODO: Where is this value being set? In Lightspeed, it's set to 0.
-    availableLevels: 41,
+    // Number of levels that have been revealed to the player
+    availableLevels: 13,
 
     highestAchievedLevel: 1,
 

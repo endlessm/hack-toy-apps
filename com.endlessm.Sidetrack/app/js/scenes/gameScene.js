@@ -339,42 +339,41 @@ class GameScene extends Phaser.Scene {
     }
 
     checkGameOver() {
+        const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
+        const isJumping = this.arrSpriteMoves[this.playerXLocation].moveType === JUMP;
+        const isPushing = this.arrSpriteMoves[this.playerXLocation].moveType === PUSH;
+
         // If player has reached final column
         if (this.playerXLocation >= this.MAXMOVES) {
+            if (this.playerYLocation !== this.goalYLocation)
+                this.gameLost();
+
             // game won when Riley runs to last square
             if (this.player.x > this.goalXLocation * this.tileLength + this.xOffset) {
                 if (this.playerYLocation === this.goalYLocation)
                     this.gameWon();
-                else
-                    this.gameLost();
             }
-        } else {
-            const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
-            const isJumping = this.arrSpriteMoves[this.playerXLocation].moveType === JUMP;
-            const isPushing = this.arrSpriteMoves[this.playerXLocation].moveType === PUSH;
+        } else if (tmpObstacle) {
+            if (tmpObstacle.type === PIT && isJumping)
+                return;
 
-            if (tmpObstacle) {
-                if (tmpObstacle.type === PIT && isJumping)
+            if (isPushing && tmpObstacle.type !== PIT) {
+                const tmpNextObstacle =
+                    this.getObstacle(this.playerXLocation + 1, this.playerYLocation);
+
+                // cannot be an obstacle next to the obstacle you're pushing
+                if (tmpObstacle && !tmpNextObstacle) {
+                    this.pushObstacle(tmpObstacle);
                     return;
-
-                if (isPushing && tmpObstacle.type !== PIT) {
-                    const tmpNextObstacle =
-                        this.getObstacle(this.playerXLocation + 1, this.playerYLocation);
-
-                    // cannot be an obstacle next to the obstacle you're pushing
-                    if (tmpObstacle && !tmpNextObstacle) {
-                        this.pushObstacle(tmpObstacle);
-                        return;
-                    }
-                    // unless that obstacle is a pit
-                    if (tmpNextObstacle === PIT) {
-                        this.pushObstacle(tmpObstacle);
-                        return;
-                    }
                 }
-
-                this.gameLost();
+                // unless that obstacle is a pit
+                if (tmpNextObstacle === PIT) {
+                    this.pushObstacle(tmpObstacle);
+                    return;
+                }
             }
+
+            this.gameLost();
         }
     }
 
@@ -813,13 +812,22 @@ class GameScene extends Phaser.Scene {
     }
 
     placeEndingTiles() {
-        this.setSpritePosition(this.goal, this.goalXLocation,
+        // create the exit goal
+        const goal = this.add.sprite(0, 0, 'specialTiles', 1);
+
+        // wrong Exits
+        var wrongExitGroup = this.add.group({
+            key: 'specialTiles',
+            repeat: 4,
+        });
+
+        this.setSpritePosition(goal, this.MAXMOVES,
             this.goalYLocation, 160, 0);
 
-        const wrongExits = this.wrongExits.getChildren();
+        const wrongExits = wrongExitGroup.getChildren();
 
         for (var i = 0; i < wrongExits.length; i++) {
-            this.setSpritePosition(wrongExits[i], this.goalXLocation, i, 160);
+            this.setSpritePosition(wrongExits[i], this.MAXMOVES, i, 160);
 
             // wrong exit sprite sheet frame
             wrongExits[i].setFrame(2);
@@ -928,16 +936,8 @@ class GameScene extends Phaser.Scene {
         for (let i = 0; i < this.tiles.length; i++)
             this.tilesHash[this.tiles[i].tileKey] = this.tiles[i];
 
-        // create the exit goal
-        this.goal = this.add.sprite(0, 0, 'specialTiles', 1);
-
-        // wrong Exits
-        this.wrongExits = this.add.group({
-            key: 'specialTiles',
-            repeat: 4,
-        });
-
         this.drawTiles();
+        this.placeEndingTiles();
 
         let sprite;
 
@@ -972,7 +972,6 @@ class GameScene extends Phaser.Scene {
             }
         }
 
-        this.placeEndingTiles();
         this.placeMoveSquares();
         this.addDragInputs();
 

@@ -9,7 +9,8 @@
 
 /* global globalParameters, defaultLevelParameters, defaultParameters,
     levelParameters, resetGlobalUserCode, ContinueScene, DebugScene,
-    GameOverScene, LevelScene, StartScene, TitleScene, ToyApp */
+    GameOverScene, LevelScene, StartScene, TitleScene, BackgroundScene,
+    ToyApp */
 
 const fontConfig = {
     color: 'white',
@@ -45,6 +46,7 @@ var config = {
     },
     scene: [
         titleScene,
+        new BackgroundScene('background'),
         new LevelScene('level'),
         new StartScene('start'),
         new GameOverScene('gameover'),

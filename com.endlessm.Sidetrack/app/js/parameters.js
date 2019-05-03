@@ -1014,6 +1014,281 @@ var defaultLevelParameters = [
     add(wall, 4, 4);
     add(robotB, 6, 4);`,
     },
+    {
+        level: 42,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.push();
+    riley.down();
+    riley.down();
+    riley.jump();
+    riley.down();
+    riley.push();
+    riley.up();
+    riley.forward();`,
+        levelCode: `\
+    rileyPosition = 0;
+    goalPosition = 2;
+    add(wall, 0, 0);
+    add(robotA, 6, 0);
+    add(robotB, 7, 0);
+    add(wall, 3, 1);
+    add(robotB, 5, 1);
+    add(robotA, 7, 1);
+    add(pit, 3, 2);
+    add(robotA, 7, 2);
+    add(wall, 3, 3);
+    add(robotA, 7, 3);
+    add(pit, 3, 4);
+    add(robotB, 7, 4);`,
+    },
+    {
+        level: 43,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.up();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.forward();
+    riley.up();
+    riley.up();`,
+        levelCode: `\
+    rileyPosition = 4;
+    goalPosition = 0;
+    add(robotA, 1, 0);
+    add(robotB, 5, 0);
+    add(wall, 2, 1);
+    add(pit, 3, 1);
+    add(robotB, 5, 1);
+    add(robotB, 0, 2);
+    add(robotA, 1, 2);    
+    add(pit, 2, 2);
+    add(wall, 3, 2);
+    add(robotB, 5, 2);
+    add(robotB, 0, 3);
+    add(robotB, 5, 3);`,
+    },
+    {
+        level: 44,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.up();
+    riley.down();
+    riley.push();
+    riley.jump();
+    riley.push();
+    riley.jump();
+    riley.forward();
+    riley.jump();`,
+        levelCode: `\
+    rileyPosition = 2;
+    goalPosition = 2;
+    add(pit, 0, 0);
+    add(pit, 1, 0);
+    add(wall, 2, 0);
+    add(wall, 4, 0);
+    add(robotB, 6, 0);
+    add(wall, 7, 0);
+    add(wall, 2, 1);
+    add(wall, 3, 1);
+    add(pit, 5, 1);
+    add(wall, 0, 2);
+    add(wall, 2, 2);
+    add(pit, 3, 2);
+    add(wall, 4, 2);
+    add(wall, 5, 2);
+    add(pit, 7, 2);
+    add(wall, 0, 3);
+    add(pit, 2, 3);
+    add(wall, 3, 3);
+    add(pit, 4, 3);
+    add(robotA, 6, 3);
+    add(pit, 7, 3);
+    add(pit, 0, 4);
+    add(robotB, 1, 4);
+    add(wall, 2, 4);
+    add(pit, 3, 4);
+    add(wall, 5, 4);
+    add(wall, 7, 4);`,
+    },
+    {
+        level: 45,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.push();
+    riley.up();
+    riley.jump();
+    riley.down();
+    riley.down();
+    riley.up();
+    riley.push();
+    riley.push();`,
+        levelCode: `\
+    rileyPosition = 2;
+    goalPosition = 2;
+    add(pit, 2, 1);
+    add(wall, 3, 1);
+    add(pit, 4, 1);
+    add(wall, 0, 2);
+    add(wall, 6, 2);
+    add(pit, 7, 2);
+    add(pit, 2, 3);
+    add(wall, 3, 3);
+    add(pit, 3, 4);`,
+    },
+    {
+        level: 46,
+        gameType: PLAYTHRUGAME,
+        levelCode: `\
+    rileyPosition = 2;
+    goalPosition = 2;
+    add(wall, 0, 0);
+    add(pit, 1, 0);
+    add(wall, 2, 0);
+    add(wall, 3, 0);
+    add(wall, 4, 0);
+    add(robotB, 5, 0);
+    add(wall, 2, 1);
+    add(robotB, 6, 1);
+    add(wall, 0, 2);
+    add(pit, 1, 2);
+    add(wall, 2, 2);
+    add(wall, 3, 2);
+    add(wall, 4, 2);
+    add(pit, 7, 2);
+    add(wall, 0, 3);
+    add(wall, 1, 3);
+    add(robotB, 5, 3);
+    add(wall, 0, 4);
+    add(robotB, 5, 4);`,
+    },
+    {
+        level: 47,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.jump();
+    riley.forward();
+    riley.psh();  
+    riley.psh();  
+    riley.up();
+    riley.forward();
+    riley.down();`,
+        levelCode: `\
+    rileyPosition = 2;
+    goalPosition = 2;
+    add(wall, 3, 0);
+    add(wall, 4, 0);
+    add(robotA, 6, 0);
+    add(wall, 3, 1);
+    add(wall, 4, 1);
+    add(pit, 1, 2);
+    add(wall, 3, 2);
+    add(wall, 4, 2);
+    add(wall, 3, 3);
+    add(wall, 4, 3);
+    add(wall, 3, 4);
+    add(wall, 4, 4);`,
+    },
+    {
+        level: 48,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.forward();
+    riley.down();
+    riley.down();
+    riley.push();
+    riley.push();
+    riley.down();
+    riley.down();`,
+        levelCode: `\
+    rileyPosition = 0;
+    goalPosition = 4;
+    add(robotA, 0, 0);
+    add(robotA, 1, 0);
+    add(wall, 4, 0);
+    add(robotB, 6, 0);
+    add(wall, 1, 1);
+    add(wall, 4, 1);
+    add(robotA, 5, 1);
+    add(robotB, 6, 1);
+    add(robotB, 7, 1);
+    add(robotB, 2, 2);
+    add(wall, 4, 2);
+    add(robotB, 3, 3);
+    add(wall, 4, 3);
+    add(robotA, 5, 3);
+    add(wall, 4, 4);
+    add(robotB, 6, 4);`,
+    },
+    {
+        level: 49,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.up();
+    riley.down();
+    riley.push();
+    riley.jump();
+    riley.push();
+    riley.jump();
+    riley.forward();
+    riley.jump();`,
+        levelCode: `\
+    rileyPosition = 2;
+    goalPosition = 2;
+
+    add(pit, 0, 0);
+    add(pit, 1, 0);
+    add(wall, 2, 0);
+    add(wall, 3, 0);
+    add(wall, 4, 0);
+    add(pit, 5, 0);
+    add(robotB, 6, 0);
+    add(wall, 7, 0);
+    add(pit, 0, 1);
+    add(wall, 2, 1);
+    add(wall, 3, 1);
+    add(pit, 5, 1);
+    add(wall, 0, 2);
+    add(robotB, 1, 2);
+    add(wall, 2, 2);
+    add(pit, 3, 2);
+    add(wall, 4, 2);
+    add(wall, 5, 2);
+    add(pit, 7, 2);
+    add(wall, 0, 3);
+    add(pit, 2, 3);
+    add(wall, 3, 3);
+    add(wall, 4, 3);
+    add(pit, 5, 3);
+    add(robotA, 6, 3);
+    add(pit, 7, 3);
+    add(pit, 0, 4);
+    add(robotB, 1, 4);
+    add(wall, 2, 4);    
+    add(pit, 3, 4);
+    add(wall, 5, 4);
+    add(wall, 7, 4);`,
+    },
+    {
+        level: 50,
+        gameType: PLAYTHRUGAME,
+        instructionCode: `\
+    riley.forward();
+    riley.push();
+    riley.down();
+    riley.jump();
+    riley.down();
+    riley.push();
+    riley.up();
+    riley.up();`,
+        levelCode: `\
+    rileyPosition = 2;
+    goalPosition = 2;`,
+    },
 ];
 
 /* Freeze default parameters */

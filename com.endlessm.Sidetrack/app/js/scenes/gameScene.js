@@ -836,44 +836,50 @@ class GameScene extends Phaser.Scene {
         const gameW = this.sys.game.config.width;
         const gameH = 100;
 
-        const scaleX = 0.4;
-        const scaleY = 0.4;
-
-        this.nextLevelButton = new Button(this, gameW / 2 + 200, gameH / 2 + 3,
-            'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
+        this.nextLevelButton = new Button(this, gameW / 2 + 145, gameH / 2,
+            'next', 1, 1, 1, 1, () => {
                 if (globalParameters.currentLevel + 1 <= globalParameters.highestAchievedLevel)
                     this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
             });
 
-        this.previousLevelButton = new Button(this, gameW / 2 - 120, gameH / 2 + 3,
-            'moveSquares', 1, this.moveSquareOffset, scaleX, scaleY, () => {
+        this.previousLevelButton = new Button(this, gameW / 2 - 145, gameH / 2,
+            'previous', 1, 1, 1, 1, () => {
                 if (globalParameters.currentLevel > 1)
                     this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
             });
 
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
-        this.previousLevelButton.flipX = true;
 
-        const text = this.add.text(gameW / 2, gameH / 2, `Level ${this.levelNumber}`, {
+        const txtLevel = this.add.text(gameW / 2 - 30, gameH / 2, `Level ${this.levelNumber}`, {
             font: 'bold 30pt Metropolis',
             fill: '#ffffff',
         });
-        text.setOrigin(0.5, 0.5);
-        text.depth = 1;
+        txtLevel.setOrigin(0.5, 0.5);
+        txtLevel.depth = 1;
 
-        var restartIcon = this.add.sprite(gameW / 2 + 120, gameH / 2, 'restartIcon');
-        restartIcon.setScale(0.5);
+        if (this.gameType === DEFAULTGAME) {
+            const txtSpace = this.add.text(220, 910, 'space', {
+                font: '18pt Metropolis-Medium',
+                fill: '#def9ff',
+            });
+
+            txtSpace.setOrigin(0.5, 0.5);
+            txtSpace.depth = 1;
+        }
+
+        var restartIcon = new Button(this, gameW / 2 + 80, gameH / 2,
+            'restartIcon', 1, 1, 1, 1, () => {
+                if (globalParameters.currentLevel > 1)
+                    this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
+            });
+
         restartIcon.setDepth(2);
-        restartIcon.setInteractive({useHandCursor: true});
         /* Restart level on button click and enter */
         restartIcon.on('pointerup', this.restartLevel.bind(this));
 
         // text background
-        const textBg = this.add.graphics();
-        textBg.fillStyle(0x000000, 0.7);
-        textBg.fillRect(this.previousLevelButton.x - 50, gameH / 2 - text.height / 2 - 10,
-            text.width + 295, text.height + 20);
+        this.add.sprite(gameW / 2, gameH / 2, 'levelSelectBackground');
 
         const yStepNumber = this.countY * this.tileLength + this.yOffset + 120;
         let xStepNumber;

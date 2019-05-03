@@ -37,12 +37,33 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('background1', 'assets/images/background1.png');
         this.load.image('background2', 'assets/images/background2.png');
         this.load.image('background3', 'assets/images/background3.png');
+        this.load.image('levelSelectBackground', 'assets/images/levelSelectBackground.png');
         this.load.image('hackdex', 'assets/images/hackdex.png');
         this.load.image('pit', 'assets/images/pit.png');
         this.load.image('separator', 'assets/images/separator.png');
-        this.load.image('restartIcon', 'assets/images/restartIcon.png');
         this.load.image('explosion', 'assets/images/explosion.png');
         this.load.image('circleHighlight', 'assets/images/circleHighlight.png');
+
+        this.load.spritesheet('previous', 'assets/images/previous.png', {
+            frameWidth: 63,
+            frameHeight: 54,
+            margin: 0,
+            spacing: 0,
+        });
+
+        this.load.spritesheet('next', 'assets/images/next.png', {
+            frameWidth: 63,
+            frameHeight: 54,
+            margin: 0,
+            spacing: 0,
+        });
+
+        this.load.spritesheet('restartIcon', 'assets/images/restartIcon.png', {
+            frameWidth: 53,
+            frameHeight: 54,
+            margin: 0,
+            spacing: 0,
+        });
 
         this.load.spritesheet('spaceBar', 'assets/images/spaceBar.png', {
             frameWidth: 268,

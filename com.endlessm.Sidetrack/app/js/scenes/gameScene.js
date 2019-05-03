@@ -888,7 +888,7 @@ class GameScene extends Phaser.Scene {
             }).setOrigin(0.5);
         }
 
-        this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight', 1);
+        this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight');
         this.stepTextHighlighter.setVisible(false).alpha = 0.4;
     }
 
@@ -1218,7 +1218,7 @@ class GameScene extends Phaser.Scene {
             globalParameters.playing = true;
             this.scene.restart(levelParameters[globalParameters.nextLevel]);
         } else {
-            this.scene.start('Home');
+            this.scene.restart(levelParameters[globalParameters.highestAchievedLevel]);
         }
     }
 

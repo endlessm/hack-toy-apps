@@ -34,7 +34,10 @@ class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load assets
-        this.load.image('background', 'assets/images/background.png');
+        this.load.image('background1', 'assets/images/background1.png');
+        this.load.image('background2', 'assets/images/background2.png');
+        this.load.image('background3', 'assets/images/background3.png');
+        this.load.image('hackdex', 'assets/images/hackdex.png');
         this.load.image('pit', 'assets/images/pit.png');
         this.load.image('separator', 'assets/images/separator.png');
         this.load.image('restartIcon', 'assets/images/restartIcon.png');
@@ -56,8 +59,8 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('robots', 'assets/images/robots.png', {
-            frameWidth: 49,
-            frameHeight: 89,
+            frameWidth: 128,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
@@ -106,7 +109,7 @@ class LoadingScene extends Phaser.Scene {
 
         this.load.spritesheet('walls', 'assets/images/walls.png', {
             frameWidth: 128,
-            frameHeight: 144,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });

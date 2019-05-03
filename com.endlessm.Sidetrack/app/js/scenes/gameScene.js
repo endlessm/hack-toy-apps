@@ -130,7 +130,13 @@ class GameScene extends Phaser.Scene {
 
     create() {
         // create bg sprite
-        const bg = this.add.sprite(0, 0, 'background');
+        let bg;
+        if (globalParameters.currentLevel >= 40)
+            bg = this.add.sprite(0, 0, 'background3'); // for final and bonus level
+        else if (globalParameters.currentLevel >= 14)
+            bg = this.add.sprite(0, 0, 'background2'); // auto mode levels
+        else
+            bg = this.add.sprite(0, 0, 'background1'); // manual and default
 
         // change the origin to the top-left corner
         bg.setOrigin(0, 0);
@@ -536,9 +542,9 @@ class GameScene extends Phaser.Scene {
 
             if (this.obstacles[i].type === ROBOTB) {
                 if (this.robotBDirection === 'down')
-                    this.obstacles[i].sprite.setFrame(2);
-                else
                     this.obstacles[i].sprite.setFrame(3);
+                else
+                    this.obstacles[i].sprite.setFrame(2);
             }
         }
     }
@@ -696,7 +702,7 @@ class GameScene extends Phaser.Scene {
 
     drawTiles() {
         const minTile = 0;
-        const maxTiles = 4;
+        const maxTiles = 9;
 
         let x;
         let y;
@@ -953,9 +959,9 @@ class GameScene extends Phaser.Scene {
             }
 
             if (this.obstacles[i].type === ROBOTB) {
-                sprite = this.add.sprite(0, 0, 'robots', 3).setDepth(1);
+                sprite = this.add.sprite(0, 0, 'robots', 2).setDepth(1);
                 if (this.robotBDirection === 'down')
-                    sprite.setFrame(2);
+                    sprite.setFrame(3);
             }
 
             this.obstacles[i].sprite = sprite;

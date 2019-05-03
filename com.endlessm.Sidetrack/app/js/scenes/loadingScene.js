@@ -129,8 +129,8 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('riley', 'assets/images/riley.png', {
-            frameWidth: 191,
-            frameHeight: 258,
+            frameWidth: 128,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
@@ -142,7 +142,7 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'running',
                 frames: this.anims.generateFrameNames('riley', {
-                    frames: [0, 1, 2, 3],
+                    frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
                 }),
                 frameRate: 12,
                 yoyo: true,
@@ -155,11 +155,24 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'jumping',
                 frames: this.anims.generateFrameNames('riley', {
-                    frames: [4, 5],
+                    frames: [12, 13, 14, 15, 16, 17],
                 }),
                 frameRate: 12,
                 yoyo: true,
-                repeat: 0,
+                repeat: -1,
+            });
+        }
+
+        // glitch animation
+        if (!this.anims.get('glitch')) {
+            this.anims.create({
+                key: 'glitch',
+                frames: this.anims.generateFrameNames('riley', {
+                    frames: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
+                }),
+                frameRate: 12,
+                yoyo: true,
+                repeat: -1,
             });
         }
 

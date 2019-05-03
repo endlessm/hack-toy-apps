@@ -58,6 +58,9 @@ class GameScene extends Phaser.Scene {
 
         this.MAXMOVES = 7;
 
+        this.RILEYPUSHFRAME = 18;
+        this.RILEYWINFRAME = 19;
+
         // capture moves
         this.arrSpriteMoves = [];
         this.moves = [];
@@ -98,18 +101,6 @@ class GameScene extends Phaser.Scene {
         if (this.params) {
             if (this.params.level > 0)
                 this.levelNumber = this.params.level;
-
-            if (this.params.goalXLocation >= 0)
-                this.goalXLocation = this.params.goalXLocation;
-
-            if (this.params.goalYLocation >= 0)
-                this.goalYLocation = this.params.goalYLocation;
-
-            if (this.params.playerXLocation >= -1)
-                this.playerXLocation = this.params.playerXLocation;
-
-            if (this.params.playerYLocation >= 0)
-                this.playerYLocation = this.params.playerYLocation;
 
             if (this.params.gameType >= 0)
                 this.gameType = this.params.gameType;
@@ -152,12 +143,7 @@ class GameScene extends Phaser.Scene {
 
         this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
 
-        // play animation if none is playing
-        if (!this.player.anims.isPlaying)
-            this.player.anims.play('running');
-
-        // we are reducing the width and height by 50%
-        this.player.setScale(0.45);
+        this.player.anims.play('running');
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
@@ -299,6 +285,22 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    handlePlaythruAnimations(moveType) {
+        this.player.anims.stop('jumping');
+        this.player.anims.stop('running');
+        this.player.anims.stop('glitch');
+
+        if (moveType === FORWARD || moveType === UP ||
+            moveType === DOWN)
+            this.player.anims.play('running');
+
+        if (moveType === ERROR || moveType === NONE)
+            this.player.anims.play('glitch');
+
+        if (moveType === JUMP)
+            this.player.anims.play('jumping');
+    }
+
     handleMovements() {
         if (this.gameType === PLAYTHRUGAME) {
             if (this.enterKey.isDown && !this.isMoving) {
@@ -339,25 +341,13 @@ class GameScene extends Phaser.Scene {
     checkGameOver() {
         // If player has reached final column
         if (this.playerXLocation >= this.MAXMOVES) {
-            const playerRect = this.player.getBounds();
-
-            // get wrongExits
-            const wrongExits = this.wrongExits.getChildren();
-
-            for (let i = 0; i < wrongExits.length; i++) {
-            // check wrong exit overlap
-                const wrongExitRect = wrongExits[i].getBounds();
-
-                if (i !== this.goalYLocation &&
-                Phaser.Geom.Intersects.RectangleToRectangle(playerRect, wrongExitRect)) {
+            // game won when Riley runs to last square
+            if (this.player.x > this.goalXLocation * this.tileLength + this.xOffset) {
+                if (this.playerYLocation === this.goalYLocation)
+                    this.gameWon();
+                else
                     this.gameLost();
-                    return;
-                }
             }
-
-            // game won when Riley runs off screen
-            if (this.player.x > this.sys.game.config.width + 100)
-                this.gameWon();
         } else {
             const tmpObstacle = this.getObstacle(this.playerXLocation, this.playerYLocation);
             const isJumping = this.arrSpriteMoves[this.playerXLocation].moveType === JUMP;
@@ -577,6 +567,9 @@ class GameScene extends Phaser.Scene {
             rileyMove.setFrame(this.moves[this.playerXLocation]);
             rileyMove.moveType = this.moves[this.playerXLocation];
 
+            this.player.anims.stop('jumping');
+            this.player.anims.play('running');
+
             this.keyIsDown = true;
             this.isMoving = false;
 
@@ -588,6 +581,11 @@ class GameScene extends Phaser.Scene {
             if (this.moves[this.playerXLocation] === DOWN &&
                 this.playerYLocation < this.countY - 1)
                 this.playerYLocation += 1;
+
+            if (this.moves[this.playerXLocation] === JUMP) {
+                this.player.anims.stop('running');
+                this.player.anims.play('jumping');
+            }
         } else if (this.gameType === PLAYTHRUGAME) {
             for (var i = 0; i < this.playerXLocation; i++)
                 this.arrSpriteMoves[i].setFrame(this.arrSpriteMoves[i].moveType);
@@ -596,8 +594,7 @@ class GameScene extends Phaser.Scene {
             const highlightedSquare = rileyMove.moveType + this.moveSquareOffset * 3;
 
             if (this.arrSpriteMoves.length > this.playerXLocation) {
-                this.player.anims.play('running');
-                this.player.anims.stop('jumping');
+                this.handlePlaythruAnimations(rileyMove.moveType);
 
                 if (rileyMove.moveType === UP &&
                     this.playerYLocation > 0)
@@ -607,10 +604,8 @@ class GameScene extends Phaser.Scene {
                     this.playerYLocation < this.countY - 1)
                     this.playerYLocation += 1;
 
-                if (rileyMove.moveType === JUMP) {
-                    this.player.anims.stop('running');
-                    this.player.anims.play('jumping');
-                }
+                if (rileyMove.moveType === PUSH)
+                    this.player.setFrame(this.RILEYPUSHFRAME);
 
                 rileyMove.setFrame(highlightedSquare);
 
@@ -627,10 +622,6 @@ class GameScene extends Phaser.Scene {
         // place the final trail
         if (this.playerXLocation === this.MAXMOVES)
             this.placeTrail(true);
-
-        // play animation if none is playing
-        if (!this.player.anims.isPlaying)
-            this.player.anims.play('running');
 
         this.checkGameOver();
     }
@@ -1250,6 +1241,11 @@ class GameScene extends Phaser.Scene {
         // shake camera
         this.cameras.main.shake(500);
 
+        // play glitch animation
+        this.player.anims.stop('running');
+        this.player.anims.stop('jumping');
+        this.player.anims.play('glitch');
+
         // listen for event completion
         this.cameras.main.on('camerashakecomplete', function() {
             this.showModal(this.gameOverAnimation);
@@ -1261,6 +1257,11 @@ class GameScene extends Phaser.Scene {
         this.isTerminating = true;
 
         globalParameters.success = true;
+
+        this.player.anims.stop('jumping');
+        this.player.anims.stop('running');
+
+        this.player.setFrame(this.RILEYWINFRAME);
 
         /* Go back to title if this was the last level */
         if (globalParameters.currentLevel < globalParameters.availableLevels)
@@ -1292,15 +1293,7 @@ class GameScene extends Phaser.Scene {
 
     /* This will be called each time something in this.params changes */
     onParametersNotify(property) {
-        if (property === 'goalYLocation') {
-            this.goalYLocation = this.params.goalYLocation;
-        } else if (property === 'goalXLocation') {
-            this.goalXLocation = this.params.goalXLocation;
-        } else if (property === 'playerXLocation') {
-            this.playerXLocation = this.params.playerXLocation;
-        } else if (property === 'playerYLocation') {
-            this.playerYLocation = this.params.playerYLocation;
-        } else if (property === 'instructionCode') {
+        if (property === 'instructionCode') {
             this.instructionCode = getUserFunction(this.params.instructionCode);
             this.runInstruction();
         } else if (property === 'levelCode') {
@@ -1323,7 +1316,15 @@ class GameScene extends Phaser.Scene {
 
         try {
             this.instructionCode(scope);
-            this.moves = scope.riley.moves;
+
+            // handle none instructions
+            for (var i = 0; i <= this.MAXMOVES; i++) {
+                if (i < scope.riley.moves.length)
+                    this.moves.push(scope.riley.moves[i]);
+                else
+                    this.moves.push(NONE);
+            }
+
             this.badPropertyNames = scope.riley._badPropertyNames;
         } catch (e) {
             /* User function error! */

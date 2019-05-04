@@ -44,14 +44,6 @@ var globalParameters = {
 var defaultParameters = {
     level: 0,
 
-    // goal location
-    goalXLocation: 8,
-    goalYLocation: 0,
-
-    // player location
-    playerXLocation: -1,
-    playerYLocation: 0,
-
     robotADirection: 'down',
     robotBDirection: 'up',
 

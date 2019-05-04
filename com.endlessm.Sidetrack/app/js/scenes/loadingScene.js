@@ -34,12 +34,36 @@ class LoadingScene extends Phaser.Scene {
         }, this);
 
         // load assets
-        this.load.image('background', 'assets/images/background.png');
+        this.load.image('background1', 'assets/images/background1.png');
+        this.load.image('background2', 'assets/images/background2.png');
+        this.load.image('background3', 'assets/images/background3.png');
+        this.load.image('levelSelectBackground', 'assets/images/levelSelectBackground.png');
+        this.load.image('hackdex', 'assets/images/hackdex.png');
         this.load.image('pit', 'assets/images/pit.png');
         this.load.image('separator', 'assets/images/separator.png');
-        this.load.image('restartIcon', 'assets/images/restartIcon.png');
         this.load.image('explosion', 'assets/images/explosion.png');
         this.load.image('circleHighlight', 'assets/images/circleHighlight.png');
+
+        this.load.spritesheet('previous', 'assets/images/previous.png', {
+            frameWidth: 63,
+            frameHeight: 54,
+            margin: 0,
+            spacing: 0,
+        });
+
+        this.load.spritesheet('next', 'assets/images/next.png', {
+            frameWidth: 63,
+            frameHeight: 54,
+            margin: 0,
+            spacing: 0,
+        });
+
+        this.load.spritesheet('restartIcon', 'assets/images/restartIcon.png', {
+            frameWidth: 53,
+            frameHeight: 54,
+            margin: 0,
+            spacing: 0,
+        });
 
         this.load.spritesheet('spaceBar', 'assets/images/spaceBar.png', {
             frameWidth: 268,
@@ -56,8 +80,8 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('robots', 'assets/images/robots.png', {
-            frameWidth: 49,
-            frameHeight: 89,
+            frameWidth: 128,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
@@ -106,7 +130,7 @@ class LoadingScene extends Phaser.Scene {
 
         this.load.spritesheet('walls', 'assets/images/walls.png', {
             frameWidth: 128,
-            frameHeight: 144,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
@@ -126,8 +150,8 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('riley', 'assets/images/riley.png', {
-            frameWidth: 191,
-            frameHeight: 258,
+            frameWidth: 128,
+            frameHeight: 128,
             margin: 0,
             spacing: 0,
         });
@@ -139,7 +163,7 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'running',
                 frames: this.anims.generateFrameNames('riley', {
-                    frames: [0, 1, 2, 3],
+                    frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
                 }),
                 frameRate: 12,
                 yoyo: true,
@@ -152,11 +176,24 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'jumping',
                 frames: this.anims.generateFrameNames('riley', {
-                    frames: [4, 5],
+                    frames: [12, 13, 14, 15, 16, 17],
                 }),
                 frameRate: 12,
                 yoyo: true,
-                repeat: 0,
+                repeat: -1,
+            });
+        }
+
+        // glitch animation
+        if (!this.anims.get('glitch')) {
+            this.anims.create({
+                key: 'glitch',
+                frames: this.anims.generateFrameNames('riley', {
+                    frames: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
+                }),
+                frameRate: 12,
+                yoyo: true,
+                repeat: -1,
             });
         }
 

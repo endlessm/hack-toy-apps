@@ -37,32 +37,32 @@ class Obstacle {
 
 class riley {
     constructor() {
-        this.moves = [];
+        this.queue = [];
         this._badPropertyNames = [];
     }
 
     forward() {
-        this.moves.push(FORWARD);
+        this.queue.push(FORWARD);
     }
 
     up() {
-        this.moves.push(UP);
+        this.queue.push(UP);
     }
 
     down() {
-        this.moves.push(DOWN);
+        this.queue.push(DOWN);
     }
 
     jump() {
-        this.moves.push(JUMP);
+        this.queue.push(JUMP);
     }
 
     push() {
-        this.moves.push(PUSH);
+        this.queue.push(PUSH);
     }
 
     error() {
-        this.moves.push(ERROR);
+        this.queue.push(ERROR);
     }
 }
 

@@ -3,8 +3,6 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var USING_FALLBACK_SOUNDS = false;
-
 const WIDTH  = 1920;
 const HEIGHT = 1004;
 const RATIO = WIDTH / HEIGHT;
@@ -266,9 +264,6 @@ function HackyBalls()
         this.radius   = ZERO;
         this.duration = 20;
     }
-
-    if (USING_FALLBACK_SOUNDS)
-        window.Sounds = new FallbackSoundAPI();
     
     //-------------------------------
     // variables

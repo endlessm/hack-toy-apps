@@ -63,7 +63,7 @@ class GameScene extends Phaser.Scene {
 
         // capture moves
         this.arrSpriteMoves = [];
-        this.moves = [];
+        this.queue = [];
 
         this.badPropertyNames = [];
 
@@ -206,7 +206,7 @@ class GameScene extends Phaser.Scene {
                 this.moveSquareOffset, scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
-                        this.moves.push(FORWARD);
+                        this.queue.push(FORWARD);
                     }
                 });
 
@@ -214,7 +214,7 @@ class GameScene extends Phaser.Scene {
                 this.moveSquareOffset, scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
-                        this.moves.push(UP);
+                        this.queue.push(UP);
                     }
                 });
 
@@ -222,7 +222,7 @@ class GameScene extends Phaser.Scene {
                 this.moveSquareOffset, scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
-                        this.moves.push(DOWN);
+                        this.queue.push(DOWN);
                     }
                 });
 
@@ -230,7 +230,7 @@ class GameScene extends Phaser.Scene {
                 scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
-                        this.moves.push(JUMP);
+                        this.queue.push(JUMP);
                         this.player.anims.stop('running');
                         this.player.anims.play('jumping');
                     }
@@ -314,22 +314,22 @@ class GameScene extends Phaser.Scene {
 
             if (!this.keyIsDown) {
                 if (this.cursors.right.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.moves.push(FORWARD);
+                    this.queue.push(FORWARD);
                     this.isMoving = true;
                 }
 
                 if (this.cursors.up.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.moves.push(UP);
+                    this.queue.push(UP);
                     this.isMoving = true;
                 }
 
                 if (this.cursors.down.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.moves.push(DOWN);
+                    this.queue.push(DOWN);
                     this.isMoving = true;
                 }
 
                 if (this.spaceBar.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.moves.push(JUMP);
+                    this.queue.push(JUMP);
                     this.isMoving = true;
                     this.player.anims.stop('running');
                     this.player.anims.play('jumping');
@@ -563,8 +563,8 @@ class GameScene extends Phaser.Scene {
         const rileyMove = this.arrSpriteMoves[this.playerXLocation];
 
         if (this.gameType === DEFAULTGAME) {
-            rileyMove.setFrame(this.moves[this.playerXLocation]);
-            rileyMove.moveType = this.moves[this.playerXLocation];
+            rileyMove.setFrame(this.queue[this.playerXLocation]);
+            rileyMove.moveType = this.queue[this.playerXLocation];
 
             this.player.anims.stop('jumping');
             this.player.anims.play('running');
@@ -573,15 +573,15 @@ class GameScene extends Phaser.Scene {
             this.isMoving = false;
 
             // handle up movements
-            if (this.moves[this.playerXLocation] === UP && this.playerYLocation > 0)
+            if (this.queue[this.playerXLocation] === UP && this.playerYLocation > 0)
                 this.playerYLocation -= 1;
 
             // handle down movements
-            if (this.moves[this.playerXLocation] === DOWN &&
+            if (this.queue[this.playerXLocation] === DOWN &&
                 this.playerYLocation < this.countY - 1)
                 this.playerYLocation += 1;
 
-            if (this.moves[this.playerXLocation] === JUMP) {
+            if (this.queue[this.playerXLocation] === JUMP) {
                 this.player.anims.stop('running');
                 this.player.anims.play('jumping');
             }
@@ -788,12 +788,12 @@ class GameScene extends Phaser.Scene {
         }
 
         // for playthru game types, the moves will be pre-populated
-        for (let i = 0; i < this.moves.length; i++) {
+        for (let i = 0; i < this.queue.length; i++) {
             // sets the initial sprite frame
-            const moveSquare = this.arrSpriteMoves[i].setFrame(this.moves[i]);
+            const moveSquare = this.arrSpriteMoves[i].setFrame(this.queue[i]);
 
             // stores the moveType since sprite frames will change
-            moveSquare.moveType = this.moves[i];
+            moveSquare.moveType = this.queue[i];
 
             // for playthru games, check if draggable is set
             if (this.gameType === PLAYTHRUGAME) {
@@ -805,7 +805,7 @@ class GameScene extends Phaser.Scene {
                 this.input.setDraggable(moveSquare);
                 moveSquare.dragDistanceThreshold = 16;
 
-                if (this.moves[i] === ERROR)
+                if (this.queue[i] === ERROR)
                     moveSquare.badPropertyName = this.badPropertyNames.shift() || 'error';
             }
         }
@@ -1351,10 +1351,10 @@ class GameScene extends Phaser.Scene {
 
             // handle none instructions
             for (var i = 0; i <= this.MAXMOVES; i++) {
-                if (i < scope.riley.moves.length)
-                    this.moves.push(scope.riley.moves[i]);
+                if (i < scope.riley.queue.length)
+                    this.queue.push(scope.riley.queue[i]);
                 else
-                    this.moves.push(NONE);
+                    this.queue.push(NONE);
             }
 
             this.badPropertyNames = scope.riley._badPropertyNames;

@@ -3,9 +3,6 @@ var canvas = canvasID.getContext( '2d' );
 
 "use strict";
 
-var USING_TEST_GUI = false;
-var USING_FALLBACK_SOUNDS = false;
-
 const WIDTH  = 1920;
 const HEIGHT = 1004;
 const RATIO = WIDTH / HEIGHT;
@@ -19,7 +16,7 @@ var MAX_DEATHEFFECTS = 8
 //---------------------------------------------------------
 // The object globalParameters contains all the data that
 // must be exposed to and share with GTK so that the UI 
-// can be handled externally (not using _hackyBallsGUI).
+// can be handled externally.
 //---------------------------------------------------------
 var globalParameters = 
 {
@@ -267,9 +264,6 @@ function HackyBalls()
         this.radius   = ZERO;
         this.duration = 20;
     }
-
-    if (USING_FALLBACK_SOUNDS)
-        window.Sounds = new FallbackSoundAPI();
     
     //-------------------------------
     // variables
@@ -284,7 +278,6 @@ function HackyBalls()
     var _balls                  = new Array();
     var _deathAnimations        = new Array();
     var _numBalls               = 0;
-    var _hackyBallsGUI          = new HackyBallsGUI();
     var _leftWall               = ZERO;
     var _topWall                = ZERO;
     var _bottomWall             = HEIGHT;
@@ -439,14 +432,6 @@ function HackyBalls()
         // load images
         //--------------------------------------
         _deleteImage.src = "images/delete-ball.png";
-
-        //---------------------------------------------
-        // initialize user interface with parameters
-        //---------------------------------------------
-        if ( USING_TEST_GUI )
-        {
-            _hackyBallsGUI.initialize( globalParameters );
-        }
 
         //------------------------------------
         // initialize tools
@@ -1070,14 +1055,6 @@ function HackyBalls()
         // show tools
         //-------------------------
         _tools.render();
-        
-        //-------------------------
-        // show user interface
-        //-------------------------
-        if ( USING_TEST_GUI )
-        {
-            _hackyBallsGUI.render();
-        }
 
         //---------------------------------------
         // restore canvas to default transform
@@ -1110,14 +1087,6 @@ function HackyBalls()
 
         x = sx / _worldToWindowScale;
         y = sy / _worldToWindowScale;
-        
-        if ( USING_TEST_GUI )
-        {
-            if ( _grabbedBall == NULL_BALL )
-            {
-                _hackyBallsGUI.setMouseDown( x, y );    
-             }
-        }
         
         //--------------------------
         // update mouse state
@@ -1284,11 +1253,6 @@ function HackyBalls()
         _numBalls = 0;
         _game.setLevel( this, level, _collisionBalls, _ballsWithSomeCollision ); 
         
-        if ( USING_TEST_GUI ) 
-        { 
-            _hackyBallsGUI.setParameters( globalParameters ); 
-        } 
-        
         _flinger.cancel(); 
         _grabbedBall = NULL_BALL;
 
@@ -1342,14 +1306,6 @@ function HackyBalls()
         
         _game.getMouseMoveAction( x, y );
 
-        if ( _grabbedBall == NULL_BALL )
-        {
-            if ( USING_TEST_GUI )
-            {
-                _hackyBallsGUI.setMouseMove( x, y );
-            }
-        }
-        
         this.updateMouse( x, y );
     }
     
@@ -1375,11 +1331,6 @@ function HackyBalls()
 
         x = sx / _worldToWindowScale;
         y = sy / _worldToWindowScale;
-        
-        if ( USING_TEST_GUI )
-        {
-            _hackyBallsGUI.setMouseUp( x, y );
-        }
          
         if ( _flinger.getState() == FLINGER_STATE_PULLING )
         {

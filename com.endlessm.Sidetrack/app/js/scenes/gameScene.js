@@ -42,8 +42,8 @@ class GameScene extends Phaser.Scene {
 
         // sprite tile placement
         this.tileLength = 128;
-        this.xOffset = 450;
-        this.yOffset = 180;
+        this.xOffset = 448;
+        this.yOffset = 116;
 
         this.tiles = [];
         this.tilesHash = {};
@@ -127,15 +127,15 @@ class GameScene extends Phaser.Scene {
         let bg;
         if (globalParameters.currentLevel >= 40) {
             Sounds.playLoop('sidetrack/bg/bonus_mode');
-            bg = this.add.sprite(0, 0, 'background3'); // for final and bonus level
+            bg = this.add.sprite(0, -40, 'background3'); // for final and bonus level
         }
         else if (globalParameters.currentLevel >= 14) {
             Sounds.playLoop('sidetrack/bg/auto_mode');
-            bg = this.add.sprite(0, 0, 'background2'); // auto mode levels
+            bg = this.add.sprite(0, -40, 'background2'); // auto mode levels
         }
         else {
             Sounds.playLoop('sidetrack/bg/manual_mode');
-            bg = this.add.sprite(0, 0, 'background1'); // manual and default
+            bg = this.add.sprite(0, -40, 'background1'); // manual and default
         }
 
         // change the origin to the top-left corner
@@ -147,10 +147,10 @@ class GameScene extends Phaser.Scene {
         this.createLevel();
 
         // create the player
-        this.player = this.add.sprite(0, 0, 'riley');
-        this.player.setDepth(1);
+        this.player = this.add.sprite(0, 0, 'riley').setOrigin(0).setDepth(1);
 
-        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
+        this.setSpritePosition(this.player, this.playerXLocation,
+            this.playerYLocation, 0, -24);
 
         this.player.anims.play('running');
 
@@ -173,11 +173,11 @@ class GameScene extends Phaser.Scene {
 
             this.setSpritePosition(this.playButton, -1, this.countY, -75, 20);
 
-            const x = this.xOffset - this.tileLength - 50;
-            const y = this.countY * this.tileLength + this.yOffset + 20;
+            const x = 0;
+            const y = this.countY * this.tileLength + this.yOffset - 10;
 
             this.separator = this.add.sprite(x - this.tileLength, y,
-                'separator').setVisible(false);
+                'separator').setVisible(false).setOrigin(0);
         } else {
             const scaleX = 0.5;
             const scaleY = 0.5;
@@ -623,15 +623,15 @@ class GameScene extends Phaser.Scene {
 
                 this.stepTextHighlighter.setVisible(true);
                 this.stepTextHighlighter.x =
-                    this.playerXLocation * this.tileLength + this.xOffset;
-                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 120;
+                    this.playerXLocation * this.tileLength + this.xOffset + 35;
+                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 160;
             }
         }
 
         this.handleMovementAudio(rileyMove.moveType);
 
         this.placeTrail();
-        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
+        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation, 0, -24);
 
         // place the final trail
         if (this.playerXLocation === this.MAXMOVES)
@@ -641,7 +641,7 @@ class GameScene extends Phaser.Scene {
     }
 
     placeTrail(isFinalTrail = false) {
-        var trail = this.add.sprite(this.player.x, this.player.y, 'trail');
+        var trail = this.add.sprite(this.player.x, this.player.y, 'trail').setOrigin(0);
         this.arrTileHistory.push(this.getTile(this.playerXLocation, this.playerYLocation));
 
         let currentYLocation = this.arrTileHistory[this.playerXLocation].y;
@@ -716,9 +716,11 @@ class GameScene extends Phaser.Scene {
             x = this.tiles[i].x * this.tileLength + this.xOffset;
             y = this.tiles[i].y * this.tileLength + this.yOffset;
 
-            // added this condition because starting location is a tile
-            if (this.tiles[i].x < this.countX - 1 && this.tiles[i].x >= 0)
-                this.add.sprite(x, y, 'tiles', Phaser.Math.Between(minTile, maxTiles));
+            // do not draw starting or final tiles
+            if (this.tiles[i].x < this.countX - 2 && this.tiles[i].x >= 0) {
+                this.add.sprite(x, y, 'tiles',
+                    Phaser.Math.Between(minTile, maxTiles)).setOrigin(0);
+            }
         }
     }
 
@@ -771,7 +773,7 @@ class GameScene extends Phaser.Scene {
 
             // Place the draggable move squares in correct spots
             for (let i = 0; i <= this.MAXMOVES; i++) {
-                this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, 0, 20);
+                this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, -15, 10);
 
                 if (this.arrSpriteMoves[i].moveType === FORWARD)
                     instructions.push('riley.forward();');
@@ -801,8 +803,8 @@ class GameScene extends Phaser.Scene {
         let sprite;
 
         for (let i = 0; i <= this.MAXMOVES; i++) {
-            sprite = this.add.sprite(0, 0, 'moveSquares', NONE);
-            this.setSpritePosition(sprite, i, this.countY, 0, 20);
+            sprite = this.add.sprite(0, 0, 'moveSquares', NONE).setOrigin(0);
+            this.setSpritePosition(sprite, i, this.countY, -15, 10);
             this.arrSpriteMoves.push(sprite);
         }
 
@@ -832,7 +834,7 @@ class GameScene extends Phaser.Scene {
 
     placeEndingTiles() {
         // create the exit goal
-        const goal = this.add.sprite(0, 0, 'specialTiles', 1);
+        const goal = this.add.sprite(0, 0, 'specialTiles', 1).setOrigin(0);
 
         // wrong Exits
         var wrongExitGroup = this.add.group({
@@ -841,12 +843,13 @@ class GameScene extends Phaser.Scene {
         });
 
         this.setSpritePosition(goal, this.MAXMOVES,
-            this.goalYLocation, 160, 0);
+            this.goalYLocation, 0, 0);
 
         const wrongExits = wrongExitGroup.getChildren();
 
         for (var i = 0; i < wrongExits.length; i++) {
-            this.setSpritePosition(wrongExits[i], this.MAXMOVES, i, 160);
+            wrongExits[i].setOrigin(0);
+            this.setSpritePosition(wrongExits[i], this.MAXMOVES, i, 0);
 
             // wrong exit sprite sheet frame
             wrongExits[i].setFrame(2);
@@ -861,21 +864,22 @@ class GameScene extends Phaser.Scene {
 
     displayLevelUI() {
         const gameW = this.sys.game.config.width;
-        const gameH = 100;
+        const gameH = 76;
 
-        this.nextLevelButton = new Button(this, gameW / 2 + 145, gameH / 2,
+        this.nextLevelButton = new Button(this, gameW / 2 + 150, gameH / 2 + 5,
             'next', 1, 1, 1, 1, this.startNextLevel.bind(this));
 
-        this.previousLevelButton = new Button(this, gameW / 2 - 145, gameH / 2,
+        this.previousLevelButton = new Button(this, gameW / 2 - 151, gameH / 2 + 5,
             'previous', 1, 1, 1, 1, this.startPreviousLevel.bind(this));
 
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
 
-        const txtLevel = this.add.text(gameW / 2 - 30, gameH / 2, `Level ${this.levelNumber}`, {
-            font: 'bold 30pt Metropolis',
-            fill: '#ffffff',
-        });
+        const txtLevel = this.add.text(gameW / 2 - 40, gameH / 2 + 5,
+            `Level ${this.levelNumber}`, {
+                font: 'bold 30pt Metropolis',
+                fill: '#ffffff',
+            });
         txtLevel.setOrigin(0.5, 0.5);
         txtLevel.depth = 1;
 
@@ -889,7 +893,7 @@ class GameScene extends Phaser.Scene {
             txtSpace.depth = 1;
         }
 
-        var restartIcon = new Button(this, gameW / 2 + 80, gameH / 2,
+        var restartIcon = new Button(this, gameW / 2 + 90, gameH / 2 + 5,
             'restartIcon', 1, 1, 1, 1, this.restartLevel.bind(this));
 
         restartIcon.setDepth(2);
@@ -897,17 +901,17 @@ class GameScene extends Phaser.Scene {
         // text background
         this.add.sprite(gameW / 2, gameH / 2, 'levelSelectBackground');
 
-        const yStepNumber = this.countY * this.tileLength + this.yOffset + 120;
+        const yStepNumber = this.countY * this.tileLength + this.yOffset + 190;
         let xStepNumber;
         for (let i = 0; i <= this.MAXMOVES; i++) {
-            xStepNumber = i * this.tileLength + this.xOffset;
+            xStepNumber = i * this.tileLength + this.xOffset + 65;
             this.add.text(xStepNumber, yStepNumber, i, {
                 font: '30pt Metropolis-Medium',
                 fill: '#53edf9',
             }).setOrigin(0.5);
         }
 
-        this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight');
+        this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight').setOrigin(0);
         this.stepTextHighlighter.setVisible(false).alpha = 0.4;
     }
 
@@ -952,19 +956,19 @@ class GameScene extends Phaser.Scene {
         // add obstacles
         for (var i = 0; i < this.obstacles.length; i++) {
             if (this.obstacles[i].type === WALL)
-                sprite = this.add.sprite(0, 0, 'walls', 0);
+                sprite = this.add.sprite(0, 0, 'walls', 0).setOrigin(0);
 
             if (this.obstacles[i].type === PIT)
-                sprite = this.add.sprite(0, 0, 'pit');
+                sprite = this.add.sprite(0, 0, 'pit').setOrigin(0);
 
             if (this.obstacles[i].type === ROBOTA) {
-                sprite = this.add.sprite(0, 0, 'robots', 0).setDepth(1);
+                sprite = this.add.sprite(0, 0, 'robots', 0).setDepth(1).setOrigin(0);
                 if (this.robotADirection === 'up')
                     sprite.setFrame(1);
             }
 
             if (this.obstacles[i].type === ROBOTB) {
-                sprite = this.add.sprite(0, 0, 'robots', 2).setDepth(1);
+                sprite = this.add.sprite(0, 0, 'robots', 2).setDepth(1).setOrigin(0);
                 if (this.robotBDirection === 'down')
                     sprite.setFrame(3);
             }
@@ -984,8 +988,8 @@ class GameScene extends Phaser.Scene {
         this.addDragInputs();
 
         // create the starting tile
-        this.setSpritePosition(this.add.sprite(0, 0, 'specialTiles', 0),
-            this.playerXLocation, this.playerYLocation, -170);
+        const startingTile = this.add.sprite(0, 0, 'specialTiles', 0).setOrigin(0);
+        this.setSpritePosition(startingTile, this.playerXLocation, this.playerYLocation, -352);
     }
 
     setSeparatorPosition(gameObject) {
@@ -993,7 +997,7 @@ class GameScene extends Phaser.Scene {
         const maxX = this.MAXMOVES * this.tileLength + this.xOffset;
         const halfTilelength = this.tileLength * 0.5;
 
-        const offset = minX - halfTilelength + 2;
+        const offset = minX - halfTilelength + 33;
 
         if (gameObject.x < offset) {
             this.separator.x = offset - this.tileLength;

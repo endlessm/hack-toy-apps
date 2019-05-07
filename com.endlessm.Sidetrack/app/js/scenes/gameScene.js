@@ -97,6 +97,8 @@ class GameScene extends Phaser.Scene {
         this.robotADirection = 'down';
         this.robotBDirection = 'up';
 
+        this.isAnimating = false;
+
         // few sanity checks to make sure data is coming through
         if (this.params) {
             if (this.params.level > 0)
@@ -176,35 +178,6 @@ class GameScene extends Phaser.Scene {
 
             this.separator = this.add.sprite(x - this.tileLength, y,
                 'separator').setVisible(false);
-
-            // TODO: animation should only happen when FelixNet appears
-            // if (this.params.level === 14) {
-            if (this.params.felixNetAppearsAnimation) {
-                // hide the play button until animation is complete
-                this.playButton.setAlpha(0);
-
-                // TODO: add animation when assets received
-
-                // this.controls = this.add.sprite(120,
-                // 750, 'controls').setOrigin(0).setScale(0.7);
-                // play the destroy control animation
-                // this.controls.setVisible(true);
-                // this.controls.anims.play('controls');
-
-                // this.controls.on('animationcomplete', function() {
-                //     this.controls.setVisible(false);
-                //     // fade in play button
-                //     this.tweens.add({
-                //         targets: [this.playButton],
-                //         duration: 2000,
-                //         alpha: 1,
-                //         onComplete: () => {
-                //             var modalText = 'What was that?';
-                //             this.showModal(modalText);
-                //         },
-                //     });
-                // }.bind(this));
-            }
         } else {
             const scaleX = 0.5;
             const scaleY = 0.5;
@@ -256,7 +229,7 @@ class GameScene extends Phaser.Scene {
 
     update() {
         // don't execute if we are terminating
-        if (this.isTerminating || globalParameters.paused ||
+        if (this.isTerminating || globalParameters.paused || this.isAnimating ||
             !globalParameters.playing)
             return;
 
@@ -1288,21 +1261,54 @@ class GameScene extends Phaser.Scene {
     }
 
     playControlsCutscene() {
-        // TODO: https://phabricator.endlessm.com/T26461
-        // For now, just wait for 5 seconds
-        setTimeout(() => {
-            // These should actually be set by the quest script.
-            globalParameters.currentLevel = 14;
-            globalParameters.availableLevels = 40;
+        this.isAnimating = true;
+        this.playButton.setAlpha(0);
 
-            this.scene.restart(levelParameters[globalParameters.currentLevel]);
-            globalParameters.controlsCutscene = false;
-        }, 5000);
+        this.controls = this.add.sprite(0, 0, 'controlsDestroyed').setScale(0.5);
+        this.setSpritePosition(this.controls, -1, this.countY, -10, 65);
+
+        // play the destroy control animation
+        this.controls.anims.play('controlsDestroyed');
+
+        this.controls.on('animationcomplete', function() {
+            this.controls.setVisible(false);
+            // fade in play button
+            this.tweens.add({
+                targets: [this.playButton],
+                duration: 1000,
+                alpha: 1,
+                onComplete: () => {
+                    globalParameters.controlsCutscene = false;
+                    this.isAnimating = false;
+                    var modalText = 'What was that?';
+                    this.showModal(modalText);
+                },
+            });
+        }.bind(this));
     }
 
     playEscapeCutscene() {
-        // TODO: https://phabricator.endlessm.com/T26445
-        // For now, just wait for 5 seconds
+        this.isAnimating = true;
+        this.felix = this.add.sprite(0, 0, 'felixnet');
+
+        this.setSpritePosition(this.felix, this.goalXLocation, this.goalYLocation);
+        this.felix.setDepth(5);
+        this.felix.anims.play('felixnet');
+
+        this.felix.on('animationcomplete', function() {
+            // fade in play button
+            this.tweens.add({
+                targets: [this.playButton],
+                duration: 2000,
+                alpha: 1,
+                onComplete: () => {
+                    globalParameters.escapeCutscene = false;
+                    this.isAnimating = false;
+                    this.scene.restart(levelParameters[globalParameters.currentLevel]);
+                },
+            });
+        }.bind(this));
+
         setTimeout(() => {
             // These should actually be set by the quest script.
             globalParameters.currentLevel = 41;
@@ -1364,7 +1370,6 @@ class GameScene extends Phaser.Scene {
             globalParameters.highestAchievedLevel = globalParameters.nextLevel;
 
         saveState();
-
         this.showModal(this.levelCompleteAnimation);
     }
 

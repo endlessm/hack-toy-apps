@@ -155,6 +155,20 @@ class LoadingScene extends Phaser.Scene {
             margin: 0,
             spacing: 0,
         });
+
+        this.load.spritesheet('felixnet', 'assets/images/felixnetEscape.png', {
+            frameWidth: 631,
+            frameHeight: 128,
+            margin: 0,
+            spacing: 0,
+        });
+
+        this.load.spritesheet('controlsDestroyed', 'assets/images/controlsDestroyed.png', {
+            frameWidth: 448,
+            frameHeight: 524,
+            margin: 0,
+            spacing: 0,
+        });
     }
 
     create() {
@@ -223,12 +237,25 @@ class LoadingScene extends Phaser.Scene {
             });
         }
 
-        // garbled controls animation
-        if (!this.anims.get('controls')) {
+        // felixnet escapes animation
+        if (!this.anims.get('felixnet')) {
             this.anims.create({
-                key: 'controls',
-                frames: this.anims.generateFrameNames('controls', {
-                    frames: [0, 1, 2, 3, 4, 5],
+                key: 'felixnet',
+                frames: this.anims.generateFrameNames('felixnet', {
+                    frames: [1, 2, 3, 0, 4, 0, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0],
+                }),
+                frameRate: 10,
+                yoyo: false,
+                repeat: 0,
+            });
+        }
+
+        // garbled controls animation
+        if (!this.anims.get('controlsDestroyed')) {
+            this.anims.create({
+                key: 'controlsDestroyed',
+                frames: this.anims.generateFrameNames('controlsDestroyed', {
+                    frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                 }),
                 frameRate: 4,
                 yoyo: false,

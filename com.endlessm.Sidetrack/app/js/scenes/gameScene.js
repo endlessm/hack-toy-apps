@@ -1308,15 +1308,6 @@ class GameScene extends Phaser.Scene {
                 },
             });
         }.bind(this));
-
-        setTimeout(() => {
-            // These should actually be set by the quest script.
-            globalParameters.currentLevel = 41;
-            globalParameters.availableLevels = 50;
-
-            this.scene.restart(levelParameters[globalParameters.currentLevel]);
-            globalParameters.escapeCutscene = false;
-        }, 5000);
     }
 
     playLobbyLoopMusic() {

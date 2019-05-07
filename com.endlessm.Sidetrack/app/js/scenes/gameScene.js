@@ -367,7 +367,7 @@ class GameScene extends Phaser.Scene {
                     return;
                 }
                 // unless that obstacle is a pit
-                if (tmpNextObstacle === PIT) {
+                if (tmpNextObstacle.type === PIT) {
                     this.pushObstacle(tmpObstacle);
                     return;
                 }

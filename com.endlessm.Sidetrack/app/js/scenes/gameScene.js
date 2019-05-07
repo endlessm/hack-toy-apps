@@ -885,7 +885,7 @@ class GameScene extends Phaser.Scene {
 
         if (this.gameType === DEFAULTGAME) {
             const txtSpace = this.add.text(120, 770, 'Spacebar', {
-                font: '18pt Metropolis-Medium',
+                font: '18pt Metropolis',
                 fill: '#def9ff',
             });
 
@@ -906,7 +906,7 @@ class GameScene extends Phaser.Scene {
         for (let i = 0; i <= this.MAXMOVES; i++) {
             xStepNumber = i * this.tileLength + this.xOffset + 65;
             this.add.text(xStepNumber, yStepNumber, i, {
-                font: '30pt Metropolis-Medium',
+                font: 'bold 30pt Metropolis',
                 fill: '#53edf9',
             }).setOrigin(0.5);
         }

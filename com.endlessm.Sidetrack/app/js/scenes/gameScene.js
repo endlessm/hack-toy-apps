@@ -169,9 +169,9 @@ class GameScene extends Phaser.Scene {
 
         if (this.gameType === PLAYTHRUGAME) {
             this.playButton = new Button(this, 0, 0, 'playButton', 0, 1,
-                1, 1, this.playButtonClick.bind(this));
+                1, 1, this.playButtonClick.bind(this)).setOrigin(0);
 
-            this.setSpritePosition(this.playButton, -1, this.countY, -75, 20);
+            this.setSpritePosition(this.playButton, -2, this.countY, -20, -10);
 
             const x = 0;
             const y = this.countY * this.tileLength + this.yOffset - 10;
@@ -179,8 +179,8 @@ class GameScene extends Phaser.Scene {
             this.separator = this.add.sprite(x - this.tileLength, y,
                 'separator').setVisible(false).setOrigin(0);
         } else {
-            const scaleX = 0.5;
-            const scaleY = 0.5;
+            const scaleX = 1;
+            const scaleY = 1;
 
             this.fowardKeyButton = new Button(this, 0, 0, 'moveSquares', 1,
                 this.moveSquareOffset, scaleX, scaleY, () => {
@@ -188,7 +188,7 @@ class GameScene extends Phaser.Scene {
                         this.isMoving = true;
                         this.queue.push(FORWARD);
                     }
-                });
+                }).setOrigin(0);
 
             this.upKeyButton = new Button(this, 0, 0, 'moveSquares', 2,
                 this.moveSquareOffset, scaleX, scaleY, () => {
@@ -196,7 +196,7 @@ class GameScene extends Phaser.Scene {
                         this.isMoving = true;
                         this.queue.push(UP);
                     }
-                });
+                }).setOrigin(0);
 
             this.downKeyButton = new Button(this, 0, 0, 'moveSquares', 3,
                 this.moveSquareOffset, scaleX, scaleY, () => {
@@ -204,7 +204,7 @@ class GameScene extends Phaser.Scene {
                         this.isMoving = true;
                         this.queue.push(DOWN);
                     }
-                });
+                }).setOrigin(0);
 
             this.spacebarButton = new Button(this, 0, 0, 'spaceBar', 0, 1,
                 scaleX, scaleY, () => {
@@ -214,12 +214,12 @@ class GameScene extends Phaser.Scene {
                         this.player.anims.stop('running');
                         this.player.anims.play('jumping');
                     }
-                });
+                }).setOrigin(0);
 
-            this.setSpritePosition(this.fowardKeyButton, -1, this.countY, 0, 50);
-            this.setSpritePosition(this.upKeyButton, -1, this.countY, 0, -20);
-            this.setSpritePosition(this.downKeyButton, -1, this.countY, 0, 120);
-            this.setSpritePosition(this.spacebarButton, -1, this.countY, -100, 50);
+            this.setSpritePosition(this.fowardKeyButton, -2, this.countY - 1, -20, -10);
+            this.setSpritePosition(this.upKeyButton, -2, this.countY - 2, -20, -10);
+            this.setSpritePosition(this.downKeyButton, -2, this.countY, -20, -10);
+            this.setSpritePosition(this.spacebarButton, -3, this.countY - 1, -20, -10);
         }
 
         /* Reset Global game state */
@@ -804,7 +804,7 @@ class GameScene extends Phaser.Scene {
 
         for (let i = 0; i <= this.MAXMOVES; i++) {
             sprite = this.add.sprite(0, 0, 'moveSquares', NONE).setOrigin(0);
-            this.setSpritePosition(sprite, i, this.countY, -15, 10);
+            this.setSpritePosition(sprite, i, this.countY, -15, 16);
             this.arrSpriteMoves.push(sprite);
         }
 
@@ -884,7 +884,7 @@ class GameScene extends Phaser.Scene {
         txtLevel.depth = 1;
 
         if (this.gameType === DEFAULTGAME) {
-            const txtSpace = this.add.text(220, 910, 'space', {
+            const txtSpace = this.add.text(120, 770, 'Spacebar', {
                 font: '18pt Metropolis-Medium',
                 fill: '#def9ff',
             });

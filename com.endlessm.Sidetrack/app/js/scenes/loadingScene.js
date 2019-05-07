@@ -66,15 +66,15 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('spaceBar', 'assets/images/spaceBar.png', {
-            frameWidth: 268,
-            frameHeight: 168,
+            frameWidth: 156,
+            frameHeight: 156,
             margin: 0,
             spacing: 0,
         });
 
         this.load.spritesheet('playButton', 'assets/images/playButton.png', {
-            frameWidth: 179,
-            frameHeight: 177,
+            frameWidth: 219,
+            frameHeight: 219,
             margin: 0,
             spacing: 0,
         });

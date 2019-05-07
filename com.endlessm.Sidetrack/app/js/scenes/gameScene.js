@@ -120,14 +120,21 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
-        // create bg sprite
+        Sounds.stop('sidetrack/bg/lobby_loop');
+        // create bg sprite and add background audio
         let bg;
-        if (globalParameters.currentLevel >= 40)
+        if (globalParameters.currentLevel >= 40) {
+            Sounds.playLoop('sidetrack/bg/bonus_mode');
             bg = this.add.sprite(0, 0, 'background3'); // for final and bonus level
-        else if (globalParameters.currentLevel >= 14)
+        }
+        else if (globalParameters.currentLevel >= 14) {
+            Sounds.playLoop('sidetrack/bg/auto_mode');
             bg = this.add.sprite(0, 0, 'background2'); // auto mode levels
-        else
+        }
+        else {
+            Sounds.playLoop('sidetrack/bg/manual_mode');
             bg = this.add.sprite(0, 0, 'background1'); // manual and default
+        }
 
         // change the origin to the top-left corner
         bg.setOrigin(0, 0);
@@ -283,6 +290,34 @@ class GameScene extends Phaser.Scene {
                     this.placePlayer();
             }
         }
+    }
+
+    handleMovementAudio(moveType) {
+        Sounds.stop('sidetrack/sfx/start_chime');
+        Sounds.stop('sidetrack/sfx/move_fwd');
+        Sounds.stop('sidetrack/sfx/move_up');
+        Sounds.stop('sidetrack/sfx/move_down');
+        Sounds.stop('sidetrack/sfx/move_jump');
+        Sounds.stop('sidetrack/sfx/push_default');
+        Sounds.stop('sidetrack/sfx/failure');
+
+        if (moveType === FORWARD)
+            Sounds.play('sidetrack/sfx/move_fwd');
+
+        if (moveType === UP)
+            Sounds.play('sidetrack/sfx/move_up');
+
+        if (moveType === DOWN)
+            Sounds.play('sidetrack/sfx/move_down');
+
+        if (moveType === JUMP)
+            Sounds.play('sidetrack/sfx/move_jump');
+
+        if (moveType === PUSH)
+            Sounds.play('sidetrack/sfx/push_default');
+
+        if (moveType === ERROR || moveType === NONE)
+            Sounds.play('sidetrack/sfx/failure');
     }
 
     handlePlaythruAnimations(moveType) {
@@ -502,6 +537,11 @@ class GameScene extends Phaser.Scene {
                 this.setSpritePosition(this.obstacles[i].sprite, xPosition, yPosition);
             }
         }
+
+        // play robot sound only once
+        if(isRobotType)
+            Sounds.play('sidetrack/sfx/robot');
+
     }
 
     checkRobotCollisions() {
@@ -615,6 +655,8 @@ class GameScene extends Phaser.Scene {
             }
         }
 
+        this.handleMovementAudio(rileyMove.moveType);
+
         this.placeTrail();
         this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation);
 
@@ -709,6 +751,7 @@ class GameScene extends Phaser.Scene {
 
     addDragInputs() {
         this.input.on('dragstart', (pointer, gameObject) => {
+            Sounds.play('sidetrack/sfx/instruction_grab');
             const gameObjectFrame = gameObject.moveType + this.moveSquareOffset * 2;
 
             // so user can see the move they're dragging
@@ -730,13 +773,16 @@ class GameScene extends Phaser.Scene {
 
             this.setSeparatorPosition(gameObject);
 
-            if (index !== this.separator.position && this.separator.position !== index + 1)
+            if (index !== this.separator.position && this.separator.position !== index + 1) {
                 this.separator.setVisible(true);
+                Sounds.play('sidetrack/sfx/instruction_drag');
+            }
             else
                 this.separator.setVisible(false);
         });
 
         this.input.on('dragend', (pointer, gameObject) => {
+            Sounds.play('sidetrack/sfx/instruction_drop');
             gameObject.setFrame(gameObject.moveType);
             gameObject.setDepth(1);
 
@@ -1156,6 +1202,7 @@ class GameScene extends Phaser.Scene {
     }
 
     showModal(modalText) {
+        this.playLobbyLoopMusic();
         var width = this.cameras.main.width;
         var height = this.cameras.main.height;
 
@@ -1216,6 +1263,7 @@ class GameScene extends Phaser.Scene {
     }
 
     continueLevel() {
+        Sounds.play('sidetrack/sfx/start_chime');
         if (globalParameters.nextLevel) {
             globalParameters.playing = true;
             this.scene.restart(levelParameters[globalParameters.nextLevel]);
@@ -1225,6 +1273,7 @@ class GameScene extends Phaser.Scene {
     }
 
     restartLevel() {
+        Sounds.play('sidetrack/sfx/start_chime');
         globalParameters.playing = true;
         globalParameters.currentLevel = this.params.level;
         this.scene.restart(levelParameters[globalParameters.currentLevel]);
@@ -1264,10 +1313,19 @@ class GameScene extends Phaser.Scene {
         }, 5000);
     }
 
+    playLobbyLoopMusic() {
+        Sounds.stop('sidetrack/bg/manual_mode');
+        Sounds.stop('sidetrack/bg/auto_mode');
+        Sounds.stop('sidetrack/bg/bonus_mode');
+        Sounds.playLoop('sidetrack/bg/lobby_loop');
+    }
+
     gameLost() {
         // initiated game over sequence
         this.isTerminating = true;
         globalParameters.success = false;
+
+        Sounds.play('sidetrack/sfx/failure');
 
         // shake camera
         this.cameras.main.shake(500);
@@ -1291,6 +1349,8 @@ class GameScene extends Phaser.Scene {
 
         this.player.anims.stop('jumping');
         this.player.anims.stop('running');
+
+        Sounds.play('sidetrack/sfx/success');
 
         this.player.setFrame(this.RILEYWINFRAME);
 

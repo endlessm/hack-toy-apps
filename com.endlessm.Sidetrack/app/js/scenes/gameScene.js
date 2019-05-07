@@ -864,16 +864,10 @@ class GameScene extends Phaser.Scene {
         const gameH = 100;
 
         this.nextLevelButton = new Button(this, gameW / 2 + 145, gameH / 2,
-            'next', 1, 1, 1, 1, () => {
-                if (globalParameters.currentLevel + 1 <= globalParameters.highestAchievedLevel)
-                    this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
-            });
+            'next', 1, 1, 1, 1, this.startNextLevel.bind(this));
 
         this.previousLevelButton = new Button(this, gameW / 2 - 145, gameH / 2,
-            'previous', 1, 1, 1, 1, () => {
-                if (globalParameters.currentLevel > 1)
-                    this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
-            });
+            'previous', 1, 1, 1, 1, this.startPreviousLevel.bind(this));
 
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
@@ -896,14 +890,9 @@ class GameScene extends Phaser.Scene {
         }
 
         var restartIcon = new Button(this, gameW / 2 + 80, gameH / 2,
-            'restartIcon', 1, 1, 1, 1, () => {
-                if (globalParameters.currentLevel > 1)
-                    this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
-            });
+            'restartIcon', 1, 1, 1, 1, this.restartLevel.bind(this));
 
         restartIcon.setDepth(2);
-        /* Restart level on button click and enter */
-        restartIcon.on('pointerup', this.restartLevel.bind(this));
 
         // text background
         this.add.sprite(gameW / 2, gameH / 2, 'levelSelectBackground');
@@ -1246,10 +1235,25 @@ class GameScene extends Phaser.Scene {
     }
 
     restartLevel() {
+        if (this.isAnimating)
+            return;
         Sounds.play('sidetrack/sfx/start_chime');
         globalParameters.playing = true;
         globalParameters.currentLevel = this.params.level;
         this.scene.restart(levelParameters[globalParameters.currentLevel]);
+    }
+
+    startPreviousLevel() {
+        if (this.isAnimating || globalParameters.currentLevel <= 1)
+            return;
+        this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
+    }
+
+    startNextLevel() {
+        if (this.isAnimating ||
+            globalParameters.currentLevel >= globalParameters.highestAchievedLevel)
+            return;
+        this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
     }
 
     createModalBackground(width, height) {

@@ -99,6 +99,8 @@ class GameScene extends Phaser.Scene {
 
         this.isAnimating = false;
 
+        this.playerYOffset = -24;
+
         // few sanity checks to make sure data is coming through
         if (this.params) {
             if (this.params.level > 0)
@@ -152,7 +154,7 @@ class GameScene extends Phaser.Scene {
         this.player = this.add.sprite(0, 0, 'riley').setOrigin(0).setDepth(1);
 
         this.setSpritePosition(this.player, this.playerXLocation,
-            this.playerYLocation, 0, -24);
+            this.playerYLocation, 0, this.playerYOffset);
 
         this.player.anims.play('running');
 
@@ -514,9 +516,8 @@ class GameScene extends Phaser.Scene {
         }
 
         // play robot sound only once
-        if(isRobotType)
+        if (isRobotType)
             Sounds.play('sidetrack/sfx/robot');
-
     }
 
     checkRobotCollisions() {
@@ -633,7 +634,8 @@ class GameScene extends Phaser.Scene {
         this.handleMovementAudio(rileyMove.moveType);
 
         this.placeTrail();
-        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation, 0, -24);
+        this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation,
+            0, this.playerYOffset);
 
         // place the final trail
         if (this.playerXLocation === this.MAXMOVES)
@@ -643,7 +645,8 @@ class GameScene extends Phaser.Scene {
     }
 
     placeTrail(isFinalTrail = false) {
-        var trail = this.add.sprite(this.player.x, this.player.y, 'trail').setOrigin(0);
+        var trail = this.add.sprite(this.player.x, this.player.y - this.playerYOffset,
+            'trail').setOrigin(0);
         this.arrTileHistory.push(this.getTile(this.playerXLocation, this.playerYLocation));
 
         let currentYLocation = this.arrTileHistory[this.playerXLocation].y;
@@ -889,12 +892,12 @@ class GameScene extends Phaser.Scene {
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
 
-        const txtLevel = this.add.text(gameW / 2 - 40, gameH / 2 + 5,
+        const txtLevel = this.add.text(gameW / 2 - 100, gameH / 2 + -18,
             `Level ${this.levelNumber}`, {
                 font: 'bold 30pt Metropolis',
                 fill: '#ffffff',
             });
-        txtLevel.setOrigin(0.5, 0.5);
+        txtLevel.setOrigin(0);
         txtLevel.depth = 1;
 
         if (this.gameType === DEFAULTGAME) {
@@ -1286,8 +1289,8 @@ class GameScene extends Phaser.Scene {
         this.isAnimating = true;
         this.playButton.setAlpha(0);
 
-        this.controls = this.add.sprite(0, 0, 'controlsDestroyed').setScale(0.5);
-        this.setSpritePosition(this.controls, -1, this.countY, -10, 65);
+        this.controls = this.add.sprite(0, 0, 'controlsDestroyed').setOrigin(0);
+        this.setSpritePosition(this.controls, -3, this.countY - 2, -50, -30);
 
         // play the destroy control animation
         this.controls.anims.play('controlsDestroyed');

@@ -299,6 +299,77 @@ var defaultLevelParameters = [
         return 'asteroid';
     }`,
     },
+
+    /* Level 15 */
+    {
+        /* Reset User spawn functions */
+        spawnPowerupCode: ``,
+
+        /* Obstacle course of Beam enemies */
+        spawnEnemyCode: `\
+            const squids = [86, 121, 179, 417, 58, 925, 490, 806, 445, 203, 726, 437, 684, 984, 949, 541, 1020, 158, 1070, 1007, 1304, 319, 1330, 116, 1315, 870, 1590, 993, 1686, 802, 1725, 158, 1899, 553, 1913, 967, 2069, 733, 2063, 90, 2370, 944, 2429, 93, 2587, 462, 2720, 1049, 2748, 214, 3112, 214, 3115, 913, 3408, 798, 3501, 307, 3673, 987, 3662, 118, 3859, 716, 4177, 930, 4237, 716, 4290, 96, 4490, 679, 4581, 973, 4758, 806, 4772, 107, 5190, 674, 5209, 956, 5582, 392, 5711, 688, 5937, 434, 6007, 953, 6281, 617, 6461, 868, 6845, 104, 7124, 395, 7248, 155, 7290, 677, 7519, 457, 7603, 713, 7643, 161, 8012, 541, 8122, 248, 8477, 82, 8579, 299, 8562, 973, 8894, 843, 9100, 651, 9126, 101, 9250, 984, 9470, 798, 9653, 992];
+            const lastSquid = squids.length - 2;
+            var shipX = data.shipX || 0;
+            var i = data.i || 0;
+
+            /* Keep track of ship progress */
+            data.shipX = shipX + globalLevel15Parameters.shipSpeed / 30;
+
+            if (i > lastSquid) {
+                /* Reset state after the last enemy appeared on screen */
+                if (data.shipX - squids[lastSquid] > width) {
+                    data.shipX = 0;
+                    data.i = 0;
+                }
+                return null;
+            }
+
+            /* Do not spawn far away enemies */
+            if (shipX - squids[i] > width)
+                return null;
+
+            /* Spwan next enemy next time */
+            data.i = i + 2;
+
+            return {
+                type: 'squid',
+                scale: 50,
+                velocity: {x: 0, y: 0},
+                x: width + squids[i],
+                y: height - squids[i + 1]
+            };`,
+    },
+
+    /* Level 16 */
+    {
+        spawnEnemyCode: `\
+            if (ticksSinceSpawn > 120) {
+                return 'asteroid';
+            }`,
+
+        /* Super fast astronauts that are also very small */
+        spawnAstronautCode: `\
+            if (ticksSinceSpawn > 60) {
+                return {
+                    scale: random(2, 8),
+                    velocity: { x: 1600 },
+                    x: width + random(50, 1000),
+                    y: random(0, height)
+                };
+            }
+
+            return null;`,
+    },
+
+    /* Level 17 */
+    {
+        /* Big walls of enemies, Solve - must chain invuln powerups to survive */
+        spawnEnemyCode: `\
+            if (ticksSinceSpawn > 6) {
+                return pickOne('asteroid', 'squid', 'asteroid', 'beam',
+                    'asteroid', 'spinner', 'asteroid');
+            }`,
+    },
 ];
 
 /* Freeze default parameters */

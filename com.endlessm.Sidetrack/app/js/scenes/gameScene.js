@@ -1393,9 +1393,11 @@ class GameScene extends Phaser.Scene {
         if (property === 'instructionCode') {
             this.instructionCode = getUserFunction(this.params.instructionCode);
             this.runInstruction();
+            this.scene.restart(levelParameters[globalParameters.currentLevel]);
         } else if (property === 'levelCode') {
             this.levelCode = getUserFunction(this.params.levelCode);
             this.runObstacles();
+            this.scene.restart(levelParameters[globalParameters.currentLevel]);
         } else if (property === 'robotADirection') {
             this.robotADirection = this.getRobotDirection(this.params.robotADirection, ROBOTA);
             this.setRobotsFrame();

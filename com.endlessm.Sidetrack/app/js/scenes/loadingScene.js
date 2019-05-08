@@ -2,37 +2,6 @@
 
 class LoadingScene extends Phaser.Scene {
     preload() {
-        // show logo
-        this.add.sprite(this.sys.game.config.width / 2, 250, 'logo');
-
-        // progress bar background
-        const bgBar = this.add.graphics();
-
-        const barW = 150;
-        const barH = 30;
-
-        bgBar.setPosition(this.sys.game.config.width / 2 - barW / 2,
-            this.sys.game.config.height / 2 - barH / 2);
-        bgBar.fillStyle(0xF5F5F5, 1);
-        bgBar.fillRect(0, 0, barW, barH);
-
-        // progress bar
-        const progressBar = this.add.graphics();
-        progressBar.setPosition(this.sys.game.config.width / 2 - barW / 2,
-            this.sys.game.config.height / 2 - barH / 2);
-
-        // listen to the "progress" event
-        this.load.on('progress', function(value) {
-            // clearing progress bar (so we can draw it again)
-            progressBar.clear();
-
-            // set style
-            progressBar.fillStyle(0x9AD98D, 1);
-
-            // draw rectangle
-            progressBar.fillRect(0, 0, value * barW, barH);
-        }, this);
-
         // load assets
         this.load.image('background1', 'assets/images/background1.png');
         this.load.image('background2', 'assets/images/background2.png');
@@ -89,13 +58,6 @@ class LoadingScene extends Phaser.Scene {
         this.load.spritesheet('trail', 'assets/images/trail.png', {
             frameWidth: 128,
             frameHeight: 128,
-            margin: 0,
-            spacing: 0,
-        });
-
-        this.load.spritesheet('controls', 'assets/images/controls.png', {
-            frameWidth: 400,
-            frameHeight: 400,
             margin: 0,
             spacing: 0,
         });
@@ -262,6 +224,9 @@ class LoadingScene extends Phaser.Scene {
                 repeat: 0,
             });
         }
+
+        if (window.ToyApp)
+            window.ToyApp.loadNotify();
 
         this.startLevel();
     }

@@ -1099,75 +1099,16 @@ class GameScene extends Phaser.Scene {
             obstacle.sameBottomObstacle = true;
     }
 
-    // sets spritesheet frame for walls and pits
+    // sets spritesheet frame for walls
     static setSpritesheetFrame(obstacle) {
-        let boolVal = 0;
-        let spriteSheetFrame = 0;
+        const SPRITESHEET_ORDER = [0, 2, 1, 6, 4, 9, 8, 12, 3, 10, 7, 13, 5, 14, 11, 15];
+        const spritesheetIndex = +!!obstacle.sameLeftObstacle << 3 |
+            +!!obstacle.sameRightObstacle << 2 |
+            +!!obstacle.sameTopObstacle << 1 |
+            +!!obstacle.sameBottomObstacle;
 
-        if (obstacle.sameLeftObstacle)
-            boolVal += 1000;
-
-        if (obstacle.sameRightObstacle)
-            boolVal += 100;
-
-        if (obstacle.sameTopObstacle)
-            boolVal += 10;
-
-        if (obstacle.sameBottomObstacle)
-            boolVal += 1;
-
-        switch (boolVal) {
-        case 1111:
-            spriteSheetFrame = 15;
-            break;
-        case 1101:
-            spriteSheetFrame = 14;
-            break;
-        case 1011:
-            spriteSheetFrame = 13;
-            break;
-        case 111:
-            spriteSheetFrame = 12;
-            break;
-        case 1110:
-            spriteSheetFrame = 11;
-            break;
-        case 1001:
-            spriteSheetFrame = 10;
-            break;
-        case 101:
-            spriteSheetFrame = 9;
-            break;
-        case 110:
-            spriteSheetFrame = 8;
-            break;
-        case 1010:
-            spriteSheetFrame = 7;
-            break;
-        case 11:
-            spriteSheetFrame = 6;
-            break;
-        case 1100:
-            spriteSheetFrame = 5;
-            break;
-        case 100:
-            spriteSheetFrame = 4;
-            break;
-        case 1000:
-            spriteSheetFrame = 3;
-            break;
-        case 1:
-            spriteSheetFrame = 2;
-            break;
-        case 10:
-            spriteSheetFrame = 1;
-            break;
-        default:
-            spriteSheetFrame = 0;
-            break;
-        }
-
-        obstacle.sprite.setFrame(spriteSheetFrame);
+        const spritesheetFrame = SPRITESHEET_ORDER[spritesheetIndex];
+        obstacle.sprite.setFrame(spritesheetFrame);
     }
 
     getTile(x, y) {

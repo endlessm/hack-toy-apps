@@ -115,6 +115,8 @@ class GameScene extends Phaser.Scene {
             this.robotBDirection =
                 this.getRobotDirection(this.params.robotBDirection, ROBOTB);
         }
+
+        this.cameras.main.setBackgroundColor('#131430');
     }
 
     preload() {
@@ -168,7 +170,7 @@ class GameScene extends Phaser.Scene {
         }, this);
 
         if (this.gameType === PLAYTHRUGAME) {
-            this.playButton = new Button(this, 0, 0, 'playButton', 0, 1,
+            this.playButton = new Button(this, 0, 0, 'playButton', 0, 1, 3,
                 1, 1, this.playButtonClick.bind(this)).setOrigin(0);
 
             this.setSpritePosition(this.playButton, -2, this.countY, -20, -10);
@@ -183,7 +185,7 @@ class GameScene extends Phaser.Scene {
             const scaleY = 1;
 
             this.fowardKeyButton = new Button(this, 0, 0, 'moveSquares', 1,
-                this.moveSquareOffset, scaleX, scaleY, () => {
+                this.moveSquareOffset, 27, scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
                         this.queue.push(FORWARD);
@@ -191,7 +193,7 @@ class GameScene extends Phaser.Scene {
                 }).setOrigin(0);
 
             this.upKeyButton = new Button(this, 0, 0, 'moveSquares', 2,
-                this.moveSquareOffset, scaleX, scaleY, () => {
+                this.moveSquareOffset, 27,scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
                         this.queue.push(UP);
@@ -199,14 +201,14 @@ class GameScene extends Phaser.Scene {
                 }).setOrigin(0);
 
             this.downKeyButton = new Button(this, 0, 0, 'moveSquares', 3,
-                this.moveSquareOffset, scaleX, scaleY, () => {
+                this.moveSquareOffset, 27, scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
                         this.queue.push(DOWN);
                     }
                 }).setOrigin(0);
 
-            this.spacebarButton = new Button(this, 0, 0, 'spaceBar', 0, 1,
+            this.spacebarButton = new Button(this, 0, 0, 'spaceBar', 0, 1, 2,
                 scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
@@ -867,10 +869,22 @@ class GameScene extends Phaser.Scene {
         const gameH = 76;
 
         this.nextLevelButton = new Button(this, gameW / 2 + 150, gameH / 2 + 5,
-            'next', 1, 1, 1, 1, this.startNextLevel.bind(this));
+            'next', 1, 1, 2, 1, 1, this.startNextLevel.bind(this));
 
         this.previousLevelButton = new Button(this, gameW / 2 - 151, gameH / 2 + 5,
-            'previous', 1, 1, 1, 1, this.startPreviousLevel.bind(this));
+            'previous', 1, 1, 2, 1, 1, this.startPreviousLevel.bind(this));
+
+        // disable previous button
+        if (globalParameters.currentLevel <= 1) {
+            this.previousLevelButton.disabled = true;
+            this.previousLevelButton.setFrame(0);
+        }
+
+        // disable next button
+        if (globalParameters.highestAchievedLevel <= globalParameters.currentLevel) {
+            this.nextLevelButton.disabled = true;
+            this.nextLevelButton.setFrame(0);
+        }
 
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
@@ -894,7 +908,7 @@ class GameScene extends Phaser.Scene {
         }
 
         var restartIcon = new Button(this, gameW / 2 + 90, gameH / 2 + 5,
-            'restartIcon', 1, 1, 1, 1, this.restartLevel.bind(this));
+            'restartIcon', 1, 1, 1, 1, 1, this.restartLevel.bind(this));
 
         restartIcon.setDepth(2);
 

@@ -45,9 +45,9 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         /* Stars */
         this.particles.stars = scene.add.particles('star');
         this.particles.stars.emitter = this.particles.stars.createEmitter({
-            emitZone: { type: 'random', source: particleShape },
-            scale: { start: 0.8, end: 0.2 },
-            alpha: { start: 1, end: 0 },
+            emitZone: {type: 'random', source: particleShape},
+            scale: {start: 0.8, end: 0.2},
+            alpha: {start: 1, end: 0},
             lifespan: 800,
         }).startFollow(this);
         this.particles.stars.emitter.stop();
@@ -55,10 +55,10 @@ class Ship extends Phaser.Physics.Arcade.Sprite {
         /* Dots */
         this.particles.dots = scene.add.particles('dot');
         this.particles.dots.emitter = this.particles.dots.createEmitter({
-            emitZone: { type: 'random', source: particleShape },
-            scale: { start: 0.8, end: 0.2 },
-            alpha: { start: 1, end: 0 },
-            lifespan: 800   ,
+            emitZone: {type: 'random', source: particleShape},
+            scale: {start: 0.8, end: 0.2},
+            alpha: {start: 1, end: 0},
+            lifespan: 800,
         }).startFollow(this);
         this.particles.dots.emitter.stop();
 

@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 10000 1040"
+   height="1040"
+   width="10000">
+  <defs
+     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-21.833325)"
+     id="layer1">
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       y="54.851727"
+       x="10.877339"
+       id="image4634"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       preserveAspectRatio="none"
+       height="132.72583"
+       width="252.62312" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-9"
+       x="95.461052"
+       y="348.07501" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-3"
+       x="368.94815"
+       y="142.25484" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-6"
+       x="642.43524"
+       y="376.26956" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-0"
+       x="946.93634"
+       y="99.963013" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-62"
+       x="2.4190495"
+       y="866.85468" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-61"
+       x="405.60104"
+       y="742.79871" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-8"
+       x="605.78229"
+       y="923.24377" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-7"
+       x="983.58923"
+       y="940.16046" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-92"
+       x="862.35272"
+       y="474.95044" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-02"
+       x="1223.2429"
+       y="257.85248" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-37"
+       x="1646.161"
+       y="88.685204" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-5"
+       x="1236.2124"
+       y="807.43463" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-922"
+       x="1496.166"
+       y="933.21759" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-89"
+       x="1585.2607"
+       y="770.78174" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-73"
+       x="1837.8839"
+       y="903.50757" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-612"
+       x="2283.3577"
+       y="878.13245" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-93"
+       x="1984.4956"
+       y="672.31232" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-1"
+       x="1815.3284"
+       y="483.40884" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-94"
+       x="1987.3149"
+       y="29.476656" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-78"
+       x="1254.257"
+       y="54.851742" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-4"
+       x="2353.8442"
+       y="26.6572" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-50"
+       x="2500.4558"
+       y="387.54739" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-36"
+       x="2672.4426"
+       y="153.53267" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-10"
+       x="2647.0674"
+       y="979.63287" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-63"
+       x="3047.4299"
+       y="849.93793" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-2"
+       x="3019.2354"
+       y="147.89375" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-06"
+       x="3329.3755"
+       y="734.34027" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-15"
+       x="3774.8496"
+       y="652.57617" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-54"
+       x="3591.585"
+       y="917.60486" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-76"
+       x="4093.4475"
+       y="872.49359" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-56"
+       x="4654.519"
+       y="748.43756" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-937"
+       x="4149.8369"
+       y="663.85394" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-45"
+       x="3583.1265"
+       y="54.851742" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-25"
+       x="3419.5979"
+       y="246.57466" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-47"
+       x="4209.0454"
+       y="37.935017" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-44"
+       x="4691.1719"
+       y="37.935017" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-30"
+       x="4397.9487"
+       y="615.92322" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-786"
+       x="4493.8105"
+       y="911.96594" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-88"
+       x="5125.3677"
+       y="889.41028" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-43"
+       x="5099.9927"
+       y="604.64539" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-14"
+       x="5500.3555"
+       y="331.15829" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-920"
+       x="5621.5918"
+       y="624.38159" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-68"
+       x="5926.0933"
+       y="895.04926" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-926"
+       x="6191.1216"
+       y="559.53412" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-64"
+       x="5849.9678"
+       y="370.63065" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-95"
+       x="6763.4712"
+       y="37.935017" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-04"
+       x="6380.0254"
+       y="802.00726" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-87"
+       x="7039.7778"
+       y="-463.88412"
+       transform="scale(1,-1)" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-17"
+       x="7206.1255"
+       y="607.46484" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-27"
+       x="7530.3628"
+       y="658.21503" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-22"
+       x="7428.8623"
+       y="387.54739" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-610"
+       x="7161.0142"
+       y="97.143562" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-615"
+       x="8037.8643"
+       y="184.54666" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-949"
+       x="7564.1963"
+       y="97.143562" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-09"
+       x="7930.7256"
+       y="474.95044" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-177"
+       x="8480.5186"
+       y="909.14648" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-11"
+       x="8491.7959"
+       y="238.11629" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-59"
+       x="9047.2285"
+       y="40.754459" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-77"
+       x="9014.5234"
+       y="587.51715" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-365"
+       x="9145.9102"
+       y="920.42432" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-639"
+       x="9566.0098"
+       y="931.70215" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-48"
+       x="9377.1055"
+       y="725.88196" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-12"
+       x="8806.4482"
+       y="776.42059" />
+    <image
+       xlink:href="../app/assets/enemies/squid.png"
+       width="252.62312"
+       height="132.72585"
+       preserveAspectRatio="none"
+       style="stroke-width:0.53624016;image-rendering:optimizeSpeed"
+       id="image4634-939"
+       x="8390.2969"
+       y="15.379378" />
+    <path
+       id="enemies"
+       d="M 86.438787,121.21467 179.48079,417.25738 58.244244,924.75921 489.6208,806.34212 444.50952,202.97885 726.45498,436.99358 684.16315,983.96776 949.19186,541.3134 1019.6782,157.86758 1070.4284,1006.5234 1304.4431,318.57648 1329.8182,115.57576 1315.3818,869.99071 1590.4517,993.21759 1685.6334,802.2187 1724.5419,157.86758 1899.3481,552.59122 1913.4454,967.05105 2068.5153,733.03631 2062.8765,90.200667 2370.1969,944.49541 2429.4055,93.02012 2587.2949,462.36866 2719.8093,1048.8152 2748.0039,214.25667 H 3111.7135 L 3114.5329,913.48139 3407.7562,797.88375 3500.7982,307.29866 3672.785,986.7872 3661.5072,118.39521 3858.869,716.1196 4177.4673,930.3981 4236.6758,716.1196 4290.2455,95.839574 4490.4267,679.46665 4580.6493,972.68994 4758.2749,806.34212 4772.3724,107.11739 5189.6514,673.82776 5209.3877,955.77323 5581.5557,391.8823 5711.2506,687.92503 5936.807,434.17413 6007.2933,952.95374 6280.7805,617.43866 6461.2254,868.37011 6844.6715,104.29794 7123.7975,394.70174 7247.8535,155.04812 7290.145,676.64721 7518.521,456.72977 7603.1048,713.30011 7642.577,160.68703 8011.9253,541.3134 8121.8843,248.09012 8477.1356,81.742304 8578.636,298.8403 8561.7189,972.68994 8894.4146,842.99503 9100.2351,651.27212 9125.6099,101.47848 9249.6659,983.96776 9469.5834,797.88375 9652.848,992.42613"
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+  </g>
+</svg>

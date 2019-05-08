@@ -651,7 +651,8 @@ path_data_append_cheader (GString *string,
 static gchar *
 path_data_append_json_polygon (GString *string,
                                cairo_path_data_t *path_data,
-                               gint size)
+                               gint size,
+                               gint precision)
 {
   gint i;
 
@@ -665,9 +666,11 @@ path_data_append_json_polygon (GString *string,
         {
           case CAIRO_PATH_MOVE_TO:
           case CAIRO_PATH_LINE_TO:
-            g_string_append_printf (string, "%s  %lf, %lf",
+            g_string_append_printf (string, "%s  %.*lf, %.*lf",
                                     (i == 0) ? "" : ",\n",
+                                    precision,
                                     data[1].point.x,
+                                    precision,
                                     data[1].point.y);
             break;
           case CAIRO_PATH_CURVE_TO:
@@ -730,8 +733,10 @@ int
 main (int argc, char **argv)
 {
   static gchar **filenames, *target;
+  static gint precision = 6;
   static GOptionEntry entries[] =
     {
+        { "precision", 'p', 0, G_OPTION_ARG_INT, &precision, "Float precision", NULL },
         { "target", 't', 0, G_OPTION_ARG_FILENAME, &target, "name of the output file", NULL },
         { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &filenames, "A SVG file to convert", NULL },
         { NULL }
@@ -790,7 +795,7 @@ main (int argc, char **argv)
           path_data = parse_path_data (path, &size);
 
           if (dump_poly)
-            path_data_append_json_polygon (string, path_data, size);
+            path_data_append_json_polygon (string, path_data, size, precision);
           else if (dump_shape)
             path_data_append_json_shape (string, basename, path_data, size, width, height);
           else if (dump_header)

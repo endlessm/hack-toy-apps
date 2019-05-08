@@ -13,7 +13,7 @@ const PLAYTHRUGAME = 1;
 
 var globalParameters = {
     // Number of levels that have been revealed to the player
-    availableLevels: 13,
+    availableLevels: 50,
 
     highestAchievedLevel: 1,
 

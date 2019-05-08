@@ -117,6 +117,9 @@ class GameScene extends Phaser.Scene {
         }
 
         this.cameras.main.setBackgroundColor('#131430');
+
+        if (globalParameters.currentLevel > globalParameters.highestAchievedLevel)
+            globalParameters.highestAchievedLevel = globalParameters.currentLevel;
     }
 
     preload() {
@@ -1185,12 +1188,15 @@ class GameScene extends Phaser.Scene {
 
     continueLevel() {
         Sounds.play('sidetrack/sfx/start_chime');
-        if (globalParameters.nextLevel) {
-            globalParameters.playing = true;
-            this.scene.restart(levelParameters[globalParameters.nextLevel]);
-        } else {
-            this.scene.restart(levelParameters[globalParameters.highestAchievedLevel]);
-        }
+        let nextLevel;
+
+        if (globalParameters.currentLevel < globalParameters.availableLevels)
+            nextLevel = globalParameters.currentLevel + 1;
+        else
+            nextLevel = globalParameters.highestAchievedLevel;
+
+        globalParameters.playing = true;
+        this.scene.restart(nextLevel);
     }
 
     restartLevel() {
@@ -1313,15 +1319,6 @@ class GameScene extends Phaser.Scene {
         Sounds.play('sidetrack/sfx/success');
 
         this.player.setFrame(this.RILEYWINFRAME);
-
-        /* Go back to title if this was the last level */
-        if (globalParameters.currentLevel < globalParameters.availableLevels)
-            globalParameters.nextLevel = globalParameters.currentLevel + 1;
-        else
-            globalParameters.nextLevel = 0;
-
-        if (globalParameters.nextLevel > globalParameters.highestAchievedLevel)
-            globalParameters.highestAchievedLevel = globalParameters.nextLevel;
 
         saveState();
         this.showModal(this.levelCompleteAnimation);

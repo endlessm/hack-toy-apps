@@ -20,9 +20,6 @@ var globalParameters = {
     /* Current Level: read only property, 0 for title screen */
     currentLevel: 0,
 
-    /* Next that will be started */
-    nextLevel: 1,
-
     /* Level specific parameters */
     score: 0,
     success: false,

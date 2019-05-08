@@ -135,7 +135,6 @@ window.saveState = function() {
     ToyApp.saveState({
         /* Global state */
         availableLevels: globalParameters.availableLevels,
-        nextLevel: globalParameters.nextLevel,
         highestAchievedLevel: globalParameters.highestAchievedLevel,
         /* Level state */
         level: globalParameters.currentLevel,
@@ -149,15 +148,12 @@ window.loadState = function(state) {
     if (typeof state === 'object' &&
         typeof state.availableLevels === 'number' &&
         typeof state.highestAchievedLevel === 'number' &&
-        typeof state.nextLevel === 'number' &&
         typeof state.level === 'number' &&
         Array.isArray(state.levelParameters) &&
         state.levelParameters.every(obj => typeof obj === 'object') &&
-        state.nextLevel < state.availableLevels &&
         state.level >= 0 && state.level <= state.highestAchievedLevel) {
         /* Restore global parameters */
         globalParameters.availableLevels = state.availableLevels;
-        globalParameters.nextLevel = state.nextLevel;
         globalParameters.highestAchievedLevel = state.highestAchievedLevel;
 
         /* Restore current level parameters */

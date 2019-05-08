@@ -539,17 +539,24 @@ class LevelScene extends Phaser.Scene {
             /* Make sure type is a valid enemy */
             if (!enemyTypes.includes(type))
                 return;
-            var pos = this.userSpace.applyInverse(
-                retval.x || scope.width + scope.random(100, 400),
-                retval.y || scope.random(0, scope.height)
-            );
 
-            var enemyTypeIndex = enemyTypes.indexOf(retval.type);
+            // eslint-disable-next-line no-undefined
+            if (retval.x === undefined)
+                retval.x = scope.width + scope.random(100, 400);
 
-            var scale = retval.scale ? retval.scale : scope.random(20, 80);
-            var obj = this.createEnemy(type, pos, scale);
+            // eslint-disable-next-line no-undefined
+            if (retval.y === undefined)
+                retval.y = scope.random(0, scope.height);
+
+            // eslint-disable-next-line no-undefined
+            if (retval.scale === undefined)
+                retval.scale = scope.random(20, 80);
+
+            var pos = this.userSpace.applyInverse(retval.x, retval.y);
+            var obj = this.createEnemy(type, pos, retval.scale);
 
             /* Increment global counter */
+            var enemyTypeIndex = enemyTypes.indexOf(type);
             if (this.firstObjectOfType[enemyTypeIndex] === null) {
                 this.firstObjectOfType[enemyTypeIndex] = obj;
                 obj.enemyTypeIndex = enemyTypeIndex;
@@ -559,7 +566,8 @@ class LevelScene extends Phaser.Scene {
             globalParameters[`enemyType${enemyTypeIndex}SpawnedCount`]++;
 
             /* Set object velocity */
-            if (retval.velocity && retval.velocity.x) {
+            // eslint-disable-next-line no-undefined
+            if (retval.velocity && retval.velocity.x !== undefined) {
                 obj.setVelocityX(-this.params.shipSpeed + retval.velocity.x);
             } else {
                 var speedFactor = 0.5 + Phaser.Math.RND.frac();
@@ -595,9 +603,18 @@ class LevelScene extends Phaser.Scene {
             var obj = this.physics.add.sprite(pos.x, pos.y, 'astronaut');
             this.astronauts.add(obj);
             obj.depth = 1;
-            var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
-            obj.setVelocityX(-this.params.shipSpeed * speedFactor);
-            obj.setScale(this.params.astronautSize / 100);
+
+            /* Set object velocity */
+            // eslint-disable-next-line no-undefined
+            if (retval.velocity && retval.velocity.x !== undefined) {
+                obj.setVelocityX(-(this.params.shipSpeed + retval.velocity.x));
+            } else {
+                var speedFactor = 0.5 + 0.5 * Phaser.Math.RND.frac();
+                obj.setVelocityX(-this.params.shipSpeed * speedFactor);
+            }
+
+            var scale = retval.scale || this.params.astronautSize;
+            obj.setScale(scale / 100);
 
             /* FIXME: improve colission shape */
             obj.body.setAllowRotation(true);

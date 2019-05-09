@@ -124,10 +124,6 @@ class GameScene extends Phaser.Scene {
             globalParameters.highestAchievedLevel = globalParameters.currentLevel;
     }
 
-    preload() {
-        this.load.image('logo', 'assets/images/player.png');
-    }
-
     create() {
         Sounds.stop('sidetrack/bg/lobby_loop');
         // create bg sprite and add background audio
@@ -1206,7 +1202,7 @@ class GameScene extends Phaser.Scene {
             nextLevel = globalParameters.highestAchievedLevel;
 
         globalParameters.playing = true;
-        this.scene.restart(nextLevel);
+        this.scene.restart(levelParameters[nextLevel]);
     }
 
     restartLevel() {

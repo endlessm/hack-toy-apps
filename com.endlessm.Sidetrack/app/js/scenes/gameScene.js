@@ -421,8 +421,9 @@ class GameScene extends Phaser.Scene {
 
     addExplosionSprite(obstacle) {
         obstacle.isDestroyed = true;
-        const explosion = this.add.sprite(obstacle.sprite.x,
-            obstacle.sprite.y, 'explosion').setDepth(2);
+        const explosion = this.add.sprite(0, 0, 'explosion').setOrigin(0).setDepth(2);
+        this.setSpritePosition(explosion, obstacle.xPosition,
+            obstacle.yPosition, -10, -10);
         this.explosions.push(explosion);
     }
 

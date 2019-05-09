@@ -31,6 +31,7 @@ var globalParameters = {
     controlsCutscene: false,
     escapeCutscene: false,
     willPlayFelixEscapeAnimation: false,
+    showHackdex: false,
 
     /* Quests can use this parameter to start any level at any time.
      * NOTE: Setting this will stop any current level.

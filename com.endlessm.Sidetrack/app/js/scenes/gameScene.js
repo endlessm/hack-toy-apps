@@ -225,6 +225,11 @@ class GameScene extends Phaser.Scene {
             this.setSpritePosition(this.spacebarButton, -3, this.countY - 1, -20, -10);
         }
 
+        if (globalParameters.currentLevel === 26 && globalParameters.showHackdex) {
+            this.hackdex = this.add.sprite(0, 0, 'hackdex').setOrigin(0);
+            this.setSpritePosition(this.hackdex, this.goalXLocation, this.goalYLocation);
+        }
+
         /* Reset Global game state */
         globalParameters.success = true;
         globalParameters.score = 0;
@@ -1317,6 +1322,13 @@ class GameScene extends Phaser.Scene {
 
         saveState();
 
+        // pick up hackdex
+        if (globalParameters.currentLevel === 26 && globalParameters.showHackdex) {
+            this.hackdex.setVisible(false);
+            globalParameters.showHackdex = false;
+        }
+
+        // felix escape cutscene
         if (globalParameters.currentLevel === 40 &&
             globalParameters.willPlayFelixEscapeAnimation) {
             this.player.anims.play('running');
@@ -1326,7 +1338,7 @@ class GameScene extends Phaser.Scene {
                 duration: 2000,
                 x: this.sys.game.config.width,
                 onComplete: () => {
-                    globalParameters.success = true;                    
+                    globalParameters.success = true;
                 },
             });
         } else {

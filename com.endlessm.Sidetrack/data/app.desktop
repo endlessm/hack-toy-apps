@@ -8,4 +8,4 @@ Icon=com.endlessm.Sidetrack
 Categories=Game;
 X-Endless-LaunchMaximized=true
 X-Endless-SplashBackground=com.endlessm.Sidetrack.jpg
-X-Endless-HackShader=Sidetrack
+X-Endless-HackShader=desaturate

@@ -101,15 +101,15 @@ class LoadingScene extends Phaser.Scene {
         });
 
         this.load.spritesheet('game-over', 'assets/images/game-over.png', {
-            frameWidth: 629,
-            frameHeight: 283,
+            frameWidth: 652,
+            frameHeight: 390,
             margin: 0,
             spacing: 0,
         });
 
         this.load.spritesheet('levelComplete', 'assets/images/levelComplete.png', {
-            frameWidth: 695,
-            frameHeight: 325,
+            frameWidth: 1046,
+            frameHeight: 360,
             margin: 0,
             spacing: 0,
         });
@@ -216,10 +216,10 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'game-over',
                 frames: this.anims.generateFrameNames('game-over', {
-                    frames: [0, 1],
+                    frames: [0, 1, 2],
                 }),
-                frameRate: 12,
                 yoyo: true,
+                frameRate: 12,
                 repeat: -1,
             });
         }
@@ -229,10 +229,10 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'levelComplete',
                 frames: this.anims.generateFrameNames('levelComplete', {
-                    frames: [0, 1],
+                    frames: [0, 1, 2],
                 }),
-                frameRate: 12,
                 yoyo: true,
+                frameRate: 12,
                 repeat: -1,
             });
         }

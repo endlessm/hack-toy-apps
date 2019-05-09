@@ -1,4 +1,8 @@
 window.ToyApp = {
+    requestState() {
+        window.webkit.messageHandlers.ToyAppRequestState.postMessage({});
+    },
+
     loadNotify() {
         window.webkit.messageHandlers.ToyAppLoadNotify.postMessage({});
     },

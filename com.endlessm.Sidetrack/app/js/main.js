@@ -16,6 +16,8 @@ const fontConfig = {
     },
 };
 
+const loadingScene = new LoadingScene('Loading');
+
 // our game's configuration
 var config = {
     title: 'Sidetrack',
@@ -29,7 +31,7 @@ var config = {
     },
     scene: [
         new BootScene('Boot'),
-        new LoadingScene('Loading'),
+        loadingScene,
         new GameScene('Game'),
     ],
 };
@@ -136,8 +138,6 @@ window.saveState = function() {
         /* Global state */
         availableLevels: globalParameters.availableLevels,
         highestAchievedLevel: globalParameters.highestAchievedLevel,
-        /* Level state */
-        level: globalParameters.currentLevel,
         /* Per-level parameters */
         levelParameters,
     });
@@ -148,10 +148,8 @@ window.loadState = function(state) {
     if (typeof state === 'object' &&
         typeof state.availableLevels === 'number' &&
         typeof state.highestAchievedLevel === 'number' &&
-        typeof state.level === 'number' &&
         Array.isArray(state.levelParameters) &&
-        state.levelParameters.every(obj => typeof obj === 'object') &&
-        state.level >= 0 && state.level <= state.highestAchievedLevel) {
+        state.levelParameters.every(obj => typeof obj === 'object')) {
         /* Restore global parameters */
         globalParameters.availableLevels = state.availableLevels;
         globalParameters.highestAchievedLevel = state.highestAchievedLevel;
@@ -160,5 +158,10 @@ window.loadState = function(state) {
         state.levelParameters.forEach((levelState, ix) => {
             Object.assign(levelParameters[ix], levelState);
         });
+    } else {
+        // eslint-disable-next-line no-console
+        console.error('Not loading state, because it was not present or not valid.');
     }
+
+    loadingScene.doneLoadingState();
 };

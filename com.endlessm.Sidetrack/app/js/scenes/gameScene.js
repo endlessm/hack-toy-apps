@@ -232,6 +232,9 @@ class GameScene extends Phaser.Scene {
         /* Reset Global game state */
         globalParameters.success = true;
         globalParameters.score = 0;
+
+        if (window.ToyApp)
+            window.ToyApp.loadNotify();
     }
 
     update() {

@@ -24,6 +24,8 @@ const fontConfig = {
     },
 };
 
+const titleScene = new TitleScene('title');
+
 /* Config */
 var config = {
     title: 'LightSpeed',
@@ -42,7 +44,7 @@ var config = {
         },
     },
     scene: [
-        new TitleScene('title'),
+        titleScene,
         new LevelScene('level'),
         new StartScene('start'),
         new GameOverScene('gameover'),
@@ -161,8 +163,6 @@ window.saveState = function() {
         /* Global state */
         availableLevels: globalParameters.availableLevels,
         nextLevel: globalParameters.nextLevel,
-        /* Level state */
-        level: globalParameters.currentLevel,
         /* Global user functions */
         updateAsteroidCode: globalParameters.updateAsteroidCode,
         updateSpinnerCode: globalParameters.updateSpinnerCode,
@@ -179,11 +179,9 @@ window.loadState = function(state) {
     if (typeof state === 'object' &&
         typeof state.availableLevels === 'number' &&
         typeof state.nextLevel === 'number' &&
-        typeof state.level === 'number' &&
         Array.isArray(state.levelParameters) &&
         state.levelParameters.every(obj => typeof obj === 'object') &&
-        state.nextLevel < state.availableLevels &&
-        state.level >= 0 && state.level <= state.availableLevels) {
+        state.nextLevel < state.availableLevels) {
         /* Restore global parameters */
         globalParameters.availableLevels = state.availableLevels;
         globalParameters.nextLevel = state.nextLevel;
@@ -197,6 +195,11 @@ window.loadState = function(state) {
         state.levelParameters.forEach((levelState, ix) => {
             Object.assign(levelParameters[ix], levelState);
         });
+    } else {
+        // eslint-disable-next-line no-console
+        console.error('Not loading state, because it was not present or not valid.');
     }
+
+    titleScene.doneLoadingState();
 };
 

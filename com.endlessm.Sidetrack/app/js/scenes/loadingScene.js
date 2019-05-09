@@ -203,7 +203,7 @@ class LoadingScene extends Phaser.Scene {
             this.anims.create({
                 key: 'felixnet',
                 frames: this.anims.generateFrameNames('felixnet', {
-                    frames: [1, 2, 3, 0, 4, 0, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0],
+                    frames: [1, 2, 3, 0, 4, 0, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                 }),
                 frameRate: 10,
                 yoyo: false,

@@ -1264,24 +1264,16 @@ class GameScene extends Phaser.Scene {
 
     playEscapeCutscene() {
         this.isAnimating = true;
-        this.felix = this.add.sprite(0, 0, 'felixnet');
+        this.felix = this.add.sprite(0, 0, 'felixnet').setOrigin(0);
 
-        this.setSpritePosition(this.felix, this.goalXLocation, this.goalYLocation);
+        this.setSpritePosition(this.felix, this.goalXLocation - 1, this.goalYLocation);
         this.felix.setDepth(5);
         this.felix.anims.play('felixnet');
 
         this.felix.on('animationcomplete', function() {
-            // fade in play button
-            this.tweens.add({
-                targets: [this.playButton],
-                duration: 2000,
-                alpha: 1,
-                onComplete: () => {
-                    globalParameters.escapeCutscene = false;
-                    this.isAnimating = false;
-                    this.scene.restart(levelParameters[globalParameters.currentLevel]);
-                },
-            });
+            globalParameters.escapeCutscene = false;
+            this.isAnimating = false;
+            this.showModal(this.levelCompleteAnimation);
         }.bind(this));
     }
 
@@ -1316,9 +1308,6 @@ class GameScene extends Phaser.Scene {
     gameWon() {
         // initiated game over sequence
         this.isTerminating = true;
-
-        globalParameters.success = true;
-
         this.player.anims.stop('jumping');
         this.player.anims.stop('running');
 
@@ -1327,7 +1316,23 @@ class GameScene extends Phaser.Scene {
         this.player.setFrame(this.RILEYWINFRAME);
 
         saveState();
-        this.showModal(this.levelCompleteAnimation);
+
+        if (globalParameters.currentLevel === 40 &&
+            globalParameters.willPlayFelixEscapeAnimation) {
+            this.player.anims.play('running');
+
+            this.tweens.add({
+                targets: [this.player],
+                duration: 2000,
+                x: this.sys.game.config.width,
+                onComplete: () => {
+                    globalParameters.success = true;                    
+                },
+            });
+        } else {
+            globalParameters.success = true;
+            this.showModal(this.levelCompleteAnimation);
+        }
     }
 
     onGlobalPropertyChange(obj, property) {

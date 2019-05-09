@@ -230,9 +230,6 @@ class LoadingScene extends Phaser.Scene {
             });
         }
 
-        if (window.ToyApp)
-            window.ToyApp.loadNotify();
-
         this.doneLoadingAssets();
     }
 

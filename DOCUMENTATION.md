@@ -124,7 +124,10 @@ This file contains settings used to customize the behavior of the ToyApp (see mo
 com.endlessm.Bouncing/data/metadata.json
 ```
 
-For now, it only supports `use-load-notify`, a boolean property used by the runner to keep the splashscreen visible until the JavaScript game is completely loaded. When enabled, the game must update its status using `ToyApp.loadNotify();` a helper function (more details about helper functions below).
+For now, it only supports `use-load-notify`, a boolean property used by the runner to keep the splashscreen visible until the JavaScript game is completely loaded.
+When enabled, if the game is using the game state service to save its state, it must request for the state to be loaded with `ToyApp.requestState()`.
+It must also update its status using `ToyApp.loadNotify();`.
+These are both helper functions (more details about helper functions below).
 
 ## The Webview and App Runner
 
@@ -137,7 +140,11 @@ This is the GTK+ application that glues everything together, to present the Java
 
 These functions provide the JavaScript game with interfaces to the runner it-self and to other desktop components:
 
-* `window.ToyApp` provides a `loadNotify` function to let the runner know when the game is done loading, a `setHackable` function to update the hackable property from the hackable interface (see the examples below), and a `setAspectRatio` to enforce a specific aspect ratio to the GTK+ window.
+* `window.ToyApp` provides
+  * a `requestState` function to request that the runner load its state from the game state service, and call `window.loadState(state)` when finished
+  * a `loadNotify` function to let the runner know when the game is done loading
+  * a `setHackable` function to update the hackable property from the hackable interface (see the examples below)
+  * a `setAspectRatio` to enforce a specific aspect ratio to the GTK+ window.
 * `window.Sounds` provides a `play`, `playLoop`, `updateSound` and `stop` functions to interact with the desktop sound server (see the example below).
 
 ### DBus Interface and Gio Actions

@@ -83,6 +83,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager = self.view.get_user_content_manager()
 
         # Register message handlers
+        self._manager_add_msg_handler(manager, 'ToyAppRequestState', self._on_request_state)
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
         self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
@@ -131,7 +132,6 @@ toy-app-window > overlay > revealer > frame {
         self.revealer.connect('notify::child-revealed', self._on_child_revealed)
         self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.revealer.set_reveal_child(False)
-        GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
 
     def _on_child_revealed(self, revealer, pspec):
         if not self.revealer.get_child_revealed():
@@ -143,6 +143,9 @@ toy-app-window > overlay > revealer > frame {
 
     def _on_context_menu(self, webview, context, event, hit):
         return Gtk.true()
+
+    def _on_request_state(self, manager, result):
+        GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
 
     def _on_load_notify(self, manager, result):
         self._view_show()
@@ -190,6 +193,7 @@ toy-app-window > overlay > revealer > frame {
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:
             self._view_show()
+            GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
 
     def _on_play_sound(self, manager, result):
         val = result.get_js_value()

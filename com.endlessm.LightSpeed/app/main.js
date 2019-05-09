@@ -197,6 +197,9 @@ window.loadState = function(state) {
         state.levelParameters.forEach((levelState, ix) => {
             Object.assign(levelParameters[ix], levelState);
         });
+    } else {
+        // eslint-disable-next-line no-console
+        console.error('Not loading state, because it was not present or not valid.');
     }
 };
 

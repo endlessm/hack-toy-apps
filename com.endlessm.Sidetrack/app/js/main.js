@@ -16,6 +16,8 @@ const fontConfig = {
     },
 };
 
+const loadingScene = new LoadingScene('Loading');
+
 // our game's configuration
 var config = {
     title: 'Sidetrack',
@@ -29,7 +31,7 @@ var config = {
     },
     scene: [
         new BootScene('Boot'),
-        new LoadingScene('Loading'),
+        loadingScene,
         new GameScene('Game'),
     ],
 };
@@ -160,4 +162,6 @@ window.loadState = function(state) {
         // eslint-disable-next-line no-console
         console.error('Not loading state, because it was not present or not valid.');
     }
+
+    loadingScene.doneLoadingState();
 };

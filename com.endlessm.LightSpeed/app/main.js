@@ -24,6 +24,8 @@ const fontConfig = {
     },
 };
 
+const titleScene = new TitleScene('title');
+
 /* Config */
 var config = {
     title: 'LightSpeed',
@@ -42,7 +44,7 @@ var config = {
         },
     },
     scene: [
-        new TitleScene('title'),
+        titleScene,
         new LevelScene('level'),
         new StartScene('start'),
         new GameOverScene('gameover'),
@@ -197,5 +199,7 @@ window.loadState = function(state) {
         // eslint-disable-next-line no-console
         console.error('Not loading state, because it was not present or not valid.');
     }
+
+    titleScene.doneLoadingState();
 };
 

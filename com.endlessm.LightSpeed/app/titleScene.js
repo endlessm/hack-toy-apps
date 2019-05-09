@@ -11,8 +11,10 @@
 const kcode = [38, 38, 40, 40, 37, 39, 37, 39, 65, 66];
 
 class TitleScene extends Phaser.Scene {
-    init() {
-        void this;
+    constructor(...args) {
+        super(...args);
+        this._loadedState = false;
+        this._playerReady = false;
     }
 
     preload() {
@@ -101,7 +103,7 @@ class TitleScene extends Phaser.Scene {
 
         /* Fade out when enter key is released */
         this.input.keyboard.on('keyup_ENTER', () => {
-            this.scene.start('start');
+            this.playerIsReady();
         });
 
         this.events.on('shutdown', () => {
@@ -140,6 +142,18 @@ class TitleScene extends Phaser.Scene {
 
         /* make astronaut spin */
         this.astronaut.rotation += 0.006;
+    }
+
+    doneLoadingState() {
+        this._loadedState = true;
+        if (this._playerReady)
+            this.scene.start('start');
+    }
+
+    playerIsReady() {
+        this._playerReady = true;
+        if (this._loadedState)
+            this.scene.start('start');
     }
 }
 

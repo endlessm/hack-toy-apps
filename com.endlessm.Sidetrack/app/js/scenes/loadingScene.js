@@ -1,6 +1,12 @@
 /* exported LoadingScene */
 
 class LoadingScene extends Phaser.Scene {
+    constructor(...args) {
+        super(...args);
+        this._loadedState = false;
+        this._loadedAssets = false;
+    }
+
     preload() {
         // load assets
         this.load.image('background1', 'assets/images/background1.png');
@@ -227,7 +233,19 @@ class LoadingScene extends Phaser.Scene {
         if (window.ToyApp)
             window.ToyApp.loadNotify();
 
-        this.startLevel();
+        this.doneLoadingAssets();
+    }
+
+    doneLoadingAssets() {
+        this._loadedAssets = true;
+        if (this._loadedState)
+            this.startLevel();
+    }
+
+    doneLoadingState() {
+        this._loadedState = true;
+        if (this._loadedAssets)
+            this.startLevel();
     }
 
     startLevel() {

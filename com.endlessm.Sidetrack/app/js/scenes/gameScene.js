@@ -124,10 +124,6 @@ class GameScene extends Phaser.Scene {
             globalParameters.highestAchievedLevel = globalParameters.currentLevel;
     }
 
-    preload() {
-        this.load.image('logo', 'assets/images/player.png');
-    }
-
     create() {
         Sounds.stop('sidetrack/bg/lobby_loop');
         // create bg sprite and add background audio
@@ -229,6 +225,11 @@ class GameScene extends Phaser.Scene {
             this.setSpritePosition(this.spacebarButton, -3, this.countY - 1, -20, -10);
         }
 
+        if (globalParameters.currentLevel === 26 && globalParameters.showHackdex) {
+            this.hackdex = this.add.sprite(0, 0, 'hackdex').setOrigin(0);
+            this.setSpritePosition(this.hackdex, this.goalXLocation, this.goalYLocation);
+        }
+
         /* Reset Global game state */
         globalParameters.success = true;
         globalParameters.score = 0;
@@ -284,23 +285,29 @@ class GameScene extends Phaser.Scene {
         Sounds.stop('sidetrack/sfx/push_default');
         Sounds.stop('sidetrack/sfx/failure');
 
-        if (moveType === FORWARD)
+        if (moveType === FORWARD) {
             Sounds.play('sidetrack/sfx/move_fwd');
+        }
 
-        if (moveType === UP)
+        if (moveType === UP) {
             Sounds.play('sidetrack/sfx/move_up');
+        }
 
-        if (moveType === DOWN)
+        if (moveType === DOWN) {
             Sounds.play('sidetrack/sfx/move_down');
+        }
 
-        if (moveType === JUMP)
+        if (moveType === JUMP) {
             Sounds.play('sidetrack/sfx/move_jump');
+        }
 
-        if (moveType === PUSH)
+        if (moveType === PUSH) {
             Sounds.play('sidetrack/sfx/push_default');
+        }
 
-        if (moveType === ERROR || moveType === NONE)
+        if (moveType === ERROR || moveType === NONE) {
             Sounds.play('sidetrack/sfx/failure');
+        }
     }
 
     handlePlaythruAnimations(moveType) {
@@ -523,8 +530,9 @@ class GameScene extends Phaser.Scene {
         }
 
         // play robot sound only once
-        if (isRobotType)
+        if (isRobotType) {
             Sounds.play('sidetrack/sfx/robot');
+        }
     }
 
     checkRobotCollisions() {
@@ -1203,7 +1211,7 @@ class GameScene extends Phaser.Scene {
             nextLevel = globalParameters.highestAchievedLevel;
 
         globalParameters.playing = true;
-        this.scene.restart(nextLevel);
+        this.scene.restart(levelParameters[nextLevel]);
     }
 
     restartLevel() {
@@ -1265,24 +1273,16 @@ class GameScene extends Phaser.Scene {
 
     playEscapeCutscene() {
         this.isAnimating = true;
-        this.felix = this.add.sprite(0, 0, 'felixnet');
+        this.felix = this.add.sprite(0, 0, 'felixnet').setOrigin(0);
 
-        this.setSpritePosition(this.felix, this.goalXLocation, this.goalYLocation);
+        this.setSpritePosition(this.felix, this.goalXLocation - 1, this.goalYLocation);
         this.felix.setDepth(5);
         this.felix.anims.play('felixnet');
 
         this.felix.on('animationcomplete', function() {
-            // fade in play button
-            this.tweens.add({
-                targets: [this.playButton],
-                duration: 2000,
-                alpha: 1,
-                onComplete: () => {
-                    globalParameters.escapeCutscene = false;
-                    this.isAnimating = false;
-                    this.scene.restart(levelParameters[globalParameters.currentLevel]);
-                },
-            });
+            globalParameters.escapeCutscene = false;
+            this.isAnimating = false;
+            this.showModal(this.levelCompleteAnimation);
         }.bind(this));
     }
 
@@ -1317,9 +1317,6 @@ class GameScene extends Phaser.Scene {
     gameWon() {
         // initiated game over sequence
         this.isTerminating = true;
-
-        globalParameters.success = true;
-
         this.player.anims.stop('jumping');
         this.player.anims.stop('running');
 
@@ -1328,7 +1325,30 @@ class GameScene extends Phaser.Scene {
         this.player.setFrame(this.RILEYWINFRAME);
 
         saveState();
-        this.showModal(this.levelCompleteAnimation);
+
+        // pick up hackdex
+        if (globalParameters.currentLevel === 26 && globalParameters.showHackdex) {
+            this.hackdex.setVisible(false);
+            globalParameters.showHackdex = false;
+        }
+
+        // felix escape cutscene
+        if (globalParameters.currentLevel === 40 &&
+            globalParameters.willPlayFelixEscapeAnimation) {
+            this.player.anims.play('running');
+
+            this.tweens.add({
+                targets: [this.player],
+                duration: 2000,
+                x: this.sys.game.config.width,
+                onComplete: () => {
+                    globalParameters.success = true;
+                },
+            });
+        } else {
+            globalParameters.success = true;
+            this.showModal(this.levelCompleteAnimation);
+        }
     }
 
     onGlobalPropertyChange(obj, property) {

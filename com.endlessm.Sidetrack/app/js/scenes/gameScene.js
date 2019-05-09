@@ -281,23 +281,29 @@ class GameScene extends Phaser.Scene {
         Sounds.stop('sidetrack/sfx/push_default');
         Sounds.stop('sidetrack/sfx/failure');
 
-        if (moveType === FORWARD)
+        if (moveType === FORWARD) {
             Sounds.play('sidetrack/sfx/move_fwd');
+        }
 
-        if (moveType === UP)
+        if (moveType === UP) {
             Sounds.play('sidetrack/sfx/move_up');
+        }
 
-        if (moveType === DOWN)
+        if (moveType === DOWN) {
             Sounds.play('sidetrack/sfx/move_down');
+        }
 
-        if (moveType === JUMP)
+        if (moveType === JUMP) {
             Sounds.play('sidetrack/sfx/move_jump');
+        }
 
-        if (moveType === PUSH)
+        if (moveType === PUSH) {
             Sounds.play('sidetrack/sfx/push_default');
+        }
 
-        if (moveType === ERROR || moveType === NONE)
+        if (moveType === ERROR || moveType === NONE) {
             Sounds.play('sidetrack/sfx/failure');
+        }
     }
 
     handlePlaythruAnimations(moveType) {
@@ -519,8 +525,9 @@ class GameScene extends Phaser.Scene {
         }
 
         // play robot sound only once
-        if (isRobotType)
+        if (isRobotType) {
             Sounds.play('sidetrack/sfx/robot');
+        }
     }
 
     checkRobotCollisions() {

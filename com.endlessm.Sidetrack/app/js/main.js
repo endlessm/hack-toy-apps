@@ -136,8 +136,6 @@ window.saveState = function() {
         /* Global state */
         availableLevels: globalParameters.availableLevels,
         highestAchievedLevel: globalParameters.highestAchievedLevel,
-        /* Level state */
-        level: globalParameters.currentLevel,
         /* Per-level parameters */
         levelParameters,
     });
@@ -148,10 +146,8 @@ window.loadState = function(state) {
     if (typeof state === 'object' &&
         typeof state.availableLevels === 'number' &&
         typeof state.highestAchievedLevel === 'number' &&
-        typeof state.level === 'number' &&
         Array.isArray(state.levelParameters) &&
-        state.levelParameters.every(obj => typeof obj === 'object') &&
-        state.level >= 0 && state.level <= state.highestAchievedLevel) {
+        state.levelParameters.every(obj => typeof obj === 'object')) {
         /* Restore global parameters */
         globalParameters.availableLevels = state.availableLevels;
         globalParameters.highestAchievedLevel = state.highestAchievedLevel;

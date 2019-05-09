@@ -161,8 +161,6 @@ window.saveState = function() {
         /* Global state */
         availableLevels: globalParameters.availableLevels,
         nextLevel: globalParameters.nextLevel,
-        /* Level state */
-        level: globalParameters.currentLevel,
         /* Global user functions */
         updateAsteroidCode: globalParameters.updateAsteroidCode,
         updateSpinnerCode: globalParameters.updateSpinnerCode,
@@ -179,11 +177,9 @@ window.loadState = function(state) {
     if (typeof state === 'object' &&
         typeof state.availableLevels === 'number' &&
         typeof state.nextLevel === 'number' &&
-        typeof state.level === 'number' &&
         Array.isArray(state.levelParameters) &&
         state.levelParameters.every(obj => typeof obj === 'object') &&
-        state.nextLevel < state.availableLevels &&
-        state.level >= 0 && state.level <= state.availableLevels) {
+        state.nextLevel < state.availableLevels) {
         /* Restore global parameters */
         globalParameters.availableLevels = state.availableLevels;
         globalParameters.nextLevel = state.nextLevel;

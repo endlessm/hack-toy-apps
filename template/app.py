@@ -183,12 +183,16 @@ toy-app-window > overlay > revealer > frame {
         try:
             val = proxy.call_finish(result)
         except GLib.Error as err:
-            print("Error loading game state: %s" % err.message)
+            if (Gio.dbus_error_get_remote_error(err) !=
+                    'com.endlessm.GameStateService.KeyError'):
+                print("Error loading game state: %s" % err.message)
 
         if val is not None:
             json = GLib.strescape(val.unpack()[0])
             js = 'if(typeof loadState === "function"){loadState(JSON.parse("%s"));}' % json
             self.view.run_javascript(js);
+        else:
+            self.view.run_javascript('if(typeof loadState === "function"){loadState();}')
 
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:

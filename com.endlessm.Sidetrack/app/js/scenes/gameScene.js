@@ -76,7 +76,7 @@ class GameScene extends Phaser.Scene {
         this.keyIsDown = false;
 
         // play thru game delay
-        this.tickReset = 120;
+        this.tickReset = 60;
         this.tick = this.tickReset;
 
         // to calculate which frame to use for the move arrows spritesheet

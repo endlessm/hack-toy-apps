@@ -1264,8 +1264,6 @@ class GameScene extends Phaser.Scene {
                 onComplete: () => {
                     globalParameters.controlsCutscene = false;
                     this.isAnimating = false;
-                    var modalText = 'What was that?';
-                    this.showModal(modalText);
                 },
             });
         }.bind(this));

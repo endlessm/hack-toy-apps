@@ -456,10 +456,9 @@ function HackyBalls()
 
 
     //------------------------------------------
-    this.createBall = function( x, y, species )
-    {    
-        if ( _numBalls < MAX_BALLS )
-        {
+    this.createBall = function(x, y, species) {
+        if (_numBalls < MAX_BALLS &&
+            !globalParameters[`createType${species}Disabled`]) {
             if (!_levelLoading)
             {
                 Sounds.play( _species[ species ].createSound );

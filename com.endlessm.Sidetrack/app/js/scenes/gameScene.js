@@ -1338,7 +1338,8 @@ class GameScene extends Phaser.Scene {
                 duration: 2000,
                 x: this.sys.game.config.width,
                 onComplete: () => {
-                    globalParameters.success = true;
+                    // set to false so quest knows to fire felix cutscene
+                    globalParameters.willPlayFelixEscapeAnimation = false;
                 },
             });
         } else {

@@ -101,6 +101,10 @@ class GameScene extends Phaser.Scene {
 
         this.playerYOffset = -24;
 
+        // updating instructions from toolbox restarts level
+        // draging instructions should in game should not restart
+        this.isInGameInstructionUpdate = false;
+
         // few sanity checks to make sure data is coming through
         if (this.params) {
             if (this.params.level > 0)
@@ -194,7 +198,7 @@ class GameScene extends Phaser.Scene {
                 }).setOrigin(0);
 
             this.upKeyButton = new Button(this, 0, 0, 'moveSquares', 2,
-                this.moveSquareOffset, 27,scaleX, scaleY, () => {
+                this.moveSquareOffset, 27, scaleX, scaleY, () => {
                     if (!this.isMoving) {
                         this.isMoving = true;
                         this.queue.push(UP);
@@ -793,7 +797,7 @@ class GameScene extends Phaser.Scene {
 
             // Place the draggable move squares in correct spots
             for (let i = 0; i <= this.MAXMOVES; i++) {
-                this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, -15, 10);
+                this.setSpritePosition(this.arrSpriteMoves[i], i, this.countY, -15, 16);
 
                 if (this.arrSpriteMoves[i].moveType === FORWARD)
                     instructions.push('riley.forward();');
@@ -814,6 +818,7 @@ class GameScene extends Phaser.Scene {
                     instructions.push(`riley.${this.arrSpriteMoves[i].badPropertyName}();`);
             }
 
+            this.isInGameInstructionUpdate = true;
             this.params.instructionCode = instructions.join('\n ');
         });
     }
@@ -1370,6 +1375,10 @@ class GameScene extends Phaser.Scene {
     /* This will be called each time something in this.params changes */
     onParametersNotify(property) {
         if (property === 'instructionCode') {
+            if (this.isInGameInstructionUpdate) {
+                this.isInGameInstructionUpdate = false;
+                return;
+            }
             this.instructionCode = getUserFunction(this.params.instructionCode);
             this.runInstruction();
             this.scene.restart(levelParameters[globalParameters.currentLevel]);

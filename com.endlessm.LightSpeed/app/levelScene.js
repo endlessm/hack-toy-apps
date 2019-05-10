@@ -8,7 +8,7 @@
 /* exported LevelScene, CONFETTI_COLORS, ASTRONAUT_PARTICLE_COLORS */
 /* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
     SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
-    ActivatePowerupScope, resetGlobalCounters */
+    ActivatePowerupScope, resetGlobalCounters, BackgroundScene */
 
 const CONFETTI_COLORS = [
     0x1500ff,
@@ -53,7 +53,6 @@ class LevelScene extends Phaser.Scene {
 
         this.resetQuestData();
 
-
         /* Create userScope */
         this.spawnAstronautScope = new SpawnAstronautScope();
         this.spawnEnemyScope = new SpawnEnemyScope();
@@ -85,7 +84,6 @@ class LevelScene extends Phaser.Scene {
 
     preload() {
         /* Common assets */
-        this.load.image('background', 'assets/background.jpg');
         this.load.image('astronaut', 'assets/astronaut.png');
         this.load.image('particle', 'assets/particles/particle.png');
         this.load.image('star', 'assets/particles/star.png');
@@ -111,13 +109,13 @@ class LevelScene extends Phaser.Scene {
     }
 
     create() {
-        const {centerX, centerY} = this.cameras.main;
-
-        /* Background */
-        this.add.image(centerX, centerY, 'background');
+        const centerY = game.config.height / 2;
 
         /* Fade in scene */
         this.cameras.main.fadeIn(200);
+
+        this.scene.launch('background', this.params.shipSpeed);
+        this.background = this.scene.get('background');
 
         /* Ship */
         this.ship = new Ship(this, this.params.shipAsset, 256, centerY);
@@ -357,6 +355,8 @@ class LevelScene extends Phaser.Scene {
             this.ship.setType(this.params.shipAsset);
         } else if (property === 'shipSize') {
             this.ship.setScale(this.params.shipSize / 100);
+        } else if (property === 'shipSpeed') {
+            this.background.setSpeed(this.params.shipSpeed);
         } else if (property === 'astronautSize') {
             this.astronauts.getChildren().forEach(astronaut => {
                 astronaut.setScale(this.params.astronautSize / 100);

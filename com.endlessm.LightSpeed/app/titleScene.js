@@ -19,7 +19,6 @@ class TitleScene extends Phaser.Scene {
 
     preload() {
         /* Images */
-        this.load.image('background', 'assets/background.jpg');
         this.load.image('logo', 'assets/logo.png');
         this.load.image('particle', 'assets/particles/particle.png');
         this.load.image('astronaut', 'assets/astronaut.png');
@@ -39,12 +38,13 @@ class TitleScene extends Phaser.Scene {
         /* Reset Camera FX */
         this.cameras.main.resetFX();
 
-        /* Background */
-        var bg = this.add.image(centerX, centerY, 'background');
+        this.scene.launch('background', levelParameters[0].shipSpeed);
+        this.scene.moveDown('background');
 
         /* Bottom text */
         var text = this.add.text(0, 0, 'Press ENTER to start.', fontConfig);
-        Phaser.Display.Align.In.BottomCenter(text, bg, 0, -128);
+        text.setOrigin(0.5, 0.5);
+        text.setPosition(centerX, centerY * 1.8);
         this.tweens.add({
             targets: text,
             alpha: 0.16,

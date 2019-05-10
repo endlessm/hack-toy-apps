@@ -467,6 +467,7 @@ class GameScene extends Phaser.Scene {
         if (!this.isMoving) {
             this.isMoving = true;
             this.playButton.setFrame(3);
+            this.playButton.disabled = true;
         }
     }
 
@@ -750,6 +751,9 @@ class GameScene extends Phaser.Scene {
 
     addDragInputs() {
         this.input.on('dragstart', (pointer, gameObject) => {
+            if (this.isMoving)
+                return;
+
             Sounds.play('sidetrack/sfx/instruction_grab');
             const gameObjectFrame = gameObject.moveType + this.moveSquareOffset * 2;
 
@@ -759,6 +763,9 @@ class GameScene extends Phaser.Scene {
         });
 
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+            if (this.isMoving)
+                return;
+
             gameObject.x = dragX;
             gameObject.y = dragY;
 
@@ -781,6 +788,9 @@ class GameScene extends Phaser.Scene {
         });
 
         this.input.on('dragend', (pointer, gameObject) => {
+            if (this.isMoving)
+                return;
+
             Sounds.play('sidetrack/sfx/instruction_drop');
             gameObject.setFrame(gameObject.moveType);
             gameObject.setDepth(1);
@@ -843,9 +853,15 @@ class GameScene extends Phaser.Scene {
 
             // for playthru games, check if draggable is set
             if (this.gameType === PLAYTHRUGAME) {
-                moveSquare.on('pointerover', () =>
-                    moveSquare.setFrame(moveSquare.moveType + this.moveSquareOffset));
-                moveSquare.on('pointerout', () => moveSquare.setFrame(moveSquare.moveType));
+                moveSquare.on('pointerover', () => {
+                    if (!this.isMoving)
+                        moveSquare.setFrame(moveSquare.moveType + this.moveSquareOffset);
+                });
+
+                moveSquare.on('pointerout', () => {
+                    if (!this.isMoving)
+                        moveSquare.setFrame(moveSquare.moveType);
+                });
 
                 moveSquare.setInteractive({useHandCursor: true});
                 this.input.setDraggable(moveSquare);

@@ -18,6 +18,7 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('separator', 'assets/images/separator.png');
         this.load.image('explosion', 'assets/images/explosion.png');
         this.load.image('circleHighlight', 'assets/images/circleHighlight.png');
+        this.load.image('pushTrail', 'assets/images/pushTrail.png');
 
         this.load.spritesheet('previous', 'assets/images/previous.png', {
             frameWidth: 63,

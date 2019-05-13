@@ -377,6 +377,14 @@ class GameScene extends Phaser.Scene {
             if (this.playerYLocation !== this.goalYLocation)
                 this.gameLost();
 
+            // check collisions with obstacles on final square
+            if (tmpObstacle) {
+                if (tmpObstacle.type !== PIT)
+                    this.gameLost();
+                else if (!isJumping)
+                    this.gameLost();
+            }
+
             // game won when Riley runs to last square
             if (this.player.x > this.goalXLocation * this.tileLength + this.xOffset) {
                 if (this.playerYLocation === this.goalYLocation)

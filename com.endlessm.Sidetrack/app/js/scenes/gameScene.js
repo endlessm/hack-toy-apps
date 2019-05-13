@@ -100,6 +100,7 @@ class GameScene extends Phaser.Scene {
         this.isAnimating = false;
 
         this.playerYOffset = -24;
+        this.nextLevel = globalParameters.highestAchievedLevel;
 
         // updating instructions from toolbox restarts level
         // draging instructions should in game should not restart
@@ -123,9 +124,6 @@ class GameScene extends Phaser.Scene {
         }
 
         this.cameras.main.setBackgroundColor('#131430');
-
-        if (globalParameters.currentLevel > globalParameters.highestAchievedLevel)
-            globalParameters.highestAchievedLevel = globalParameters.currentLevel;
     }
 
     create() {
@@ -1224,15 +1222,8 @@ class GameScene extends Phaser.Scene {
 
     continueLevel() {
         Sounds.play('sidetrack/sfx/start_chime');
-        let nextLevel;
-
-        if (globalParameters.currentLevel < globalParameters.availableLevels)
-            nextLevel = globalParameters.currentLevel + 1;
-        else
-            nextLevel = globalParameters.highestAchievedLevel;
-
         globalParameters.playing = true;
-        this.scene.restart(levelParameters[nextLevel]);
+        this.scene.restart(levelParameters[this.nextLevel]);
     }
 
     restartLevel() {
@@ -1342,6 +1333,14 @@ class GameScene extends Phaser.Scene {
         Sounds.play('sidetrack/sfx/success');
 
         this.player.setFrame(this.RILEYWINFRAME);
+
+        if (globalParameters.currentLevel < globalParameters.availableLevels)
+            this.nextLevel = globalParameters.currentLevel + 1;
+        else
+            this.nextLevel = globalParameters.highestAchievedLevel;
+
+        if (this.nextLevel > globalParameters.highestAchievedLevel)
+            globalParameters.highestAchievedLevel = this.nextLevel;
 
         saveState();
 

@@ -9,9 +9,9 @@ class LoadingScene extends Phaser.Scene {
 
     preload() {
         // load assets
-        this.load.image('background1', 'assets/images/background1.png');
-        this.load.image('background2', 'assets/images/background2.png');
-        this.load.image('background3', 'assets/images/background3.png');
+        this.load.image('background1', 'assets/images/background1.jpg');
+        this.load.image('background2', 'assets/images/background2.jpg');
+        this.load.image('background3', 'assets/images/background3.jpg');
         this.load.image('levelSelectBackground', 'assets/images/levelSelectBackground.png');
         this.load.image('hackdex', 'assets/images/hackdex.png');
         this.load.image('pit', 'assets/images/pit.png');

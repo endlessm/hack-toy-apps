@@ -782,6 +782,9 @@ class GameScene extends Phaser.Scene {
             Sounds.play('sidetrack/sfx/instruction_grab');
             const gameObjectFrame = gameObject.moveType + this.moveSquareOffset * 2;
 
+            // determine if instruction is dragged left or right
+            gameObject.defaultX = gameObject.x;
+
             // so user can see the move they're dragging
             gameObject.setDepth(2);
             gameObject.setFrame(gameObjectFrame);
@@ -1071,60 +1074,65 @@ class GameScene extends Phaser.Scene {
     }
 
     setSeparatorPosition(gameObject) {
-        const minX = this.tileLength + this.xOffset;
-        const maxX = this.MAXMOVES * this.tileLength + this.xOffset;
         const halfTilelength = this.tileLength * 0.5;
+        const separatorOffset = this.xOffset + halfTilelength + 30;
+        let offset;
 
-        const offset = minX - halfTilelength + 33;
+        // find direction the instruction is dragged
+        // to determine what part of gameObject we want to use measure
+        if (gameObject.x > gameObject.defaultX)
+            offset = this.xOffset - halfTilelength;
+        else
+            offset = this.xOffset + 32;
 
         if (gameObject.x < offset) {
-            this.separator.x = offset - this.tileLength;
+            this.separator.x = separatorOffset - this.tileLength;
             this.separator.position = 0;
         }
 
         if (gameObject.x >= offset && gameObject.x < offset + this.tileLength) {
-            this.separator.x = offset;
+            this.separator.x = separatorOffset;
             this.separator.position = 1;
         }
 
         if (gameObject.x >= offset + this.tileLength &&
             gameObject.x < offset + this.tileLength * 2) {
-            this.separator.x = offset + this.tileLength;
+            this.separator.x = separatorOffset + this.tileLength;
             this.separator.position = 2;
         }
 
         if (gameObject.x >= offset + this.tileLength * 2 &&
             gameObject.x < offset + this.tileLength * 3) {
-            this.separator.x = offset + this.tileLength * 2;
+            this.separator.x = separatorOffset + this.tileLength * 2;
             this.separator.position = 3;
         }
 
         if (gameObject.x >= offset + this.tileLength * 3 &&
             gameObject.x < offset + this.tileLength * 4) {
-            this.separator.x = offset + this.tileLength * 3;
+            this.separator.x = separatorOffset + this.tileLength * 3;
             this.separator.position = 4;
         }
 
         if (gameObject.x >= offset + this.tileLength * 4 &&
             gameObject.x < offset + this.tileLength * 5) {
-            this.separator.x = offset + this.tileLength * 4;
+            this.separator.x = separatorOffset + this.tileLength * 4;
             this.separator.position = 5;
         }
 
         if (gameObject.x >= offset + this.tileLength * 5 &&
             gameObject.x < offset + this.tileLength * 6) {
-            this.separator.x = offset + this.tileLength * 5;
+            this.separator.x = separatorOffset + this.tileLength * 5;
             this.separator.position = 6;
         }
 
         if (gameObject.x >= offset + this.tileLength * 6 &&
             gameObject.x < offset + this.tileLength * 7) {
-            this.separator.x = offset + this.tileLength * 6;
+            this.separator.x = separatorOffset + this.tileLength * 6;
             this.separator.position = 7;
         }
 
-        if (gameObject.x >= maxX) {
-            this.separator.x = offset + this.tileLength * 7;
+        if (gameObject.x >= offset + this.tileLength * 7) {
+            this.separator.x = separatorOffset + this.tileLength * 7;
             this.separator.position = 8;
         }
     }

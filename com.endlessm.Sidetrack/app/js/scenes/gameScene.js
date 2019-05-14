@@ -1286,6 +1286,7 @@ class GameScene extends Phaser.Scene {
     playControlsCutscene() {
         this.isAnimating = true;
         this.playButton.setAlpha(0);
+        Sounds.play('sidetrack/sfx/felix_smash');
 
         this.controls = this.add.sprite(0, 0, 'controlsDestroyed').setOrigin(0);
         this.setSpritePosition(this.controls, -3, this.countY - 2, -50, -30);

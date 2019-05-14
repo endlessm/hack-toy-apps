@@ -125,6 +125,8 @@ class GameScene extends Phaser.Scene {
                 this.getRobotDirection(this.params.robotBDirection, ROBOTB);
         }
 
+        globalParameters.playing = true;
+
         this.cameras.main.setBackgroundColor('#131430');
     }
 
@@ -1257,7 +1259,6 @@ class GameScene extends Phaser.Scene {
 
     continueLevel() {
         Sounds.play('sidetrack/sfx/start_chime');
-        globalParameters.playing = true;
         this.scene.restart(levelParameters[this.nextLevel]);
     }
 
@@ -1265,7 +1266,6 @@ class GameScene extends Phaser.Scene {
         if (this.isAnimating)
             return;
         Sounds.play('sidetrack/sfx/start_chime');
-        globalParameters.playing = true;
         globalParameters.currentLevel = this.params.level;
         this.scene.restart(levelParameters[globalParameters.currentLevel]);
     }

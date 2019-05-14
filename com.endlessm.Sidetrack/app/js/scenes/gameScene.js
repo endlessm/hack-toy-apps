@@ -802,11 +802,15 @@ class GameScene extends Phaser.Scene {
                 }
             }
 
+            let sp = this.separator.position;
+
             this.setSeparatorPosition(gameObject);
 
             if (index !== this.separator.position && this.separator.position !== index + 1) {
                 this.separator.setVisible(true);
-                Sounds.play('sidetrack/sfx/instruction_drag');
+
+                if (sp != this.separator.position)
+                    Sounds.play('sidetrack/sfx/instruction_drag');
             }
             else
                 this.separator.setVisible(false);

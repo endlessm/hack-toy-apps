@@ -934,12 +934,12 @@ class GameScene extends Phaser.Scene {
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
 
-        const txtLevel = this.add.text(gameW / 2 - 100, gameH / 2 + -18,
+        const txtLevel = this.add.text(gameW / 2 - 27, gameH / 2 + 4,
             `Level ${this.levelNumber}`, {
                 font: 'bold 30pt Metropolis',
                 fill: '#ffffff',
             });
-        txtLevel.setOrigin(0);
+        txtLevel.setOrigin(0.5);
         txtLevel.depth = 1;
 
         if (this.gameType === DEFAULTGAME) {

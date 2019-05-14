@@ -70,6 +70,8 @@ class GameScene extends Phaser.Scene {
         // capture tiles player was on
         this.arrTileHistory = [];
 
+        this.pushTrails = [];
+
         // determine if riley is moving on keypress
         this.isMoving = false;
         // pressing the arrow key down only moves player once
@@ -439,6 +441,17 @@ class GameScene extends Phaser.Scene {
             this.setSpritePosition(pushedObstacle.sprite,
                 pushedObstacle.xPosition, pushedObstacle.yPosition);
         }
+
+        const halfTileLength = this.tileLength * 0.5;
+        let pushArrow;
+
+        // add push trails sprites
+        for (var j = this.playerXLocation + 1; j < pushedObstacle.xPosition; j++) {
+            pushArrow = this.add.sprite(0, 0, 'pushTrail');
+            this.setSpritePosition(pushArrow, j,
+                pushedObstacle.yPosition, halfTileLength, halfTileLength);
+            this.pushTrails.push(pushArrow);
+        }
     }
 
     addExplosionSprite(obstacle) {
@@ -601,6 +614,12 @@ class GameScene extends Phaser.Scene {
         this.placeRobots();
         this.checkRobotCollisions();
         this.playerXLocation++;
+
+        // destroy all push trails on move
+        for (var j = 0; j < this.pushTrails.length; j++)
+            this.pushTrails[j].destroy();
+
+        this.pushTrails = [];
 
         const rileyMove = this.arrSpriteMoves[this.playerXLocation];
 

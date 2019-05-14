@@ -671,8 +671,8 @@ class GameScene extends Phaser.Scene {
 
                 this.stepTextHighlighter.setVisible(true);
                 this.stepTextHighlighter.x =
-                    this.playerXLocation * this.tileLength + this.xOffset + 35;
-                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 160;
+                    this.playerXLocation * this.tileLength + this.xOffset + 43;
+                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 168;
             }
         }
 
@@ -990,7 +990,7 @@ class GameScene extends Phaser.Scene {
         }
 
         this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight').setOrigin(0);
-        this.stepTextHighlighter.setVisible(false).alpha = 0.4;
+        this.stepTextHighlighter.setVisible(false);
     }
 
     createLevel() {

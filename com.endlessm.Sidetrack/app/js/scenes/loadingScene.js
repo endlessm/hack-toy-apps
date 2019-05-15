@@ -187,7 +187,7 @@ class LoadingScene extends Phaser.Scene {
                     frames: [0, 1, 2],
                 }),
                 yoyo: true,
-                frameRate: 12,
+                frameRate: 10,
                 repeat: -1,
             });
         }
@@ -200,7 +200,7 @@ class LoadingScene extends Phaser.Scene {
                     frames: [0, 1, 2],
                 }),
                 yoyo: true,
-                frameRate: 12,
+                frameRate: 8,
                 repeat: -1,
             });
         }

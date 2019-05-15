@@ -673,8 +673,8 @@ class GameScene extends Phaser.Scene {
 
                 this.stepTextHighlighter.setVisible(true);
                 this.stepTextHighlighter.x =
-                    this.playerXLocation * this.tileLength + this.xOffset + 35;
-                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 160;
+                    this.playerXLocation * this.tileLength + this.xOffset + 43;
+                this.stepTextHighlighter.y = this.countY * this.tileLength + this.yOffset + 168;
             }
         }
 
@@ -807,11 +807,15 @@ class GameScene extends Phaser.Scene {
                 }
             }
 
+            let sp = this.separator.position;
+
             this.setSeparatorPosition(gameObject);
 
             if (index !== this.separator.position && this.separator.position !== index + 1) {
                 this.separator.setVisible(true);
-                Sounds.play('sidetrack/sfx/instruction_drag');
+
+                if (sp != this.separator.position)
+                    Sounds.play('sidetrack/sfx/instruction_drag');
             }
             else
                 this.separator.setVisible(false);
@@ -995,7 +999,7 @@ class GameScene extends Phaser.Scene {
         }
 
         this.stepTextHighlighter = this.add.sprite(0, 0, 'circleHighlight').setOrigin(0);
-        this.stepTextHighlighter.setVisible(false).alpha = 0.4;
+        this.stepTextHighlighter.setVisible(false);
     }
 
     createLevel() {
@@ -1294,6 +1298,7 @@ class GameScene extends Phaser.Scene {
     playControlsCutscene() {
         this.isAnimating = true;
         this.playButton.setAlpha(0);
+        Sounds.play('sidetrack/sfx/felix_smash');
 
         this.controls = this.add.sprite(0, 0, 'controlsDestroyed').setOrigin(0);
         this.setSpritePosition(this.controls, -3, this.countY - 2, -50, -30);

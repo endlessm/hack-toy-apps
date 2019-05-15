@@ -6,6 +6,7 @@
 const fontConfig = {
     color: 'white',
     fontSize: '38px',
+    fontFamily: 'Metropolis',
     align: 'center',
     shadow: {
         color: 'black',

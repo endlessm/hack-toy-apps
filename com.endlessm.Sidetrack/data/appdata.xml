@@ -7,9 +7,9 @@
     <category>Game</category>
   </categories>
   <name>Sidetrack</name>
-  <summary>Learn to design your own game</summary>
+  <summary>Escape the maze of pits and robots!</summary>
 
-  <description><p>Sidetrack lets you design the rules and elements of the game. Every feature of the game is flexible! You can change the game attributes such as background, ball size, gravity, and bounce. You can even change the sound and visual effects! It’s the first step in learning to create your own game.</p></description>
+  <description><p>Everyone thought this old AI trap was defunct, but now the intrepid Riley’s stuck inside! Help Riley slip past walls, jump over pits, and outmaneuver insectoid robots by selecting the right Instructions or putting them in the correct order. There’s even a super powerful Instruction, and you’re going to need it!<br><br>Note: For the best experience, enjoy Sidetrack as part of Hack episodes with your friends in the Clubhouse guiding you through playing and hacking it!</p></description>
 
   <screenshots>
     <screenshot>

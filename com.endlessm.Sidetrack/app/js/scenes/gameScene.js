@@ -502,14 +502,19 @@ class GameScene extends Phaser.Scene {
         return tmpObstacle;
     }
 
-    getObstacleCountOnTile(x, y) {
-        let obstacleCount = 0;
+    hasRobotCollided(x, y) {
+        let isCollision = false;
+
+        // if obstacles in x and y coords are not robots, there is a collision
         for (var i = 0; i < this.obstacles.length; i++) {
-            if (this.obstacles[i].xPosition === x &&
-                this.obstacles[i].yPosition === y)
-                obstacleCount++;
+            if (this.obstacles[i].xPosition === x && this.obstacles[i].yPosition === y) {
+                if (this.obstacles[i].type !== ROBOTA && this.obstacles[i].type !== ROBOTB) {
+                    isCollision = true;
+                    break;
+                }
+            }
         }
-        return obstacleCount;
+        return isCollision;
     }
 
     placeRobots() {
@@ -560,18 +565,16 @@ class GameScene extends Phaser.Scene {
     }
 
     checkRobotCollisions() {
-        // check if obstacle exists in new position
-        let obstacleCount;
+        let hasRobotCollided = false;
 
-        for (var i = 0; i < this.obstacles.length; i++) {
-            if (this.obstacles[i].type === ROBOTA ||
-                this.obstacles[i].type === ROBOTB) {
-                obstacleCount = this.getObstacleCountOnTile(this.obstacles[i].xPosition,
-                    this.obstacles[i].yPosition);
+        // TODO: find better way to code this so it's not O(n²)
+        const robots = this.obstacles.filter(({type}) => [ROBOTA, ROBOTB].includes(type));
 
-                if (obstacleCount > 1)
-                    this.addExplosionSprite(this.obstacles[i]);
-            }
+        for (var j = 0; j < robots.length; j++) {
+            hasRobotCollided = this.hasRobotCollided(robots[j].xPosition, robots[j].yPosition);
+
+            if (hasRobotCollided)
+                this.addExplosionSprite(robots[j]);
         }
     }
 

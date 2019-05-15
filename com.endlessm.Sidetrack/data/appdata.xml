@@ -9,7 +9,10 @@
   <name>Sidetrack</name>
   <summary>Escape the maze of pits and robots!</summary>
 
-  <description><p>Everyone thought this old AI trap was defunct, but now the intrepid Riley’s stuck inside! Help Riley slip past walls, jump over pits, and outmaneuver insectoid robots by selecting the right Instructions or putting them in the correct order. There’s even a super powerful Instruction, and you’re going to need it!<br><br>Note: For the best experience, enjoy Sidetrack as part of Hack episodes with your friends in the Clubhouse guiding you through playing and hacking it!</p></description>
+  <description>
+    <p>Everyone thought this old AI trap was defunct, but now the intrepid Riley’s stuck inside! Help Riley slip past walls, jump over pits, and outmaneuver insectoid robots by selecting the right Instructions or putting them in the correct order. There’s even a super powerful Instruction, and you’re going to need it!</p>
+    <p><b>Note:</b> For the best experience, enjoy Sidetrack as part of Hack episodes with your friends in the Clubhouse guiding you through its features.</p>
+  </description>
 
   <screenshots>
     <screenshot>

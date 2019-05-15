@@ -9,7 +9,10 @@
   <name>Lightspeed</name>
   <summary>Pilot your spaceship to save the astronauts</summary>
 
-  <description><p>Deep in outer space, astronauts are floating free from their ships and will really appreciate it if you can scoop them up as you speed through fields of asteroids. The ship’s log says to watch out for … spacesquids!? If only there were some way to hack the parameters and make your spaceship invulnerable! Think of what you could do!<br><br><b>Note:</b> For the best experience, enjoy Lightspeed as part of Hack episodes with your friends in the Clubhouse guiding you through playing the levels and editing their code.</p></description>
+  <description>
+    <p>Deep in outer space, astronauts are floating free from their ships and will really appreciate it if you can scoop them up as you speed through fields of asteroids. The ship’s log says to watch out for … spacesquids!? If only there were some way to hack the parameters and make your spaceship invulnerable! Think of what you could do!</p>
+    <p><b>Note:</b> For the best experience, enjoy Lightspeed as part of Hack episodes with your friends in the Clubhouse guiding you through its features.</p>
+  </description>
 
   <screenshots>
     <screenshot>

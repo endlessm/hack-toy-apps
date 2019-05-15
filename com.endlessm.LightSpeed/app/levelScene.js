@@ -719,7 +719,7 @@ class LevelScene extends Phaser.Scene {
 
                 if (obj.isFirstOne) {
                     const index = obj.enemyTypeIndex;
-                    const y = obj.y;
+                    const {y} = this.userSpace.transformPoint(obj.x, obj.y);
 
                     /* Update enemy type min/max globals */
                     globalParameters[`enemyType${index}MinY`] =

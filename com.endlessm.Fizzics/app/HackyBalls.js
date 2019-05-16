@@ -450,7 +450,7 @@ function HackyBalls()
         //--------------------------------
         // Initialize the game UI...
         //--------------------------------
-        _game.initializeUserInterface();
+        _game.initializeUserInterface(WIDTH);
     }
     
 

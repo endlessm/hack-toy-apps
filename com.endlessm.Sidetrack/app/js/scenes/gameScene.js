@@ -149,7 +149,6 @@ class GameScene extends Phaser.Scene {
         // change the origin to the top-left corner
         bg.setOrigin(0, 0);
 
-        // Level text
         this.displayLevelUI();
 
         this.createLevel();
@@ -808,18 +807,19 @@ class GameScene extends Phaser.Scene {
                 }
             }
 
-            let sp = this.separator.position;
+            const sp = this.separator.position;
 
             this.setSeparatorPosition(gameObject);
 
             if (index !== this.separator.position && this.separator.position !== index + 1) {
                 this.separator.setVisible(true);
 
-                if (sp != this.separator.position)
+                if (sp !== this.separator.position) {
                     Sounds.play('sidetrack/sfx/instruction_drag');
-            }
-            else
+                }
+            } else {
                 this.separator.setVisible(false);
+            }
         });
 
         this.input.on('dragend', (pointer, gameObject) => {

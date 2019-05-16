@@ -74,9 +74,7 @@ class GameScene extends Phaser.Scene {
 
         // determine if riley is moving on keypress
         this.isMoving = false;
-        // pressing the arrow key down only moves player once
-        this.keyIsDown = false;
-
+        
         // play thru game delay
         this.tickReset = 60;
         this.tick = this.tickReset;
@@ -163,10 +161,8 @@ class GameScene extends Phaser.Scene {
 
         this.player.anims.play('running');
 
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-
+        this.setKeyboardKeys();
+        
         /* Listen to properties changes */
         this.game.events.on('global-property-change',
             this.onGlobalPropertyChange, this);
@@ -250,17 +246,9 @@ class GameScene extends Phaser.Scene {
             !globalParameters.playing)
             return;
 
-        // forbids keyboard presses if true
-        // only happens if player is in last column or game type is playthrough
-        let isKeyboardPressOff = false;
-
-        if (!isKeyboardPressOff)
-            this.handleMovements();
-
         // move Riley at gamespeed when at last tile
         if (this.playerXLocation >= this.MAXMOVES) {
             this.player.x += this.playerSpeed;
-            isKeyboardPressOff = true;
             this.checkGameOver();
         } else {
             if (this.gameType === PLAYTHRUGAME) {
@@ -282,6 +270,53 @@ class GameScene extends Phaser.Scene {
         }
     }
 
+    setKeyboardKeys() {
+        if (this.gameType === PLAYTHRUGAME) {
+            this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+            this.enterKey.on('up', () => {
+                if (!this.isMoving) {
+                    this.isMoving = true;
+                    this.playButton.setFrame(3);
+                }
+            }, this);
+        }
+
+        if (this.gameType === DEFAULTGAME) {
+            this.cursors = this.input.keyboard.createCursorKeys();
+            this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+            this.cursors.up.on('up', () => {
+                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                    this.isMoving = true;
+                    this.queue.push(UP);
+                }
+            });
+
+            this.cursors.down.on('up', () => {
+                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                    this.isMoving = true;
+                    this.queue.push(DOWN);
+                }
+            });
+
+            this.cursors.right.on('up', () => {
+                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                    this.isMoving = true;
+                    this.queue.push(FORWARD);
+                }
+            });
+
+            this.spaceBar.on('up', () => {
+                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                    this.isMoving = true;
+                    this.queue.push(JUMP);
+                    this.player.anims.stop('running');
+                    this.player.anims.play('jumping');
+                }
+            });
+        }
+    }
     handleMovementAudio(moveType) {
         Sounds.stop('sidetrack/sfx/start_chime');
         Sounds.stop('sidetrack/sfx/move_fwd');
@@ -330,43 +365,6 @@ class GameScene extends Phaser.Scene {
 
         if (moveType === JUMP)
             this.player.anims.play('jumping');
-    }
-
-    handleMovements() {
-        if (this.gameType === PLAYTHRUGAME) {
-            if (this.enterKey.isDown && !this.isMoving) {
-                this.isMoving = true;
-                this.playButton.setFrame(3);
-            }
-        } else {
-            if (this.cursors.right.isUp && this.cursors.up.isUp &&
-                this.cursors.down.isUp && this.spaceBar.isUp)
-                this.keyIsDown = false;
-
-            if (!this.keyIsDown) {
-                if (this.cursors.right.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.queue.push(FORWARD);
-                    this.isMoving = true;
-                }
-
-                if (this.cursors.up.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.queue.push(UP);
-                    this.isMoving = true;
-                }
-
-                if (this.cursors.down.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.queue.push(DOWN);
-                    this.isMoving = true;
-                }
-
-                if (this.spaceBar.isDown && this.playerXLocation < this.MAXMOVES) {
-                    this.queue.push(JUMP);
-                    this.isMoving = true;
-                    this.player.anims.stop('running');
-                    this.player.anims.play('jumping');
-                }
-            }
-        }
     }
 
     checkGameOver() {
@@ -634,8 +632,7 @@ class GameScene extends Phaser.Scene {
 
             this.player.anims.stop('jumping');
             this.player.anims.play('running');
-
-            this.keyIsDown = true;
+            
             this.isMoving = false;
 
             // handle up movements
@@ -1300,6 +1297,7 @@ class GameScene extends Phaser.Scene {
 
     playControlsCutscene() {
         this.isAnimating = true;
+        game.input.keyboard.enabled = false;
         this.playButton.setAlpha(0);
         Sounds.play('sidetrack/sfx/felix_smash');
 
@@ -1319,6 +1317,7 @@ class GameScene extends Phaser.Scene {
                 onComplete: () => {
                     globalParameters.controlsCutscene = false;
                     this.isAnimating = false;
+                    game.input.keyboard.enabled = true;
                 },
             });
         }.bind(this));

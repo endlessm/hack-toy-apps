@@ -68,6 +68,7 @@ var globalParameters =
     currentLevel    : 0,
     flipped         : false,
     levelSuccess    : false,
+    levelLoading    : false,
     ballDied        : false,
 
     // parameters for species 0 balls
@@ -301,7 +302,6 @@ function HackyBalls()
     var _devMode                = false;
     var _savedBalls             = null;
     var _numSavedBalls          = 0;
-    var _levelLoading           = false;
     var _simulationTimeLeft     = 0;
 
     //------------------------------------------------------------------------- 
@@ -459,7 +459,7 @@ function HackyBalls()
     this.createBall = function(x, y, species) {
         if (_numBalls < MAX_BALLS &&
             !globalParameters[`createType${species}Disabled`]) {
-            if (!_levelLoading)
+            if (!globalParameters.levelLoading)
             {
                 Sounds.play( _species[ species ].createSound );
             }
@@ -1074,9 +1074,9 @@ function HackyBalls()
         globalParameters.levelSuccess = false;
         globalParameters.ballDied = false;
         _numBalls = 0;
-        _levelLoading = true;
+        globalParameters.levelLoading = true;
         _game.setLevel( this, _game.getCurrentLevel(), _collisionBalls, _ballsWithSomeCollision ); 
-        _levelLoading = false;
+        globalParameters.levelLoading = false;
     }
 
     //--------------------------------
@@ -1244,7 +1244,7 @@ function HackyBalls()
 
         Sounds.stop( "fizzics/you_won" );
 
-        _levelLoading = true;
+        globalParameters.levelLoading = true;
 
         Sounds.stop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
 
@@ -1257,7 +1257,7 @@ function HackyBalls()
 
         this._resetToolStatus();
 
-        _levelLoading = false;
+        globalParameters.levelLoading = false;
 
         Sounds.playLoop( `fizzics/level/${(_game.getCurrentLevel() % 10) + 1}/background` );
 

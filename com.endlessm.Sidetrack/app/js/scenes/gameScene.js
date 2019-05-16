@@ -520,46 +520,38 @@ class GameScene extends Phaser.Scene {
     placeRobots() {
         let xPosition;
         let yPosition;
-
-        let isRobotType = false;
         let robotDirection = '';
 
-        for (var i = 0; i < this.obstacles.length; i++) {
-            isRobotType = false;
+        const robots = this.obstacles.filter(({type}) => [ROBOTA, ROBOTB].includes(type));
 
-            if (this.obstacles[i].type === ROBOTA) {
-                isRobotType = true;
+        for (var i = 0; i < robots.length; i++) {
+            if (robots[i].type === ROBOTA)
                 robotDirection = this.robotADirection;
-            }
 
-            if (this.obstacles[i].type === ROBOTB) {
-                isRobotType = true;
+            if (robots[i].type === ROBOTB)
                 robotDirection = this.robotBDirection;
+
+            if (robotDirection === 'up') {
+                if (robots[i].yPosition <= 0)
+                    yPosition = this.countY - 1;
+                else
+                    yPosition = robots[i].yPosition - 1;
             }
 
-            if (isRobotType) {
-                if (robotDirection === 'up') {
-                    if (this.obstacles[i].yPosition <= 0)
-                        yPosition = this.countY - 1;
-                    else
-                        yPosition = this.obstacles[i].yPosition - 1;
-                }
-
-                if (robotDirection === 'down') {
-                    if (this.obstacles[i].yPosition >= this.countY - 1)
-                        yPosition = 0;
-                    else
-                        yPosition = this.obstacles[i].yPosition + 1;
-                }
-
-                xPosition = this.obstacles[i].xPosition;
-                this.obstacles[i].yPosition = yPosition;
-                this.setSpritePosition(this.obstacles[i].sprite, xPosition, yPosition);
+            if (robotDirection === 'down') {
+                if (robots[i].yPosition >= this.countY - 1)
+                    yPosition = 0;
+                else
+                    yPosition = robots[i].yPosition + 1;
             }
+
+            xPosition = robots[i].xPosition;
+            robots[i].yPosition = yPosition;
+            this.setSpritePosition(robots[i].sprite, xPosition, yPosition);
         }
 
         // play robot sound only once
-        if (isRobotType) {
+        if (robots.length) {
             Sounds.play('sidetrack/sfx/robot');
         }
     }

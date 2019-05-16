@@ -8,7 +8,7 @@
 /* exported LevelScene, CONFETTI_COLORS, ASTRONAUT_PARTICLE_COLORS */
 /* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
     SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
-    ActivatePowerupScope, resetGlobalCounters, BackgroundScene */
+    ActivatePowerupScope, resetGlobalCounters */
 
 const CONFETTI_COLORS = [
     0x1500ff,
@@ -189,9 +189,6 @@ class LevelScene extends Phaser.Scene {
 
         /* Handle ship movement */
         this.ship.handleInput(this.params.shipAcceleration, this.params.shipDrag);
-
-        /* Check target score and time limit in case they were hacked */
-        this.checkLevelDone();
 
         /* Execute spawn functions */
         this.runSpawnEnemy();
@@ -433,6 +430,9 @@ class LevelScene extends Phaser.Scene {
 
         /* Update position */
         this.scoreText.x = (this.scoreBox.width - this.scoreText.width) / 2;
+
+        /* Check target score and time limit in case they were hacked */
+        this.checkLevelDone();
     }
 
     createScoreBox(text) {
@@ -495,21 +495,24 @@ class LevelScene extends Phaser.Scene {
     }
 
     checkLevelDone() {
-        if (globalParameters.score >= this.params.scoreTarget) {
-            globalParameters.success = true;
+        if (!globalParameters.playing ||
+            globalParameters.score < this.params.scoreTarget)
+            return;
 
-            /* Go back to title if this was the last level */
-            if (globalParameters.currentLevel < globalParameters.availableLevels)
-                globalParameters.nextLevel = globalParameters.currentLevel + 1;
-            else
-                globalParameters.nextLevel = 0;
+        globalParameters.success = true;
+        globalParameters.playing = false;
 
-            /* Save game state when level is finished */
-            saveState();
+        /* Go back to title if this was the last level */
+        if (globalParameters.currentLevel < globalParameters.availableLevels)
+            globalParameters.nextLevel = globalParameters.currentLevel + 1;
+        else
+            globalParameters.nextLevel = 0;
 
-            this.scene.launch('continue',
-                `Level ${globalParameters.currentLevel} Complete!`);
-        }
+        /* Save game state when level is finished */
+        saveState();
+
+        this.scene.launch('continue',
+            `Level ${globalParameters.currentLevel} Complete!`);
     }
 
     runSpawnEnemy() {
@@ -781,9 +784,6 @@ class LevelScene extends Phaser.Scene {
                 /* Confetti! */
                 this.particles.confetti.explode(256, astronaut.x, astronaut.y);
                 this.destroySprite(astronaut);
-
-                /* Check if we finished the level */
-                this.checkLevelDone();
             },
         });
 
@@ -810,6 +810,9 @@ class LevelScene extends Phaser.Scene {
     }
 
     runActivatePowerup(powerUpType) {
+        if (!globalParameters.playing)
+            return;
+
         /* Increment powerup pickup count */
         globalParameters[`${powerUpType}PowerupPickedCount`]++;
 

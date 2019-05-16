@@ -862,8 +862,13 @@ class GameScene extends Phaser.Scene {
                     instructions.push(`riley.${this.arrSpriteMoves[i].badPropertyName}();`);
             }
 
+            // this is kind of a hack to add proper indentation in toolbox
+            const indent = '    ';
+            for (var j = 0; j < instructions.length; j++)
+                instructions[j] = indent + instructions[j];
+
             this.isInGameInstructionUpdate = true;
-            this.params.instructionCode = instructions.join('\n ');
+            this.params.instructionCode = instructions.join('\n');
         });
     }
 

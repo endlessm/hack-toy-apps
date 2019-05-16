@@ -8,7 +8,7 @@
 /* exported LevelScene, CONFETTI_COLORS, ASTRONAUT_PARTICLE_COLORS */
 /* global Ship, enemyTypes, saveState, shipTypes, powerupTypes,
     SpawnAstronautScope, SpawnEnemyScope, UpdateEnemyScope, SpawnPowerupScope,
-    ActivatePowerupScope, resetGlobalCounters, BackgroundScene */
+    ActivatePowerupScope, resetGlobalCounters */
 
 const CONFETTI_COLORS = [
     0x1500ff,

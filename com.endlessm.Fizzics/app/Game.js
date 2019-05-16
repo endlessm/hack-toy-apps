@@ -202,7 +202,7 @@ function Game()
     
     
     //----------------------------------------
-    this.initializeUserInterface = function()
+    this.initializeUserInterface = function(defaultWidth)
     {                
         //-------------------------------------------
         // set up UI layout
@@ -227,12 +227,12 @@ function Game()
 
         _successScreen.width   =  908 * UI_SCALE;
         _successScreen.height  = 1494 * UI_SCALE;
-        
+
         var buttonHeight = _levelboard.y + _levelboard.height * 0.1;
 
-        var left = canvasID.width * ONE_HALF - ( _levelboard.width + _scoreboard.width + _flingboard.width ) * ONE_HALF;
+        var left = defaultWidth * ONE_HALF - ( _levelboard.width + _scoreboard.width + _flingboard.width ) * ONE_HALF;
         var top = 0;
-        
+
         _levelboard.x = left;
         _scoreboard.x = _levelboard.x + _levelboard.width;
         _flingboard.x = _scoreboard.x + _scoreboard.width;

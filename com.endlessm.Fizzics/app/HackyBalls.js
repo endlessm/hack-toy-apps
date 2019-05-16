@@ -351,8 +351,8 @@ function HackyBalls()
         //-----------------------------------
         this._updateCanvasSize();
 
-        _rightWall  = canvasID.width;
-        _bottomWall = canvasID.height;
+        _rightWall  = WIDTH;
+        _bottomWall = HEIGHT;
 
         //--------------------------------------
         // create species array  

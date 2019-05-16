@@ -75,7 +75,7 @@ class GameScene extends Phaser.Scene {
 
         // determine if riley is moving on keypress
         this.isMoving = false;
-        
+
         // play thru game delay
         this.tickReset = 60;
         this.tick = this.tickReset;
@@ -119,9 +119,9 @@ class GameScene extends Phaser.Scene {
                 globalParameters.currentLevel = this.params.level;
 
             this.robotADirection =
-                this.getRobotDirection(this.params.robotADirection, ROBOTA);
+                GameScene.getRobotDirection(this.params.robotADirection, ROBOTA);
             this.robotBDirection =
-                this.getRobotDirection(this.params.robotBDirection, ROBOTB);
+                GameScene.getRobotDirection(this.params.robotBDirection, ROBOTB);
         }
 
         this.cameras.main.setBackgroundColor('#131430');
@@ -134,12 +134,10 @@ class GameScene extends Phaser.Scene {
         if (globalParameters.currentLevel >= 40) {
             Sounds.playLoop('sidetrack/bg/bonus_mode');
             bg = this.add.sprite(0, -40, 'background3'); // for final and bonus level
-        }
-        else if (globalParameters.currentLevel >= 14) {
+        } else if (globalParameters.currentLevel >= 14) {
             Sounds.playLoop('sidetrack/bg/auto_mode');
             bg = this.add.sprite(0, -40, 'background2'); // auto mode levels
-        }
-        else {
+        } else {
             Sounds.playLoop('sidetrack/bg/manual_mode');
             bg = this.add.sprite(0, -40, 'background1'); // manual and default
         }
@@ -160,7 +158,7 @@ class GameScene extends Phaser.Scene {
         this.player.anims.play('running');
 
         this.setKeyboardKeys();
-        
+
         /* Listen to properties changes */
         this.game.events.on('global-property-change',
             this.onGlobalPropertyChange, this);
@@ -317,7 +315,8 @@ class GameScene extends Phaser.Scene {
             });
         }
     }
-    handleMovementAudio(moveType) {
+
+    static handleMovementAudio(moveType) {
         Sounds.stop('sidetrack/sfx/start_chime');
         Sounds.stop('sidetrack/sfx/move_fwd');
         Sounds.stop('sidetrack/sfx/move_up');
@@ -326,29 +325,28 @@ class GameScene extends Phaser.Scene {
         Sounds.stop('sidetrack/sfx/push_default');
         Sounds.stop('sidetrack/sfx/failure');
 
-        if (moveType === FORWARD) {
+        if (moveType === FORWARD)
             Sounds.play('sidetrack/sfx/move_fwd');
-        }
 
-        if (moveType === UP) {
+
+        if (moveType === UP)
             Sounds.play('sidetrack/sfx/move_up');
-        }
 
-        if (moveType === DOWN) {
+
+        if (moveType === DOWN)
             Sounds.play('sidetrack/sfx/move_down');
-        }
 
-        if (moveType === JUMP) {
+
+        if (moveType === JUMP)
             Sounds.play('sidetrack/sfx/move_jump');
-        }
 
-        if (moveType === PUSH) {
+
+        if (moveType === PUSH)
             Sounds.play('sidetrack/sfx/push_default');
-        }
 
-        if (moveType === ERROR || moveType === NONE) {
+
+        if (moveType === ERROR || moveType === NONE)
             Sounds.play('sidetrack/sfx/failure');
-        }
     }
 
     handlePlaythruAnimations(moveType) {
@@ -551,9 +549,8 @@ class GameScene extends Phaser.Scene {
         }
 
         // play robot sound only once
-        if (robots.length) {
+        if (robots.length)
             Sounds.play('sidetrack/sfx/robot');
-        }
     }
 
     checkRobotCollisions() {
@@ -588,7 +585,7 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    getRobotDirection(direction, type) {
+    static getRobotDirection(direction, type) {
         let defaultDirection = '';
 
         if (type === ROBOTA)
@@ -599,8 +596,7 @@ class GameScene extends Phaser.Scene {
 
         if (direction === 'up' || direction === 'down')
             return direction;
-        else
-            return defaultDirection;
+        return defaultDirection;
     }
 
     placePlayer() {
@@ -624,7 +620,7 @@ class GameScene extends Phaser.Scene {
 
             this.player.anims.stop('jumping');
             this.player.anims.play('running');
-            
+
             this.isMoving = false;
 
             // handle up movements
@@ -670,7 +666,7 @@ class GameScene extends Phaser.Scene {
             }
         }
 
-        this.handleMovementAudio(rileyMove.moveType);
+        GameScene.handleMovementAudio(rileyMove.moveType);
 
         this.placeTrail();
         this.setSpritePosition(this.player, this.playerXLocation, this.playerYLocation,
@@ -806,9 +802,8 @@ class GameScene extends Phaser.Scene {
             if (index !== this.separator.position && this.separator.position !== index + 1) {
                 this.separator.setVisible(true);
 
-                if (sp !== this.separator.position) {
+                if (sp !== this.separator.position)
                     Sounds.play('sidetrack/sfx/instruction_drag');
-                }
             } else {
                 this.separator.setVisible(false);
             }
@@ -1189,7 +1184,7 @@ class GameScene extends Phaser.Scene {
     }
 
     showModal(modalText) {
-        this.playLobbyLoopMusic();
+        GameScene.playLobbyLoopMusic();
         var width = this.cameras.main.width;
         var height = this.cameras.main.height;
 
@@ -1352,7 +1347,7 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    playLobbyLoopMusic() {
+    static playLobbyLoopMusic() {
         Sounds.stop('sidetrack/bg/manual_mode');
         Sounds.stop('sidetrack/bg/auto_mode');
         Sounds.stop('sidetrack/bg/bonus_mode');
@@ -1458,10 +1453,12 @@ class GameScene extends Phaser.Scene {
             this.runObstacles();
             this.scene.restart(levelParameters[globalParameters.currentLevel]);
         } else if (property === 'robotADirection') {
-            this.robotADirection = this.getRobotDirection(this.params.robotADirection, ROBOTA);
+            this.robotADirection = GameScene.getRobotDirection(this.params.robotADirection,
+                ROBOTA);
             this.setRobotsFrame();
         } else if (property === 'robotBDirection') {
-            this.robotBDirection = this.getRobotDirection(this.params.robotBDirection, ROBOTB);
+            this.robotBDirection = GameScene.getRobotDirection(this.params.robotBDirection,
+                ROBOTB);
             this.setRobotsFrame();
         }
     }

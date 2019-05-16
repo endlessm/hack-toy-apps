@@ -12,7 +12,7 @@ class Button extends Phaser.GameObjects.Sprite {
         this.maxFrames = maxFrames;
         this.myCallback = callback;
         this.myScope = _scene;
-        
+
         this.disabled = false;
 
         this.setInteractive({useHandCursor: true});

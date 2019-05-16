@@ -25,6 +25,7 @@ function getUserFunction(code) {
 
 class GameScene extends Phaser.Scene {
     init(data) {
+        globalParameters.playing = false;
         this.params = data;
 
         this.levelNumber = 0;
@@ -123,8 +124,6 @@ class GameScene extends Phaser.Scene {
                 this.getRobotDirection(this.params.robotBDirection, ROBOTB);
         }
 
-        globalParameters.playing = true;
-
         this.cameras.main.setBackgroundColor('#131430');
     }
 
@@ -148,7 +147,6 @@ class GameScene extends Phaser.Scene {
         // change the origin to the top-left corner
         bg.setOrigin(0, 0);
 
-        // Level text
         this.displayLevelUI();
 
         this.createLevel();
@@ -238,6 +236,8 @@ class GameScene extends Phaser.Scene {
 
         if (window.ToyApp)
             window.ToyApp.loadNotify();
+
+        globalParameters.playing = true;
     }
 
     update() {
@@ -807,18 +807,19 @@ class GameScene extends Phaser.Scene {
                 }
             }
 
-            let sp = this.separator.position;
+            const sp = this.separator.position;
 
             this.setSeparatorPosition(gameObject);
 
             if (index !== this.separator.position && this.separator.position !== index + 1) {
                 this.separator.setVisible(true);
 
-                if (sp != this.separator.position)
+                if (sp !== this.separator.position) {
                     Sounds.play('sidetrack/sfx/instruction_drag');
-            }
-            else
+                }
+            } else {
                 this.separator.setVisible(false);
+            }
         });
 
         this.input.on('dragend', (pointer, gameObject) => {
@@ -952,20 +953,10 @@ class GameScene extends Phaser.Scene {
         this.previousLevelButton = new Button(this, gameW / 2 - 151, gameH / 2 + 5,
             'previous', 1, 1, 2, 1, 1, this.startPreviousLevel.bind(this));
 
-        // disable previous button
-        if (globalParameters.currentLevel <= 1) {
-            this.previousLevelButton.disabled = true;
-            this.previousLevelButton.setFrame(0);
-        }
-
-        // disable next button
-        if (globalParameters.highestAchievedLevel <= globalParameters.currentLevel) {
-            this.nextLevelButton.disabled = true;
-            this.nextLevelButton.setFrame(0);
-        }
-
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
+
+        this.enableLevelSelectors(globalParameters.playing);
 
         const txtLevel = this.add.text(gameW / 2 - 27, gameH / 2 + 4,
             `Level ${this.levelNumber}`, {
@@ -1343,6 +1334,32 @@ class GameScene extends Phaser.Scene {
         }.bind(this));
     }
 
+    enableLevelSelectors(isEnabled) {
+        if (isEnabled) {
+            this.nextLevelButton.disabled = false;
+            this.previousLevelButton.disabled = false;
+            this.nextLevelButton.setFrame(1);
+            this.previousLevelButton.setFrame(1);
+
+            // disable previous button if level 1
+            if (globalParameters.currentLevel <= 1) {
+                this.previousLevelButton.disabled = true;
+                this.previousLevelButton.setFrame(0);
+            }
+
+            // disable next button if reached highest level
+            if (globalParameters.highestAchievedLevel <= globalParameters.currentLevel) {
+                this.nextLevelButton.disabled = true;
+                this.nextLevelButton.setFrame(0);
+            }
+        } else {
+            this.nextLevelButton.disabled = true;
+            this.previousLevelButton.disabled = true;
+            this.previousLevelButton.setFrame(0);
+            this.nextLevelButton.setFrame(0);
+        }
+    }
+
     playLobbyLoopMusic() {
         Sounds.stop('sidetrack/bg/manual_mode');
         Sounds.stop('sidetrack/bg/auto_mode');
@@ -1430,6 +1447,8 @@ class GameScene extends Phaser.Scene {
             this.playControlsCutscene();
         else if (property === 'escapeCutscene' && globalParameters.escapeCutscene)
             this.playEscapeCutscene();
+        else if (property === 'playing')
+            this.enableLevelSelectors(globalParameters.playing);
     }
 
     /* This will be called each time something in this.params changes */

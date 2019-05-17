@@ -338,6 +338,8 @@ var defaultLevelParameters = [
 
     /* Level 16 - Super fast astronauts that are also very small */
     {
+        astronautSize: 6,
+
         spawnEnemyCode: `\
     if (ticksSinceSpawn > 120) {
         return 'asteroid';
@@ -346,7 +348,6 @@ var defaultLevelParameters = [
         spawnAstronautCode: `\
     if (ticksSinceSpawn > 60) {
         return {
-            scale: random(2, 8),
             velocity: { x: 1600 },
             x: width + random(50, 1000),
             y: random(0, height)

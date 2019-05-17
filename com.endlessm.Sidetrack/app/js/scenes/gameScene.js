@@ -1467,6 +1467,11 @@ class GameScene extends Phaser.Scene {
         if (!this.instructionCode)
             return;
 
+        if (this.gameType === DEFAULTGAME) {
+            this.queue = [];
+            return;
+        }
+
         var scope = this.userInstructionsCodeScope;
 
         try {

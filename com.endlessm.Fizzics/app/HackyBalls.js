@@ -1680,7 +1680,14 @@ function HackyBalls()
                 _balls[b].setUsingPhysics ( _species[s].usePhysics );
             }
         }
-        
+
+        // Make sure we deselect disabled tools
+        if ( (globalParameters.flingToolDisabled && _currentTool === TOOL_FLING) ||
+             (globalParameters.moveToolDisabled && _currentTool === TOOL_MOVE) ||
+             (globalParameters.createToolDisabled && _currentTool === TOOL_CREATE) ||
+             (globalParameters.deleteToolDisabled && _currentTool === TOOL_SPECIES))
+            _currentTool = -1;
+
         _tools.applyParameters();
     }
 

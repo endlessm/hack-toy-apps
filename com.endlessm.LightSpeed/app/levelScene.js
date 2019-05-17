@@ -109,6 +109,10 @@ class LevelScene extends Phaser.Scene {
     }
 
     create() {
+        /* Reset Global game state */
+        globalParameters.success = false;
+        globalParameters.score = 0;
+
         const centerY = game.config.height / 2;
 
         /* Fade in scene */
@@ -167,10 +171,6 @@ class LevelScene extends Phaser.Scene {
             this.game.events.off('global-property-change',
                 this.onGlobalPropertyChange, this);
         }, this);
-
-        /* Reset Global game state */
-        globalParameters.success = false;
-        globalParameters.score = 0;
 
         this.updatePlayingState();
     }

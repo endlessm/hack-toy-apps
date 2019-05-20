@@ -1685,7 +1685,12 @@ function HackyBalls()
         if ( (globalParameters.flingToolDisabled && _currentTool === TOOL_FLING) ||
              (globalParameters.moveToolDisabled && _currentTool === TOOL_MOVE) ||
              (globalParameters.createToolDisabled && _currentTool === TOOL_CREATE) ||
-             (globalParameters.deleteToolDisabled && _currentTool === TOOL_SPECIES))
+             (globalParameters.deleteToolDisabled && _currentTool === TOOL_DELETE) ||
+             (globalParameters.createType0Disabled && _currentTool === TOOL_SPECIES && _selectedSpecies === 0) ||
+             (globalParameters.createType1Disabled && _currentTool === TOOL_SPECIES && _selectedSpecies === 1) ||
+             (globalParameters.createType2Disabled && _currentTool === TOOL_SPECIES && _selectedSpecies === 2) ||
+             (globalParameters.createType3Disabled && _currentTool === TOOL_SPECIES && _selectedSpecies === 3) ||
+             (globalParameters.createType4Disabled && _currentTool === TOOL_SPECIES && _selectedSpecies === 4))
             _currentTool = -1;
 
         _tools.applyParameters();

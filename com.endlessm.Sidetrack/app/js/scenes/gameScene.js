@@ -463,6 +463,8 @@ class GameScene extends Phaser.Scene {
     removeAllExplosions() {
         for (var i = 0; i < this.explosions.length; i++)
             this.explosions[i].destroy();
+
+        this.explosions = [];
     }
 
     removeObstacle() {
@@ -604,6 +606,7 @@ class GameScene extends Phaser.Scene {
         this.removeAllExplosions();
         this.placeRobots();
         this.checkRobotCollisions();
+
         this.playerXLocation++;
 
         // destroy all push trails on move
@@ -676,6 +679,10 @@ class GameScene extends Phaser.Scene {
         if (this.playerXLocation === this.MAXMOVES)
             this.placeTrail(true);
 
+        if (this.explosions.length > 0) {
+            Sounds.play('sidetrack/sfx/explosion');
+        }
+        
         this.checkGameOver();
     }
 

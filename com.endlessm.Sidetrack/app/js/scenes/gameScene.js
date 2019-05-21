@@ -269,50 +269,62 @@ class GameScene extends Phaser.Scene {
     }
 
     setKeyboardKeys() {
-        if (this.gameType === PLAYTHRUGAME) {
-            this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
-            this.enterKey.on('up', () => {
-                if (!this.isMoving) {
-                    this.isMoving = true;
-                    this.playButton.setFrame(3);
-                }
-            }, this);
-        }
+        this.enterKey.on('up', () => {
+            if (!this.isMoving) {
+                this.isMoving = true;
+                this.playButton.setFrame(3);
+            }
+        }, this);
+
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.cursors.up.on('up', () => {
+            if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                this.isMoving = true;
+                this.queue.push(UP);
+            }
+        });
+
+        this.cursors.down.on('up', () => {
+            if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                this.isMoving = true;
+                this.queue.push(DOWN);
+            }
+        });
+
+        this.cursors.right.on('up', () => {
+            if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                this.isMoving = true;
+                this.queue.push(FORWARD);
+            }
+        });
+
+        this.spaceBar.on('up', () => {
+            if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
+                this.isMoving = true;
+                this.queue.push(JUMP);
+                this.player.anims.stop('running');
+                this.player.anims.play('jumping');
+            }
+        });
+
+        this.spaceBar.enabled = false;
+        this.cursors.right.enabled = false;
+        this.cursors.up.enabled = false;
+        this.cursors.down.enabled = false;
+        this.enterKey.enabled = false;
+
+        if (this.gameType === PLAYTHRUGAME)
+            this.enterKey.enabled = true;
 
         if (this.gameType === DEFAULTGAME) {
-            this.cursors = this.input.keyboard.createCursorKeys();
-            this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-            this.cursors.up.on('up', () => {
-                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
-                    this.isMoving = true;
-                    this.queue.push(UP);
-                }
-            });
-
-            this.cursors.down.on('up', () => {
-                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
-                    this.isMoving = true;
-                    this.queue.push(DOWN);
-                }
-            });
-
-            this.cursors.right.on('up', () => {
-                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
-                    this.isMoving = true;
-                    this.queue.push(FORWARD);
-                }
-            });
-
-            this.spaceBar.on('up', () => {
-                if (!this.isMoving && this.playerXLocation < this.MAXMOVES) {
-                    this.isMoving = true;
-                    this.queue.push(JUMP);
-                    this.player.anims.stop('running');
-                    this.player.anims.play('jumping');
-                }
-            });
+            this.spaceBar.enabled = true;
+            this.cursors.right.enabled = true;
+            this.cursors.up.enabled = true;
+            this.cursors.down.enabled = true;
         }
     }
 

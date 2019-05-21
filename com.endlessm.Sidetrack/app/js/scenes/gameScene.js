@@ -820,8 +820,8 @@ class GameScene extends Phaser.Scene {
             const index = this.arrSpriteMoves.indexOf(gameObject);
 
             if (this.separator.visible) {
-                this.arrSpriteMoves =
-                    this.arrayMove(this.arrSpriteMoves, index, this.separator.position);
+                this.arrSpriteMoves = this.reorderInstructions(this.arrSpriteMoves,
+                    index, this.separator.position);
                 this.separator.setVisible(false);
             }
 
@@ -1126,13 +1126,16 @@ class GameScene extends Phaser.Scene {
         }
     }
 
-    arrayMove(arr, old_index, new_index) {
+    reorderInstructions(arr, old_index, new_index) {
         void this;
+        let index = new_index;
+        if (old_index < new_index)
+            index--;
 
         if (new_index >= arr.length)
             arr.push(arr.splice(old_index, 1)[0]);
         else
-            arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+            arr.splice(index, 0, arr.splice(old_index, 1)[0]);
 
         return arr;
     }

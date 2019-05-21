@@ -1325,7 +1325,7 @@ class GameScene extends Phaser.Scene {
         this.isAnimating = true;
         this.felix = this.add.sprite(0, 0, 'felixnet').setOrigin(0);
 
-        this.setSpritePosition(this.felix, this.goalXLocation - 1, this.goalYLocation);
+        this.setSpritePosition(this.felix, this.goalXLocation - 3, this.goalYLocation);
         this.felix.setDepth(5);
         this.felix.anims.play('felixnet');
 

@@ -870,16 +870,14 @@ class GameScene extends Phaser.Scene {
             this.arrSpriteMoves.push(sprite);
         }
 
-        // for playthru game types, the moves will be pre-populated
-        for (let i = 0; i < this.queue.length; i++) {
-            // sets the initial sprite frame
-            const moveSquare = this.arrSpriteMoves[i].setFrame(this.queue[i]);
+        if (this.gameType === PLAYTHRUGAME) {
+            for (let i = 0; i < this.queue.length; i++) {
+                // sets the initial sprite frame
+                const moveSquare = this.arrSpriteMoves[i].setFrame(this.queue[i]);
 
-            // stores the moveType since sprite frames will change
-            moveSquare.moveType = this.queue[i];
+                // stores the moveType since sprite frames will change
+                moveSquare.moveType = this.queue[i];
 
-            // for playthru games, check if draggable is set
-            if (this.gameType === PLAYTHRUGAME) {
                 moveSquare.on('pointerover', () => {
                     if (!this.isMoving)
                         moveSquare.setFrame(moveSquare.moveType + this.moveSquareOffset);
@@ -1464,9 +1462,6 @@ class GameScene extends Phaser.Scene {
     }
 
     runInstruction() {
-        if (!this.instructionCode)
-            return;
-
         if (this.gameType === DEFAULTGAME) {
             this.queue = [];
             return;
@@ -1475,7 +1470,8 @@ class GameScene extends Phaser.Scene {
         var scope = this.userInstructionsCodeScope;
 
         try {
-            this.instructionCode(scope);
+            if (this.instructionCode)
+                this.instructionCode(scope);
 
             // handle none instructions
             for (var i = 0; i <= this.MAXMOVES; i++) {

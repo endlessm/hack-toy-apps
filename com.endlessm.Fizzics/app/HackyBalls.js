@@ -457,8 +457,7 @@ function HackyBalls()
 
     //------------------------------------------
     this.createBall = function(x, y, species) {
-        if (_numBalls < MAX_BALLS &&
-            !globalParameters[`createType${species}Disabled`]) {
+        if (_numBalls < MAX_BALLS) {
             if (!globalParameters.levelLoading)
             {
                 Sounds.play( _species[ species ].createSound );
@@ -1447,8 +1446,9 @@ function HackyBalls()
     
     //---------------------------------
     this.spaceKeyPressed = function()
-    {    
-        this.createBall( _mousePosition.x, _mousePosition.y, _selectedSpecies );        
+    {
+        if (!globalParameters[`createType${species}Disabled`])
+            this.createBall( _mousePosition.x, _mousePosition.y, _selectedSpecies );
     }
 
     //---------------------------------

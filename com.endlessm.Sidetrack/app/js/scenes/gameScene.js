@@ -1442,6 +1442,7 @@ class GameScene extends Phaser.Scene {
     }
 
     onGlobalPropertyChange(obj, property) {
+        console.log('onGlobalPropertyChange ' + property);
         if (Object.is(globalParameters, obj))
             this.onGlobalParametersNotify(property);
         else if (Object.is(this.params, obj))
@@ -1460,6 +1461,7 @@ class GameScene extends Phaser.Scene {
 
     /* This will be called each time something in this.params changes */
     onParametersNotify(property) {
+        console.log('onParametersNotify ' + property);
         if (property === 'instructionCode') {
             if (this.isInGameInstructionUpdate) {
                 this.isInGameInstructionUpdate = false;

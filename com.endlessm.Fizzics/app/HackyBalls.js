@@ -1075,6 +1075,8 @@ function HackyBalls()
         _numBalls = 0;
         globalParameters.levelLoading = true;
         _game.setLevel( this, _game.getCurrentLevel(), _collisionBalls, _ballsWithSomeCollision ); 
+        _tools.select(-1);
+
         globalParameters.levelLoading = false;
     }
 

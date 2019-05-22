@@ -115,9 +115,6 @@ class GameScene extends Phaser.Scene {
             if (this.params.gameType >= 0)
                 this.gameType = this.params.gameType;
 
-            if (this.params.level >= 0)
-                globalParameters.currentLevel = this.params.level;
-
             this.robotADirection =
                 GameScene.getRobotDirection(this.params.robotADirection, ROBOTA);
             this.robotBDirection =
@@ -131,10 +128,10 @@ class GameScene extends Phaser.Scene {
         Sounds.stop('sidetrack/bg/lobby_loop');
         // create bg sprite and add background audio
         let bg;
-        if (globalParameters.currentLevel >= 40) {
+        if (this.levelNumber >= 40) {
             Sounds.playLoop('sidetrack/bg/bonus_mode');
             bg = this.add.sprite(0, -40, 'background3'); // for final and bonus level
-        } else if (globalParameters.currentLevel >= 14) {
+        } else if (this.levelNumber >= 14) {
             Sounds.playLoop('sidetrack/bg/auto_mode');
             bg = this.add.sprite(0, -40, 'background2'); // auto mode levels
         } else {
@@ -223,11 +220,6 @@ class GameScene extends Phaser.Scene {
             this.setSpritePosition(this.spacebarButton, -3, this.countY - 1, -20, -10);
         }
 
-        if (globalParameters.currentLevel === 26 && globalParameters.showHackdex) {
-            this.hackdex = this.add.sprite(0, 0, 'hackdex').setOrigin(0);
-            this.setSpritePosition(this.hackdex, this.goalXLocation, this.goalYLocation);
-        }
-
         /* Reset Global game state */
         globalParameters.success = true;
         globalParameters.score = 0;
@@ -235,7 +227,13 @@ class GameScene extends Phaser.Scene {
         if (window.ToyApp)
             window.ToyApp.loadNotify();
 
+        globalParameters.currentLevel = this.levelNumber;
         globalParameters.playing = true;
+
+        if (globalParameters.currentLevel === 26 && globalParameters.showHackdex) {
+            this.hackdex = this.add.sprite(0, 0, 'hackdex').setOrigin(0);
+            this.setSpritePosition(this.hackdex, this.goalXLocation, this.goalYLocation);
+        }
     }
 
     update() {
@@ -943,8 +941,6 @@ class GameScene extends Phaser.Scene {
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
 
-        this.enableLevelSelectors(globalParameters.playing);
-
         const txtLevel = this.add.text(gameW / 2 - 27, gameH / 2 + 4,
             `Level ${this.levelNumber}`, {
                 font: 'bold 30pt Metropolis',
@@ -1253,21 +1249,20 @@ class GameScene extends Phaser.Scene {
         if (this.isAnimating)
             return;
         Sounds.play('sidetrack/sfx/start_chime');
-        globalParameters.currentLevel = this.params.level;
-        this.scene.restart(levelParameters[globalParameters.currentLevel]);
+        this.scene.restart(levelParameters[this.levelNumber]);
     }
 
     startPreviousLevel() {
-        if (this.isAnimating || globalParameters.currentLevel <= 1)
+        if (this.isAnimating || this.levelNumber <= 1)
             return;
-        this.scene.restart(levelParameters[globalParameters.currentLevel - 1]);
+        this.scene.restart(levelParameters[this.levelNumber - 1]);
     }
 
     startNextLevel() {
         if (this.isAnimating ||
-            globalParameters.currentLevel >= globalParameters.highestAchievedLevel)
+            this.levelNumber >= globalParameters.highestAchievedLevel)
             return;
-        this.scene.restart(levelParameters[globalParameters.currentLevel + 1]);
+        this.scene.restart(levelParameters[this.levelNumber + 1]);
     }
 
     createModalBackground(width, height) {
@@ -1436,6 +1431,11 @@ class GameScene extends Phaser.Scene {
             this.playEscapeCutscene();
         else if (property === 'playing')
             this.enableLevelSelectors(globalParameters.playing);
+        else if (property === 'currentLevel') {
+            if (this.levelNumber != globalParameters.currentLevel) {
+                globalParameters.currentLevel = this.levelNumber;
+            }
+        }
     }
 
     /* This will be called each time something in this.params changes */

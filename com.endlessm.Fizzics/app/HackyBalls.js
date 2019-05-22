@@ -1101,10 +1101,19 @@ function HackyBalls()
             else
                 Sounds.play( "fizzics/NEXT-LEVEL/clicked" );
             this.setGameLevel( _game.getNextLevel() );
+            return;
         }
-        if ( gameAction == GAME_ACTION_PREV_LEVEL  ) { this.setGameLevel( _game.getPrevLevel() ); Sounds.play( "fizzics/buttonClick" ); }
-        if ( gameAction == GAME_ACTION_RESET_LEVEL ) { this.resetLevelOnly(); Sounds.play( "fizzics/buttonClick" ); }
-        
+        if ( gameAction == GAME_ACTION_PREV_LEVEL  ) {
+            this.setGameLevel( _game.getPrevLevel() );
+            Sounds.play( "fizzics/buttonClick" );
+            return;
+        }
+        if ( gameAction == GAME_ACTION_RESET_LEVEL ) {
+            this.resetLevelOnly();
+            Sounds.play( "fizzics/buttonClick" );
+            return;
+        }
+
         //--------------------------
         // detect selecting a tool
         //--------------------------

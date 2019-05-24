@@ -1,0 +1,13 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.game {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #d3d3d3;
+}

@@ -2,3 +2,18 @@
 /com.endlessm.HackUnlock.json
 /com.endlessm.LightSpeed.json
 /com.endlessm.OperatingSystemApp.json
+
+# Vendors
+*/**/node_modules/
+
+# System and IDE files
+Thumbs.db
+.DS_Store
+.idea
+*.suo
+*.sublime-project
+*.sublime-workspace
+.vscode/
+*.log
+*/**/*.map
+.directory

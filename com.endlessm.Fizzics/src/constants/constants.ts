@@ -25,7 +25,7 @@ export const PI_OVER_180 = Math.PI / 180.0;
 export const MILLISECONDS_PER_SECOND = 1000;
 
 export const PLAYER_DEFAULTS: IRawPlayer = {
-  unlockedLevel: 20
+  unlockedLevel: 0
 };
 
 export const MAIN_BALL_DEFAULT_FRAME = 6;

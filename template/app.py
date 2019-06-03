@@ -41,6 +41,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
     def __init__(self, application, metadata):
         super(ToyAppWindow, self).__init__()
 
+        self.app = application
         self.app_id = application.get_application_id()
         app_info = Gio.DesktopAppInfo.new(self.app_id + '.desktop')
         decorated = metadata.get('decorated', True)
@@ -88,6 +89,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
         self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
         self._manager_add_msg_handler(manager, 'ToyAppSaveState', self._on_save_state)
+        self._manager_add_msg_handler(manager, 'ToyAppQuit', self._on_quit)
         self._manager_add_msg_handler(manager, 'playSound', self._on_play_sound)
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
@@ -176,6 +178,9 @@ toy-app-window > overlay > revealer > frame {
 
         GameState.set('%s.State' % self.app_id,
                       GLib.Variant('s', val.to_string()))
+
+    def _on_quit(self, manager, result):
+        self.app.quit()
 
     def _on_load_state_finish(self, proxy, result, user_data):
         val = None;

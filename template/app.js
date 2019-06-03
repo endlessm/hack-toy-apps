@@ -21,6 +21,10 @@ window.ToyApp = {
         }, 2);
         window.webkit.messageHandlers.ToyAppSaveState.postMessage(string);
     },
+
+    quit() {
+        window.webkit.messageHandlers.ToyAppQuit.postMessage({});
+    },
 };
 
 window.Sounds = {

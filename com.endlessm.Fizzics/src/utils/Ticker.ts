@@ -1,19 +1,23 @@
 export class Ticker {
-  private __actors: Set<any> = new Set();
+  private readonly _actors: Set<
+    (time: number, delta: number) => void
+  > = new Set();
 
-  public get actors(): Set<any> {
-    return this.__actors;
+  public get actors(): Set<(time: number, delta: number) => void> {
+    return this._actors;
   }
 
-  public add(fn: any): void {
-    this.__actors.add(fn);
+  public add(fn: (time: number, delta: number) => void): void {
+    this._actors.add(fn);
   }
 
-  public remove(fn: any): void {
-    this.__actors.delete(fn);
+  public remove(fn: (time: number, delta: number) => void): void {
+    this._actors.delete(fn);
   }
 
   public update(time: number, delta: number): void {
-    this.__actors.forEach((actor: any) => actor(time, delta));
+    this._actors.forEach((actor: (time: number, delta: number) => void) => {
+      actor(time, delta);
+    });
   }
 }

@@ -1,5 +1,20 @@
 import { TRANSFORM } from "..";
 
+export function isEmpty(arr: any[]): boolean {
+  return arr.length === 0;
+}
+
+export const getUUID = (() => {
+  let num = 0;
+
+  return (prefix = "") => {
+    num += 1;
+    const value = num < 10 ? `0${num}` : num;
+
+    return `${prefix}${value.toString()}`;
+  };
+})();
+
 export function lineAngle(
   x1: number,
   y1: number,
@@ -52,6 +67,7 @@ export function loopRunnable(
   ...args: any[]
 ): Phaser.Time.TimerEvent {
   fireImmediately && runnable.call(context, ...args);
+
   return addRunnable(scene, delay, runnable, context, true, ...args);
 }
 
@@ -82,11 +98,13 @@ function addRunnable(
 
 export function isInBounds(x: number, y: number): boolean {
   const { width, height } = TRANSFORM;
+
   return new Phaser.Geom.Rectangle(0, 0, width, height).contains(x, y);
 }
 
 export function random(min: number, max: number, toFixed: number = 0): number {
   const diff = Math.max(min - max, max - min) * Math.random();
+
   return +(Math.min(min, max) + diff).toFixed(toFixed);
 }
 

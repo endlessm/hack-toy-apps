@@ -1,16 +1,23 @@
-import { inject, injectable } from "@robotlegsjs/core";
+import { Facade } from "@koreez/mvcx";
+import { SceneEvents } from "../../constants/EventNames";
+import { SceneKey } from "../../constants/types";
 import { PreloadScene } from "../../scenes/PreloadScene";
-import { InitialAssetsLoadCompleteSignal } from "../../signals/InitialAssetsLoadCompleteSignal";
-import { AbstractSceneMediator } from "../AbstractSceneMediator";
+import { AbstractSceneMediator } from "./AbstractSceneMediator";
 
-@injectable()
 export class PreloadSceneMediator extends AbstractSceneMediator<PreloadScene> {
-  @inject(InitialAssetsLoadCompleteSignal)
-  private _initialAssetsLoadCompleteSignal: InitialAssetsLoadCompleteSignal;
+  constructor() {
+    super(<PreloadScene>window.fizzicsGame.scene.getScene(SceneKey.Preload));
+  }
 
-  protected sceneCreated(): void {
-    super.sceneCreated();
+  public setView(view: PreloadScene): void {
+    super.setView(view);
 
-    this._initialAssetsLoadCompleteSignal.dispatch();
+    this.view.scene.start(SceneKey.Preload);
+  }
+
+  protected onSceneReady(): void {
+    super.onSceneReady();
+
+    this.facade.sendNotification(SceneEvents.LoadComplete);
   }
 }

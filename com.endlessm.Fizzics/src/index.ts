@@ -1,29 +1,24 @@
-/* tslint:disable:no-import-side-effect ordered-imports  */
-import "reflect-metadata";
-import "./endless";
 import "./phaser";
+import "./endless";
 import { I18nPlugin } from "@koreez/phaser3-i18n";
 import { NinePatchPlugin } from "@koreez/phaser3-ninepatch";
 import { CANVAS_CONTAINER_ID } from "./constants/constants";
+import { FizzicsFacade } from "./FizzicsFacade";
 import { FizzicsGame } from "./FizzicsGame";
 
 window.onload = () => {
   startGame();
 };
 
-export const TRANSFORM: {
-  width: number;
-  height: number;
-  center: Phaser.Geom.Point;
-} = {
+// tslint:disable-next-line: export-name
+export const TRANSFORM = {
   width: 0,
   height: 0,
   center: new Phaser.Geom.Point()
 };
 
 function startGame(): void {
-  //@ts-ignore
-  const gameConfig: Phaser.Types.Core.GameConfig = {
+  const gameConfig: GameConfig = {
     title: "Fizzics",
     type: Phaser.CANVAS,
     scale: {
@@ -48,17 +43,17 @@ function startGame(): void {
       }
     },
     plugins: {
-      global: [
-        { key: "NinePatchPlugin", plugin: NinePatchPlugin, start: true }
-      ],
+      global: [{ key: "NinePatchPlugin", plugin: NinePatchPlugin, start: true }],
       scene: [{ key: "i18nPlugin", mapping: "i18n", plugin: I18nPlugin }]
     }
   };
 
-  // tslint:disable-next-line:no-unused-expression
-  const fizzicsGame = new FizzicsGame(gameConfig);
+  window.fizzicsGame = new FizzicsGame(gameConfig);
+  setTimeout(() => {
+    FizzicsFacade.Instance.initialize(false);
+  });
 
-  const { width, height } = fizzicsGame.scale;
+  const { width, height } = window.fizzicsGame.scale;
   TRANSFORM.width = width;
   TRANSFORM.height = height;
   TRANSFORM.center.setTo(width / 2, height / 2);

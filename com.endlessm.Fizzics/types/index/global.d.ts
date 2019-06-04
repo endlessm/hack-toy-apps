@@ -1,3 +1,4 @@
+
 declare const __ENV__: string;
 declare var globalParameters: {
   //min and max values for ball parameters
@@ -174,6 +175,8 @@ declare var ToyApp: {
   requestState(): void;
 };
 declare var Sounds: { play(key: string): void; playLoop(key: string): void };
+declare var fizzicsGame: Phaser.Game;
+
 
 interface Window {
   flip(): void;
@@ -352,4 +355,5 @@ interface Window {
   };
   ToyApp: any;
   Sounds: any;
+  fizzicsGame: Phaser.Game;
 }

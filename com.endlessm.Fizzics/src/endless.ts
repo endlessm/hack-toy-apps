@@ -25,8 +25,8 @@ const globalParameters = {
   backgroundImageIndex: 0,
 
   // switches for including game tools
-  moveToolActive: false,
   flingToolActive: false,
+  moveToolActive: false,
   createToolActive: false,
   deleteToolActive: false,
 

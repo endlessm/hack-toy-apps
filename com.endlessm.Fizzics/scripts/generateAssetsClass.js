@@ -120,6 +120,7 @@ const handleAtlasesTree = node => {
         shell
           .ShellString(`\nexport namespace  ${toPascalCase(name)} {`)
           .toEnd(assetsClassFile);
+
         shell.ShellString('\nexport class Atlas {').toEnd(assetsClassFile);
         shell
           .ShellString(`\npublic static readonly Name: string =  '${name}'`)
@@ -139,10 +140,33 @@ const handleAtlasesTree = node => {
         shell.ShellString(`\n}`).toEnd(assetsClassFile);
 
         shell.ShellString(`\nexport namespace  Atlas {`).toEnd(assetsClassFile);
-
+        //
+        //
+        //
+        shell.ShellString('\nexport class Pairs {').toEnd(assetsClassFile);
+        json['frames'].forEach(frameData => {
+          frameFull = frameData['filename'];
+          indexOfExtension = frameFull.lastIndexOf('.');
+          frameName =
+            indexOfExtension === -1
+              ? frameFull
+              : frameFull.substring(0, indexOfExtension);
+          shell
+            .ShellString(
+              `\npublic static readonly ${toPascalCase(
+                frameName,
+              )}Pair: { key: string, frame: string} = { key: '${name}', frame: '${frameFull}'}`,
+            )
+            .toEnd(assetsClassFile);
+        });
+        shell.ShellString(`\n}`).toEnd(assetsClassFile);
+        //
+        //
+        //
         shell.ShellString(`\nexport enum Frames {`).toEnd(assetsClassFile);
-        for (let frame in json['textures'][0]['frames']) {
-          frameFull = json['textures'][0]['frames'][frame]['filename'];
+
+        json['frames'].forEach(frameData => {
+          frameFull = frameData['filename'];
           indexOfExtension = frameFull.lastIndexOf('.');
           frameName =
             indexOfExtension === -1
@@ -151,15 +175,17 @@ const handleAtlasesTree = node => {
           shell
             .ShellString(`\n ${toPascalCase(frameName)} = '${frameFull}',`)
             .toEnd(assetsClassFile);
-        }
+        });
+
         shell.ShellString(`\n}`).toEnd(assetsClassFile);
 
         shell
           .ShellString(`\nexport class FrameSourceSizes {`)
           .toEnd(assetsClassFile);
-        for (let frame in json['textures'][0]['frames']) {
-          sourceSize = json['textures'][0]['frames'][frame]['sourceSize'];
-          frameFull = json['textures'][0]['frames'][frame]['filename'];
+
+        json['frames'].forEach(frameData => {
+          sourceSize = frameData['sourceSize'];
+          frameFull = frameData['filename'];
           indexOfExtension = frameFull.lastIndexOf('.');
           frameName =
             indexOfExtension === -1
@@ -172,80 +198,11 @@ const handleAtlasesTree = node => {
               )}:{w:number; h:number} = {w:${sourceSize.w}, h:${sourceSize.h}}`,
             )
             .toEnd(assetsClassFile);
-        }
-        shell.ShellString(`\n}`).toEnd(assetsClassFile);
+        });
 
         shell.ShellString(`\n}`).toEnd(assetsClassFile);
+
         shell.ShellString(`\n}`).toEnd(assetsClassFile);
-      } catch (e) {
-        console.error('\x1b[31m%s\x1b[0m', `Atlas Data File Error: ${e}`);
-      }
-    }
-  }
-};
-
-const handleSpritefontsTree = node => {
-  if (node.type === 'directory') {
-    if (node.children.length === 0) {
-      console.warn(
-        '\x1b[33m%s\x1b[0m',
-        `Warning!!!\nEmpty directory ${node.path}`,
-      );
-    } else {
-      shell
-        .ShellString(`\nexport namespace  ${toPascalCase(node.name)} {`)
-        .toEnd(assetsClassFile);
-      node.children.forEach(childNode => handleSpritefontsTree(childNode));
-      shell.ShellString(`\n}`).toEnd(assetsClassFile);
-    }
-  } else {
-    if (node.extension === '.json') {
-      try {
-        const fileData = fs.readFileSync(node.path, 'ascii');
-        const json = JSON.parse(fileData);
-
-        let name = node.name.substring(0, node.name.indexOf('.'));
-        let path = node.path;
-        if (name.endsWith('-sd')) {
-          return;
-        } else if (name.endsWith('-hd')) {
-          name = name.replace('-hd', '');
-          path = path.replace('-hd', '');
-        }
-        shell
-          .ShellString(`\nexport class  ${toPascalCase(name)} {`)
-          .toEnd(assetsClassFile);
-        shell
-          .ShellString(`\npublic static readonly Name: string =  '${name}'`)
-          .toEnd(assetsClassFile);
-
-        shell
-          .ShellString(
-            `\npublic static readonly XmlURL: string =  '${path.replace(
-              'json',
-              'xml',
-            )}'`,
-          )
-          .toEnd(assetsClassFile);
-
-        shell
-          .ShellString(`\npublic static readonly Chars: any[] =  [`)
-          .toEnd(assetsClassFile);
-        for (let char in json['chars']) {
-          carrFull = json['chars'][char];
-          shell
-            .ShellString(`\n${JSON.stringify(carrFull)},`)
-            .toEnd(assetsClassFile);
-        }
-        shell.ShellString(`\n]`).toEnd(assetsClassFile);
-
-        shell
-          .ShellString(
-            `\npublic static readonly Atlas: string =  '${json['atlas']}'`,
-          )
-          .toEnd(assetsClassFile);
-
-
         shell.ShellString(`\n}`).toEnd(assetsClassFile);
       } catch (e) {
         console.error('\x1b[31m%s\x1b[0m', `Atlas Data File Error: ${e}`);
@@ -405,8 +362,6 @@ const loopTree = node => {
       handleAtlasesTree(node);
     } else if (node.name.toLowerCase() === 'bitmapfonts') {
       handleAssetTree(node, 'xml', 'png');
-    } else if (node.name.toLowerCase() === 'spritefonts') {
-      handleSpritefontsTree(node);
     } else if (node.name.toLowerCase() === 'audios') {
       handleAssetTree(node, 'mp3', 'ogg');
     } else if (node.name.toLowerCase() === 'spines') {

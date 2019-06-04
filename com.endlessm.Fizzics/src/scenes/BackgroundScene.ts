@@ -8,11 +8,11 @@ export class BackgroundScene extends AbstractScene {
     this._buildBg();
   }
 
-  public updateBackground(frame: string): void {
-    this._bg.setTexture(frame);
+  public updateBackground(imageIndex: number): void {
+    this._bg.setTexture(`background_${imageIndex}`);
   }
 
-  private _buildBg() {
+  private _buildBg(): void {
     const { x, y } = TRANSFORM.center;
     this._bg = this.add.image(x, y, "");
   }

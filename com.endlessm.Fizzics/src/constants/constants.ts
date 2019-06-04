@@ -1,40 +1,72 @@
-import { Images } from "../assets";
-import { IRawPlayer } from "./types";
+import { IButtonConfig, IRawPlayer } from "./types";
+export const raw = require("../../assets/jsones/GameLevels.json");
 
 export const CANVAS_CONTAINER_ID: string = "canvas";
-export const FIZZICS_STORAGE_KEY: string = "com_endlessm_fizzics";
-export const GAME: string = "game";
-export const ACTIVE_LEVEL: string = "active_level";
-export const MAIN_BALL_TYPE: string = "main_ball_type";
-export const STAR_BALL_TYPE: string = "star_ball_type";
-export const DIAMOND_BALL_TYPE: string = "diamond_ball_type";
-export const ROCK_BALL_TYPE: string = "rock_ball_type";
-export const BOMB_BALL_TYPE: string = "bomb_ball_type";
-
-export const MAIN_BALL_IDS: string = "main_balls_ids";
-export const STAR_BALL_IDS: string = "star_balls_ids";
-export const DIAMOND_BALL_IDS: string = "diamond_balls_ids";
-export const ROCK_BALL_IDS: string = "rock_balls_ids";
-export const BOMB_BALL_IDS: string = "bomb_balls_ids";
 
 export const ZERO = 0.0;
-export const ONE_HALF = 0.5;
-export const ONE = 1.0;
-export const PI2 = Math.PI * 2.0;
-export const PI_OVER_180 = Math.PI / 180.0;
-export const MILLISECONDS_PER_SECOND = 1000;
 
 export const PLAYER_DEFAULTS: IRawPlayer = {
-  unlockedLevel: 0
+  unlockedLevel: 11
 };
 
-export const MAIN_BALL_DEFAULT_FRAME = 6;
-export const ROCK_BALL_DEFAULT_FRAME = 9;
-export const STAR_BALL_DEFAULT_FRAME = 8;
-export const DIAMOND_BALL_DEFAULT_FRAME = 10;
-export const BOMB_BALL_DEFAULT_FRAME = 1;
+export const MAX_BALLS_COUNT = 110;
+
+export const LEVEL_BAR_PREV_BUTTON_CONFIG: IButtonConfig = {
+  hoverFrame: "prev_hover",
+  upFrame: "prev_enabled",
+  disableFrame: "prev_disabled"
+};
+
+export const LEVEL_BAR_NEXT_BUTTON_CONFIG: IButtonConfig = {
+  hoverFrame: "prev_hover",
+  upFrame: "prev_enabled",
+  disableFrame: "prev_disabled",
+  flipX: true
+};
+
+export const LEVEL_BAR_RETRY_BUTTON_CONFIG: IButtonConfig = {
+  hoverFrame: "reset_hover",
+  upFrame: "reset_enabled",
+  disableFrame: "reset_disabled"
+};
+
+export const ToolSound = {
+  fling: "fizzics/flingTool",
+  move: "fizzics/moveTool",
+  create: "fizzics/createTool",
+  remove: "fizzics/trashTool"
+};
 
 export const LEVEL_DEFAULTS = {
+  minRadius: 10.0,
+  maxRadius: 100.0,
+  minGravity: -50.0,
+  maxGravity: 50.0,
+  minCollision: 0.01,
+  maxCollision: 0.2,
+  minFriction: 0.0,
+  maxFriction: 100.0,
+  minSocialForce: -30.0,
+  maxSocialForce: 30.0,
+
+  flingToolActive: true,
+  moveToolActive: false,
+  createToolActive: false,
+  deleteToolActive: false,
+
+  flingToolDisabled: false,
+  moveToolDisabled: false,
+  createToolDisabled: false,
+  deleteToolDisabled: false,
+
+  createType0Disabled: false,
+  createType1Disabled: false,
+  createType2Disabled: false,
+  createType3Disabled: false,
+  createType4Disabled: false,
+
+  backgroundImageIndex: 2,
+
   // MAIN
   imageIndex_0: 6,
   radius_0: 50,
@@ -62,7 +94,6 @@ export const LEVEL_DEFAULTS = {
   successSound_0: 0,
   toolSound_0: 0,
 
-  // parameters for species 1 balls
   // STAR
   radius_1: 60,
   gravity_1: ZERO,
@@ -90,7 +121,6 @@ export const LEVEL_DEFAULTS = {
   successSound_1: 1,
   toolSound_1: 1,
 
-  // parameters for species 2 balls
   // BOMB
   radius_2: 60,
   gravity_2: ZERO,
@@ -118,7 +148,6 @@ export const LEVEL_DEFAULTS = {
   successSound_2: 2,
   toolSound_2: 2,
 
-  // parameters for species 3 balls
   // ROCK
   radius_3: 60,
   gravity_3: ZERO,
@@ -146,7 +175,6 @@ export const LEVEL_DEFAULTS = {
   successSound_3: 3,
   toolSound_3: 3,
 
-  // parameters for species 4 balls
   // DIAMOND
   radius_4: 35,
   gravity_4: ZERO,
@@ -173,77 +201,4 @@ export const LEVEL_DEFAULTS = {
   flySound_4: 4,
   successSound_4: 4,
   toolSound_4: 4
-};
-
-export const MAX_BALLS_COUNT = 110;
-
-export const LEVEL_BAR_PREVIEWS_BUTTON_CONFIG: any = {
-  hoverFrame: Images.PrevHover.Name,
-  upFrame: Images.PrevEnabled.Name,
-  disableFrame: Images.PrevDisabled.Name
-};
-
-export const LEVEL_BAR_NEXT_BUTTON_CONFIG: any = {
-  hoverFrame: Images.PrevHover.Name,
-  upFrame: Images.PrevEnabled.Name,
-  disableFrame: Images.PrevDisabled.Name,
-  flip: true
-};
-
-export const LEVEL_BAR_RETRY_BUTTON_CONFIG: any = {
-  hoverFrame: Images.ResetHover.Name,
-  upFrame: Images.ResetEnabled.Name,
-  disableFrame: Images.ResetDisabled.Name
-};
-
-export const TOOLS_BAR_FLING_TOOL_CONFIG: any = {
-  active: Images.FlingToolSelected.Name,
-  passive: Images.FlingTool.Name
-};
-
-export const TOOLS_BAR_DRAG_TOOL_CONFIG: any = {
-  active: Images.MoveToolSelected.Name,
-  passive: Images.MoveTool.Name
-};
-
-export const TOOLS_BAR_CREATE_TOOL_CONFIG: any = {
-  active: Images.CreateToolSelected.Name,
-  passive: Images.CreateTool.Name
-};
-
-export const TOOLS_BAR_DELETE_TOOL_CONFIG: any = {
-  active: Images.DeleteToolSelected.Name,
-  passive: Images.DeleteTool.Name
-};
-
-export const CREATE_TOOL_MAIN_BALL_OPTION_CONFIG: any = {
-  scale: 0.23,
-  frame: MAIN_BALL_DEFAULT_FRAME
-};
-
-export const ToolSound: any = {
-  fling: "fizzics/flingTool",
-  drag: "fizzics/moveTool",
-  create: "fizzics/createTool",
-  delete: "fizzics/trashTool"
-};
-
-export const CREATE_TOOL_STAR_BALL_OPTION_CONFIG: any = {
-  scale: 0.25,
-  frame: STAR_BALL_DEFAULT_FRAME
-};
-
-export const CREATE_TOOL_BOMB_BALL_OPTION_CONFIG: any = {
-  scale: 0.22,
-  frame: BOMB_BALL_DEFAULT_FRAME
-};
-
-export const CREATE_TOOL_ROCK_BALL_OPTION_CONFIG: any = {
-  scale: 0.24,
-  frame: ROCK_BALL_DEFAULT_FRAME
-};
-
-export const CREATE_TOOL_DIAMOND_BALL_OPTION_CONFIG: any = {
-  scale: 0.24,
-  frame: DIAMOND_BALL_DEFAULT_FRAME
 };

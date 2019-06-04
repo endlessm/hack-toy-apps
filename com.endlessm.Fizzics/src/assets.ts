@@ -4,6 +4,164 @@
 // tslint:disable:naming-convention
 
 
+export namespace  Atlases {
+export namespace  Fizzics {
+export class Atlas {
+public static readonly Name: string =  'fizzics'
+public static readonly AtlasURL: string =  'assets/atlases/fizzics.json'
+public static readonly TextureURL: string =  'assets/atlases/fizzics.png'
+}
+export namespace  Atlas {
+export class Pairs {
+public static readonly BallPair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_0'}
+public static readonly Ball1Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_1'}
+public static readonly Ball2Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_2'}
+public static readonly Ball3Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_3'}
+public static readonly Ball4Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_4'}
+public static readonly Ball5Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_5'}
+public static readonly Ball6Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_6'}
+public static readonly Ball7Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_7'}
+public static readonly Ball8Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_8'}
+public static readonly Ball9Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_9'}
+public static readonly Ball10Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'ball_10'}
+public static readonly Collision1Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_1'}
+public static readonly Collision2Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_2'}
+public static readonly Collision3Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_3'}
+public static readonly Collision4Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_4'}
+public static readonly Collision5Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_5'}
+public static readonly Collision6Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_6'}
+public static readonly Collision7Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_7'}
+public static readonly Collision8Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_8'}
+public static readonly Collision9Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_9'}
+public static readonly Collision10Pair: { key: string, frame: string} = { key: 'fizzics', frame: 'collision_10'}
+public static readonly CreateToolPair: { key: string, frame: string} = { key: 'fizzics', frame: 'create_tool'}
+public static readonly CreateToolSelectedPair: { key: string, frame: string} = { key: 'fizzics', frame: 'create_tool_selected'}
+public static readonly DeleteBallPair: { key: string, frame: string} = { key: 'fizzics', frame: 'delete_ball'}
+public static readonly DiamondBgPair: { key: string, frame: string} = { key: 'fizzics', frame: 'diamond_bg'}
+public static readonly DiamondsIconPair: { key: string, frame: string} = { key: 'fizzics', frame: 'diamonds_icon'}
+public static readonly FlingBgPair: { key: string, frame: string} = { key: 'fizzics', frame: 'fling_bg'}
+public static readonly FlingToolPair: { key: string, frame: string} = { key: 'fizzics', frame: 'fling_tool'}
+public static readonly FlingToolSelectedPair: { key: string, frame: string} = { key: 'fizzics', frame: 'fling_tool_selected'}
+public static readonly FlingerActivePair: { key: string, frame: string} = { key: 'fizzics', frame: 'flinger_active'}
+public static readonly FlingerHoverPair: { key: string, frame: string} = { key: 'fizzics', frame: 'flinger_hover'}
+public static readonly FlingsIconPair: { key: string, frame: string} = { key: 'fizzics', frame: 'flings_icon'}
+public static readonly LevelBgPair: { key: string, frame: string} = { key: 'fizzics', frame: 'level_bg'}
+public static readonly MoveToolPair: { key: string, frame: string} = { key: 'fizzics', frame: 'move_tool'}
+public static readonly MoveToolSelectedPair: { key: string, frame: string} = { key: 'fizzics', frame: 'move_tool_selected'}
+public static readonly NextLevelBgPair: { key: string, frame: string} = { key: 'fizzics', frame: 'next_level_bg'}
+public static readonly NextLevelButtonPair: { key: string, frame: string} = { key: 'fizzics', frame: 'next_level_button'}
+public static readonly PrevDisabledPair: { key: string, frame: string} = { key: 'fizzics', frame: 'prev_disabled'}
+public static readonly PrevEnabledPair: { key: string, frame: string} = { key: 'fizzics', frame: 'prev_enabled'}
+public static readonly PrevHoverPair: { key: string, frame: string} = { key: 'fizzics', frame: 'prev_hover'}
+public static readonly RemoveToolPair: { key: string, frame: string} = { key: 'fizzics', frame: 'remove_tool'}
+public static readonly RemoveToolSelectedPair: { key: string, frame: string} = { key: 'fizzics', frame: 'remove_tool_selected'}
+public static readonly ResetDisabledPair: { key: string, frame: string} = { key: 'fizzics', frame: 'reset_disabled'}
+public static readonly ResetEnabledPair: { key: string, frame: string} = { key: 'fizzics', frame: 'reset_enabled'}
+public static readonly ResetHoverPair: { key: string, frame: string} = { key: 'fizzics', frame: 'reset_hover'}
+public static readonly SpeciesSelectionPair: { key: string, frame: string} = { key: 'fizzics', frame: 'species_selection'}
+public static readonly ToolsBgPair: { key: string, frame: string} = { key: 'fizzics', frame: 'tools_bg'}
+}
+export enum Frames {
+ Ball = 'ball_0',
+ Ball1 = 'ball_1',
+ Ball2 = 'ball_2',
+ Ball3 = 'ball_3',
+ Ball4 = 'ball_4',
+ Ball5 = 'ball_5',
+ Ball6 = 'ball_6',
+ Ball7 = 'ball_7',
+ Ball8 = 'ball_8',
+ Ball9 = 'ball_9',
+ Ball10 = 'ball_10',
+ Collision1 = 'collision_1',
+ Collision2 = 'collision_2',
+ Collision3 = 'collision_3',
+ Collision4 = 'collision_4',
+ Collision5 = 'collision_5',
+ Collision6 = 'collision_6',
+ Collision7 = 'collision_7',
+ Collision8 = 'collision_8',
+ Collision9 = 'collision_9',
+ Collision10 = 'collision_10',
+ CreateTool = 'create_tool',
+ CreateToolSelected = 'create_tool_selected',
+ DeleteBall = 'delete_ball',
+ DiamondBg = 'diamond_bg',
+ DiamondsIcon = 'diamonds_icon',
+ FlingBg = 'fling_bg',
+ FlingTool = 'fling_tool',
+ FlingToolSelected = 'fling_tool_selected',
+ FlingerActive = 'flinger_active',
+ FlingerHover = 'flinger_hover',
+ FlingsIcon = 'flings_icon',
+ LevelBg = 'level_bg',
+ MoveTool = 'move_tool',
+ MoveToolSelected = 'move_tool_selected',
+ NextLevelBg = 'next_level_bg',
+ NextLevelButton = 'next_level_button',
+ PrevDisabled = 'prev_disabled',
+ PrevEnabled = 'prev_enabled',
+ PrevHover = 'prev_hover',
+ RemoveTool = 'remove_tool',
+ RemoveToolSelected = 'remove_tool_selected',
+ ResetDisabled = 'reset_disabled',
+ ResetEnabled = 'reset_enabled',
+ ResetHover = 'reset_hover',
+ SpeciesSelection = 'species_selection',
+ ToolsBg = 'tools_bg',
+}
+export class FrameSourceSizes {
+public static readonly Ball:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball1:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball2:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball3:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball4:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball5:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball6:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball7:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball8:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball9:{w:number; h:number} = {w:200, h:200}
+public static readonly Ball10:{w:number; h:number} = {w:200, h:200}
+public static readonly Collision1:{w:number; h:number} = {w:232, h:232}
+public static readonly Collision2:{w:number; h:number} = {w:220, h:220}
+public static readonly Collision3:{w:number; h:number} = {w:230, h:230}
+public static readonly Collision4:{w:number; h:number} = {w:230, h:230}
+public static readonly Collision5:{w:number; h:number} = {w:250, h:118}
+public static readonly Collision6:{w:number; h:number} = {w:250, h:118}
+public static readonly Collision7:{w:number; h:number} = {w:250, h:120}
+public static readonly Collision8:{w:number; h:number} = {w:250, h:120}
+public static readonly Collision9:{w:number; h:number} = {w:250, h:250}
+public static readonly Collision10:{w:number; h:number} = {w:400, h:400}
+public static readonly CreateTool:{w:number; h:number} = {w:50, h:50}
+public static readonly CreateToolSelected:{w:number; h:number} = {w:50, h:50}
+public static readonly DeleteBall:{w:number; h:number} = {w:237, h:237}
+public static readonly DiamondBg:{w:number; h:number} = {w:3, h:3}
+public static readonly DiamondsIcon:{w:number; h:number} = {w:26, h:22}
+public static readonly FlingBg:{w:number; h:number} = {w:19, h:19}
+public static readonly FlingTool:{w:number; h:number} = {w:50, h:50}
+public static readonly FlingToolSelected:{w:number; h:number} = {w:50, h:50}
+public static readonly FlingerActive:{w:number; h:number} = {w:260, h:260}
+public static readonly FlingerHover:{w:number; h:number} = {w:260, h:260}
+public static readonly FlingsIcon:{w:number; h:number} = {w:25, h:30}
+public static readonly LevelBg:{w:number; h:number} = {w:19, h:19}
+public static readonly MoveTool:{w:number; h:number} = {w:50, h:50}
+public static readonly MoveToolSelected:{w:number; h:number} = {w:50, h:50}
+public static readonly NextLevelBg:{w:number; h:number} = {w:51, h:52}
+public static readonly NextLevelButton:{w:number; h:number} = {w:51, h:52}
+public static readonly PrevDisabled:{w:number; h:number} = {w:51, h:44}
+public static readonly PrevEnabled:{w:number; h:number} = {w:51, h:44}
+public static readonly PrevHover:{w:number; h:number} = {w:51, h:44}
+public static readonly RemoveTool:{w:number; h:number} = {w:50, h:50}
+public static readonly RemoveToolSelected:{w:number; h:number} = {w:50, h:50}
+public static readonly ResetDisabled:{w:number; h:number} = {w:45, h:45}
+public static readonly ResetEnabled:{w:number; h:number} = {w:45, h:45}
+public static readonly ResetHover:{w:number; h:number} = {w:45, h:45}
+public static readonly SpeciesSelection:{w:number; h:number} = {w:200, h:200}
+public static readonly ToolsBg:{w:number; h:number} = {w:13, h:13}
+}
+}
+}
+}
 export namespace  Bitmapfonts {
 export class HelveticaRegular {
 public static readonly Name: string =  'helvetica_regular'
@@ -30,295 +188,13 @@ public static readonly FileURL: string =  'assets/images/background_2.png'
 public static readonly Extension: string =  '.png'
 public static readonly Size: string =  '1012034'
 }
-export class Ball {
-public static readonly Name: string =  'ball-0'
-public static readonly FileURL: string =  'assets/images/ball-0.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '34912'
-}
-export class Ball1 {
-public static readonly Name: string =  'ball-1'
-public static readonly FileURL: string =  'assets/images/ball-1.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '41787'
-}
-export class Ball10 {
-public static readonly Name: string =  'ball-10'
-public static readonly FileURL: string =  'assets/images/ball-10.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '40765'
-}
-export class Ball2 {
-public static readonly Name: string =  'ball-2'
-public static readonly FileURL: string =  'assets/images/ball-2.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '51374'
-}
-export class Ball3 {
-public static readonly Name: string =  'ball-3'
-public static readonly FileURL: string =  'assets/images/ball-3.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '55448'
-}
-export class Ball4 {
-public static readonly Name: string =  'ball-4'
-public static readonly FileURL: string =  'assets/images/ball-4.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '49544'
-}
-export class Ball5 {
-public static readonly Name: string =  'ball-5'
-public static readonly FileURL: string =  'assets/images/ball-5.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '57308'
-}
-export class Ball6 {
-public static readonly Name: string =  'ball-6'
-public static readonly FileURL: string =  'assets/images/ball-6.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '36583'
-}
-export class Ball7 {
-public static readonly Name: string =  'ball-7'
-public static readonly FileURL: string =  'assets/images/ball-7.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '39135'
-}
-export class Ball8 {
-public static readonly Name: string =  'ball-8'
-public static readonly FileURL: string =  'assets/images/ball-8.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '40405'
-}
-export class Ball9 {
-public static readonly Name: string =  'ball-9'
-public static readonly FileURL: string =  'assets/images/ball-9.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '37795'
-}
-export class Collision1 {
-public static readonly Name: string =  'collision-1'
-public static readonly FileURL: string =  'assets/images/collision-1.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '52191'
-}
-export class Collision10 {
-public static readonly Name: string =  'collision-10'
-public static readonly FileURL: string =  'assets/images/collision-10.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '89578'
-}
-export class Collision2 {
-public static readonly Name: string =  'collision-2'
-public static readonly FileURL: string =  'assets/images/collision-2.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '67925'
-}
-export class Collision3 {
-public static readonly Name: string =  'collision-3'
-public static readonly FileURL: string =  'assets/images/collision-3.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '54741'
-}
-export class Collision4 {
-public static readonly Name: string =  'collision-4'
-public static readonly FileURL: string =  'assets/images/collision-4.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '9314'
-}
-export class Collision5 {
-public static readonly Name: string =  'collision-5'
-public static readonly FileURL: string =  'assets/images/collision-5.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '4110'
-}
-export class Collision6 {
-public static readonly Name: string =  'collision-6'
-public static readonly FileURL: string =  'assets/images/collision-6.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '5119'
-}
-export class Collision7 {
-public static readonly Name: string =  'collision-7'
-public static readonly FileURL: string =  'assets/images/collision-7.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '7089'
-}
-export class Collision8 {
-public static readonly Name: string =  'collision-8'
-public static readonly FileURL: string =  'assets/images/collision-8.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '5156'
-}
-export class Collision9 {
-public static readonly Name: string =  'collision-9'
-public static readonly FileURL: string =  'assets/images/collision-9.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '34299'
-}
-export class CreateTool {
-public static readonly Name: string =  'create_tool'
-public static readonly FileURL: string =  'assets/images/create_tool.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '6556'
-}
-export class CreateToolSelected {
-public static readonly Name: string =  'create_tool_selected'
-public static readonly FileURL: string =  'assets/images/create_tool_selected.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '3171'
-}
-export class DeleteBall {
-public static readonly Name: string =  'delete_ball'
-public static readonly FileURL: string =  'assets/images/delete_ball.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '16546'
-}
-export class DeleteTool {
-public static readonly Name: string =  'delete_tool'
-public static readonly FileURL: string =  'assets/images/delete_tool.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '6094'
-}
-export class DeleteToolSelected {
-public static readonly Name: string =  'delete_tool_selected'
-public static readonly FileURL: string =  'assets/images/delete_tool_selected.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2696'
-}
-export class DiamondBg {
-public static readonly Name: string =  'diamond_bg'
-public static readonly FileURL: string =  'assets/images/diamond_bg.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '463'
-}
-export class DiamondsIcon {
-public static readonly Name: string =  'diamonds_icon'
-public static readonly FileURL: string =  'assets/images/diamonds_icon.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '1456'
-}
-export class FlingBg {
-public static readonly Name: string =  'fling_bg'
-public static readonly FileURL: string =  'assets/images/fling_bg.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '871'
-}
-export class FlingTool {
-public static readonly Name: string =  'fling_tool'
-public static readonly FileURL: string =  'assets/images/fling_tool.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '5848'
-}
-export class FlingToolSelected {
-public static readonly Name: string =  'fling_tool_selected'
-public static readonly FileURL: string =  'assets/images/fling_tool_selected.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2779'
-}
-export class FlingerActive {
-public static readonly Name: string =  'flinger_active'
-public static readonly FileURL: string =  'assets/images/flinger_active.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '29858'
-}
-export class FlingerHover {
-public static readonly Name: string =  'flinger_hover'
-public static readonly FileURL: string =  'assets/images/flinger_hover.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '31022'
-}
-export class FlingsIcon {
-public static readonly Name: string =  'flings_icon'
-public static readonly FileURL: string =  'assets/images/flings_icon.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '1350'
-}
-export class LevelBg {
-public static readonly Name: string =  'level_bg'
-public static readonly FileURL: string =  'assets/images/level_bg.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '860'
-}
-export class MoveTool {
-public static readonly Name: string =  'move_tool'
-public static readonly FileURL: string =  'assets/images/move_tool.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '5719'
-}
-export class MoveToolSelected {
-public static readonly Name: string =  'move_tool_selected'
-public static readonly FileURL: string =  'assets/images/move_tool_selected.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2777'
-}
-export class NextLevelBg {
-public static readonly Name: string =  'next_level_bg'
-public static readonly FileURL: string =  'assets/images/next_level_bg.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '1361'
-}
-export class NextLevelButton {
-public static readonly Name: string =  'next_level_button'
-public static readonly FileURL: string =  'assets/images/next_level_button.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2749'
-}
-export class PrevDisabled {
-public static readonly Name: string =  'prev_disabled'
-public static readonly FileURL: string =  'assets/images/prev_disabled.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '3333'
-}
-export class PrevEnabled {
-public static readonly Name: string =  'prev_enabled'
-public static readonly FileURL: string =  'assets/images/prev_enabled.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '3740'
-}
-export class PrevHover {
-public static readonly Name: string =  'prev_hover'
-public static readonly FileURL: string =  'assets/images/prev_hover.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '3931'
-}
-export class ResetDisabled {
-public static readonly Name: string =  'reset_disabled'
-public static readonly FileURL: string =  'assets/images/reset_disabled.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2684'
-}
-export class ResetEnabled {
-public static readonly Name: string =  'reset_enabled'
-public static readonly FileURL: string =  'assets/images/reset_enabled.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2971'
-}
-export class ResetHover {
-public static readonly Name: string =  'reset_hover'
-public static readonly FileURL: string =  'assets/images/reset_hover.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2980'
-}
-export class SpeciesSelection {
-public static readonly Name: string =  'species_selection'
-public static readonly FileURL: string =  'assets/images/species_selection.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '9802'
-}
-export class ToolsBg {
-public static readonly Name: string =  'tools_bg'
-public static readonly FileURL: string =  'assets/images/tools_bg.png'
-public static readonly Extension: string =  '.png'
-public static readonly Size: string =  '2259'
-}
 }
 export namespace Jsones {
 export class GameLevels {
 public static readonly Name: string =  'GameLevels'
 public static readonly FileURL: string =  'assets/jsones/GameLevels.json'
 public static readonly Extension: string =  '.json'
-public static readonly Size: string =  '55273'
+public static readonly Size: string =  '54836'
 }
 }
 export namespace Locales {

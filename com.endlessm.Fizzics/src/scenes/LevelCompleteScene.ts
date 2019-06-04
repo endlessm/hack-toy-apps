@@ -1,13 +1,12 @@
-import { NinePatch } from "@koreez/phaser3-ninepatch";
-import { TRANSFORM } from "..";
-import { Bitmapfonts, Images } from "../assets";
-import { MAIN_BALL_DEFAULT_FRAME } from "../constants/constants";
 import { AbstractScene } from "./AbstractScene";
+import { TRANSFORM } from "..";
+import { NinePatch } from "@koreez/phaser3-ninepatch";
 
 export class LevelCompleteScene extends AbstractScene {
   private _diamondLabel: Phaser.GameObjects.BitmapText;
   private _flingLabel: Phaser.GameObjects.BitmapText;
   private _scoreLabel: Phaser.GameObjects.BitmapText;
+  private _ballImage: Phaser.GameObjects.Image
 
   public build(): void {
     const { width, height, center } = TRANSFORM;
@@ -17,22 +16,22 @@ export class LevelCompleteScene extends AbstractScene {
     const bg = this._createBg(width * 0.2, height * 0.6);
     bg.setPosition(center.x, bg.height / 2 + 100);
 
-    const confetti = this.add.image(0, 0, Images.Collision10.Name);
+    const confetti = this.add.image(0, 0, "fizzics", "collision_10");
 
-    const ball = this.add.image(0, 0, `ball-${MAIN_BALL_DEFAULT_FRAME}`);
+    const ball = this.add.image(0, 0, "fizzics", "ball_6");
     ball.setScale(0.52);
 
-    const titleLabel = this.add.bitmapText(0, 0, Bitmapfonts.HelveticaRegular.Name, "you_won", 40).setOrigin(0.5);
+    const titleLabel = this.add.bitmapText(0, 0, "helvetica_regular", "you_won", 40).setOrigin(0.5);
 
-    const scoreLabel = this.add.bitmapText(0, 0, Bitmapfonts.HelveticaRegular.Name, "score", 40).setOrigin(0.5);
+    const scoreLabel = this.add.bitmapText(0, 0, "helvetica_regular", "score", 40).setOrigin(0.5);
 
     Phaser.Display.Align.In.TopCenter(confetti, bg);
     Phaser.Display.Align.In.Center(ball, confetti, 0, -10);
     Phaser.Display.Align.To.BottomCenter(titleLabel, confetti, 0, -50);
     Phaser.Display.Align.To.BottomCenter(scoreLabel, titleLabel, 0, 20);
 
-    const diamondContainer = this._getResultComponent(Images.DiamondsIcon.Name);
-    const flingContainer = this._getResultComponent(Images.FlingsIcon.Name);
+    const diamondContainer = this._getResultComponent("diamonds_icon");
+    const flingContainer = this._getResultComponent("flings_icon");
 
     Phaser.Display.Align.To.BottomCenter(diamondContainer, scoreLabel, 0, 34);
     Phaser.Display.Align.To.BottomCenter(flingContainer, scoreLabel, 0, 30);
@@ -43,9 +42,14 @@ export class LevelCompleteScene extends AbstractScene {
     const nextBtn = this._createNextButton(bg.width * 0.5, 65);
     Phaser.Display.Align.In.BottomCenter(nextBtn, bg, 0, -70);
 
+    this._ballImage = ball;
     this._scoreLabel = scoreLabel;
     this._diamondLabel = diamondContainer.getData("label");
     this._flingLabel = flingContainer.getData("label");
+  }
+
+  public updateBallImage(frameIndex: number): void {
+    this._ballImage.setFrame(`ball_${frameIndex}`)
   }
 
   public updateScore(value: number): void {
@@ -62,9 +66,9 @@ export class LevelCompleteScene extends AbstractScene {
   }
 
   private _getResultComponent(iconsFrame: string): any {
-    const icon = this.add.image(0, 0, iconsFrame);
-    const label = this.add.bitmapText(0, 0, Bitmapfonts.HelveticaRegular.Name, "  ", 23).setOrigin(0, 0.5);
-    const plus = this.add.bitmapText(0, 0, Bitmapfonts.HelveticaRegular.Name, "+", 23).setOrigin(0.5);
+    const icon = this.add.image(0, 0, "fizzics", iconsFrame);
+    const label = this.add.bitmapText(0, 0, "helvetica_regular", "  ", 23).setOrigin(0, 0.5);
+    const plus = this.add.bitmapText(0, 0, "helvetica_regular", "+", 23).setOrigin(0.5);
     Phaser.Display.Align.To.RightCenter(plus, icon, 20);
     Phaser.Display.Align.To.RightCenter(label, plus, 5, 2);
     const container = this.add.container(0, 0, [icon, plus, label]);
@@ -74,23 +78,23 @@ export class LevelCompleteScene extends AbstractScene {
   }
 
   private _createBg(width: number, height: number): NinePatch {
-    return this.add.ninePatch(0, 0, width, height, Images.NextLevelBg.Name);
+    return this.add.ninePatch(0, 0, width, height, "fizzics", "next_level_bg");
   }
 
   private _createBlocker(): void {
     const { width, height } = TRANSFORM;
 
-    const img = this.add.ninePatch(0, 50, width, height, Images.NextLevelBg.Name);
+    const img = this.add.ninePatch(0, 50, width, height, "fizzics", "next_level_bg");
     img.setInteractive();
     // TODO: replace with transparent pixel
     img.setAlpha(0.0000001);
   }
 
   private _createNextButton(width: number, height: number): Phaser.GameObjects.Container {
-    const bg = this.add.ninePatch(0, 0, width, height, Images.NextLevelButton.Name);
+    const bg = this.add.ninePatch(0, 0, width, height, "fizzics", "next_level_button");
     bg.setInteractive();
     bg.on("pointerup", this._onNextClick, this);
-    const label = this.add.bitmapText(0, 2, Bitmapfonts.HelveticaRegular.Name, "next_level", 25);
+    const label = this.add.bitmapText(0, 2, "helvetica_regular", "next_level", 25);
     label.setOrigin(0.5);
 
     const btn = this.add.container(0, 0, [bg, label]);

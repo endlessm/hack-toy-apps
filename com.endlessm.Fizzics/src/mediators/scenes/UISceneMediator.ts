@@ -1,30 +1,33 @@
-import { inject, injectable } from '@robotlegsjs/core';
-import { GameState, SceneKey } from '../../constants/types';
-import { GameModel } from '../../models/GameModel';
-import { UIScene } from '../../scenes/UIScene';
-import { AbstractSceneMediator } from '../AbstractSceneMediator';
+import { Facade } from "@koreez/mvcx";
+import { GameEvents } from "../../constants/EventNames";
+import { GameState, SceneKey, } from "../../constants/types";
+import { UIScene } from "../../scenes/UIScene";
+import { AbstractSceneMediator } from "./AbstractSceneMediator";
 
-@injectable()
 export class UISceneMediator extends AbstractSceneMediator<UIScene> {
-  @inject(GameModel)
-  private _gameModel: GameModel;
-
-  public sceneCreated(): void {
-    super.sceneCreated();
-
-    this.scene.build();
-
-    this.addReaction(() => this._gameModel.state, this._checkViewState);
+  constructor() {
+    super(<UIScene>window.fizzicsGame.scene.getScene(SceneKey.UI));
   }
 
-  private _checkViewState(state: GameState): void {
+  public onRegister(facade: Facade): void {
+    super.onRegister(facade);
+
+    this._subscribe(GameEvents.StateUpdate, this._onGameStateUpdate);
+  }
+
+  public onSceneReady(): void {
+    super.onSceneReady();
+
+    this.view.build();
+  }
+
+  private _onGameStateUpdate(state: GameState): void {
     switch (state) {
       case GameState.GAME:
-        this.scene.scene.wake(SceneKey.UI);
+        this.view.scene.wake(SceneKey.UI);
         break;
       default:
-        this.scene.scene.sleep(SceneKey.UI);
-        break;
+        this.view.scene.sleep(SceneKey.UI);
     }
   }
 }

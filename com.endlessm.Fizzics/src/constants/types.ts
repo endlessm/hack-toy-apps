@@ -1,3 +1,34 @@
+import { NavItem } from "../views/ui/NavItem";
+
+export enum ToolType {
+  FLING = "fling",
+  MOVE = "move",
+  CREATE = "create",
+  REMOVE = "remove"
+}
+
+export enum BallType {
+  MAIN,
+  STAR,
+  BOMB,
+  ROCK,
+  DIAMOND
+}
+
+export interface IButtonConfig {
+  upFrame: string;
+  hoverFrame: string;
+  disableFrame: string;
+  flipX?: boolean;
+}
+
+export interface INavigationConfig {
+  padding: { x: number; y: number };
+  gap: number;
+  items: NavItem<any>[];
+  scale?: number;
+}
+
 export interface IRawPlayer {
   unlockedLevel: number;
 }
@@ -5,17 +36,17 @@ export interface IRawPlayer {
 export interface IRawLevel {
   ID: number;
   preset: IRawPreset;
+  period: number;
   balls: IRawBall[];
   collisionSpecies: number;
   numCollisionsGoal: number;
-  period: number;
 }
 
 export interface IRawBall {
   ID: number;
   x: number;
   y: number;
-  species: BallTypes;
+  species: BallType;
 }
 
 export interface SoundData {
@@ -34,14 +65,18 @@ export interface IRawPreset {
   moveToolDisabled: boolean;
   createToolDisabled: boolean;
   deleteToolDisabled: boolean;
+  flingToolActive: boolean;
+  moveToolActive: boolean;
+  createToolActive: boolean;
+  deleteToolActive: boolean;
 }
 
 export interface IBallTypeConfig {
   radius: number;
-  gravityScale: number;
+  gravity: number;
   bounce: number;
   friction: number;
-  frozen: false;
+  frozen: boolean;
   visualGood: number;
   visualBad: number;
   soundGood: number;
@@ -59,20 +94,13 @@ export interface IBallTypeConfig {
   touchDeath_4: number;
 }
 
-export enum ToolType {
-  FLING = "fling",
-  DRAG = "drag",
-  CREATE = "create",
-  DELETE = "delete"
-}
 
 export enum SceneKey {
-  Boot = "Boot",
-  Preload = "Preload",
-  Background = "Background",
-  Game = "Game",
-  UI = "UI",
-  LEVEL_COMPLETE = "Level_Complete"
+  Preload = "PreloadScene",
+  Background = "BackgroundScene",
+  Game = "GameScene",
+  UI = "UIScene",
+  LevelComplete = "LevelCompleteScene"
 }
 export enum GameState {
   UNKNOWN = "unknown",
@@ -83,13 +111,6 @@ export enum LevelState {
   FAIL = "fail",
   COMPLETE = "complete"
 }
-export enum BallTypes {
-  MAIN,
-  STAR,
-  BOMB,
-  ROCK,
-  DIAMOND
-}
 
 export class IDPair {
   constructor(public id1: number, public id2: number) {}
@@ -99,4 +120,14 @@ export class IDPair {
     this.id1 = this.id2;
     this.id2 = id1;
   }
+}
+
+export interface IMatterCollisionPair {
+  bodyA: IMatterBody;
+  bodyB: IMatterBody;
+}
+
+export interface IMatterBody {
+  id: number;
+  gameObject: Phaser.GameObjects.GameObject;
 }

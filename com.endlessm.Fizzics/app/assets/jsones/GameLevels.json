@@ -1554,7 +1554,7 @@
       "balls": [
         {
           "ID": 0,
-          "x": 430.0277228862058,
+          "x": 420.0277228862058,
           "y": 364.04371294360567,
           "species": 0
         },
@@ -2284,33 +2284,15 @@
     },
     {
       "ID": 1000,
-      "preset": {
-        "radius_0": 30,
-        "gravity_0": 100,
-        "friction_0": 1,
-        "usePhysics_0": true,
-
-        "radius_1": 70,
-        "gravity_1": 100,
-        "friction_1": 5,
-        "usePhysics_1": true,
-
-        "radius_2": 10,
-        "gravity_2": 100,
-        "friction_2": 1,
-        "usePhysics_2": true,
-
-        "radius_3": 30,
-        "friction_3": 2,
-        "usePhysics_3": true,
-        "socialForce_3_0": -10,
-
-        "radius_4": 30,
-        "friction_4": 2,
-        "usePhysics_4": true,
-        "socialForce_4_0": -10
-      },
-      "balls": [],
+      "preset": {},
+      "balls": [
+        {
+          "ID": 4,
+          "x": 1396,
+          "y": 514,
+          "species": 0
+        }
+      ],
       "period": 50,
       "collisionSpecies": 0,
       "numCollisionsGoal": 0
@@ -2681,7 +2663,7 @@
       "ID": 1004,
       "preset": {
         "radius_0": 50,
-        "friction_0": 1,
+        "friction_0": 3,
         "usePhysics_0": true,
         "imageIndex_0": 6,
 

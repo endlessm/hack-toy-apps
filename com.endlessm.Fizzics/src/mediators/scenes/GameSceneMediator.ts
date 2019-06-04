@@ -1,86 +1,64 @@
-import { inject, injectable } from '@robotlegsjs/core';
-import { GameState, SceneKey } from '../../constants/types';
-import { GameModel } from '../../models/GameModel';
-import { LevelModel } from '../../models/playable/LevelModel';
-import { PlayableModel } from '../../models/playable/PlayableModel';
-import { GameScene } from '../../scenes/GameScene';
-import { GameScenePointerDownSignal } from '../../signals/GameScenePointerDownSignal';
-import { GameScenePointerUpSignal } from '../../signals/GameScenePointerUpSignal';
-import { AbstractSceneMediator } from '../AbstractSceneMediator';
-import _difference from 'lodash.difference';
+import { Facade } from "@koreez/mvcx";
+import { GameEvents, LevelEvents } from "../../constants/EventNames";
+import { GameState, SceneKey } from "../../constants/types";
+import { GameScene } from "../../scenes/GameScene";
+import { AbstractSceneMediator } from "./AbstractSceneMediator";
 
-@injectable()
 export class GameSceneMediator extends AbstractSceneMediator<GameScene> {
-  @inject(PlayableModel)
-  private _playableModel: PlayableModel;
-
-  @inject(GameModel)
-  private _gameModel: GameModel;
-
-  @inject(GameScenePointerDownSignal)
-  private _gameSceneDownSignal: GameScenePointerDownSignal;
-
-  @inject(GameScenePointerUpSignal)
-  private _gameSceneUpSignal: GameScenePointerUpSignal;
-
-  public sceneCreated(): void {
-    super.sceneCreated();
-
-    this.scene.build();
-
-    this.addReaction(() => this._gameModel.state, this._checkViewState);
-    this.addReaction(() => this._playableModel.level, this._prepareNewLevel);
-
-    this.scene.input.on('pointerdown', this._onSceneDown, this);
-    this.scene.input.on('pointerup', this._onSceneUp, this);
+  constructor() {
+    super(<GameScene>window.fizzicsGame.scene.getScene(SceneKey.Game));
   }
 
-  private _checkViewState(state: GameState): void {
+  public onRegister(facade: Facade): void {
+    super.onRegister(facade);
+
+    this._subscribe(GameEvents.StateUpdate, this._onGameStateUpdate);
+    this._subscribe(LevelEvents.LevelRemoved, this._onLevelRemove);
+    this._subscribe(LevelEvents.LevelCreated, this._onLevelCreate);
+  }
+
+  public onSceneReady(): void {
+    super.onSceneReady();
+
+    this.view.build();
+
+    this.view.input.on("pointerdown", this._onSceneDown, this);
+    this.view.input.on("pointerup", this._onSceneUp, this);
+  }
+
+  private _onGameStateUpdate(state: GameState): void {
     switch (state) {
       case GameState.GAME:
-        this.scene.scene.wake(SceneKey.Game);
+        this.view.scene.wake(SceneKey.Game);
         break;
       default:
-        this.scene.scene.sleep(SceneKey.Game);
-        break;
+        this.view.scene.sleep(SceneKey.Game);
     }
   }
 
-  private _prepareNewLevel(level: LevelModel): void {
-    this.scene.cleanup();
-    this.scene.buildBalls(level.balls.values);
+  private _onLevelRemove(): void {
+    this.view.destroyLevel();
+  }
 
-    this.removeReaction(this._updateBalls);
-    this.addReaction(() => this._playableModel.level.balls.keys.length, this._updateBalls);
+  private _onLevelCreate(): void {
+    this.view.buildLevel();
   }
 
   private _onSceneDown(pointer: Phaser.Input.Pointer, targets: Phaser.GameObjects.GameObject[]): void {
-    pointer.leftButtonDown() && this._gameSceneDownSignal.dispatch(targets);
+    if (pointer.leftButtonDown() && !pointer.rightButtonDown()) {
+      this.view.input.once("gameout", this._onCanvasOut, this);
+      this.facade.sendNotification(GameEvents.PointerDown, targets);
+    }
   }
 
   private _onSceneUp(pointer: Phaser.Input.Pointer, targets: Phaser.GameObjects.GameObject[]): void {
-    this._gameSceneUpSignal.dispatch(targets);
+    if (!pointer.leftButtonDown()) {
+      this.view.input.off("gameout", this._onCanvasOut, this, true);
+      this.facade.sendNotification(GameEvents.PointerUp, targets);
+    }
   }
 
-  private _updateBalls(): void {
-    const viewBallsIDs = this.scene.balls.keys;
-    const modelBallsIDs = this._playableModel.level.balls.keys;
-
-    this._addBalls(_difference(modelBallsIDs, viewBallsIDs));
-    this._removeBalls(_difference(viewBallsIDs, modelBallsIDs));
-  }
-
-  private _addBalls(ballsIDs: number[]): void {
-    ballsIDs.forEach((ballID: number) => {
-      const ballModel = this._playableModel.level.balls.get(ballID);
-      const { id, species } = ballModel;
-      this.scene.addBall(id, species);
-    });
-  }
-
-  private _removeBalls(ballsIDs: number[]): void {
-    ballsIDs.forEach((ballID: number) => {
-      this.scene.removeBall(ballID);
-    });
+  private _onCanvasOut(pointer: Phaser.Input.Pointer): void {
+    this.facade.sendNotification(GameEvents.CanvasOut);
   }
 }

@@ -1,73 +1,60 @@
-import { inject, injectable } from '@robotlegsjs/core';
-import { LevelState, SceneKey } from '../../constants/types';
-import { LevelModel } from '../../models/playable/LevelModel';
-import { PlayableModel } from '../../models/playable/PlayableModel';
-import { RawLevelsModel } from '../../models/RawLevelsModel';
-import { LevelCompleteScene } from '../../scenes/LevelCompleteScene';
-import { LevelSwitchSignal } from '../../signals/LevelSwitchSignal';
-import { AbstractSceneMediator } from '../AbstractSceneMediator';
+import { UIEvents, LevelEvents, BallTypeEvents } from "../../constants/EventNames";
+import { LevelState, SceneKey, BallType } from "../../constants/types";
+import { LevelCompleteScene } from "../../scenes/LevelCompleteScene";
+import { AbstractSceneMediator } from "./AbstractSceneMediator";
 
-@injectable()
-export class LevelCompleteSceneMediator extends AbstractSceneMediator<LevelCompleteScene> {
-  @inject(PlayableModel)
-  private _playableModel: PlayableModel;
-
-  @inject(RawLevelsModel)
-  private _rawLevelsModel: RawLevelsModel;
-
-  @inject(LevelSwitchSignal)
-  private _levelSwitchSignal: LevelSwitchSignal;
-
-  public sceneCreated(): void {
-    super.sceneCreated();
-
-    this.scene.build();
-
-    this.addReaction(() => this._playableModel.level, this._onNewLevelReady);
-
-    this.scene.events.on('nextClick', this._onNextClick, this);
+export class LevelCompleteSceneMediator extends AbstractSceneMediator<
+  LevelCompleteScene
+> {
+  constructor() {
+    super(<LevelCompleteScene>(
+      window.fizzicsGame.scene.getScene(SceneKey.LevelComplete)
+    ));
   }
 
-  private _onNewLevelReady(level: LevelModel): void {
-    this.removeReaction(this._checkForViewState);
+  public onSceneReady(): void {
+    super.onSceneReady();
 
-    this.addReaction(() => level.state, this._checkForViewState, { fireImmediately: true });
+    this.view.build();
+
+    this._subscribe(LevelEvents.StateUpdate, this._onLevelStateUpdate);
+    this._subscribe(BallTypeEvents.FrameIndex, this._onBallTypeImageUpdate);
+    this._subscribe(LevelEvents.DiamondsUpdate, this._onDiamondsUpdate);
+    this._subscribe(LevelEvents.FlingsUpdate, this._onFlingsUpdate);
+    this._subscribe(LevelEvents.ScoreUpdate, this._onScoreUpdate);
+
+    this.view.events.on("nextClick", this._onNexClick, this);
   }
 
-  private _checkForViewState(state: LevelState): void {
+  private _onLevelStateUpdate(state: LevelState): void {
     switch (state) {
       case LevelState.COMPLETE:
-        this._updateView();
-        this.scene.scene.wake(SceneKey.LEVEL_COMPLETE);
+        this.view.scene.wake(SceneKey.LevelComplete);
         break;
       default:
-        this.scene.scene.sleep(SceneKey.LEVEL_COMPLETE);
-        break;
+        this.view.scene.sleep(SceneKey.LevelComplete);
     }
   }
 
-  private _updateView(): void {
-    const level = this._playableModel.level;
-    const { diamonds, flings, score } = level;
-
-    this._updateDiamonds(diamonds);
-    this._updateFlings(flings);
-    this._updateScore(score);
+  private _onBallTypeImageUpdate(ballType: BallType, value: number): void {
+    if (ballType === BallType.MAIN) {
+      this.view.updateBallImage(value)
+    }
   }
 
-  private _updateDiamonds(value: number): void {
-    this.scene.updateDiamonds(value);
+  private _onDiamondsUpdate(value: number): void {
+    this.view.updateDiamonds(value);
   }
 
-  private _updateFlings(value: number): void {
-    this.scene.updateFlings(value);
+  private _onFlingsUpdate(value: number): void {
+    this.view.updateFlings(value);
   }
 
-  private _updateScore(value: number): void {
-    this.scene.updateScore(value);
+  private _onScoreUpdate(value: number): void {
+    this.view.updateScore(value);
   }
 
-  private _onNextClick(): void {
-    this._levelSwitchSignal.dispatch(1);
+  private _onNexClick(): void {
+    this.facade.sendNotification(UIEvents.NextLevel);
   }
 }

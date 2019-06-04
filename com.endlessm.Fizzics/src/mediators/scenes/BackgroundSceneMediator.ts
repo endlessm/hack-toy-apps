@@ -1,44 +1,42 @@
-import { inject, injectable } from '@robotlegsjs/core';
-import { GameState, SceneKey } from '../../constants/types';
-import { GameModel } from '../../models/GameModel';
-import { LevelModel } from '../../models/playable/LevelModel';
-import { PlayableModel } from '../../models/playable/PlayableModel';
-import { BackgroundScene } from '../../scenes/BackgroundScene';
-import { AbstractSceneMediator } from '../AbstractSceneMediator';
+import { Facade } from "@koreez/mvcx";
+import { GameEvents, LevelEvents } from "../../constants/EventNames";
+import { GameState, SceneKey } from "../../constants/types";
+import { BackgroundScene } from "../../scenes/BackgroundScene";
+import { AbstractSceneMediator } from "./AbstractSceneMediator";
 
-@injectable()
-export class BackgroundSceneMediator extends AbstractSceneMediator<BackgroundScene> {
-  @inject(GameModel)
-  private _gameModel: GameModel;
-
-  @inject(PlayableModel)
-  private _playableModel: PlayableModel;
-
-  public initialize(): void {
-    super.initialize();
+export class BackgroundSceneMediator extends AbstractSceneMediator<
+  BackgroundScene
+> {
+  constructor() {
+    super(<BackgroundScene>(
+      window.fizzicsGame.scene.getScene(SceneKey.Background)
+    ));
   }
 
-  public sceneCreated(): void {
-    super.sceneCreated();
+  public onRegister(facade: Facade): void {
+    super.onRegister(facade);
 
-    this.scene.build();
-
-    this.addReaction(() => this._gameModel.state, this._onGameStateChange);
-    this.addReaction(() => this._playableModel.level, this._updateBackground);
+    this._subscribe(GameEvents.StateUpdate, this._onGameStateUpdate);
+    this._subscribe(LevelEvents.BgIndexUpdate, this._onLevelBgUpdate);
   }
 
-  private _onGameStateChange(state: GameState): void {
+  public onSceneReady(): void {
+    super.onSceneReady();
+
+    this.view.build();
+  }
+
+  private _onGameStateUpdate(state: GameState): void {
     switch (state) {
       case GameState.GAME:
-        this.scene.scene.wake(SceneKey.Background);
+        this.view.scene.wake(SceneKey.Background);
         break;
       default:
-        this.scene.scene.sleep(SceneKey.Background);
-        break;
+        this.view.scene.sleep(SceneKey.Background);
     }
   }
 
-  private _updateBackground(level: LevelModel): void {
-    this.scene.updateBackground(level.backgroundFrame);
+  private _onLevelBgUpdate(imageIndex: number): void {
+    this.view.updateBackground(imageIndex);
   }
 }

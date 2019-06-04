@@ -1,17 +1,20 @@
-import { LevelBar } from "../views/ui/LevelBar";
-import { ToolsBar } from "../views/ui/ToolsBar";
+import { LevelBarView } from "../views/ui/LevelBarView";
+import { ToolsBarView } from "../views/ui/ToolsBarView";
 import { AbstractScene } from "./AbstractScene";
 
 export class UIScene extends AbstractScene {
-  private _levelBar: LevelBar;
-  private _toolsBar: ToolsBar;
+  private _levelBarView: LevelBarView;
+  private _toolsBarView: ToolsBarView;
 
   public build(): void {
-    this._buildLevelSwitcher();
+    this._buildLevelBar();
+    this._buildToolsBar();
   }
 
-  private _buildLevelSwitcher(): void {
-    this.add.existing((this._levelBar = new LevelBar(this)));
-    this.add.existing((this._toolsBar = new ToolsBar(this)));
+  private _buildLevelBar(): void {
+    this.add.existing((this._levelBarView = new LevelBarView(this)));
+  }
+  private _buildToolsBar(): void {
+    this.add.existing((this._toolsBarView = new ToolsBarView(this)));
   }
 }

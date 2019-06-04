@@ -6,7 +6,7 @@ export const CANVAS_CONTAINER_ID: string = "canvas";
 export const ZERO = 0.0;
 
 export const PLAYER_DEFAULTS: IRawPlayer = {
-  unlockedLevel: 11
+  unlockedLevel: 0
 };
 
 export const MAX_BALLS_COUNT = 110;

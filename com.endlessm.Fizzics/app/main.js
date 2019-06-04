@@ -6617,7 +6617,7 @@ const raw = __webpack_require__(/*! ../../assets/jsones/GameLevels.json */ "../a
 const CANVAS_CONTAINER_ID = "canvas";
 const ZERO = 0.0;
 const PLAYER_DEFAULTS = {
-    unlockedLevel: 11
+    unlockedLevel: 0
 };
 const MAX_BALLS_COUNT = 110;
 const LEVEL_BAR_PREV_BUTTON_CONFIG = {
@@ -8756,9 +8756,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _koreez_phaser3_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_koreez_phaser3_i18n__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _koreez_phaser3_ninepatch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @koreez/phaser3-ninepatch */ "../node_modules/@koreez/phaser3-ninepatch/lib/index.js");
 /* harmony import */ var _koreez_phaser3_ninepatch__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_koreez_phaser3_ninepatch__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./constants/constants */ "./constants/constants.ts");
-/* harmony import */ var _FizzicsFacade__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FizzicsFacade */ "./FizzicsFacade.ts");
-/* harmony import */ var _FizzicsGame__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FizzicsGame */ "./FizzicsGame.ts");
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! util */ "../node_modules/util/util.js");
+/* harmony import */ var util__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _constants_constants__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./constants/constants */ "./constants/constants.ts");
+/* harmony import */ var _constants_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./constants/types */ "./constants/types.ts");
+/* harmony import */ var _FizzicsFacade__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./FizzicsFacade */ "./FizzicsFacade.ts");
+/* harmony import */ var _FizzicsGame__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./FizzicsGame */ "./FizzicsGame.ts");
+
+
 
 
 
@@ -8778,9 +8783,9 @@ const TRANSFORM = {
 function startGame() {
     const gameConfig = {
         title: "Fizzics",
-        type: Phaser.CANVAS,
+        type: Phaser.WEBGL,
         scale: {
-            parent: _constants_constants__WEBPACK_IMPORTED_MODULE_4__["CANVAS_CONTAINER_ID"],
+            parent: _constants_constants__WEBPACK_IMPORTED_MODULE_5__["CANVAS_CONTAINER_ID"],
             autoCenter: Phaser.Scale.CENTER_BOTH,
             mode: Phaser.Scale.FIT
         },
@@ -8805,9 +8810,12 @@ function startGame() {
             scene: [{ key: "i18nPlugin", mapping: "i18n", plugin: _koreez_phaser3_i18n__WEBPACK_IMPORTED_MODULE_2__["I18nPlugin"] }]
         }
     };
-    window.fizzicsGame = new _FizzicsGame__WEBPACK_IMPORTED_MODULE_6__["FizzicsGame"](gameConfig);
-    setTimeout(() => {
-        _FizzicsFacade__WEBPACK_IMPORTED_MODULE_5__["FizzicsFacade"].Instance.initialize(false);
+    window.fizzicsGame = new _FizzicsGame__WEBPACK_IMPORTED_MODULE_8__["FizzicsGame"](gameConfig);
+    const startupInterval = setInterval(() => {
+        if (!Object(util__WEBPACK_IMPORTED_MODULE_4__["isNullOrUndefined"])(window.fizzicsGame.scene.getScene(_constants_types__WEBPACK_IMPORTED_MODULE_6__["SceneKey"].Preload))) {
+            _FizzicsFacade__WEBPACK_IMPORTED_MODULE_7__["FizzicsFacade"].Instance.initialize(false);
+            clearInterval(startupInterval);
+        }
     });
     const { width, height } = window.fizzicsGame.scale;
     TRANSFORM.width = width;

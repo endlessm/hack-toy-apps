@@ -2,7 +2,9 @@ import "./phaser";
 import "./endless";
 import { I18nPlugin } from "@koreez/phaser3-i18n";
 import { NinePatchPlugin } from "@koreez/phaser3-ninepatch";
+import { isNullOrUndefined } from "util";
 import { CANVAS_CONTAINER_ID } from "./constants/constants";
+import { SceneKey } from "./constants/types";
 import { FizzicsFacade } from "./FizzicsFacade";
 import { FizzicsGame } from "./FizzicsGame";
 
@@ -20,7 +22,7 @@ export const TRANSFORM = {
 function startGame(): void {
   const gameConfig: GameConfig = {
     title: "Fizzics",
-    type: Phaser.CANVAS,
+    type: Phaser.WEBGL,
     scale: {
       parent: CANVAS_CONTAINER_ID,
       autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -49,8 +51,11 @@ function startGame(): void {
   };
 
   window.fizzicsGame = new FizzicsGame(gameConfig);
-  setTimeout(() => {
-    FizzicsFacade.Instance.initialize(false);
+  const startupInterval = setInterval(() => {
+    if (!isNullOrUndefined(window.fizzicsGame.scene.getScene(SceneKey.Preload))) {
+      FizzicsFacade.Instance.initialize(false);
+      clearInterval(startupInterval);
+    }
   });
 
   const { width, height } = window.fizzicsGame.scale;

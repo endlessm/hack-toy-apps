@@ -8,7 +8,7 @@
   },
   "scripts": {
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "build": "npm run build-assets && npm run build-phaser && webpack --config config/webpack.config.js --env development --mode development --progress --colors",
+    "build": "npm run build-assets && npm run build-phaser && webpack --config config/webpack.config.js --env production --mode production --progress --colors",
     "build-phaser": "webpack --config config/webpack.phaser.config.js --display-modules --mode production --progress --colors",
     "stats": "webpack --config config/webpack.config.js --env production --mode production --profile --json > stats.json",
     "start": "webpack-dev-server --config config/webpack.config.js --mode development --host 0.0.0.0",

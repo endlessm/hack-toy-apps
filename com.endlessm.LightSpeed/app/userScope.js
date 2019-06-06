@@ -24,6 +24,12 @@ class UserScope {
         this.shipTypes = shipTypes;
         this.enemyTypes = enemyTypes;
         this.data = {};
+
+        [this.shipTypes, this.enemyTypes].forEach(names => {
+            names.forEach(name => {
+                this[name] = name;
+            });
+        });
     }
 
     update(data) {
@@ -89,6 +95,13 @@ class SpawnEnemyScope extends SpawnScope {
 }
 
 class SpawnPowerupScope extends SpawnScope {
+    constructor() {
+        super();
+        const constants = ['blowup', 'invulnerable', 'upgrade'];
+        constants.forEach(name => {
+            this[name] = name;
+        });
+    }
 }
 
 /*
@@ -130,6 +143,12 @@ class ActivatePowerupScope extends UserScope {
 
         this._blowUpEnemies = false;
         this.powerUpType = null;
+
+        const constants = ['blowup', 'invulnerable', 'upgrade', 'shrink',
+            'attraction', 'engine'];
+        constants.forEach(name => {
+            this[name] = name;
+        });
     }
 
     update(data) {

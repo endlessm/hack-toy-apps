@@ -252,6 +252,7 @@ function Unlock()
         _video.addEventListener("ended", function() {
             globalParameters.unlocked = true;
             globalParameters.mode = MODE_VIDEO_PLAYED;
+            window.ToyApp.quit();
         });
         _video.play();
     }

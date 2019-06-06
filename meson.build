@@ -61,9 +61,10 @@ if app_id == 'com.endlessm.Fizzics' or app_id == 'com.endlessm.HackUnlock' or ap
     )
 endif
 
-if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.endlessm.Sidetrack' 
+if app_id == 'com.endlessm.LightSpeed' or
+   app_id == 'com.endlessm.Sidetrack' 
     install_data(
-        join_paths('common', 'phaser-3.17.0.min.js'),
+        join_paths('phaser', 'phaser-3.17.0.min.js'),
         install_dir: 'share/toy/app',
         rename: 'phaser.min.js'
     )

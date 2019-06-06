@@ -176,11 +176,7 @@ class LevelScene extends Phaser.Scene {
     }
 
     update() {
-        /* Skip every other update */
-        this.odd_tick = !this.odd_tick;
-
-        if (this.odd_tick ||
-            globalParameters.paused ||
+        if (globalParameters.paused ||
             !globalParameters.playing)
             return;
 

@@ -38,6 +38,9 @@ var config = {
         width: 1920,
         height: 1004,
     },
+    fps: {
+        target: 30,
+    },
     physics: {
         default: 'arcade',
         arcade: {

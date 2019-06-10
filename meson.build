@@ -67,7 +67,14 @@ if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.endlessm.Sidetrack'
         install_dir: 'share/toy/app',
         rename: 'phaser.min.js'
     )
-    
+endif
+
+if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.endlessm.Sidetrack' 
+    install_data(
+        join_paths('common', 'pauseToyApp.js'),
+        install_dir: 'share/toy/app',
+        rename: 'pauseToyApp.js'
+    )
 endif
 
 data = configuration_data()

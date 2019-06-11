@@ -32,12 +32,16 @@ export class FlingerView extends DynamicContainer {
 
   public reset(): void {
     this.setRotation(0);
+
     this._fling.setPosition(0, 0);
+
     this._line1.setTo(0, 0, 0, 0);
     this._line2.setTo(0, 0, 0, 0);
-    this._fling.off("pointerup", this._onFlingUp, this, true);
-    this._fling.once("pointerup", this._onFlingUp, this);
+
     this.scene.input.off("pointermove", this._onFlingDrag, this, false);
+    this._fling.off("pointerdown", this._onFlingDown, this, true);
+    this._fling.once("pointerdown", this._onFlingDown, this);
+
     this._stopDistanceCheck();
 
     this.emit("flingReset");
@@ -162,10 +166,15 @@ export class FlingerView extends DynamicContainer {
     this._updateLines();
 
     this.emit("flingDistanceChange", distance);
+    this._onFlingUp();
   }
 
-  private _onFlingUp(pointer: Phaser.Input.Pointer): void {
+  private _onFlingUp(pointer?: Phaser.Input.Pointer): void {
+    this._fling.off("pointerup", this._onFling, this, true);
     this._fling.once("pointerup", this._onFling, this);
+  }
+
+  private _onFlingDown(pointer: Phaser.Input.Pointer): void {
     this.scene.input.on("pointermove", this._onFlingDrag, this);
     this.emit("flingStart", this._ball.id);
   }

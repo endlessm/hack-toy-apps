@@ -3,10 +3,11 @@ import "./endless";
 import { I18nPlugin } from "@koreez/phaser3-i18n";
 import { NinePatchPlugin } from "@koreez/phaser3-ninepatch";
 import { isNullOrUndefined } from "util";
-import { CANVAS_CONTAINER_ID } from "./constants/constants";
+import { CANVAS_CONTAINER_ID, WIDTH, HEIGHT } from "./constants/constants";
 import { SceneKey } from "./constants/types";
 import { FizzicsFacade } from "./FizzicsFacade";
 import { FizzicsGame } from "./FizzicsGame";
+import { getScale } from "./utils/utils";
 
 window.onload = () => {
   startGame();
@@ -24,13 +25,9 @@ function startGame(): void {
     title: "Fizzics",
     type: Phaser.WEBGL,
     scale: {
-      parent: CANVAS_CONTAINER_ID,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
-      mode: Phaser.Scale.FIT
+      ...getScale()
     },
-    width: 1920,
-    height: 1080,
-    backgroundColor: 0x626262,
+    backgroundColor: 0xffffff,
     scene: [],
     banner: {
       hidePhaser: false,

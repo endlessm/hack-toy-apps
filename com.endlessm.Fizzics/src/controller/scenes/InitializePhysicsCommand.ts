@@ -7,7 +7,7 @@ export function initializePhysicsCommand(e: string): void {
   const scene = <GameScene>game.scene.getScene(SceneKey.Game);
 
   const { width, height } = TRANSFORM;
-  // SETTING WALLS THICKNESS AS SMALL AS POSSIBLE TO INCREASE COLLISION PERFORMANCE
+
   scene.matter.world.setBounds(0, 0, width, height, 2);
   scene.matter.world.setGravity(0, 5);
 
@@ -31,16 +31,8 @@ export function initializePhysicsCommand(e: string): void {
   // removed angularity: (angularSpeed, rotation, angle etc),
   // prevented out of bounds bodies, ...ets
 
-  Body.update = (
-    body: any,
-    deltaTime: number,
-    timeScale: number,
-    correction: number
-  ) => {
-    const deltaTimeSquared = Math.pow(
-      deltaTime * timeScale * body.timeScale,
-      2
-    );
+  Body.update = (body: any, deltaTime: number, timeScale: number, correction: number) => {
+    const deltaTimeSquared = Math.pow(deltaTime * timeScale * body.timeScale, 2);
 
     // from the previous step
     const frictionAir = 1 - body.frictionAir * timeScale * body.timeScale;
@@ -49,11 +41,9 @@ export function initializePhysicsCommand(e: string): void {
 
     // SETTING GRAVITY SCALE FACTOR ON VELOCITY: MATTER.JS DOES NOT HAVE "gravityScale" FOR SINGLE BODY
     let velX =
-      velocityPrevX * frictionAir * correction +
-      ((body.force.x * body.gravityScale) / body.mass) * deltaTimeSquared;
+      velocityPrevX * frictionAir * correction + ((body.force.x * body.gravityScale) / body.mass) * deltaTimeSquared;
     let velY =
-      velocityPrevY * frictionAir * correction +
-      ((body.force.y * body.gravityScale) / body.mass) * deltaTimeSquared;
+      velocityPrevY * frictionAir * correction + ((body.force.y * body.gravityScale) / body.mass) * deltaTimeSquared;
 
     const x = <number>body.position.x + <number>body.velocity.x;
     const y = <number>body.position.y + <number>body.velocity.y;

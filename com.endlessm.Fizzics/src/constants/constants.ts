@@ -5,8 +5,12 @@ export const CANVAS_CONTAINER_ID: string = "canvas";
 
 export const ZERO = 0.0;
 
+export const WIDTH  = 1920;
+export const HEIGHT = 1080;
+export const RATIO = WIDTH / HEIGHT;
+
 export const PLAYER_DEFAULTS: IRawPlayer = {
-  unlockedLevel: 0
+  unlockedLevel: 1
 };
 
 export const MAX_BALLS_COUNT = 110;
@@ -50,9 +54,9 @@ export const LEVEL_DEFAULTS = {
   maxSocialForce: 30.0,
 
   flingToolActive: true,
-  moveToolActive: false,
-  createToolActive: false,
-  deleteToolActive: false,
+  moveToolActive: true,
+  createToolActive: true,
+  deleteToolActive: true,
 
   flingToolDisabled: false,
   moveToolDisabled: false,

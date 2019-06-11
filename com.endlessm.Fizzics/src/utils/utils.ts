@@ -1,5 +1,25 @@
 import { TRANSFORM } from "..";
 
+export function getScale(): ScaleConfig {
+  const width: number = (window.innerWidth || window.screen.width) * window.devicePixelRatio;
+  const height: number = (window.innerHeight || window.screen.height) * window.devicePixelRatio;
+  const designWidth = 1920;
+  const designHeight = 1080;
+
+  const scale: ScaleConfig = {
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    mode: Phaser.Scale.FIT
+  };
+
+  const designRatio: number = designWidth / designHeight;
+  const canvasRatio: number = width / height;
+  const ratioMultiplier: number = designRatio / canvasRatio;
+  scale.height = Math.trunc(designHeight * ratioMultiplier);
+  scale.width = designWidth;
+
+  return scale;
+}
+
 export function isEmpty(arr: any[]): boolean {
   return arr.length === 0;
 }
@@ -15,12 +35,7 @@ export const getUUID = (() => {
   };
 })();
 
-export function lineAngle(
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number
-): number {
+export function lineAngle(x1: number, y1: number, x2: number, y2: number): number {
   return Math.atan2(y1 - y2, x1 - x2) + Math.PI / 2;
 }
 
@@ -39,12 +54,7 @@ export function getCircularReplacer(): (key: string, value: object) => object {
   };
 }
 
-export function postRunnable(
-  scene: Phaser.Scene,
-  runnable: any,
-  context: any,
-  ...args: any[]
-): Phaser.Time.TimerEvent {
+export function postRunnable(scene: Phaser.Scene, runnable: any, context: any, ...args: any[]): Phaser.Time.TimerEvent {
   return addRunnable(scene, 0, runnable, context, false, ...args);
 }
 

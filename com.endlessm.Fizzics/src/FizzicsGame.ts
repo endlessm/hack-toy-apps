@@ -27,12 +27,38 @@ export class FizzicsGame extends Phaser.Game implements IHackToyApps {
     }
 
     this._proxyGlobalParameters();
+    // this.updateCanvasSize();
+
+    //
+    // const { innerWidth, innerHeight } = window;
+    // setTimeout(() => {
+    // const { canvasBounds, displayScale, displaySize, parentSize } = this.scale;
+    // console.warn(parentSize);
+    // const diff = window.innerHeight / canvasBounds.height;
+    // this.scale.resize(parentSize.width, HEIGHT * diff);
+    // TRANSFORM.height = this.scale.height;
+    // TRANSFORM.width = this.scale.width;
+    // TRANSFORM.center.setTo(this.scale.width / 2, this.scale.height / 2);
+    // }, 2000);
+
+    // console.warn(this.scale.resi);
+
     // setTimeout(() => {
     //   console.log("mta");
 
     //   this._proxyGlobalParameters();
     // }, 1000);
   }
+
+  // public readonly updateCanvasSize = () => {
+  // const w  = window.innerWidth;
+  // const h  = window.innerHeight;
+  // const scale = Math.min(Math.max(0, ( w/h >= RATIO ) ? h/HEIGHT : w/WIDTH), 1);
+  // _worldToWindowScale = scale;
+  // canvasID.width = WIDTH * scale;
+  // canvasID.height = HEIGHT * scale;
+  // debugger
+  // };
 
   // External API
 

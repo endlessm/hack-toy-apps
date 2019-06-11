@@ -1,19 +1,20 @@
-import { AbstractScene } from "./AbstractScene";
-import { TRANSFORM } from "..";
 import { NinePatch } from "@koreez/phaser3-ninepatch";
+import { TRANSFORM } from "..";
+import { HEIGHT, WIDTH } from "../constants/constants";
+import { AbstractScene } from "./AbstractScene";
 
 export class LevelCompleteScene extends AbstractScene {
   private _diamondLabel: Phaser.GameObjects.BitmapText;
   private _flingLabel: Phaser.GameObjects.BitmapText;
   private _scoreLabel: Phaser.GameObjects.BitmapText;
-  private _ballImage: Phaser.GameObjects.Image
+  private _ballImage: Phaser.GameObjects.Image;
 
   public build(): void {
-    const { width, height, center } = TRANSFORM;
+    const { center } = TRANSFORM;
 
     this._createBlocker();
 
-    const bg = this._createBg(width * 0.2, height * 0.6);
+    const bg = this._createBg(WIDTH * 0.2, HEIGHT * 0.6);
     bg.setPosition(center.x, bg.height / 2 + 100);
 
     const confetti = this.add.image(0, 0, "fizzics", "collision_10");
@@ -49,7 +50,7 @@ export class LevelCompleteScene extends AbstractScene {
   }
 
   public updateBallImage(frameIndex: number): void {
-    this._ballImage.setFrame(`ball_${frameIndex}`)
+    this._ballImage.setFrame(`ball_${frameIndex}`);
   }
 
   public updateScore(value: number): void {

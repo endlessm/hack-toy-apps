@@ -1,5 +1,6 @@
+import { Easings } from "../../constants/Easings";
 import { GameScene } from "../../scenes/GameScene";
-import { lineAngle } from "../../utils/utils";
+import { lineAngle, random, sample } from "../../utils/utils";
 import { DynamicContainer } from "../dynamics/DynamicContainer";
 import { BallView } from "./BallView";
 
@@ -21,12 +22,14 @@ export class FlingerView extends DynamicContainer {
   private _line2Arc: Phaser.GameObjects.Arc;
   private _lineGroup: Phaser.GameObjects.Container;
   private _minDistanceReached: boolean;
+  private _shakeTweens: Phaser.Tweens.Tween[];
   private readonly _flingUpPoint: Phaser.Geom.Point = new Phaser.Geom.Point();
 
   public build(): void {
     this.setSize(260, 260);
     this._createComponents();
     this._createFlingImage();
+    this._shakeTweens = [];
     this.stop();
   }
 
@@ -37,6 +40,10 @@ export class FlingerView extends DynamicContainer {
 
     this._line1.setTo(0, 0, 0, 0);
     this._line2.setTo(0, 0, 0, 0);
+
+    this._stopShakeTweens();
+
+    this._shakeTweens = [];
 
     this.scene.input.off("pointermove", this._onFlingDrag, this, false);
     this._fling.off("pointerdown", this._onFlingDown, this, true);
@@ -71,6 +78,103 @@ export class FlingerView extends DynamicContainer {
       //@ts-ignore
       (this._ball.body.circleRadius / (this._fling.width / 2)) * 1.7
     );
+
+    this._shake();
+  }
+
+  private _shake() {
+    const y = random(-3, 3);
+    const x = random(-2, 2);
+
+    const pair = sample([
+      { y: sample([random(-1, -3), random(1, 3)]) },
+      { x: sample([random(-1, -3), random(1, 3)]) },
+      { angle: sample([-2, 2]) }
+    ]);
+    //  -3, -2, 1, 3, 2, 1]) }, { x: random(-2, 2) }, { angle: sample([-3, 3]) }]);
+    const key = Object.keys(pair)[0];
+    if (key === "angle") {
+      this._ball.setOrigin(0.5, 1);
+      this._ball.y += this._ball.displayHeight / 2;
+    }
+    this.startDown(pair);
+
+    // const pair = sample([{ x: random(-3, 3) }]);
+    // const pair = sample([{ angle: sample([-3, 3]) }]);
+  }
+
+  private startUp(pair: any) {
+    const key = Object.keys(pair)[0];
+    const value = pair[key];
+
+    const data = {};
+    //@ts-ignore
+    data[key] = `+=${value}`;
+
+    const tween = this.scene.add.tween({
+      targets: this._ball,
+      ...data,
+
+      // key: `+=${value}`,
+      duration: 30,
+      ease: Easings.Cubic.InOut,
+      onStart: () => {
+        //@ts-ignore
+        this._ball[key] += pair[key] / 2;
+        this.setRotation(0);
+        this._ball.setRotation(0);
+      },
+      onComplete: () => {
+        pair[key] *= -0.95;
+        this.startDown(pair);
+      },
+      onUpdate: () => {
+        this.setPosition(
+          this._ball.x,
+          this._ball.y + (this._ball.displayHeight / 2 - this._ball.displayHeight * this._ball.originY)
+        );
+        this.setRotation(this._ball.rotation);
+      }
+    });
+    this._shakeTweens.push(tween);
+  }
+
+  private startDown(pair: any) {
+    const key = Object.keys(pair)[0];
+    const value = pair[key];
+
+    const data = {};
+    //@ts-ignore
+    data[key] = `+=${value}`;
+
+    const tween = this.scene.add.tween({
+      targets: this._ball,
+      // key: `+=${value}`,
+      ...data,
+      duration: 30,
+      ease: Easings.Cubic.InOut,
+      onStart: () => {
+        //@ts-ignore
+        this._ball[key] += pair[key] / 2;
+        this.setRotation(0);
+        this._ball.setRotation(0);
+      },
+      onComplete: () => {
+        if (Math.abs(value) < 0.5) {
+          return;
+        }
+        pair[key] *= -0.95;
+        this.startUp(pair);
+      },
+      onUpdate: () => {
+        this.setPosition(
+          this._ball.x,
+          this._ball.y + (this._ball.displayHeight / 2 - this._ball.displayHeight * this._ball.originY)
+        );
+        this.setRotation(this._ball.rotation);
+      }
+    });
+    this._shakeTweens.push(tween);
   }
 
   private _updateLines(): void {
@@ -175,6 +279,7 @@ export class FlingerView extends DynamicContainer {
   }
 
   private _onFlingDown(pointer: Phaser.Input.Pointer): void {
+    this._stopShakeTweens();
     this.scene.input.on("pointermove", this._onFlingDrag, this);
     this.emit("flingStart", this._ball.id);
   }
@@ -191,6 +296,19 @@ export class FlingerView extends DynamicContainer {
     } else {
       this._ball.setPosition(this.x, this.y);
       this.reset();
+    }
+  }
+
+  private _stopShakeTweens(): void {
+    this._shakeTweens.forEach((tween: Phaser.Tweens.Tween) => tween.stop());
+    if (this._ball) {
+      this._ball.setRotation(0);
+      this.setRotation(0);
+      if (this._ball.originY === 0.5) {
+        return;
+      }
+      this._ball.setOrigin(0.5, 0.5);
+      this._ball.y -= this._ball.displayHeight / 2;
     }
   }
 }

@@ -1,4 +1,3 @@
-import { Facade } from "@koreez/mvcx";
 import { SceneEvents } from "../../constants/EventNames";
 import { SceneKey } from "../../constants/types";
 import { PreloadScene } from "../../scenes/PreloadScene";

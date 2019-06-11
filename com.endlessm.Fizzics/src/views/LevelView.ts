@@ -84,6 +84,11 @@ export class LevelView extends DynamicContainer {
     ball.updateCollisionGroup(value);
   }
 
+  public onBallFlingableUpdate(ballID: BallType, frozen: boolean): void {
+    this.updateBallFrozen(ballID, frozen);
+    this.bringBallToTop(ballID);
+  }
+
   public bringBallToTop(ballID: number): void {
     const ball = this.balls.get(ballID);
     this.bringToTop(ball);

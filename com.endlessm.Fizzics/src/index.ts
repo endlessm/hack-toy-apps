@@ -3,7 +3,6 @@ import "./endless";
 import { I18nPlugin } from "@koreez/phaser3-i18n";
 import { NinePatchPlugin } from "@koreez/phaser3-ninepatch";
 import { isNullOrUndefined } from "util";
-import { CANVAS_CONTAINER_ID, WIDTH, HEIGHT } from "./constants/constants";
 import { SceneKey } from "./constants/types";
 import { FizzicsFacade } from "./FizzicsFacade";
 import { FizzicsGame } from "./FizzicsGame";

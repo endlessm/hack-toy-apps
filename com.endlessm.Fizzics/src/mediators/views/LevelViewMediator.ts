@@ -47,10 +47,6 @@ export class LevelViewMediator extends DynamicMediator<LevelView> {
     this.view.updateTypeFrozen(ballType, value);
   }
 
-  private _onBallFrozen(ballVO: BallVO, value: boolean): void {
-    this.view.updateBallFrozen(ballVO.id, value);
-  }
-
   private _onTypeFrameIndex(ballType: BallType, value: number): void {
     this.view.updateTypeFrameIndex(ballType, value);
   }
@@ -61,14 +57,16 @@ export class LevelViewMediator extends DynamicMediator<LevelView> {
   }
 
   private _onBallFlingableUpdate(ballVO: BallVO, flingable: boolean): void {
+    let frozen;
     if (flingable) {
-      this._onBallFrozen(ballVO, true);
-      this.view.bringBallToTop(ballVO.id);
+      frozen = true;
     } else {
       const ballTypesVOProxy = this.facade.retrieveProxy(BallTypesVOProxy);
       const typeConfig = ballTypesVOProxy.getTypeConfig(ballVO.species);
-      this._onBallFrozen(ballVO, typeConfig.frozen);
+      frozen = typeConfig.frozen;
     }
+
+    this.view.onBallFlingableUpdate(ballVO.id, frozen);
   }
 
   private _onBallCollisionGroupUpdate(ballVO: BallVO, collisionGroup: number): void {

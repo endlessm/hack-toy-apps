@@ -10,6 +10,7 @@ var Phaser = {
   //   }
   // },
 
+
   Display: {
     Align: {
       In: {
@@ -41,7 +42,7 @@ var Phaser = {
   Scale: require("src/scale"),
 
   Scenes: { ScenePlugin: require("src/scene/ScenePlugin") },
-
+  
   GameObjects: {
     DisplayList: require("src/gameobjects/DisplayList"),
 

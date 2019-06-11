@@ -4,13 +4,9 @@ import { GameState, SceneKey } from "../../constants/types";
 import { BackgroundScene } from "../../scenes/BackgroundScene";
 import { AbstractSceneMediator } from "./AbstractSceneMediator";
 
-export class BackgroundSceneMediator extends AbstractSceneMediator<
-  BackgroundScene
-> {
+export class BackgroundSceneMediator extends AbstractSceneMediator<BackgroundScene> {
   constructor() {
-    super(<BackgroundScene>(
-      window.fizzicsGame.scene.getScene(SceneKey.Background)
-    ));
+    super(<BackgroundScene>window.fizzicsGame.scene.getScene(SceneKey.Background));
   }
 
   public onRegister(facade: Facade): void {

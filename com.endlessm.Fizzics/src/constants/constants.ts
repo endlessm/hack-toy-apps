@@ -4,8 +4,9 @@ export const raw = require("../../assets/jsones/GameLevels.json");
 export const CANVAS_CONTAINER_ID: string = "canvas";
 
 export const ZERO = 0.0;
-
-export const WIDTH  = 1920;
+export const ONE_HALF = 0.5;
+export const FLINGER_INITIAL_JOLT = 6.0;
+export const WIDTH = 1920;
 export const HEIGHT = 1080;
 export const RATIO = WIDTH / HEIGHT;
 

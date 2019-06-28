@@ -9,15 +9,9 @@
   "scripts": {
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
     "build": "npm run build-assets && npm run build-phaser && webpack --config config/webpack.config.js --env production --mode production --progress --colors",
-    "build-phaser": "webpack --config config/webpack.phaser.config.js --display-modules --mode production --progress --colors",
-    "stats": "webpack --config config/webpack.config.js --env production --mode production --profile --json > stats.json",
     "start": "webpack-dev-server --config config/webpack.config.js --mode development --host 0.0.0.0",
-    "start-device": "npm run build-assets && npm run build-phaser && webpack-dev-server --config config/webpack.config.js --env device --mode development --host 0.0.0.0",
-    "build-assets": "node ./scripts/generateAssetsClass.js",
-    "debug-assets": "node --nolazy --inspect-brk=9229 ./scripts/generateAssetsClass.js",
-    "build-quick": "webpack --config config/webpack.config.js --env production --mode development --progress --colors",
-    "serve": "npm run build && serve -p 3000 -s app",
-    "build-firebase": "npm run build && firebase deploy --only hosting"
+    "build-phaser": "webpack --config config/webpack.phaser.config.js --display-modules --mode production --progress --colors",
+    "build-assets": "node ./scripts/generateAssetsClass.js"
   },
   "devDependencies": {
     "@types/node": "^12.0.2",

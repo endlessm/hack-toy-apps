@@ -27,6 +27,25 @@ TOY_APP_IFACE = '''
   </node>
 '''
 
+def gtk_widget_fade_out(widget, duration_ms,
+                        fade_out_finish_cb=None, *args, **kwargs):
+    step_ms = 50
+    elapsed_ms = 0
+    initial_opacity = Gtk.Widget.get_opacity(widget)
+
+    def do_fade_out():
+        nonlocal elapsed_ms
+        elapsed_ms += step_ms
+        opacity = max(initial_opacity - elapsed_ms / duration_ms, 0)
+        Gtk.Widget.set_opacity(widget, opacity)
+
+        if elapsed_ms >= duration_ms:
+            if fade_out_finish_cb:
+                fade_out_finish_cb(*args, **kwargs)
+            return False
+        return True
+    GLib.timeout_add(step_ms, do_fade_out)
+
 
 @Gtk.Template(filename=os.path.join(SCRIPT_PATH, 'app.ui'))
 class ToyAppWindow(Gtk.ApplicationWindow):
@@ -196,7 +215,19 @@ toy-app-window > overlay > revealer > frame {
                       GLib.Variant('s', val.to_string()))
 
     def _on_quit(self, manager, result):
-        self.app.quit()
+        val = result.get_js_value()
+        if val.is_undefined():
+            raise ValueError('needs ratio argument')
+
+        if not val.is_number():
+            raise ValueError('ratio arg should be number')
+
+        fade_out_ms = val.to_double()
+
+        if fade_out_ms == 0:
+            self.app.quit()
+        else:
+            gtk_widget_fade_out(self, fade_out_ms, self.app.quit)
 
     def _on_load_state_finish(self, proxy, result, user_data):
         val = None;

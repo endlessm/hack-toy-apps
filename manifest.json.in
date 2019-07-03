@@ -13,7 +13,8 @@
     "--device=dri",
     "--own-name=@APP_ID@",
     "--talk-name=com.endlessm.GameStateService",
-    "--talk-name=com.endlessm.HackSoundServer"
+    "--talk-name=com.endlessm.HackSoundServer",
+    "--talk-name=org.gnome.Shell"
   ],
   "modules": [
     {

@@ -13,6 +13,7 @@ from gi.repository import WebKit2
 
 from soundserver import HackSoundServer
 from gamestateservice import GameState
+from system import Desktop
 
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
@@ -76,6 +77,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
+        if self.app.is_hack_mode and self.app_id == "com.endlessm.HackUnlock":
+            Desktop.minimize_all()
         self.maximize()
 
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):

@@ -110,6 +110,15 @@ class ToyAppWindow(Gtk.ApplicationWindow):
                 None
             )
         )
+        manager.add_script(
+            WebKit2.UserScript.new(
+                'window.ToyApp.isHackMode = %s;' % str(self.app.is_hack_mode).lower(),
+                WebKit2.UserContentInjectedFrames.TOP_FRAME,
+                WebKit2.UserScriptInjectionTime.START,
+                None,
+                None
+            )
+        )
 
     def _setup_splash(self):
         # Check if we can use the splash screen as a temporary background while

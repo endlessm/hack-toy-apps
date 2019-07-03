@@ -1,4 +1,6 @@
 window.ToyApp = {
+    isHackMode: false,
+
     requestState() {
         window.webkit.messageHandlers.ToyAppRequestState.postMessage({});
     },

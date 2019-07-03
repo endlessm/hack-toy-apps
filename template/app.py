@@ -281,6 +281,11 @@ class Application(Gtk.Application):
         super().__init__(application_id=application_id)
         self._window = None
         self._hackable = True
+        # TODO
+        # Update hack mode according system settings.
+        self.is_hack_mode = False
+        if GLib.getenv('TOY_APP_HACK_MODE_ENABLED'):
+            self.is_hack_mode = True
 
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',

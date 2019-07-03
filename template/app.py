@@ -11,6 +11,7 @@ from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import WebKit2
 
+from hackapps import HackableAppsManager
 from soundserver import HackSoundServer
 from gamestateservice import GameState
 from system import Desktop
@@ -110,6 +111,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager = self.view.get_user_content_manager()
 
         # Register message handlers
+        self._manager_add_msg_handler(manager, 'ToyAppHideToolbox', self._on_hide_toolbox)
         self._manager_add_msg_handler(manager, 'ToyAppRequestState', self._on_request_state)
         self._manager_add_msg_handler(manager, 'ToyAppLoadNotify', self._on_load_notify)
         self._manager_add_msg_handler(manager, 'ToyAppSetHackable', self._on_set_hackable)
@@ -186,6 +188,11 @@ toy-app-window > overlay > revealer > frame {
 
     def _on_request_state(self, manager, result):
         GameState.get('%s.State' % self.app_id, self._on_load_state_finish)
+
+    def _on_hide_toolbox(self, manager, result):
+        app = HackableAppsManager.get_hackable_app(self.app_id)
+        if app:
+            app.toolbox_visible = False
 
     def _on_load_notify(self, manager, result):
         self._view_show()

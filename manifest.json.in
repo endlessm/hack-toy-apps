@@ -14,7 +14,8 @@
     "--own-name=@APP_ID@",
     "--talk-name=com.endlessm.GameStateService",
     "--talk-name=com.endlessm.HackSoundServer",
-    "--talk-name=org.gnome.Shell"
+    "--talk-name=org.gnome.Shell",
+    "--talk-name=com.endlessm.HackableAppsManager"
   ],
   "modules": [
     {

@@ -54,3 +54,23 @@ class Desktop:
             logger.error(e)
             return False
         return True
+
+    @classmethod
+    def hide_toolbox(klass, app_id):
+        """
+        Hides the toolbox window if any.
+
+        Arguments:
+            app_id (str): The well-known bus name or app id of the application.
+        """
+        script = \
+            "const sessions = Main.wm._codeViewManager._sessions;" \
+            "const session = sessions.find((s) => s.appId === '%s');" \
+            "if (session) session.toolbox.hide();" % app_id
+
+        try:
+            klass.get_shell_proxy().Eval('(s)', script)
+        except GLib.Error as e:
+            logger.error(e)
+            return False
+        return True

@@ -32,6 +32,7 @@ TOY_APP_IFACE = '''
 class ToyAppWindow(Gtk.ApplicationWindow):
     __gtype_name__ = "ToyAppWindow"
 
+    overlay = Gtk.Template.Child()
     revealer = Gtk.Template.Child()
     splash = Gtk.Template.Child()
     view = Gtk.Template.Child()
@@ -45,6 +46,9 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.app_id = application.get_application_id()
         app_info = Gio.DesktopAppInfo.new(self.app_id + '.desktop')
         decorated = metadata.get('decorated', True)
+        hack_mode_properties = metadata.get('hack-mode-properties', {})
+        self.show_topbar = (self.app.is_hack_mode and
+                            hack_mode_properties.get('topbar', False))
         use_load_notify = metadata.get('use-load-notify', False)
 
         self._played_async_sounds = {}
@@ -142,6 +146,9 @@ toy-app-window > overlay > revealer > frame {
                 Gdk.Screen.get_default(),
                 self.provider
             )
+            if self.show_topbar:
+                topbar = ToyAppTopbar(self.app)
+                self.overlay.add_overlay(topbar)
 
     def _on_context_menu(self, webview, context, event, hit):
         return Gtk.true()
@@ -274,6 +281,44 @@ toy-app-window > overlay > revealer > frame {
 
 
 ToyAppWindow.set_css_name('toy-app-window')
+
+
+@Gtk.Template(filename=os.path.join(SCRIPT_PATH, 'topbar.ui'))
+class ToyAppTopbar(Gtk.EventBox):
+    __gtype_name__ = "ToyAppTopbar"
+
+    revealer = Gtk.Template.Child()
+    close_button = Gtk.Template.Child()
+
+    def __init__(self, application):
+        super(ToyAppTopbar, self).__init__()
+
+        self.app = application
+        self._style()
+
+        self.connect('enter-notify-event', self._enter_notify_event_cb)
+        self.connect('leave-notify-event', self._leave_notify_event_cb)
+        self.close_button.connect('clicked', self._close_button_clicked_cb)
+
+    def _style(self):
+        css = b'.toyapp-topbar { background-color: rgba(6, 20, 39, 0.80); }'
+        provider = Gtk.CssProvider()
+        provider.load_from_data(css)
+        Gtk.StyleContext.add_provider_for_screen(
+            Gdk.Screen.get_default(),
+            provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
+
+    def _enter_notify_event_cb(self, *unused_args):
+        self.revealer.set_reveal_child(True)
+
+    def _leave_notify_event_cb(self, *unused_args):
+        self.revealer.set_reveal_child(False)
+
+    def _close_button_clicked_cb(self, button):
+        self.app.quit()
+
 
 class Application(Gtk.Application):
 

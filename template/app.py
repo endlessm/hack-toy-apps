@@ -287,6 +287,10 @@ class Application(Gtk.Application):
         if GLib.getenv('TOY_APP_HACK_MODE_ENABLED'):
             self.is_hack_mode = True
 
+        if self.is_hack_mode:
+            gtk_settings = Gtk.Settings.get_default()
+            gtk_settings.props.gtk_application_prefer_dark_theme = True
+
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
                                 parameter_type=GLib.VariantType('b'))

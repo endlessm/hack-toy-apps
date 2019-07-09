@@ -12,6 +12,13 @@
     "--socket=pulseaudio",
     "--device=dri",
     "--own-name=@APP_ID@",
+    "--filesystem=xdg-run/dconf",
+    "--filesystem=~/.config/dconf:ro",
+    "--nofilesystem=~/.local/lib/python3.5",
+    "--talk-name=ca.desrt.dconf",
+    "--filesystem=host",
+    "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
+    "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
     "--talk-name=com.endlessm.GameStateService",
     "--talk-name=com.endlessm.HackSoundServer"
   ],

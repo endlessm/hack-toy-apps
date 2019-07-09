@@ -8,6 +8,7 @@ gi.require_version('WebKit2', '4.0')  # nopep8
 from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import GLib
+from gi.repository import GObject
 from gi.repository import Gtk
 from gi.repository import WebKit2
 
@@ -26,6 +27,12 @@ TOY_APP_IFACE = '''
     </interface>
   </node>
 '''
+
+
+def g_settings_has_key(settings, key):
+    schema_source = Gio.SettingsSchemaSource.get_default()
+    schema = schema_source.lookup(settings.props.schema_id, False)
+    return key in schema.list_keys()
 
 
 @Gtk.Template(filename=os.path.join(SCRIPT_PATH, 'app.ui'))
@@ -326,15 +333,18 @@ class Application(Gtk.Application):
         super().__init__(application_id=application_id)
         self._window = None
         self._hackable = True
-        # TODO
-        # Update hack mode according system settings.
-        self.is_hack_mode = False
-        if GLib.getenv('TOY_APP_HACK_MODE_ENABLED'):
-            self.is_hack_mode = True
 
+        self._shell_settings = Gio.Settings.new('org.gnome.shell')
+        self._gtk_settings = Gtk.Settings.get_default()
+
+        if (not GLib.getenv('TOY_APP_HACK_MODE_ENABLED') and
+                g_settings_has_key(self._shell_settings, 'hack-mode-enabled')):
+            self._shell_settings.connect('changed::hack-mode-enabled',
+                                         self._hack_mode_settings_changed_cb)
         if self.is_hack_mode:
-            gtk_settings = Gtk.Settings.get_default()
-            gtk_settings.props.gtk_application_prefer_dark_theme = True
+            self._gtk_settings.props.gtk_application_prefer_dark_theme = True
+
+        self.connect('notify::is-hack-mode', self._is_hack_mode_changed_cb)
 
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
@@ -406,6 +416,33 @@ class Application(Gtk.Application):
                                                'org.freedesktop.DBus.Properties',
                                                'PropertiesChanged',
                                                variant)
+
+    def _has_hack_mode_enabled_key(self, schema_id, key):
+        schema_source = Gio.SettingsSchemaSource.get_default()
+        schema = schema_source.lookup('org.gnome.shell', False)
+        if 'hack-mode-enabled' not in schema.list_keys():
+            return False
+        settings = Gio.Settings.new('org.gnome.shell')
+
+    def _is_hack_mode_changed_cb(self, app, pspec):
+        self._gtk_settings.props.gtk_application_prefer_dark_theme = app.is_hack_mode
+
+    def _hack_mode_settings_changed_cb(self, settings, pspec):
+        self.notify('is-hack-mode')
+
+    def _is_hack_mode(self):
+        if GLib.getenv('TOY_APP_HACK_MODE_ENABLED'):
+            return True
+        if not g_settings_has_key(self._shell_settings, 'hack-mode-enabled'):
+            return False
+        return self._shell_settings.get_boolean('hack-mode-enabled')
+
+    is_hack_mode = \
+        GObject.Property(getter=_is_hack_mode,
+                         type=bool,
+                         default=bool(GLib.getenv('TOY_APP_HACK_MODE_ENABLED')),
+                         flags=(GObject.ParamFlags.READABLE |
+                                GObject.ParamFlags.EXPLICIT_NOTIFY))
 
 
 if __name__ == "__main__":

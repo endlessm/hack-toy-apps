@@ -139,6 +139,11 @@ game.events.on('global-property-change', (obj, property) => {
 window.flip = function() {
     globalParameters.flipped = !globalParameters.flipped;
 
+    // do not run sleep timer if in toolbox
+    if (globalParameters.flipped) {
+        clearSleepTimer(game.pauseToyAppTimeout);
+    }
+
     if (globalParameters.playing)
         /* Pause game automatically when flipped, and resume
          * automatically when flipped back */

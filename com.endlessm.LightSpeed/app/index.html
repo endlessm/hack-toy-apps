@@ -2,9 +2,23 @@
   <head>
     <title>LightSpeed</title>
     <script src="phaser.min.js"></script>
+    <style>
+        .bg {
+            background-size: cover;
+            background-repeat: no-repeat;
+
+            margin:0px;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        .bgImage {
+            background-image: url("assets/pauseScreen.jpg");
+        }
+    </style>
   </head>
 
-  <body style="margin: 0px; background-color: black; overflow: hidden;">
+  <body class="bg">
     <script src="parameters.js"></script>
     <script src="utils.js"></script>
     <script src="widgets.js"></script>
@@ -18,6 +32,7 @@
     <script src="backgroundScene.js"></script>
     <script src="levelScene.js"></script>
     <script src="main.js"></script>
+    <script src="pauseToyApp.js"></script>
   </body>
 
 </html>

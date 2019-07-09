@@ -301,7 +301,8 @@ export class FlingerView extends DynamicContainer {
 
   private _stopShakeTweens(): void {
     this._shakeTweens.forEach((tween: Phaser.Tweens.Tween) => tween.stop());
-    if (this._ball) {
+
+    if (this._ball !== undefined && this._ball.active) {
       this._ball.setRotation(0);
       this.setRotation(0);
       if (this._ball.originY === 0.5) {

@@ -14,6 +14,7 @@ from gi.repository import WebKit2
 
 from soundserver import HackSoundServer
 from gamestateservice import GameState
+from system import Desktop
 
 WebKit2.Settings.__gtype__
 WebKit2.WebView.__gtype__
@@ -27,6 +28,25 @@ TOY_APP_IFACE = '''
     </interface>
   </node>
 '''
+
+def gtk_widget_fade_out(widget, duration_ms,
+                        fade_out_finish_cb=None, *args, **kwargs):
+    step_ms = 50
+    elapsed_ms = 0
+    initial_opacity = Gtk.Widget.get_opacity(widget)
+
+    def do_fade_out():
+        nonlocal elapsed_ms
+        elapsed_ms += step_ms
+        opacity = max(initial_opacity - elapsed_ms / duration_ms, 0)
+        Gtk.Widget.set_opacity(widget, opacity)
+
+        if elapsed_ms >= duration_ms:
+            if fade_out_finish_cb:
+                fade_out_finish_cb(*args, **kwargs)
+            return False
+        return True
+    GLib.timeout_add(step_ms, do_fade_out)
 
 
 def g_settings_has_key(settings, key):
@@ -64,6 +84,8 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
+        if self.app.is_hack_mode and self.app_id == "com.endlessm.HackUnlock":
+            Desktop.minimize_all()
         self.maximize()
 
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):
@@ -111,6 +133,15 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager.add_script(
             WebKit2.UserScript.new(
                 open(os.path.join(SCRIPT_PATH, 'app.js'), 'r').read(),
+                WebKit2.UserContentInjectedFrames.TOP_FRAME,
+                WebKit2.UserScriptInjectionTime.START,
+                None,
+                None
+            )
+        )
+        manager.add_script(
+            WebKit2.UserScript.new(
+                'window.ToyApp.isHackMode = %s;' % str(self.app.is_hack_mode).lower(),
                 WebKit2.UserContentInjectedFrames.TOP_FRAME,
                 WebKit2.UserScriptInjectionTime.START,
                 None,
@@ -194,7 +225,19 @@ toy-app-window > overlay > revealer > frame {
                       GLib.Variant('s', val.to_string()))
 
     def _on_quit(self, manager, result):
-        self.app.quit()
+        val = result.get_js_value()
+        if val.is_undefined():
+            raise ValueError('needs ratio argument')
+
+        if not val.is_number():
+            raise ValueError('ratio arg should be number')
+
+        fade_out_ms = val.to_double()
+
+        if fade_out_ms == 0:
+            self.app.quit()
+        else:
+            gtk_widget_fade_out(self, fade_out_ms, self.app.quit)
 
     def _on_load_state_finish(self, proxy, result, user_data):
         val = None;

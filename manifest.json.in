@@ -20,7 +20,8 @@
     "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
     "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
     "--talk-name=com.endlessm.GameStateService",
-    "--talk-name=com.endlessm.HackSoundServer"
+    "--talk-name=com.endlessm.HackSoundServer",
+    "--talk-name=org.gnome.Shell"
   ],
   "modules": [
     {

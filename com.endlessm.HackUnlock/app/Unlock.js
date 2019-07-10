@@ -252,7 +252,9 @@ function Unlock()
         _video.addEventListener("ended", function() {
             globalParameters.unlocked = true;
             globalParameters.mode = MODE_VIDEO_PLAYED;
-            window.ToyApp.quit();
+
+            const fadeDurationMs = window.ToyApp.isHackMode ? 2000 : 0;
+            window.ToyApp.quit(fadeDurationMs);
         });
         _video.play();
     }

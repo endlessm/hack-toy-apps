@@ -1,4 +1,6 @@
 window.ToyApp = {
+    isHackMode: false,
+
     requestState() {
         window.webkit.messageHandlers.ToyAppRequestState.postMessage({});
     },
@@ -22,8 +24,8 @@ window.ToyApp = {
         window.webkit.messageHandlers.ToyAppSaveState.postMessage(string);
     },
 
-    quit() {
-        window.webkit.messageHandlers.ToyAppQuit.postMessage({});
+    quit(msFadeOut = 0) {
+        window.webkit.messageHandlers.ToyAppQuit.postMessage(msFadeOut);
     },
 };
 

@@ -54,3 +54,4 @@ class Desktop:
             logger.error(e)
             return False
         return True
+

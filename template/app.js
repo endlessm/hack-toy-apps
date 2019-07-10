@@ -1,6 +1,10 @@
 window.ToyApp = {
     isHackMode: false,
 
+    hideToolbox() {
+        window.webkit.messageHandlers.ToyAppHideToolbox.postMessage({});
+    },
+
     requestState() {
         window.webkit.messageHandlers.ToyAppRequestState.postMessage({});
     },

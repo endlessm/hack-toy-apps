@@ -21,7 +21,8 @@
     "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
     "--talk-name=com.endlessm.GameStateService",
     "--talk-name=com.endlessm.HackSoundServer",
-    "--talk-name=org.gnome.Shell"
+    "--talk-name=org.gnome.Shell",
+    "--talk-name=com.endlessm.HackableAppsManager"
   ],
   "modules": [
     {

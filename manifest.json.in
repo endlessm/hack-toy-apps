@@ -19,12 +19,28 @@
     "--filesystem=host",
     "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
     "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
+    "--env=GTK3_MODULES=/app/clippy/lib/libclippy-module.so",
     "--talk-name=com.endlessm.GameStateService",
     "--talk-name=com.endlessm.HackSoundServer",
     "--talk-name=org.gnome.Shell",
     "--talk-name=com.endlessm.HackableAppsManager"
   ],
   "modules": [
+    /** clippy ext **/
+    {
+      "name": "clippy",
+      "buildsystem": "meson",
+      "config-opts": [
+        "-Dgtk-modules-path=/app/clippy/lib"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/endlessm/clippy.git",
+          "branch": "@BRANCH@"
+        }
+      ]
+    },
     {
       "name": "toyapp",
       "buildsystem": "meson",

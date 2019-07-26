@@ -253,10 +253,9 @@ function Unlock()
             globalParameters.unlocked = true;
             globalParameters.mode = MODE_VIDEO_PLAYED;
 
-            if (window.ToyApp.isHackMode)
-                window.ToyApp.hideToolbox();
+            window.ToyApp.hideToolbox();
 
-            const fadeDurationMs = window.ToyApp.isHackMode ? 2000 : 0;
+            const fadeDurationMs = 2000;
             window.ToyApp.quit(fadeDurationMs);
         });
         _video.play();

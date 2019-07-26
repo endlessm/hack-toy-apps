@@ -75,8 +75,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         app_info = Gio.DesktopAppInfo.new(self.app_id + '.desktop')
         decorated = metadata.get('decorated', True)
         hack_mode_properties = metadata.get('hack-mode-properties', {})
-        self.show_topbar = (self.app.is_hack_mode and
-                            hack_mode_properties.get('topbar', False))
+        self.show_topbar = hack_mode_properties.get('topbar', False)
         use_load_notify = metadata.get('use-load-notify', False)
 
         self._played_async_sounds = {}
@@ -85,7 +84,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
-        if self.app.is_hack_mode and self.app_id == "com.endlessm.HackUnlock":
+        if self.app_id == "com.endlessm.HackUnlock":
             Desktop.minimize_all()
         self.maximize()
 

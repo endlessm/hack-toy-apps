@@ -1,5 +1,13 @@
 {
   "app-id": "@APP_ID@",
+  "add-extensions": {
+      "com.endlessm.Clippy.Extension": {
+          "version": "@BRANCH@",
+          "directory": "clippy",
+          "no-autodownload": false,
+          "autodelete": true
+      }
+  },
   "branch": "@BRANCH@",
   "runtime": "org.gnome.Platform",
   "runtime-version": "3.30",
@@ -19,12 +27,21 @@
     "--filesystem=host",
     "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
     "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
+    "--env=GTK3_MODULES=/app/clippy/lib/libclippy-module.so",
     "--talk-name=com.endlessm.GameStateService",
     "--talk-name=com.endlessm.HackSoundServer",
     "--talk-name=org.gnome.Shell",
     "--talk-name=com.endlessm.HackableAppsManager"
   ],
   "modules": [
+    {
+      "name": "clippy-ext",
+      "buildsystem": "simple",
+      "build-commands": [
+        "mkdir /app/clippy"
+      ],
+      "sources": []
+    },
     {
       "name": "toyapp",
       "buildsystem": "meson",

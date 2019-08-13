@@ -11,9 +11,9 @@ class GameStateService:
     def __init__(self):
         self.proxy = Gio.DBusProxy.new_for_bus_sync(
                 Gio.BusType.SESSION, 0, None,
-                'com.endlessm.GameStateService',
-                '/com/endlessm/GameStateService',
-                'com.endlessm.GameStateService',
+                'com.hack_computer.GameStateService',
+                '/com/hack_computer/GameStateService',
+                'com.hack_computer.GameStateService',
                 None)
 
     def _ignore_cb(self, _proxy, _result, user_data=None):

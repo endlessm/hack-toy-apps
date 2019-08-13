@@ -1,7 +1,7 @@
 {
   "app-id": "@APP_ID@",
   "add-extensions": {
-      "com.endlessm.Clippy.Extension": {
+      "com.hack_computer.Clippy.Extension": {
           "version": "@BRANCH@",
           "directory": "clippy",
           "no-autodownload": false,
@@ -28,8 +28,8 @@
     "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
     "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
     "--env=GTK3_MODULES=/app/clippy/lib/libclippy-module.so",
-    "--talk-name=com.endlessm.GameStateService",
-    "--talk-name=com.endlessm.HackSoundServer",
+    "--talk-name=com.hack_computer.GameStateService",
+    "--talk-name=com.hack_computer.HackSoundServer",
     "--talk-name=org.gnome.Shell",
     "--talk-name=com.endlessm.HackableAppsManager"
   ],

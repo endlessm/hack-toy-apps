@@ -46,7 +46,7 @@ install_data(
     rename: app_id + '.jpg'
 )
 
-if app_id == 'com.endlessm.HackUnlock'
+if app_id == 'com.hack_computer.HackUnlock'
     install_data(
         join_paths(app_id, 'data', 'app.service'),
         install_dir: 'share/dbus-1/services',
@@ -54,7 +54,7 @@ if app_id == 'com.endlessm.HackUnlock'
     )
 endif
 
-if app_id == 'com.endlessm.Fizzics' or app_id == 'com.endlessm.HackUnlock' or app_id == 'com.endlessm.OperatingSystemApp' or app_id == 'com.endlessm.Sidetrack' 
+if app_id == 'com.endlessm.Fizzics' or app_id == 'com.hack_computer.HackUnlock' or app_id == 'com.endlessm.OperatingSystemApp' or app_id == 'com.endlessm.Sidetrack'
     install_data(
         join_paths(app_id, 'data', 'metadata.json'),
         install_dir: 'share/toy'

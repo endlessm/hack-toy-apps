@@ -85,7 +85,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
-        if self.app.is_hack_mode and self.app_id == "com.endlessm.HackUnlock":
+        if self.app.is_hack_mode and self.app_id == "com.hack_computer.HackUnlock":
             Desktop.minimize_all()
         self.maximize()
 

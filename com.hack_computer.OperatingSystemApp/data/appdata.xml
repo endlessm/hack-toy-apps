@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>com.endlessm.OperatingSystemApp.desktop</id>
+  <id>com.hack_computer.OperatingSystemApp.desktop</id>
   <metadata_license>CC0</metadata_license>
   <project_license>LicenseRef-proprietary</project_license>
   <categories>
@@ -16,12 +16,12 @@
 
   <screenshots>
     <screenshot>
-      <image type="source">https://d3lapyynmdp1i9.cloudfront.net/screenshots/com.endlessm.OperatingSystemApp/C/com.endlessm.OperatingSystemApp-screenshot1.png</image>
+      <image type="source">https://d3lapyynmdp1i9.cloudfront.net/screenshots/com.hack_computer.OperatingSystemApp/C/com.hack_computer.OperatingSystemApp-screenshot1.png</image>
     </screenshot>
   </screenshots>
 
   <metadata>
-    <value key="GnomeSoftware::popular-background">https://d3lapyynmdp1i9.cloudfront.net/thumbnails/com.endlessm.OperatingSystemApp/com.endlessm.OperatingSystemApp-thumb.png</value>
+    <value key="GnomeSoftware::popular-background">https://d3lapyynmdp1i9.cloudfront.net/thumbnails/com.hack_computer.OperatingSystemApp/com.hack_computer.OperatingSystemApp-thumb.png</value>
   </metadata>
 
   <url type="homepage">http://www.endlessm.com</url>

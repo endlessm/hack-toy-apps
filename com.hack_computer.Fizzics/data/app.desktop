@@ -2,10 +2,10 @@
 Version=1.0
 Name=Fizzics
 Type=Application
-Exec=com.endlessm.Fizzics
+Exec=com.hack_computer.Fizzics
 StartupNotify=true
-Icon=com.endlessm.Fizzics
+Icon=com.hack_computer.Fizzics
 Categories=Game;
 X-Endless-LaunchMaximized=true
-X-Endless-SplashBackground=com.endlessm.Fizzics.jpg
+X-Endless-SplashBackground=com.hack_computer.Fizzics.jpg
 X-Endless-HackShader=fizzics

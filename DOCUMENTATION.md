@@ -250,7 +250,7 @@ To run the ToyApp with Clippy:
 $ flatpak run --env=GTK3_MODULES=libclippy-module.so com.endlessm.Bouncing
 ```
 
-In essence, what Clippy does, is to export a DBus service under the `com.endlessm.Clippy` interface. With this interface, other components of the desktop can access all sort of functionalities from the ToyApp, including JavaScript objects from the webview.
+In essence, what Clippy does, is to export a DBus service under the `com.hack_computer.Clippy` interface. With this interface, other components of the desktop can access all sort of functionalities from the ToyApp, including JavaScript objects from the webview.
 
 
 To access a hackable object from another component of the desktop:
@@ -259,10 +259,10 @@ To access a hackable object from another component of the desktop:
 const {Gio, GObject} = imports.gi;
 
 const ClippyViewName = 'view.JSContext.hackable';
-const ClippyObjectPath = '/com/endlessm/Clippy';
+const ClippyObjectPath = '/com/hack_computer/Clippy';
 const ClippyIface = `
 <node xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
-  <interface name='com.endlessm.Clippy'>
+  <interface name='com.hack_computer.Clippy'>
     <method name='Export'>
       <arg type='s' name='object' />
       <arg type='s' name='path' direction='out'/>

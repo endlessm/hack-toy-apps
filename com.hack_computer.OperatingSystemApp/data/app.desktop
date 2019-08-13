@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=System
+Type=Application
+Exec=com.hack_computer.OperatingSystemApp
+StartupNotify=true
+Icon=com.hack_computer.OperatingSystemApp
+Categories=Game;
+X-Endless-LaunchMaximized=true
+X-Endless-SplashBackground=com.hack_computer.OperatingSystemApp.jpg

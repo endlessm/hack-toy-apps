@@ -2,9 +2,9 @@
 Version=1.0
 Name=Lightspeed
 Type=Application
-Exec=com.endlessm.LightSpeed
+Exec=com.hack_computer.LightSpeed
 StartupNotify=true
-Icon=com.endlessm.LightSpeed
+Icon=com.hack_computer.LightSpeed
 Categories=Game;
 X-Endless-LaunchMaximized=true
-X-Endless-SplashBackground=com.endlessm.LightSpeed.jpg
+X-Endless-SplashBackground=com.hack_computer.LightSpeed.jpg

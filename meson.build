@@ -54,14 +54,14 @@ if app_id == 'com.hack_computer.HackUnlock'
     )
 endif
 
-if app_id == 'com.hack_computer.Fizzics' or app_id == 'com.hack_computer.HackUnlock' or app_id == 'com.hack_computer.OperatingSystemApp' or app_id == 'com.endlessm.Sidetrack'
+if app_id == 'com.hack_computer.Fizzics' or app_id == 'com.hack_computer.HackUnlock' or app_id == 'com.hack_computer.OperatingSystemApp' or app_id == 'com.hack_computer.Sidetrack'
     install_data(
         join_paths(app_id, 'data', 'metadata.json'),
         install_dir: 'share/toy'
     )
 endif
 
-if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.endlessm.Sidetrack' 
+if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.hack_computer.Sidetrack' 
     install_data(
         join_paths('common', 'phaser-3.17.0.min.js'),
         install_dir: 'share/toy/app',
@@ -69,7 +69,7 @@ if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.endlessm.Sidetrack'
     )
 endif
 
-if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.endlessm.Sidetrack' 
+if app_id == 'com.endlessm.LightSpeed' or app_id == 'com.hack_computer.Sidetrack' 
     install_data(
         join_paths('common', 'pauseToyApp.js'),
         install_dir: 'share/toy/app',

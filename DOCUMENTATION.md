@@ -167,7 +167,7 @@ Then, to access and monitor this property from another component of the desktop:
 const {Gio} = imports.gi;
 const HackableIface = `
 <node>
-  <interface name='com.endlessm.Hackable'>
+  <interface name='com.hack_computer.Hackable'>
     <property name="Hackable" type="b" access="read"/>
   </interface>
 </node>

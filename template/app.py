@@ -24,7 +24,7 @@ SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 TOY_APP_IFACE = '''
   <node>
-    <interface name='com.endlessm.Hackable'>
+    <interface name='com.hack_computer.Hackable'>
       <property name="Hackable" type="b" access="read"/>
     </interface>
   </node>
@@ -458,7 +458,7 @@ class Application(Gtk.Application):
 
         self._hackable = hackable
         changed_props = {'Hackable': GLib.Variant('b', self._hackable)}
-        variant = GLib.Variant.new_tuple(GLib.Variant('s', 'com.endlessm.Hackable'),
+        variant = GLib.Variant.new_tuple(GLib.Variant('s', 'com.hack_computer.Hackable'),
                                          GLib.Variant('a{sv}', changed_props),
                                          GLib.Variant('as', []))
         self.get_dbus_connection().emit_signal(None,

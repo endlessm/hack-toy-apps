@@ -31,7 +31,7 @@
     "--talk-name=com.hack_computer.GameStateService",
     "--talk-name=com.hack_computer.HackSoundServer",
     "--talk-name=org.gnome.Shell",
-    "--talk-name=com.endlessm.HackableAppsManager"
+    "--talk-name=com.hack_computer.HackableAppsManager"
   ],
   "modules": [
     {

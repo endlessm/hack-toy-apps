@@ -247,11 +247,11 @@ function Unlock()
             return;
         }
 
-        _video = document.createElement("video");
-        _video.src = "videos/success.webm";
+        _video = document.getElementById("video");
         _video.addEventListener("ended", function() {
             globalParameters.unlocked = true;
             globalParameters.mode = MODE_VIDEO_PLAYED;
+            _video.style.opacity = 0;
 
             if (window.ToyApp.isHackMode)
                 window.ToyApp.hideToolbox();
@@ -259,6 +259,13 @@ function Unlock()
             const fadeDurationMs = window.ToyApp.isHackMode ? 2000 : 0;
             window.ToyApp.quit(fadeDurationMs);
         });
+
+        var bg_diff_x = canvasID.width - BG_SIZE.width;
+        var bg_diff_y =  canvasID.height - BG_SIZE.height;
+        _video.style.left = bg_diff_x / 2;
+        _video.style.top = bg_diff_y / 2;
+        _video.style.width = BG_SIZE.width;
+        _video.style.opacity = 1;
         _video.play();
     }
 
@@ -335,6 +342,9 @@ function Unlock()
     {
         if ( globalParameters.mode == MODE_VIDEO_PLAYED )
         {
+            canvas.clearRect( 0, 0, canvasID.width, canvasID.height );
+            canvas.fillStyle = "white";
+            canvas.fillRect( 0, 0, canvasID.width, canvasID.height );
             return;
         }
 
@@ -346,7 +356,6 @@ function Unlock()
                 var bg_diff_y =  canvasID.height - BG_SIZE.height;
                 canvas.drawImage( _video, bg_diff_x / 2, bg_diff_y / 2);
             }
-
             return;
         }
 

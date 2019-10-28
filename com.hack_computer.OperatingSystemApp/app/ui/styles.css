@@ -200,6 +200,10 @@ body {
   z-index: 700;
 }
 
+.ui__layer-title.large {
+  width: 760px;
+}
+
 .ui__layer-title.visible {
   opacity: 1 !important;
   transition: opacity 1s ease-in-out;

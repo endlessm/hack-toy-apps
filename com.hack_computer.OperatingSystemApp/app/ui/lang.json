@@ -7,7 +7,7 @@ lang = {
           "index": 0,
           "name": "Ada",
           "top": 163,
-          "text": "One day I realized that the cursor basically pinpoints my action inside the computer. If you think about it, the cursor represents your physical agency inside the graphical interface. It’s as if you could point with your finger within the screen itself."
+          "text": "The other day, I found out that the little arrow that’s always on the screen is called a cursor. It’s where my finger would be on a touchscreen, except I use a mouse or trackpad to control it instead."
         }
       ],
       [
@@ -15,20 +15,20 @@ lang = {
           "index": 1,
           "name": "Estelle",
           "top": 325,
-          "text": "So true. On a phone or a touchscreen, your own finger literally serves the same function as the mouse pointer. It’s the center of where you interact with your computer."
+          "text": "Exactly, it marks your position on the screen. I wonder why they’d call it a cursor, though. It sounds like it might be used to cast evil spells, or something."
         }
       ],
       [
         {
           "index": 2,
-          "top": 70,
           "name": "Saniel",
-          "text": "Exactly, it marks your position on the screen. It’s interesting that <strong>“cursor”</strong> comes from the Latin verb <em>currere</em>, “to run.” "
+          "top": 35,
+          "text": "Well, the word <strong>cursor</strong> comes from the Latin verb <em>currere</em>, “to run.” It’s the same root that gives us the word “current” - as in “the current of the river.”"
         },
         {
           "index": 3,
           "name": "Ada",
-          "text": "Right, so the cursor is like a sprinter running through your text. <strong>Cursor</strong> also comes from the same root that gives us “current,” as in the current of the river. So, a primary quality of the cursor is that it’s on the move."
+          "text": "So, it’s called a cursor because it’s always on the move? That makes sense. The arrow is always flitting around the screen as I move the mouse. But sometimes, like when I’m editing text, it turns from an arrow into a vertical line. I wonder what else it can change into..."
         }
       ],
       [
@@ -36,7 +36,7 @@ lang = {
           "index": 4,
           "name": "Riley",
           "top": 328,
-          "text": "Did you try to make your cursor a huge slice of cheese yet? The system is where you go to do this."
+          "text": "Have you tried to make your cursor a huge slice of cheese yet? If you haven’t, try flipping this app to see what you can find!"
         }
       ]
     ]
@@ -47,34 +47,39 @@ lang = {
       [
         {
           "index": 0,
-          "name": "Saniel",
-          "text": "The operating system manages the inputs from the user and the outputs from the computer."
+          "name": "Estelle",
+          "text": "The OS (operating system), is at the center of what we do when we interact with the computer. We make requests (like clicking on a button) and the system relays these requests to the app (so that something happens when you click the button)."
         },
         {
           "index": 1,
-          "name": "Estelle",
-          "text": "The operating system is at the center of what we do when we interact with the computer. We make requests and the system relays these requests to the app."
+          "name": "Saniel",
+          "text": "Exactly. The OS manages resources like disk space, memory, and peripherals. It gets instructions and it sends instructions."
         }
       ],
       [
         {
           "index": 2,
-          "top": 142,
-          "name": "Saniel",
-          "text": "Exactly. The OS manages resources, disk space, memory, peripherals. It gets instructions and it sends instructions. It makes it possible to relate to the computer in everything you do."
+          "name": "Estelle",
+          "text": "What are peripherals?"
         },
         {
           "index": 3,
-          "name": "Riley",
-          "text": "Love that. I really like knowing how things work behind the scenes."
+          "name": "Saniel",
+          "top": 20,
+          "text": "Peripherals are any devices connected to the computer that give input (like the keyboard, mouse, or USB drive) or output (like the screen, speakers, or a printer). The OS manages all of these things, as well as the internal parts of the computer, to make sure that everything gets where it needs to go."
         }
       ],
       [
         {
           "index": 4,
-          "top": 262,
+          "name": "Riley",
+          "text": "Cool! I love finding out how things work behind the scenes."
+        },
+        {
+          "index": 5,
           "name": "Saniel",
-          "text": "So, for example, the Operating System handles your choice of cursors, and how your cursor behaves. So, when you choose a wedge of cheese or a unicorn as your cursor, the OS is taking your request and issuing commands."
+          "top": 35,
+          "text": "So, for example, the Operating System handles your choice of cursors, and how your cursor behaves. So, when you choose a wedge of cheese or a unicorn as your cursor, the OS is taking your request and issuing the command to display a different image for your cursor. It also tracks where your mouse is moving and makes your cursor move the same amount on the screen."
         }
       ]
     ]
@@ -85,43 +90,38 @@ lang = {
       [
         {
           "index": 0,
-          "top": 45,
           "name": "Ada",
-          "text": "Ah, daemons. You don’t see them, but you would know it if they weren’t there. The intelligences in the system! The word, <strong>daemon</strong> comes from the Latin word for “a guiding spirit.” I like thinking of them that way, as little guardians of the system."
+          "top": 45,
+          "text": "Ah, daemons (pronounced “DAY-mons”). You don’t see them, but you would know it if they weren’t there. The word <strong>daemon</strong> comes from the Latin word for “a guiding spirit.” I like thinking of them that way, as little guardians of the system. "
         }
       ],
       [
         {
           "index": 1,
-          "name": "Estelle",
           "top": 238,
-          "text": "Yes. Daemons perform many different activities in the system. They serve as layers of responsibility. Much of the work of the Daemons happens in the background. They do things without having to be asked."
-        },
+          "name": "Estelle",
+          "text": "Yes. Daemons run in the background and perform many different activities in the system. Daemons are these little programs that wake up when called to perform an action and then they go to sleep again. You could say they’ve always got one eye half open, kind of like Saniel! "
+        }
+      ],
+      [
         {
           "index": 2,
-          "name": "Riley",
-          "text": "My mom loves it when she doesn’t have to ask me to do things."
-        }
+          "name": "Saniel",
+          "top": 155,
+          "text": "Do I really do that? Hmmph. Well, a good example is the <strong>sound daemon</strong>. It’s idle most of the time, but when you open the Clubhouse, that event is sent to the <strong>sound daemon</strong>. It gets woken up, and it plays back a sound, then it resumes its half-slumber. "
+        },
       ],
       [
         {
           "index": 3,
-          "top": 155,
-          "name": "Faber",
-          "text": "Yep. Daemons run in the background. That’s true. But they can also perform operations in reaction to a user’s input, even in direct reaction to a user command. For example, the journal daemon captures logs from other processes and stores that info. Then when the user wants the info, it’s available."
-        }
-      ],
-      [
-        {
-          "index": 4,
-          "name": "Saniel",
-          "top": 36,
-          "text": "We can think of daemons as little programs that wake up when something particular happens, and then they perform an action and then go to sleep again."
+          "name": "Riley",
+          "top": -15,
+          "text": "Or when you go to print out your 37th picture of a unicorn, the <strong>line printer daemon</strong> wakes up and adds it to the queue (so the printer knows what order to print everything in). Uh, no reason to check the print queue, really. I definitely haven’t been sending my print jobs under other peoples’ names."
         },
         {
-          "index": 5,
-          "name": "Estelle",
-          "text": "When something needs to be done, the daemons spring into action."
+          "index": 4,
+          "name": "Faber",
+          "text": "It’s pretty awesome that daemons are always there when you need them. They’re always listening for their name to be called, and then they do things without having to be asked."
         }
       ]
     ]
@@ -134,7 +134,7 @@ lang = {
           "index": 0,
           "left": 75,
           "name": "Estelle",
-          "text": "/dev/null is a very tiny piece of the operating system. I can take it as a source or as a destination. It’s probably 100 lines of code. But It’s impactful. dev/null is a file in the file system that doesn’t exist. Anytime you need an empty file, /dev/null is there.",
+          "text": "Dev/null is a very tiny piece of the operating system. It’s probably only 100 lines of code. But It’s impactful. Dev/null is a file in the file system that doesn’t exist. Anytime you need an empty file, dev null is there.",
         }
       ],
       [
@@ -146,7 +146,7 @@ lang = {
         {
           "index": 2,
           "name": "Saniel",
-          "text": "Great question. /dev/null is a special file. Anything you dump into it disappears. We typically use /dev/null for disposing of unwanted output streams, or as a handy empty file for an input process.",
+          "text": "Great question. Dev/null is a special file. Anything you dump into it disappears. We typically use dev/null for disposing of unwanted output streams, or as a handy empty file for an input process.",
         }
       ],
       [
@@ -154,25 +154,25 @@ lang = {
           "index": 3,
           "name": "Ada",
           "top": 140,
-          "text": "Yes, let’s think of it this way: it’s sort of like a wastebasket within the file system, but things just keep moving through it."
+          "text": "Yes, it’s sort of like a black hole within the file system."
         },
         {
           "index": 4,
           "name": "Riley",
-          "text": "Rad. That helps me wrap my mind around it! So this empty file gives an unwanted output stream a place to go.",
+          "text": "That helps me wrap my mind around it! So this empty file called dev/null gives us a place to direct some unwanted output that we don’t want to save.",
         }
       ],
       [
         {
           "index": 5,
-          "top": "-60",
           "name": "Saniel",
-          "text": "Indeed. There’s a joke among programmers. If someone complains to me, I might say, “I’m sending your complaints to /dev/null.”"
+          "top": "-60",
+          "text": "Indeed. There’s a joke among programmers. If someone complains to me, I might say, “I’m sending your complaints to dev/null.”"
         },
         {
           "index": 6,
           "name": "Riley",
-          "text": "LOL. I am so going to use that with Faber."
+          "text": "LOL. I am so going to use that!"
         }
       ]
     ]
@@ -184,42 +184,37 @@ lang = {
         {
           "index": 0,
           "name": "Ada",
-          "text": "The kernel is the core of the operating system. We can think of an operating system as a seed or a nut, a concentration of information to generate growth."
-        },
+          "text": "The kernel is the core of the operating system. Just like a kernel of corn has enough genetic information to grow a whole cornstalk if you planted it, the kernel of the operating system has enough operating information to bring the computer to life!"
+        }
+      ],
+      [
         {
           "index": 1,
-          "name": "Estelle",
-          "text": "The kernel connects the system to programs. Like a seed, the kernel is surrounded by a shell, which in this case is the interface we see when we use a computer. Typically, the kernel is what communicates with the file system, the memory manager, or any devices."
-        }
+          "name": "Saniel",
+          "top": 205,
+          "text": "That’s right. Fundamentally, The kernel connects the application software to the hardware of a computer. Think of the devices that make up your computer – the drives, the monitor, the keyboard, you name it – the kernel manages those devices, at the lowest level."
+        },
       ],
       [
         {
           "index": 2,
-          "name": "Saniel",
-          "top": 205,
-          "text": "That’s right. Fundamentally, The kernel connects the application software to the hardware of a computer. Think of the devices that make up your computer – the drives, the monitor, the keyboard, you name it, the kernel manages those devices, at the lowest level."
-        },
-      ],
-      [
-        {
-          "index": 3,
-          "top": 365,
           "name": "Estelle",
-          "text": "Yes, you could say the kernel acts like an air traffic controller. The kernel’s job is to interface between the programs and the hardware. The memory is just the hardware. It’s keeping track. It can swap out what different programs use by allocating some of it to physical memory."
+          "top": 365,
+          "text": "Yes, you could say the kernel acts like an air traffic controller. The kernel’s job is to interface between the programs and the hardware. For instance, lots of different programs need access to the physical memory card in your computer so that they can remember or save things."
         }
       ],
       [
         {
-          "index": 4,
-          "top": 205,
+          "index": 3,
           "name": "Saniel",
-          "text": "Yes, so program A says, <em>I want 1 meg of memory</em>, so the memory manager says, <em>Okay, you can have that area there.</em> And program B says, <em>I want 1 meg of memory,</em> and it says, <em>Okay you can have this area here.</em>"
+          "top": 205,
+          "text": "Yes, so program A says, <em>I want 1 megabyte of memory</em>, and the memory manager says, <em>Okay, you can have that area there</em>. Then program B says, <em>I want 1 megabyte of memory</em>, and it says, <em>Okay, you can have this area here</em>."
         }
       ]
     ]
   },
   "clock": {
-    "title": "kernel clock",
+    "title": "kernel clock and scheduler?",
     "columns": [
       [
         {
@@ -229,37 +224,31 @@ lang = {
         },
         {
           "index": 1,
-          "name": "Ada",
-          "text": "Yes. There has to be a common reference for that. One of the primary reasons the kernel clock exists is to appoint the time on which everything else happens."
-        },
-      ],
-      [
-        {
-          "index": 2,
           "name": "Faber",
-          "top": 130,
-          "text": "All the different functions of the computer rely on the kernel clock. Imagine if society had no concept of time."
-        },
-        {
-          "index": 4,
-          "name": "Ada",
-          "text": "Yes, for every tick, something else happens. Is there any input from the mouse? Is there any input from the keyboard? The kernel clock is tracking that. The scheduler is like an orchestra conductor letting each section know when to start playing."
+          "text": "All the different functions of the computer rely on the kernel clock. Imagine if we all set our watches differently, and tried to live our lives with no shared idea of time!"
         }
       ],
       [
         {
-          "index": 5,
+          "index": 2,
+          "name": "Ada",
+          "top": 130,
+          "text": "Yes, for every tick of that clock, something happens. Tick! Is there any input from the mouse? Tick! Is there any input from the keyboard? The kernel clock is tracking that. The <strong>scheduler</strong> is like an orchestra conductor letting each section know when to start playing."
+        },
+      ],
+      [
+        {
+          "index": 3,
           "name": "Estelle",
-          "top": 265,
+          "top": 175,
           "text": "Right! You don’t actually have ten programs running at the same time. The scheduler says, <em>you get a slice of time, you get a slice of time, you get a slice of time.</em>"
         },
       ],
       [
         {
-          "index": 6,
+          "index": 4,
           "name": "Saniel",
-          "top": 125,
-          "text": "Yes, exactly – and a slice is maybe 10 milliseconds so you swap them in and out really fast. And what still amazes me is that for the user, it feels like it’s all going on at the same time."
+          "text": "Yes, exactly – and a slice is maybe 10 milliseconds, so you can swap them in and out faster than we can perceive. For the users, it feels like it’s all going on at the same time."
         }
       ]
     ]
@@ -271,38 +260,33 @@ lang = {
         {
           "index": 0,
           "name": "Estelle",
+          "top": -15,
           "text": "A computer’s memory resides in the physical devices capable of storing information, both temporarily and permanently. RAM, or “random access memory” is a form of temporary memory. ROM, or “read-only memory” is a permanent form."
         },
         {
           "index": 1,
           "name": "Faber",
-          "text": "Everything is memory, on some level. You make a request of the memory, and then it goes to an output device, either a disk or a screen. But basically a computer is always  moving blocks of memory around."
+          "text": "Everything is memory, on some level. You make a request of the memory, (for example, get the user’s chosen cursor image) and then it goes to an output device (in this case, the screen). But basically a computer is always moving blocks of memory around."
         },
       ],
       [
         {
           "index": 2,
-          "top": 160,
           "name": "Riley",
+          "top": 160,
           "text": "I was just studying this. The memory manager is part of the kernel, right?"
         },
         {
           "index": 3,
           "name": "Faber",
-          "text": "Yes! And it’s one of the key functions of the kernel to know which processes are running at which time. And the memory manager is always in the process of loaning out memory to whatever programs need it."
+          "text": "Yes! And it’s one of the key responsibilities of the kernel to know which processes are running when. The memory manager is always in the process of loaning out memory to whatever programs need it."
         }
       ],
       [
         {
           "index": 4,
-          "top": 28,
           "name": "Estelle",
-          "text": "Exactly. The memory manager ensures that one program doesn’t interfere with another. It is constantly reallocating memory as needed."
-        },
-        {
-          "index": 5,
-          "name": "Ada",
-          "text": "It’s a very fluid process. You can think of memory as like a pool or a part of the ocean. At any given time there are different creatures at any given spot but they are floating through."
+          "text": "Exactly. The operating system, software, and hardware are constantly accessing and allocating memory. The memory manager ensures that one program doesn’t interfere with another. It’s constantly re-assigning memory as needed."
         }
       ]
     ]
@@ -314,41 +298,28 @@ lang = {
         {
           "index": 0,
           "name": "Saniel",
-          "text": "Yes, the window manager. It’s just what it sounds like. When an operating system uses windows to display information, the window manager handles how we relate to those windows."
+          "text": "The window manager - It’s exactly what it sounds like. When an operating system uses windows to display information, the window manager handles how we relate to those windows."
         }
       ],
       [
         {
           "index": 1,
-          "name": "Estelle",
-          "top": 228,
-          "text": "The operating system handles all of the switching from window to window that we do. The kernel allocates memory, while the window manager handles how we graphically interact with the programs."
-        }
-      ],
-      [
-        {
-          "index": 2,
           "name": "Ada",
           "top": 42,
-          "text": "Whenever you change any aspect of your window, the window manager is responsible for that. So why do we even need windows? We don’t really even think of it, but a window allows us to interact with an application. It locates our activities."
+          "text": "Why do we even need windows? We don’t really even think of it, but a window allows us to interact with an application. It locates our activities. Whenever you change any aspect of your window, the window manager is responsible for that."
         },
         {
-          "index": 3,
+          "index": 2,
           "name": "Riley",
-          "text": "So, like, when we open a window, or maximize it, minimize it, move it, close it, the window manager handles all of that?"
+          "text": "So, like, when we open a window, or maximize it, minimize it, move it, close it, etc. – the window manager handles all of that?"
         }
       ],
       [
         {
-          "index": 4,
-          "top": 150,
+          "index": 3,
           "name": "Saniel",
-          "text": "Right. And that matters because windows allow us to handle different programs at the same time. As Ada says, we are so used to it, we don’t even think of it."
-        },
-        {
-          "index": 5,
-          "name": "Faber",
-          "text": "If we didn’t have the window manager in the operating system, each application would have to handle that function individually."
+          "top": 150,
+          "text": "Right. And that matters because windows allow us to access multiple programs at the same time. As Ada says, we are so used to it, we don’t even think of it."
         }
       ]
     ]
@@ -360,20 +331,20 @@ lang = {
         {
           "index": 0,
           "name": "Saniel",
-          "text": "The file system is part of the kernel. It manages both how we store data and how we retrieve it. It manages folders and directories, and it also defines the rules for how we access files."
+          "text": "The file system  manages both how we store data and how we retrieve it. It manages folders and directories, and it also defines the rules for how we access files."
         }
       ],
       [
         {
           "index": 1,
-          "top": 120,
           "name": "Faber",
-          "text": "Seriously, without the idea of a file, we’d  just have one long, uninterrupted  stream of data."
+          "top": 120,
+          "text": "Seriously, without the idea of files and folders, we’d just have one long, uninterrupted stream of data."
         },
         {
           "index": 2,
           "name": "Estelle",
-          "text": "Yes. The file system establishes relationships between the files themselves. It creates an architecture that helps the storage medium operate efficiently and reliably. There is a beauty to it."
+          "text": "Yes. The file system establishes relationships between the files themselves. It organizes things so that the system can operate efficiently and reliably."
         }
       ],
       [
@@ -385,15 +356,15 @@ lang = {
         {
           "index": 4,
           "name": "Riley",
-          "text": "I think about file systems 24/7! If you’re ever looking for me, you know you can always find me rooting around in the root directory;)"
+          "text": "I’m always thinking about the file system! You know you can always find me exploring the weird forgotten corners of legacy folders!"
         }
       ],
       [
         {
           "index": 5,
-          "top": 210,
           "name": "Saniel",
-          "text": "Uh, yes, Riley, you do have an unusual gift for understanding file structures."
+          "top": 210,
+          "text": "Yes, Riley, you do have an unusual gift for understanding file structures."
         },
         {
           "index": 6,

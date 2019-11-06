@@ -134,7 +134,7 @@ lang = {
           "index": 0,
           "left": 75,
           "name": "Estelle",
-          "text": "Dev/null is a very tiny piece of the operating system. It’s probably only 100 lines of code. But It’s impactful. Dev/null is a file in the file system that doesn’t exist. Anytime you need an empty file, dev null is there.",
+          "text": "/dev/null is a very tiny piece of the operating system. It’s probably only 100 lines of code. But It’s impactful. /dev/null is a file in the file system that doesn’t exist. Anytime you need an empty file, dev null is there.",
         }
       ],
       [
@@ -146,7 +146,7 @@ lang = {
         {
           "index": 2,
           "name": "Saniel",
-          "text": "Great question. Dev/null is a special file. Anything you dump into it disappears. We typically use dev/null for disposing of unwanted output streams, or as a handy empty file for an input process.",
+          "text": "Great question. /dev/null is a special file. Anything you dump into it disappears. We typically use /dev/null for disposing of unwanted output streams, or as a handy empty file for an input process.",
         }
       ],
       [
@@ -159,7 +159,7 @@ lang = {
         {
           "index": 4,
           "name": "Riley",
-          "text": "That helps me wrap my mind around it! So this empty file called dev/null gives us a place to direct some unwanted output that we don’t want to save.",
+          "text": "That helps me wrap my mind around it! So this empty file called /dev/null gives us a place to direct some unwanted output that we don’t want to save.",
         }
       ],
       [
@@ -167,7 +167,7 @@ lang = {
           "index": 5,
           "name": "Saniel",
           "top": "-60",
-          "text": "Indeed. There’s a joke among programmers. If someone complains to me, I might say, “I’m sending your complaints to dev/null.”"
+          "text": "Indeed. There’s a joke among programmers. If someone complains to me, I might say, “I’m sending your complaints to /dev/null.”"
         },
         {
           "index": 6,
@@ -214,7 +214,7 @@ lang = {
     ]
   },
   "clock": {
-    "title": "kernel clock and scheduler?",
+    "title": "kernel clock and scheduler",
     "columns": [
       [
         {
@@ -369,7 +369,7 @@ lang = {
         {
           "index": 6,
           "name": "Riley",
-          "text": "You taught me everything I know, Dr. Rowe!"
+          "text": "You taught me everything I know, Saniel!"
         }
       ]
     ]

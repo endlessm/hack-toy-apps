@@ -8,3 +8,4 @@ Icon=com.hack_computer.OperatingSystemApp
 Categories=Game;
 X-Endless-LaunchMaximized=true
 X-Endless-SplashBackground=com.hack_computer.OperatingSystemApp.jpg
+X-Flatpak-RenamedFrom=com.endlessm.OperatingSystemApp.desktop

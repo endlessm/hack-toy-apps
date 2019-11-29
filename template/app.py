@@ -15,6 +15,7 @@ from gi.repository import WebKit2
 from hackapps import HackableAppsManager
 from soundserver import HackSoundServer
 from gamestateservice import GameState
+from clubhouse import Clubhouse
 from system import Desktop
 
 WebKit2.Settings.__gtype__
@@ -125,6 +126,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self._manager_add_msg_handler(manager, 'ToyAppSetAspectRatio', self._on_set_aspect_ratio)
         self._manager_add_msg_handler(manager, 'ToyAppSaveState', self._on_save_state)
         self._manager_add_msg_handler(manager, 'ToyAppQuit', self._on_quit)
+        self._manager_add_msg_handler(manager, 'ToyAppShowClubhouse', self._on_show_clubhouse)
         self._manager_add_msg_handler(manager, 'playSound', self._on_play_sound)
         self._manager_add_msg_handler(manager, 'playSoundAsync', self._on_play_sound_async)
         self._manager_add_msg_handler(manager, 'updateSound', self._on_update_sound)
@@ -246,6 +248,17 @@ toy-app-window > overlay > revealer > frame {
         else:
             gtk_widget_fade_out(self, fade_out_ms, self.app.quit)
 
+    def _on_show_clubhouse(self, manager, result):
+        val = result.get_js_value()
+        if val.is_undefined():
+            raise ValueError('needs character argument')
+
+        if not val.is_string():
+            raise ValueError('character arg should be string')
+
+        character_name = val.to_string()
+        Clubhouse.show_clubhouse(character_name)
+
     def _on_load_state_finish(self, proxy, result, user_data):
         val = None;
 
@@ -262,6 +275,13 @@ toy-app-window > overlay > revealer > frame {
             self.view.run_javascript(js);
         else:
             self.view.run_javascript('if(typeof loadState === "function"){loadState();}')
+
+        Clubhouse.property_connect('RunningQuest', self._on_running_quest_change)
+
+    def _on_running_quest_change(self, new_value):
+        self.view.run_javascript(f'ToyApp.runningQuest = "{new_value}";')
+        js = 'if(typeof runningQuestChanged === "function"){runningQuestChanged();}'
+        self.view.run_javascript(js)
 
     def _on_view_load_changed(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:

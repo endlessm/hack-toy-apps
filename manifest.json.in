@@ -28,6 +28,7 @@
     "--env=DCONF_USER_CONFIG_DIR=.config/dconf",
     "--env=GSETTINGS_SCHEMA_DIR=/run/host/usr/share/glib-2.0/schemas/",
     "--env=GTK3_MODULES=/app/clippy/lib/libclippy-module.so",
+    "--talk-name=com.hack_computer.Clubhouse",
     "--talk-name=com.hack_computer.GameStateService",
     "--talk-name=com.hack_computer.HackSoundServer",
     "--talk-name=org.gnome.Shell",

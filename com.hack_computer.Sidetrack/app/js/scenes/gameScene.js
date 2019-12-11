@@ -1077,6 +1077,20 @@ class GameScene extends Phaser.Scene {
         // create the starting tile
         const startingTile = this.add.sprite(0, 0, 'specialTiles', 0).setOrigin(0);
         this.setSpritePosition(startingTile, this.playerXLocation, this.playerYLocation, -352);
+
+        // Show need hack modal after level 14 to ensure that following levels
+        // are played only with quests
+        if (ToyApp.isHackMode && ToyApp.runningQuest) {
+            hideNeedHackScreen();
+        } else {
+            if (this.levelNumber < 14) {
+                hideNeedHackScreen();
+            } else {
+                needHackScreen(() => {
+                    ToyApp.showClubhouse('ada');
+                });
+            }
+        }
     }
 
     setSeparatorPosition(gameObject) {
@@ -1272,6 +1286,7 @@ class GameScene extends Phaser.Scene {
     restartLevel() {
         if (this.isAnimating)
             return;
+
         Sounds.play('sidetrack/sfx/start_chime');
         globalParameters.currentLevel = this.params.level;
         this.scene.restart(levelParameters[globalParameters.currentLevel]);

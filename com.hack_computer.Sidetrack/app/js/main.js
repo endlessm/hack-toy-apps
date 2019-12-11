@@ -171,3 +171,7 @@ window.loadState = function(state) {
 
     loadingScene.doneLoadingState();
 };
+
+window.runningQuestChanged = function() {
+    game.scene.getScene('Game').restartLevel();
+}

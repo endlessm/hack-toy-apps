@@ -25,6 +25,43 @@ function sleepScenes() {
   }
 }
 
+var NEED_HACK_MODAL = null;
+
+function needHackScreen(clickCB = null) {
+    if (NEED_HACK_MODAL) {
+        NEED_HACK_MODAL.style.display = 'block';
+        return;
+    }
+
+    NEED_HACK_MODAL = document.createElement('div');
+    NEED_HACK_MODAL.classList.add('needHack');
+
+    NEED_HACK_MODAL.innerHTML = `
+        <h1>Game Over</h1>
+
+        <p> It is not possible to continue without an associated quest. </p>
+
+        <p>
+        To play more levels of Sidetrack you should engage with Ada in the Clubhouse. Try Hack and look for
+        quests related to Sidetrack.
+        </p>
+    `;
+
+    if (clickCB) {
+        const button = document.createElement('button');
+        button.addEventListener('click', clickCB);
+        button.innerHTML = 'Click here to continue';
+        NEED_HACK_MODAL.append(button);
+    }
+
+    document.body.append(NEED_HACK_MODAL);
+}
+
+function hideNeedHackScreen() {
+    if (NEED_HACK_MODAL)
+        NEED_HACK_MODAL.style.display = 'none';
+}
+
 // Enter sleep or wake mode when visibility changes
 // i.e user minimizes toy app
 document.addEventListener('visibilitychange', () => {

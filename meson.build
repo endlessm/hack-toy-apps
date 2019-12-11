@@ -77,6 +77,12 @@ if app_id == 'com.hack_computer.LightSpeed' or app_id == 'com.hack_computer.Side
     )
 endif
 
+install_data(
+    join_paths('common', 'styles.css'),
+    install_dir: 'share/toy/app',
+    rename: 'common.css'
+)
+
 data = configuration_data()
 data.set('APP_ID', app_id)
 runner = configure_file(

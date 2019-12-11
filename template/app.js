@@ -1,5 +1,6 @@
 window.ToyApp = {
     isHackMode: false,
+    runningQuest: '',
 
     hideToolbox() {
         window.webkit.messageHandlers.ToyAppHideToolbox.postMessage({});
@@ -30,6 +31,10 @@ window.ToyApp = {
 
     quit(msFadeOut = 0) {
         window.webkit.messageHandlers.ToyAppQuit.postMessage(msFadeOut);
+    },
+
+    showClubhouse(characterName = 'ada') {
+        window.webkit.messageHandlers.ToyAppShowClubhouse.postMessage(characterName);
     },
 };
 

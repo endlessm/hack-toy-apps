@@ -24,10 +24,14 @@
     <value key="GnomeSoftware::popular-background">https://d3lapyynmdp1i9.cloudfront.net/thumbnails/com.hack_computer.OperatingSystemApp/com.hack_computer.OperatingSystemApp-thumb.png</value>
   </metadata>
 
-  <url type="homepage">http://www.endlessm.com</url>
+  <url type="homepage">https://hack-computer.com</url>
+
+  <categories>
+    <category>LearnToCode</category>
+  </categories>
 
   <releases>
-    <release date="2018-10-16" version="0.0.0"/>
+    <release date="2019-11-16" version="1.1"/>
   </releases>
 
   <content_rating type="oars-1.1">

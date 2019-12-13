@@ -25,27 +25,22 @@ function sleepScenes() {
   }
 }
 
+var NEED_HACK_OVERLAY = null;
 var NEED_HACK_MODAL = null;
 
-function needHackScreen(clickCB = null) {
+function needHackScreen(content, clickCB = null) {
     if (NEED_HACK_MODAL) {
         NEED_HACK_MODAL.style.display = 'block';
+        NEED_HACK_OVERLAY.style.display = 'block';
         return;
     }
 
+    NEED_HACK_OVERLAY = document.createElement('div');
+    NEED_HACK_OVERLAY.classList.add('needHackOverlay');
     NEED_HACK_MODAL = document.createElement('div');
     NEED_HACK_MODAL.classList.add('needHack');
 
-    NEED_HACK_MODAL.innerHTML = `
-        <h1>Game Over</h1>
-
-        <p> It is not possible to continue without an associated quest. </p>
-
-        <p>
-        To play more levels of Sidetrack you should engage with Ada in the Clubhouse. Try Hack and look for
-        quests related to Sidetrack.
-        </p>
-    `;
+    NEED_HACK_MODAL.innerHTML = content;
 
     if (clickCB) {
         const button = document.createElement('button');
@@ -54,12 +49,15 @@ function needHackScreen(clickCB = null) {
         NEED_HACK_MODAL.append(button);
     }
 
+    document.body.append(NEED_HACK_OVERLAY);
     document.body.append(NEED_HACK_MODAL);
 }
 
 function hideNeedHackScreen() {
-    if (NEED_HACK_MODAL)
+    if (NEED_HACK_MODAL) {
         NEED_HACK_MODAL.style.display = 'none';
+        NEED_HACK_OVERLAY.style.display = 'none';
+    }
 }
 
 // Enter sleep or wake mode when visibility changes

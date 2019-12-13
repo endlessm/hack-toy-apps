@@ -90,6 +90,11 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             Desktop.minimize_all()
         self.maximize()
 
+        self.topbar = ToyAppTopbar(self.app)
+        self.topbar.props.no_show_all = True
+        self.topbar.props.visible = self.show_topbar
+        self.overlay.add_overlay(self.topbar)
+
         if GLib.getenv('TOY_APP_ENABLE_INSPECTOR'):
             self.settings.set_enable_developer_extras(True)
         else:
@@ -189,8 +194,7 @@ toy-app-window > overlay > revealer > frame {
                 self.provider
             )
             if self.show_topbar:
-                topbar = ToyAppTopbar(self.app)
-                self.overlay.add_overlay(topbar)
+                self.topbar.show()
 
     def _on_context_menu(self, webview, context, event, hit):
         return Gtk.true()
@@ -364,37 +368,26 @@ ToyAppWindow.set_css_name('toy-app-window')
 class ToyAppTopbar(Gtk.EventBox):
     __gtype_name__ = "ToyAppTopbar"
 
-    revealer = Gtk.Template.Child()
-    close_button = Gtk.Template.Child()
-
     def __init__(self, application):
         super(ToyAppTopbar, self).__init__()
-
         self.app = application
         self._style()
 
-        self.connect('enter-notify-event', self._enter_notify_event_cb)
-        self.connect('leave-notify-event', self._leave_notify_event_cb)
-        self.close_button.connect('clicked', self._close_button_clicked_cb)
-
     def _style(self):
-        css = b'.toyapp-topbar { background-color: rgba(6, 20, 39, 0.80); }'
+        css = b'ToyAppTopbar { background-color: rgba(6, 20, 39, 0.80); }'
         provider = Gtk.CssProvider()
         provider.load_from_data(css)
-        Gtk.StyleContext.add_provider_for_screen(
-            Gdk.Screen.get_default(),
+        self.get_style_context().add_provider(
             provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-    def _enter_notify_event_cb(self, *unused_args):
-        self.revealer.set_reveal_child(True)
-
-    def _leave_notify_event_cb(self, *unused_args):
-        self.revealer.set_reveal_child(False)
-
-    def _close_button_clicked_cb(self, button):
+    @Gtk.Template.Callback()
+    def _on_close_button_clicked(self, button):
         self.app.quit()
+
+
+ToyAppTopbar.set_css_name('ToyAppTopbar')
 
 
 class Application(Gtk.Application):
@@ -430,8 +423,20 @@ class Application(Gtk.Application):
         quit.connect('activate', self._quit_action_activated_cb)
         self.add_action(quit)
 
+    def _on_flip_js_finished(self, view, result):
+        retval = view.run_javascript_finish(result).get_js_value()
+        app_id = self.props.application_id
+        if self._window.show_topbar and app_id == "com.hack_computer.HackUnlock":
+            # globalParameters.mode is 0 when in first screen and puzzle is not
+            # solved
+            if retval.to_double() == 0.0:
+                self._window.topbar.show()
+            else:
+                self._window.topbar.hide()
+
     def _flip_action_activated_cb(self, action, param):
-        self._window.view.run_javascript('if(typeof flip !== "undefined"){flip();}')
+        js = 'if(typeof flip !== "undefined"){flip();}; globalParameters.mode'
+        self._window.view.run_javascript(js, None, self._on_flip_js_finished)
 
     def _reset_action_activated_cb(self, action, param):
         self._window.view.run_javascript('if(typeof reset !== "undefined"){reset();}')

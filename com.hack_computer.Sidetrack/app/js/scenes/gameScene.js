@@ -1086,7 +1086,18 @@ class GameScene extends Phaser.Scene {
             if (this.levelNumber < 14) {
                 hideNeedHackScreen();
             } else {
-                needHackScreen(() => {
+                const content = `
+                    <h1>Game Over</h1>
+
+                    <p> It is not possible to continue without an associated quest. </p>
+
+                    <p>
+                    To play more levels of Sidetrack you should engage with Ada
+                    in the Clubhouse. Try Hack and look for quests related to
+                    Sidetrack.
+                    </p>
+                `;
+                needHackScreen(content, () => {
                     ToyApp.showClubhouse('ada');
                 });
             }

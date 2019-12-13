@@ -10,8 +10,14 @@
   <summary>Escape the maze of pits and robots!</summary>
 
   <description>
-    <p>Everyone thought this old AI trap was defunct, but now the intrepid Riley’s stuck inside! Help Riley slip past walls, jump over pits, and outmaneuver insectoid robots by selecting the right Instructions or putting them in the correct order. There’s even a super powerful Instruction, and you’re going to need it!</p>
-    <p><b>Note:</b> For the best experience, enjoy Sidetrack as part of Hack episodes with your friends in the Clubhouse guiding you through its features.</p>
+    <p>Learning objectives:
+        <ul>
+            <li>Use Procedural Thinking to place Instructions in the correct order and help Riley escape the maze! Just like writing a program, you’ll need to plan and think through your set of Instructions in advance.</li>
+            <li>Predict the behavior of simple automata to avoid robots and push walls out of your way.</li>
+            <li>Practice the coordinate system and unleash your creativity to design your own Sidetrack levels!</li>
+        </ul>
+    </p>
+    <p><b>Note:</b> For the best experience, enjoy Sidetrack as part of Hack with your friends in the Clubhouse guiding you through its features.</p>
   </description>
 
   <screenshots>

@@ -30,18 +30,27 @@ class Clubhouse(GObject.Object):
     _action_group = None
 
     @classmethod
-    def get_proxy(klass):
+    def get_proxy_async(klass, callback, *callback_args):
+        def _on_proxy_ready(proxy, result):
+            try:
+                klass._proxy = proxy.new_finish(result)
+            except GLib.Error as e:
+                logger.warning("Error: Failed to get Clubhouse proxy:", e.message)
+                return
+
+            callback(klass._proxy, *callback_args)
+
         if klass._proxy is None:
-            klass._proxy = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
-                                                         0,
-                                                         None,
-                                                         klass._INTERFACE_NAME,
-                                                         klass._DBUS_PATH,
-                                                         klass._INTERFACE_NAME,
-                                                         None)
-
-        return klass._proxy
-
+            Gio.DBusProxy.new_for_bus(Gio.BusType.SESSION,
+                                      0,
+                                      None,
+                                      klass._INTERFACE_NAME,
+                                      klass._DBUS_PATH,
+                                      klass._INTERFACE_NAME,
+                                      None,
+                                      _on_proxy_ready)
+        else:
+            callback(klass._proxy, *callback_args)
 
     @classmethod
     def get_action_group(klass):
@@ -67,9 +76,10 @@ class Clubhouse(GObject.Object):
                 new_value = changed_properties_dict.get(prop_name)
                 callback(new_value, *args)
 
-        proxy = klass.get_proxy()
+        def _proxy_ready(proxy):
+            prop = proxy.get_cached_property(prop_name)
+            if prop is not None:
+                callback(prop.unpack(), *args)
+            proxy.connect('g-properties-changed', _props_changed_cb, *args)
 
-        prop = proxy.get_cached_property(prop_name)
-        if prop is not None:
-            callback(prop.unpack())
-        return proxy.connect('g-properties-changed', _props_changed_cb, *args)
+        klass.get_proxy_async(_proxy_ready)

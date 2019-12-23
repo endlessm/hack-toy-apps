@@ -46,15 +46,7 @@ install_data(
     rename: app_id + '.jpg'
 )
 
-if app_id == 'com.hack_computer.HackUnlock'
-    install_data(
-        join_paths(app_id, 'data', 'app.service'),
-        install_dir: 'share/dbus-1/services',
-        rename: app_id + '.service'
-    )
-endif
-
-if app_id == 'com.hack_computer.Fizzics' or app_id == 'com.hack_computer.HackUnlock' or app_id == 'com.hack_computer.OperatingSystemApp' or app_id == 'com.hack_computer.Sidetrack'
+if app_id == 'com.hack_computer.Fizzics' or app_id == 'com.hack_computer.OperatingSystemApp' or app_id == 'com.hack_computer.Sidetrack'
     install_data(
         join_paths(app_id, 'data', 'metadata.json'),
         install_dir: 'share/toy'

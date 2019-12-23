@@ -177,8 +177,6 @@ const proxy = new HackableProxy(Gio.DBus.session, 'com.endlessm.Bouncing', '/com
 proxy.connect('g-properties-changed', () => { print(proxy.Hackable); });
 ```
 
-**NOTE**: That this is currently used by the Shell to hide the Flip-To-Hack button for the HackUnlock ToyApp.
-
 #### Flip Action Example
 
 To connect this action to the JavaScript game, the game must implement a `flip` global function:
@@ -283,7 +281,7 @@ print(proxyObj.color);
 
 What this example does is to tell the ToyApp, using the DBus service created by Clippy, to export the JavaScript object `view.JSContext.hackable`. By `view` it refers to the runner webview, by `JSContent` refers to the objects from the execution context of the JavaScript game, and by `hackable` it literally refers to the hackable object defined in the Bouncing example.
 
-**NOTE**: The current users of clippy are, the [toolboxes](https://github.com/endlessm/hack-toolbox-app) that implement the hackable UI for the ToyApps, the [clubhouse](https://github.com/endlessm/clubhouse) that implements the quests around the ToyApps, and the [gnome-initial-setup](https://github.com/endlessm/gnome-initial-setup) that launches the HackUnlock app.
+**NOTE**: The current users of clippy are, the [toolboxes](https://github.com/endlessm/hack-toolbox-app) that implement the hackable UI for the ToyApps, the [clubhouse](https://github.com/endlessm/clubhouse) that implements the quests around the ToyApps.
 
 # The Toolbox
 

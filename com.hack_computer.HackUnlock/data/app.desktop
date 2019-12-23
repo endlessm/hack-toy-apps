@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=HackUnlock
-Type=Application
-Exec=com.hack_computer.HackUnlock
-NoDisplay=true
-X-Endless-Hackable=true
-X-Endless-HackShader=none

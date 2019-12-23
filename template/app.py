@@ -86,8 +86,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
-        if self.app.is_hack_mode and self.app_id == "com.hack_computer.HackUnlock":
-            Desktop.minimize_all()
         self.maximize()
 
         self.topbar = ToyAppTopbar(self.app)
@@ -423,20 +421,9 @@ class Application(Gtk.Application):
         quit.connect('activate', self._quit_action_activated_cb)
         self.add_action(quit)
 
-    def _on_flip_js_finished(self, view, result):
-        retval = view.run_javascript_finish(result).get_js_value()
-        app_id = self.props.application_id
-        if self._window.show_topbar and app_id == "com.hack_computer.HackUnlock":
-            # globalParameters.mode is 0 when in first screen and puzzle is not
-            # solved
-            if retval.to_double() == 0.0:
-                self._window.topbar.show()
-            else:
-                self._window.topbar.hide()
-
     def _flip_action_activated_cb(self, action, param):
         js = 'if(typeof flip !== "undefined"){flip();}; globalParameters.mode'
-        self._window.view.run_javascript(js, None, self._on_flip_js_finished)
+        self._window.view.run_javascript(js)
 
     def _reset_action_activated_cb(self, action, param):
         self._window.view.run_javascript('if(typeof reset !== "undefined"){reset();}')

@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=com.hack_computer.HackUnlock
-Exec=com.hack_computer.HackUnlock --gapplication-service

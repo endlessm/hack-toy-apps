@@ -79,16 +79,22 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.show_topbar = (self.app.is_hack_mode and
                             hack_mode_properties.get('topbar', False))
         use_load_notify = metadata.get('use-load-notify', False)
+        self._scale_content = metadata.get('scale-content', False)
+        maximize = metadata.get('maximize', True)
+        self._set_geometry_hints(metadata.get('geometry-hints'))
 
         self._played_async_sounds = {}
         self.connect('destroy', self._on_destroy)
+        self.connect('size-allocate', self._on_size_changed)
 
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
         if self.app.is_hack_mode and self.app_id == "com.hack_computer.HackUnlock":
             Desktop.minimize_all()
-        self.maximize()
+
+        if maximize:
+            self.maximize()
 
         self.topbar = ToyAppTopbar(self.app)
         self.topbar.props.no_show_all = True
@@ -111,6 +117,10 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
         # Finally load html app index
         self.view.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
+
+    def _on_size_changed(self, window, allocation):
+        if self._hints is not None and self._scale_content:
+            self.view.set_zoom_level(allocation.width / self._hints.max_width)
 
     def _on_destroy(self, window):
         for sound_id in self._played_async_sounds:
@@ -180,6 +190,43 @@ toy-app-window > overlay > revealer > frame {
             self.revealer.set_reveal_child(True)
         else:
             self.revealer.hide()
+
+    def _set_geometry_hints(self, hints):
+        self._hints = None
+
+        if hints is None:
+            return
+
+        h = Gdk.Geometry()
+        mask = 0
+
+        if 'min-width' in hints and 'min-height' in hints:
+            h.min_width = hints['min-width']
+            h.min_height = hints['min-height']
+            mask |= Gdk.WindowHints.MIN_SIZE
+
+        if 'max-width' in hints and 'max-height' in hints:
+            h.max_width = hints['max-width']
+            h.max_height = hints['max-height']
+            mask |= Gdk.WindowHints.MAX_SIZE
+
+        if 'base-width' in hints and 'base-height' in hints:
+            h.base_width = hints['base-width']
+            h.base_height = hints['base-height']
+            mask |= Gdk.WindowHints.BASE_SIZE
+
+        if 'width-inc' in hints and 'height-inc' in hints:
+            h.width_inc = hints['width-inc']
+            h.height_inc = hints['height-inc']
+            mask |= Gdk.WindowHints.RESIZE_INC
+
+        if 'min-aspect' in hints and 'max-aspect' in hints:
+            h.min_aspect = hints['min-aspect']
+            h.max_aspect = hints['max-aspect']
+            mask |= Gdk.WindowHints.ASPECT
+
+        self.set_geometry_hints(None, h, Gdk.WindowHints(mask))
+        self._hints = h
 
     def _view_show(self):
         self.revealer.connect('notify::child-revealed', self._on_child_revealed)

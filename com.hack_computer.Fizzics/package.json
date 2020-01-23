@@ -1,0 +1,55 @@
+{
+  "name": "Fizzics",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=8.11.2",
+    "npm": ">=6.2.0"
+  },
+  "scripts": {
+    "tslint-check": "tslint-config-prettier-check ./tslint.json",
+    "build": "npm run build-assets && npm run build-phaser && webpack --config config/webpack.config.js --env production --mode production --progress --colors",
+    "start": "webpack-dev-server --config config/webpack.config.js --mode development --host 0.0.0.0",
+    "build-phaser": "webpack --config config/webpack.phaser.config.js --display-modules --mode production --progress --colors",
+    "build-assets": "node ./scripts/generateAssetsClass.js"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.2",
+    "case-sensitive-paths-webpack-plugin": "^2.2.0",
+    "clean-webpack-plugin": "^2.0.2",
+    "copy-webpack-plugin": "^5.0.0",
+    "directory-tree": "^2.2.3",
+    "eslint": "^5.14.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "exports-loader": "^0.7.0",
+    "imports-loader": "^0.8.0",
+    "phaser": "^3.16.2",
+    "prettier": "^1.17.1",
+    "serve": "^11.0.0",
+    "shelljs": "^0.8.3",
+    "terser-webpack-plugin": "^1.2.4",
+    "ts-loader": "^6.0.1",
+    "tslint": "^5.12.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-consistent-codestyle": "^1.15.0",
+    "tslint-loader": "^3.5.4",
+    "tslint-microsoft-contrib": "^6.1.0-beta",
+    "tslint-plugin-prettier": "^2.0.1",
+    "tsutils": "^3.8.0",
+    "typescript": "^3.3.3",
+    "webpack": "^4.32.0",
+    "webpack-bundle-analyzer": "^3.0.4",
+    "webpack-cli": "^3.3.2",
+    "webpack-dev-server": "^3.4.1",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {
+    "@koreez/mvcx": "^1.0.0-alpha.14",
+    "@koreez/phaser3-i18n": "^2.0.6",
+    "@koreez/phaser3-ninepatch": "^2.0.1"
+  }
+}

@@ -3,3 +3,18 @@
 /com.hack_computer.LightSpeed.json
 /com.hack_computer.OperatingSystemApp.json
 /com.hack_computer.Sidetrack.json
+
+# Vendors
+*/**/node_modules/
+
+# System and IDE files
+Thumbs.db
+.DS_Store
+.idea
+*.suo
+*.sublime-project
+*.sublime-workspace
+.vscode/
+*.log
+*/**/*.map
+.directory

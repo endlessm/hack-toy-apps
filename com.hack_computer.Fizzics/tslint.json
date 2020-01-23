@@ -1,0 +1,68 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint-microsoft-contrib", "tslint-consistent-codestyle", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": ["./src/assets.ts"]
+  },
+  "rules": {
+    "no-unsafe-any": false,
+    "completed-docs": false,
+    "no-invalid-this": false,
+    "no-relative-imports": false,
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "member-variable-declaration",
+      "array-destructuring"
+    ],
+    "ter-indent": ["error", "spaces", 4],
+    "prettier": true,
+    "function-name": [
+      true,
+      {
+        "private-method-regex": "^_[a-z][\\w\\d]+$"
+      }
+    ],
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "public-static-field",
+          "public-instance-field",
+          "public-constructor",
+          "private-static-field",
+          "private-instance-field",
+          "private-constructor",
+          "public-instance-method",
+          "protected-instance-method",
+          "private-instance-method"
+        ]
+      }
+    ],
+    "naming-convention": [
+      true,
+      {
+        "type": "member",
+        "modifiers": "private",
+        "leadingUnderscore": "require"
+      },
+      {
+        "type": "interface",
+        "prefix": "I"
+      },
+      {
+        "type": "genericTypeParameter",
+        "prefix": "T"
+      },
+      {
+        "type": "enumMember",
+        "format": "PascalCase"
+      }
+    ],
+    "use-strict": true,
+    "variable-name": [true, "allow-leading-underscore", "ban-keywords"]
+  },
+  "rulesDirectory": ["tslint-plugin-prettier"]
+}

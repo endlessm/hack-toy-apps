@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "declaration": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": true,
+    "isolatedModules": false,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["dom", "es2015"]
+  },
+  "include": ["./src/**/*", "./types/**/*", "./plugins/**/*"]
+}

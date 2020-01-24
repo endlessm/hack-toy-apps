@@ -1,3 +1,4 @@
+export declare function getScale(): ScaleConfig;
 export declare function isEmpty(arr: any[]): boolean;
 export declare const getUUID: (prefix?: string) => string;
 export declare function lineAngle(x1: number, y1: number, x2: number, y2: number): number;

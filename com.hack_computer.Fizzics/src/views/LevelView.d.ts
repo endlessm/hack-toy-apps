@@ -18,6 +18,7 @@ export declare class LevelView extends DynamicContainer {
     addBall(id: number, species: BallType, x: number, y: number): BallView;
     updateBallFrozen(ballID: number, value: boolean): void;
     updateBallCollisionGroup(ballID: number, value: number): void;
+    onBallFlingableUpdate(ballID: BallType, frozen: boolean): void;
     bringBallToTop(ballID: number): void;
     private _destroyBall;
 }

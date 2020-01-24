@@ -15,11 +15,15 @@ export declare class FlingerView extends DynamicContainer {
     private _line2Arc;
     private _lineGroup;
     private _minDistanceReached;
+    private _shakeTweens;
     private readonly _flingUpPoint;
     build(): void;
     reset(): void;
     stop(): void;
     start(ballView: BallView): void;
+    private _shake;
+    private startUp;
+    private startDown;
     private _updateLines;
     private _startDistanceCheck;
     private _stopDistanceCheck;
@@ -30,5 +34,7 @@ export declare class FlingerView extends DynamicContainer {
     private _onFlingOut;
     private _onFlingDrag;
     private _onFlingUp;
+    private _onFlingDown;
     private _onFling;
+    private _stopShakeTweens;
 }

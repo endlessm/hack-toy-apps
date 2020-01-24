@@ -7,7 +7,6 @@ export declare class LevelViewMediator extends DynamicMediator<LevelView> {
     private _onTypeBounce;
     private _onTypeFriction;
     private _onTypeFrozen;
-    private _onBallFrozen;
     private _onTypeFrameIndex;
     private _onBallDraggableUpdate;
     private _onBallFlingableUpdate;

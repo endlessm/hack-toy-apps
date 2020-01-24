@@ -8,6 +8,7 @@ class LoadingScene extends Phaser.Scene {
     }
 
     preload() {
+        console.debug('Loading assets.');
         // load assets
         this.load.image('background1', 'assets/images/background1.jpg');
         this.load.image('background2', 'assets/images/background2.jpg');
@@ -235,12 +236,14 @@ class LoadingScene extends Phaser.Scene {
     }
 
     doneLoadingAssets() {
+        console.debug('Assets loading process finished.');
         this._loadedAssets = true;
         if (this._loadedState)
             this.startLevel();
     }
 
     doneLoadingState() {
+        console.debug('State loading process finished.');
         this._loadedState = true;
         if (this._loadedAssets)
             this.startLevel();

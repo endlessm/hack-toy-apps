@@ -1084,7 +1084,7 @@ class GameScene extends Phaser.Scene {
         if (ToyApp.isHackMode && ToyApp.runningQuest) {
             hideNeedHackScreen();
         } else {
-            if (this.levelNumber < 14 || this.levelNumber >= 23) {
+            if (this.levelNumber < 14 || globalParameters.highestAchievedLevel >= 23) {
                 hideNeedHackScreen();
             } else {
                 const content = `

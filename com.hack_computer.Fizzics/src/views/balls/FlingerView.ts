@@ -253,10 +253,12 @@ export class FlingerView extends DynamicContainer {
 
   private _onFlingOver(): void {
     this._fling.setFrame("flinger_hover");
+    this.scene.input.setDefaultCursor('pointer');
   }
 
   private _onFlingOut(): void {
     this._fling.setFrame("flinger_active");
+    this.scene.input.setDefaultCursor('default');
   }
 
   private _onFlingDrag(pointer: Phaser.Input.Pointer, dragX?: number, dragY?: number): void {
@@ -286,11 +288,11 @@ export class FlingerView extends DynamicContainer {
 
   private _onFling(pointer: Phaser.Input.Pointer): void {
     this.scene.input.off("pointermove", this._onFlingDrag, this, false);
-
     if (this._minDistanceReached) {
       const diffX = this.x - this._ball.x;
       const diffY = this.y - this._ball.y;
       this._ball.setVelocity(diffX / 10, diffY / 10);
+      this.scene.input.setDefaultCursor('default');
       this.emit("flingEnd", this._ball.id);
       this._startDistanceCheck(pointer);
     } else {

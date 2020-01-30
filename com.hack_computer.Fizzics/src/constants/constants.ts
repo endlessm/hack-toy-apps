@@ -11,7 +11,7 @@ export const HEIGHT = 1080;
 export const RATIO = WIDTH / HEIGHT;
 
 export const PLAYER_DEFAULTS: IRawPlayer = {
-  unlockedLevel: 1
+  unlockedLevel: 0
 };
 
 export const MAX_BALLS_COUNT = 110;

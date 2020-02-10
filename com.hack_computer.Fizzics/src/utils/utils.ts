@@ -1,21 +1,16 @@
 import { TRANSFORM } from "..";
 
 export function getScale(): ScaleConfig {
-  const width: number = (window.innerWidth || window.screen.width) * window.devicePixelRatio;
-  const height: number = (window.innerHeight || window.screen.height) * window.devicePixelRatio;
   const designWidth = 1920;
   const designHeight = 1080;
 
   const scale: ScaleConfig = {
+    width: designWidth,
+    height: designHeight,
+    parent: 'toy-app-container',
     autoCenter: Phaser.Scale.CENTER_BOTH,
     mode: Phaser.Scale.FIT
   };
-
-  const designRatio: number = designWidth / designHeight;
-  const canvasRatio: number = width / height;
-  const ratioMultiplier: number = designRatio / canvasRatio;
-  scale.height = Math.trunc(designHeight * ratioMultiplier);
-  scale.width = designWidth;
 
   return scale;
 }

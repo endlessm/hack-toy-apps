@@ -23,6 +23,7 @@ function startGame(): void {
   const gameConfig: GameConfig = {
     title: "Fizzics",
     type: Phaser.WEBGL,
+    parent: 'toy-app-container',
     scale: {
       ...getScale()
     },

@@ -87,7 +87,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.connect('destroy', self._on_destroy)
         self.connect('size-allocate', self._on_size_changed)
 
-        self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
         if self.app.is_hack_mode and self.app_id == "com.hack_computer.HackUnlock":
@@ -228,10 +227,17 @@ toy-app-window > overlay > revealer > frame {
         self.set_geometry_hints(None, h, Gdk.WindowHints(mask))
         self._hints = h
 
+    def wait_for_js_app(self):
+        self._waiting = True
+
+        while self._waiting:
+            Gtk.main_iteration()
+
     def _view_show(self):
         self.revealer.connect('notify::child-revealed', self._on_child_revealed)
         self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
         self.revealer.set_reveal_child(False)
+        self._waiting = False
 
     def _on_child_revealed(self, revealer, pspec):
         if not self.revealer.get_child_revealed():
@@ -441,7 +447,6 @@ class Application(Gtk.Application):
 
     def __init__(self, application_id):
         super().__init__(application_id=application_id)
-        self._window = None
         self._hackable = True
 
         self._shell_settings = Gio.Settings.new('org.gnome.shell')
@@ -455,6 +460,10 @@ class Application(Gtk.Application):
             self._gtk_settings.props.gtk_application_prefer_dark_theme = True
 
         self.connect('notify::is-hack-mode', self._is_hack_mode_changed_cb)
+
+        self._metadata = self._load_metadata()
+        self._window = ToyAppWindow(self, self._metadata)
+        self._window.connect('destroy', self._window_destroy_cb)
 
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
@@ -494,21 +503,19 @@ class Application(Gtk.Application):
     def _window_destroy_cb(self, window):
         self._window = None
 
+    def _load_metadata(self):
+        try:
+            with open(os.path.join(SCRIPT_PATH, 'metadata.json')) as metadata_file:
+                return json.load(metadata_file)
+        except IOError:
+            return {}
+
     def do_startup(self):
         Gtk.Application.do_startup(self)
         self._setup_actions()
 
-        try:
-            with open(os.path.join(SCRIPT_PATH, 'metadata.json')) as metadata_file:
-                self._metadata = json.load(metadata_file)
-        except IOError:
-            self._metadata = {}
-
     def do_activate(self):
-        if not self._window:
-            self._window = ToyAppWindow(self, self._metadata)
-            self._window.connect('destroy', self._window_destroy_cb)
-            self._window.show_all()
+        self._window.set_application(self)
         self._window.present()
 
     def do_dbus_register(self, connection, path):
@@ -559,6 +566,10 @@ class Application(Gtk.Application):
             return False
         return self._shell_settings.get_boolean('hack-mode-enabled')
 
+    def wait_for_js_app(self):
+        self._window.show_all()
+        self._window.wait_for_js_app()
+
     is_hack_mode = \
         GObject.Property(getter=_is_hack_mode,
                          type=bool,
@@ -574,4 +585,8 @@ if __name__ == "__main__":
     args = sys.argv[2:]
     args.insert(0, sys.argv[0])
     app = Application(sys.argv[1])
+
+    # Make sure we register the dbus name after the JS Application has started
+    app.wait_for_js_app()
+
     app.run(args)

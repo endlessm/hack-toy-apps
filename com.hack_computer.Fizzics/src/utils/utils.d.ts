@@ -12,3 +12,4 @@ export declare function random(min: number, max: number, toFixed?: number): numb
 export declare function sample(array: any[]): any;
 export declare function getEnumKeys(e: any): any[];
 export declare function getEnumValues(e: any): any[];
+export declare function clamp(n: number, min: number, max: number): number;

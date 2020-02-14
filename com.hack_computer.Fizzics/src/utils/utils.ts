@@ -129,3 +129,7 @@ export function getEnumKeys(e: any): any[] {
 export function getEnumValues(e: any): any[] {
   return getEnumKeys(e).map((k: any) => e[k as any]);
 }
+
+export function clamp(n: number, min: number, max: number): number {
+  return Math.min(Math.max(n, min), max);
+}

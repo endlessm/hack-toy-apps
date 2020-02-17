@@ -32,8 +32,8 @@ export declare class FlingerView extends DynamicContainer {
     private _createComponents;
     private _onFlingOver;
     private _onFlingOut;
+    private _getPointerFromEvent;
     private _onFlingDrag;
-    private _onFlingUp;
     private _onFlingDown;
     private _onFling;
     private _stopShakeTweens;

@@ -1,6 +1,6 @@
 import { Easings } from "../../constants/Easings";
 import { GameScene } from "../../scenes/GameScene";
-import { lineAngle, random, sample } from "../../utils/utils";
+import { lineAngle, random, sample, clamp } from "../../utils/utils";
 import { DynamicContainer } from "../dynamics/DynamicContainer";
 import { BallView } from "./BallView";
 
@@ -45,7 +45,7 @@ export class FlingerView extends DynamicContainer {
 
     this._shakeTweens = [];
 
-    this.scene.input.off("pointermove", this._onFlingDrag, this, false);
+    document.onmousemove = null;
     this._fling.off("pointerdown", this._onFlingDown, this, true);
     this._fling.once("pointerdown", this._onFlingDown, this);
 
@@ -188,8 +188,8 @@ export class FlingerView extends DynamicContainer {
     this._minDistanceReached ? this._lineGroup.setAlpha(0.7) : this._lineGroup.setAlpha(0.3);
   }
 
-  private _startDistanceCheck(pointer: Phaser.Input.Pointer): void {
-    this._flingUpPoint.setTo(pointer.x, pointer.y);
+  private _startDistanceCheck(x: number, y: number): void {
+    this._flingUpPoint.setTo(x, y);
     this.scene.ticker.add(this._onTick);
   }
 
@@ -259,40 +259,47 @@ export class FlingerView extends DynamicContainer {
     this._fling.setFrame("flinger_active");
   }
 
-  private _onFlingDrag(pointer: Phaser.Input.Pointer, dragX?: number, dragY?: number): void {
-    const angle = lineAngle(this.x, this.y, pointer.x, pointer.y);
+  private _getPointerFromEvent(e: MouseEvent): number[] {
+    const r = this.scene.game.canvas.getBoundingClientRect();
+    const s = this.scene.game.scale.width / (r.right - r.left);
+    return [(e.pageX - r.left) * s, (e.pageY - r.top) * s];
+  }
+
+  private _onFlingDrag(e: MouseEvent): void {
+    let [x, y] = this._getPointerFromEvent(e);
+    x = clamp(x, 0, this.scene.game.scale.width);
+    y = clamp(y, 0, this.scene.game.scale.height);
+
+    const angle = lineAngle(this.x, this.y, x, y);
     this.setRotation(angle);
-    const distance = Phaser.Math.Distance.Between(this.x, this.y, pointer.x, pointer.y);
+    const distance = Phaser.Math.Distance.Between(this.x, this.y, x, y);
     this._rectPath.height = distance / this.scaleX - FlingerView.FLING_IMG_DEVIANT;
     this._fling.y = this._rectPath.height;
-    this._ball.x = pointer.x + Math.sin(angle) * FlingerView.FLING_IMG_DEVIANT * this.scaleX;
-    this._ball.y = pointer.y - Math.cos(angle) * FlingerView.FLING_IMG_DEVIANT * this.scaleY;
+    this._ball.x = x + Math.sin(angle) * FlingerView.FLING_IMG_DEVIANT * this.scaleX;
+    this._ball.y = y - Math.cos(angle) * FlingerView.FLING_IMG_DEVIANT * this.scaleY;
     this._updateLines();
 
     this.emit("flingDistanceChange", distance);
-    this._onFlingUp();
-  }
-
-  private _onFlingUp(pointer?: Phaser.Input.Pointer): void {
-    this._fling.off("pointerup", this._onFling, this, true);
-    this._fling.once("pointerup", this._onFling, this);
   }
 
   private _onFlingDown(pointer: Phaser.Input.Pointer): void {
     this._stopShakeTweens();
-    this.scene.input.on("pointermove", this._onFlingDrag, this);
+    document.onmousemove = this._onFlingDrag.bind(this);
+    document.onmouseup = this._onFling.bind(this);
     this.emit("flingStart", this._ball.id);
   }
 
-  private _onFling(pointer: Phaser.Input.Pointer): void {
-    this.scene.input.off("pointermove", this._onFlingDrag, this, false);
+  private _onFling(e: MouseEvent): void {
+    document.onmousemove = null;
+    document.onmouseup = null;
 
     if (this._minDistanceReached) {
+      const [x, y] = this._getPointerFromEvent(e);
       const diffX = this.x - this._ball.x;
       const diffY = this.y - this._ball.y;
       this._ball.setVelocity(diffX / 10, diffY / 10);
       this.emit("flingEnd", this._ball.id);
-      this._startDistanceCheck(pointer);
+      this._startDistanceCheck(x, y);
     } else {
       this._ball.setPosition(this.x, this.y);
       this.reset();

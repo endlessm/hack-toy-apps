@@ -20,6 +20,7 @@ export function startLevelCommand(e: string, levelIndex: number): void {
 
   const gp = window.globalParameters;
   Object.assign(gp, LEVEL_DEFAULTS);
+  Object.assign(gp, {'currentLevel': levelIndex});
   Object.assign(gp, rawLevel.preset);
 
   this.executeCommand(e, globalParametersSetupCommand);

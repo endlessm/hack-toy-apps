@@ -90,6 +90,9 @@ export class FizzicsGame extends Phaser.Game implements IHackToyApps {
     //@ts-ignore
     window.globalParameters._proxy = { ...window.globalParameters };
 
+    //@ts-ignore
+    window.globalParameters._listeners = [];
+
     Object.keys(window.globalParameters).forEach(prop => {
       if (prop[0] === "_") {
         return;
@@ -105,6 +108,10 @@ export class FizzicsGame extends Phaser.Game implements IHackToyApps {
           // if (window.globalParameters._proxy[prop] !== val) {
           window.globalParameters._proxy[prop] = val;
           globalParametersUpdate(prop, val);
+          //@ts-ignore
+          window.globalParameters._listeners.forEach(listener => {
+            listener(prop, val);
+          });
           // }
         }
       });

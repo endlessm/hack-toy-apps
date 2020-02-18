@@ -3,6 +3,7 @@ import { BallTypesVOProxy } from "../../models/BallTypesVOProxy";
 import { CreateToolVOProxy } from "../../models/CreateToolVOProxy";
 import { LevelVOProxy } from "../../models/LevelVOProxy";
 import { ToolsVOProxy } from "../../models/ToolsVOProxy";
+import { startLevelCommand } from "./StartLevelCommand";
 
 // tslint:disable-next-line: max-func-body-length cyclomatic-complexity
 export function globalParametersUpdateCommand(e: string, prop: string, value: number | boolean | string): void {
@@ -125,6 +126,11 @@ export function globalParametersUpdateCommand(e: string, prop: string, value: nu
       ballTypesVOProxy.updateImageIndex(+prop.charAt(11), value);
       break;
 
+    // To change level
+    case "preset":
+      console.log('MANUQ preset changed');
+      this.executeCommand(e, startLevelCommand, value);
+      break;
     default:
   }
 }

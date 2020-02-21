@@ -6,6 +6,7 @@ export declare class FlingerView extends DynamicContainer {
     constructor(scene: Phaser.Scene);
     private static readonly MIN_DISTANCE;
     private static readonly FLING_IMG_DEVIANT;
+    private _angle;
     private _ball;
     private _fling;
     private _rectPath;
@@ -21,6 +22,7 @@ export declare class FlingerView extends DynamicContainer {
     reset(): void;
     stop(): void;
     start(ballView: BallView): void;
+    private _getFlingAngle;
     private _shake;
     private startUp;
     private startDown;

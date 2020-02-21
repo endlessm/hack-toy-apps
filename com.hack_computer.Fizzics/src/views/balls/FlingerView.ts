@@ -13,6 +13,7 @@ export class FlingerView extends DynamicContainer {
 
   private static readonly MIN_DISTANCE = 100;
   private static readonly FLING_IMG_DEVIANT = 95;
+  private _angle: number = 0;
   private _ball: BallView;
   private _fling: Phaser.GameObjects.Image;
   private _rectPath: Phaser.GameObjects.Rectangle;
@@ -34,7 +35,7 @@ export class FlingerView extends DynamicContainer {
   }
 
   public reset(): void {
-    this.setRotation(0);
+    this.setRotation(this._angle);
 
     this._fling.setPosition(0, 0);
 
@@ -80,6 +81,35 @@ export class FlingerView extends DynamicContainer {
     );
 
     this._shake();
+
+    this._angle = this._getFlingAngle();
+  }
+
+  private _getFlingAngle(): number {
+    let r = this.width / 2;
+    let w = this.scene.game.scale.width - r;
+    let h = this.scene.game.scale.height - r;
+
+    if (this.x < r && this.y < r)
+      return Math.PI * -0.25;
+
+    if (this.x < r && this.y > h)
+      return Math.PI * 1.25;
+
+    if (this.x > w && this.y < r)
+      return Math.PI * 0.25;
+
+    if (this.x > w && this.y > h)
+      return Math.PI * 0.75;
+
+    if (this.x < r)
+      return Math.PI * 1.5;
+    else if (this.x > w)
+      return Math.PI/2;
+    else if (this.y > h)
+      return Math.PI;
+
+    return 0;
   }
 
   private _shake() {
@@ -121,8 +151,7 @@ export class FlingerView extends DynamicContainer {
       onStart: () => {
         //@ts-ignore
         this._ball[key] += pair[key] / 2;
-        this.setRotation(0);
-        this._ball.setRotation(0);
+        this.setRotation(this._angle);
       },
       onComplete: () => {
         pair[key] *= -0.95;
@@ -133,7 +162,6 @@ export class FlingerView extends DynamicContainer {
           this._ball.x,
           this._ball.y + (this._ball.displayHeight / 2 - this._ball.displayHeight * this._ball.originY)
         );
-        this.setRotation(this._ball.rotation);
       }
     });
     this._shakeTweens.push(tween);
@@ -156,8 +184,7 @@ export class FlingerView extends DynamicContainer {
       onStart: () => {
         //@ts-ignore
         this._ball[key] += pair[key] / 2;
-        this.setRotation(0);
-        this._ball.setRotation(0);
+        this.setRotation(this._angle);
       },
       onComplete: () => {
         if (Math.abs(value) < 0.5) {
@@ -171,7 +198,6 @@ export class FlingerView extends DynamicContainer {
           this._ball.x,
           this._ball.y + (this._ball.displayHeight / 2 - this._ball.displayHeight * this._ball.originY)
         );
-        this.setRotation(this._ball.rotation);
       }
     });
     this._shakeTweens.push(tween);
@@ -310,8 +336,7 @@ export class FlingerView extends DynamicContainer {
     this._shakeTweens.forEach((tween: Phaser.Tweens.Tween) => tween.stop());
 
     if (this._ball !== undefined && this._ball.active) {
-      this._ball.setRotation(0);
-      this.setRotation(0);
+      this.setRotation(this._angle);
       if (this._ball.originY === 0.5) {
         return;
       }

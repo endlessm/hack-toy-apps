@@ -11,7 +11,6 @@ export declare class LevelCompleteScene extends AbstractScene {
     updateFlings(value: number): void;
     private _getResultComponent;
     private _createBg;
-    private _createBlocker;
     private _createNextButton;
     private _onNextClick;
 }

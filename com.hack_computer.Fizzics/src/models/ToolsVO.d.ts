@@ -5,5 +5,5 @@ export declare class ToolsVO {
     tools: Map<ToolType, ToolVO>;
     activeTool: ToolType;
     constructor();
-    readonly createTool: CreateToolVO;
+    get createTool(): CreateToolVO;
 }

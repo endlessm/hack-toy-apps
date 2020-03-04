@@ -12,8 +12,6 @@ export class LevelCompleteScene extends AbstractScene {
   public build(): void {
     const { center } = TRANSFORM;
 
-    this._createBlocker();
-
     const bg = this._createBg(WIDTH * 0.2, HEIGHT * 0.6);
     bg.setPosition(center.x, bg.height / 2 + 100);
 
@@ -80,15 +78,6 @@ export class LevelCompleteScene extends AbstractScene {
 
   private _createBg(width: number, height: number): NinePatch {
     return this.add.ninePatch(0, 0, width, height, "fizzics", "next_level_bg");
-  }
-
-  private _createBlocker(): void {
-    const { width, height } = TRANSFORM;
-
-    const img = this.add.ninePatch(0, 50, width, height, "fizzics", "next_level_bg");
-    img.setInteractive();
-    // TODO: replace with transparent pixel
-    img.setAlpha(0.0000001);
   }
 
   private _createNextButton(width: number, height: number): Phaser.GameObjects.Container {

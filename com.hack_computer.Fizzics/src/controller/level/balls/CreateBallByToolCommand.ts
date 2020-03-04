@@ -34,8 +34,4 @@ export function createBallByToolCommand(e: string): void {
 
   const ballVO = ballsVOProxy.getBall(newBallID);
   this.sendNotification(BallsEvents.CreatedByTool, ballVO);
-
-  if (activeOption === BallType.MAIN) {
-    this.executeCommand(e, checkForLevelPlayStateCommand);
-  }
 }

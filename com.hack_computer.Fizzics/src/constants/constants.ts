@@ -116,7 +116,7 @@ export const LEVEL_DEFAULTS = {
   touchDeath_1_2: 0,
   touchDeath_1_3: 0,
   touchDeath_1_4: 0,
-  deathVisualGood_1: 10,
+  deathVisualGood_1: 2,
   deathVisualBad_1: 1,
   deathSoundGood_1: 0,
   deathSoundBad_1: 0,

@@ -1,4 +1,4 @@
-import { ZERO } from "./constants/constants";
+import { ZERO, LEVEL_DEFAULTS } from "./constants/constants";
 
 /* exported globalParameters, levelParameters,
 
@@ -176,5 +176,7 @@ const globalParameters = {
   deathSoundBad_4: 0,
   imageIndex_4: 0
 };
+
+Object.assign(globalParameters, LEVEL_DEFAULTS);
 
 window.globalParameters = globalParameters;

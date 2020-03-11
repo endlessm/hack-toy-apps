@@ -15,7 +15,7 @@ export class LevelCompleteScene extends AbstractScene {
     const bg = this._createBg(WIDTH * 0.2, HEIGHT * 0.6);
     bg.setPosition(center.x, bg.height / 2 + 100);
 
-    const confetti = this.add.image(0, 0, "fizzics", "collision_10");
+    const confetti = this.add.image(0, 0, "fizzics", "collision_1");
 
     const ball = this.add.image(0, 0, "fizzics", "ball_6");
     ball.setScale(0.52);

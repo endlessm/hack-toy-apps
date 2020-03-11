@@ -48,9 +48,10 @@ export class EffectsViewMediator extends Mediator<EffectsView> {
   }
 
   private _onStarCollision(id1: number, id2: number): void {
+    const targetBallType = this._levelView.getBall(id1).species;
     this.view.show(
       this._getBallPosition(id1),
-      `collision_${this._getTypeConfig(BallType.STAR).visualGood + 1}`,
+      `collision_${this._getTypeConfig(targetBallType).visualGood + 1}`,
       0.7
     );
   }

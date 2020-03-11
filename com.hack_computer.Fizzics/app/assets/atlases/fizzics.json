@@ -90,6 +90,14 @@
 },
 {
 	"filename": "collision_1",
+	"frame": {"x":0,"y":0,"w":329,"h":317},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":33,"y":24,"w":329,"h":317},
+	"sourceSize": {"w":400,"h":400}
+},
+{
+	"filename": "collision_2",
 	"frame": {"x":0,"y":556,"w":217,"h":226},
 	"rotated": false,
 	"trimmed": true,
@@ -97,31 +105,7 @@
 	"sourceSize": {"w":232,"h":232}
 },
 {
-	"filename": "collision_2",
-	"frame": {"x":163,"y":783,"w":202,"h":201},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":9,"y":10,"w":202,"h":201},
-	"sourceSize": {"w":220,"h":220}
-},
-{
 	"filename": "collision_3",
-	"frame": {"x":218,"y":556,"w":221,"h":200},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":0,"y":11,"w":221,"h":200},
-	"sourceSize": {"w":230,"h":230}
-},
-{
-	"filename": "collision_4",
-	"frame": {"x":916,"y":190,"w":194,"h":166},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":16,"y":34,"w":194,"h":166},
-	"sourceSize": {"w":230,"h":230}
-},
-{
-	"filename": "collision_5",
 	"frame": {"x":330,"y":200,"w":236,"h":98},
 	"rotated": false,
 	"trimmed": true,
@@ -129,7 +113,7 @@
 	"sourceSize": {"w":250,"h":118}
 },
 {
-	"filename": "collision_6",
+	"filename": "collision_4",
 	"frame": {"x":567,"y":194,"w":236,"h":98},
 	"rotated": false,
 	"trimmed": true,
@@ -137,7 +121,15 @@
 	"sourceSize": {"w":250,"h":118}
 },
 {
-	"filename": "collision_7",
+	"filename": "collision_5",
+	"frame": {"x":916,"y":190,"w":194,"h":166},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":34,"w":194,"h":166},
+	"sourceSize": {"w":230,"h":230}
+},
+{
+	"filename": "collision_6",
 	"frame": {"x":817,"y":676,"w":233,"h":95},
 	"rotated": false,
 	"trimmed": true,
@@ -145,7 +137,7 @@
 	"sourceSize": {"w":250,"h":120}
 },
 {
-	"filename": "collision_8",
+	"filename": "collision_7",
 	"frame": {"x":567,"y":889,"w":233,"h":95},
 	"rotated": false,
 	"trimmed": true,
@@ -153,20 +145,28 @@
 	"sourceSize": {"w":250,"h":120}
 },
 {
+	"filename": "collision_8",
+	"frame": {"x":218,"y":556,"w":221,"h":200},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":11,"w":221,"h":200},
+	"sourceSize": {"w":230,"h":230}
+},
+{
 	"filename": "collision_9",
+	"frame": {"x":163,"y":783,"w":202,"h":201},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":9,"y":10,"w":202,"h":201},
+	"sourceSize": {"w":220,"h":220}
+},
+{
+	"filename": "collision_10",
 	"frame": {"x":0,"y":783,"w":162,"h":204},
 	"rotated": false,
 	"trimmed": true,
 	"spriteSourceSize": {"x":33,"y":13,"w":162,"h":204},
 	"sourceSize": {"w":250,"h":250}
-},
-{
-	"filename": "collision_10",
-	"frame": {"x":0,"y":0,"w":329,"h":317},
-	"rotated": false,
-	"trimmed": true,
-	"spriteSourceSize": {"x":33,"y":24,"w":329,"h":317},
-	"sourceSize": {"w":400,"h":400}
 },
 {
 	"filename": "create_tool",
@@ -383,6 +383,6 @@
 	"format": "RGBA8888",
 	"size": {"w":1113,"h":988},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:5428391ea69e91f9e4e2782dd4cd6bc0:eb8648e1574f45681be8d14674cd0fdb:68c6851ab4064e30f93097188ba6bb64$"
+	"smartupdate": "$TexturePacker:SmartUpdate:ba516a3b066bd7a843b034baa811ce44:a84945b8b6b58e58c52b64bc9a3a9348:68c6851ab4064e30f93097188ba6bb64$"
 }
 }

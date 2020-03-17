@@ -17,4 +17,12 @@ export class UIScene extends AbstractScene {
   private _buildToolsBar(): void {
     this.add.existing((this._toolsBarView = new ToolsBarView(this)));
   }
+
+  get levelBarView() : LevelBarView {
+    return this._levelBarView;
+  }
+
+  get toolsBarView() : ToolsBarView {
+    return this._toolsBarView;
+  }
 }

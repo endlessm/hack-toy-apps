@@ -31,4 +31,12 @@ export class GameScene extends AbstractScene {
     super.update(time, delta);
     this._ticker.update(time, delta);
   }
+
+  get flingerView() {
+    return this._flinger;
+  }
+
+  get levelView() {
+    return this._levelView;
+  }
 }

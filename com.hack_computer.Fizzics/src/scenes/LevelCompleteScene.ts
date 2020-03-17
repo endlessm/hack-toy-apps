@@ -82,7 +82,7 @@ export class LevelCompleteScene extends AbstractScene {
 
   private _createNextButton(width: number, height: number): Phaser.GameObjects.Container {
     const bg = this.add.ninePatch(0, 0, width, height, "fizzics", "next_level_button");
-    bg.setInteractive();
+    bg.setInteractive({ cursor: 'pointer' });
     bg.on("pointerup", this._onNextClick, this);
     const label = this.add.bitmapText(0, 2, "helvetica_regular", "next_level", 25);
     label.setOrigin(0.5);

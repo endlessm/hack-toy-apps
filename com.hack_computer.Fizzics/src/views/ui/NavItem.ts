@@ -1,7 +1,6 @@
 export abstract class NavItem<T> extends Phaser.GameObjects.Container {
   constructor(scene: Phaser.Scene, t: T) {
     super(scene);
-
     this._t = t;
     this._createBg();
     this.enable();
@@ -32,7 +31,7 @@ export abstract class NavItem<T> extends Phaser.GameObjects.Container {
   public abstract deselect(): void;
 
   public enable(): void {
-    this.bg.setInteractive();
+    this.bg.setInteractive({cursor : 'pointer'});
     this.alpha = 1;
   }
 

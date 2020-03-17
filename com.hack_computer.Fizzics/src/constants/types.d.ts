@@ -12,6 +12,10 @@ export declare enum BallType {
     ROCK = 3,
     DIAMOND = 4
 }
+export declare enum FlingerState {
+    PULLING = 0,
+    WAITING = 1
+}
 export interface IButtonConfig {
     upFrame: string;
     hoverFrame: string;

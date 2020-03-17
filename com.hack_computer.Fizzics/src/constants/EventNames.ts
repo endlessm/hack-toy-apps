@@ -36,6 +36,7 @@ export enum FlingerEvents {
 }
 
 export enum UIEvents {
+  CursorRefresh = "CursorRefresh",
   LevelSwitch = "LevelSwitch",
   NextLevel = "NextLevel",
   ToolSwitch = "ToolSwitch",

@@ -21,7 +21,7 @@ export class Button extends Phaser.GameObjects.Image {
   }
 
   public enable(): void {
-    this.setInteractive();
+    this.setInteractive({ cursor: 'pointer'});
     this.setFrame(this.config.upFrame);
   }
 

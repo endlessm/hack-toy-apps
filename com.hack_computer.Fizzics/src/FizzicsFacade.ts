@@ -6,7 +6,8 @@ import {
   GameEvents,
   SceneEvents,
   ToyAppEvents,
-  UIEvents
+  UIEvents,
+  LevelEvents
 } from "./constants/EventNames";
 import { canvasOutCommand } from "./controller/game/CanvasOutCommand";
 import { freeSpacePointerDownCommand } from "./controller/game/FreeSpacePointerDownCommand";
@@ -15,6 +16,7 @@ import { nextLevelCommand } from "./controller/game/NextLevelCommand";
 import { scenePointerDownCommand } from "./controller/game/ScenePointerDownCommand";
 import { scenePointerUpCommand } from "./controller/game/ScenePointerUpCommand";
 import { switchLevelCommand } from "./controller/game/SwitchLevelCommand";
+import { refreshCursorCommand } from './controller/level/RefreshCursorCommand';
 import { ballFlingCommand } from "./controller/level/balls/BallFlingCommand";
 import { ballPointerDownCommand } from "./controller/level/balls/BallPointerDownCommand";
 import { ballPointerUpCommand } from "./controller/level/balls/BallPointerUpCommand";
@@ -49,6 +51,7 @@ import { LevelView } from "./views/LevelView";
 import { CreateToolBarView } from "./views/ui/CreateToolBarView";
 import { LevelBarView } from "./views/ui/LevelBarView";
 import { ToolsBarView } from "./views/ui/ToolsBarView";
+import { CursorObservant } from "./observants/CursorObservant";
 
 export class FizzicsFacade extends Facade {
   public initialize(debug: boolean): void {
@@ -75,6 +78,7 @@ export class FizzicsFacade extends Facade {
     this.registerCommand(SceneEvents.BombCollision, bombCollisionCommand);
     this.registerCommand(SceneEvents.RockCollision, rockCollisionCommand);
 
+    this.registerCommand(UIEvents.CursorRefresh, refreshCursorCommand);
     this.registerCommand(UIEvents.NextLevel, nextLevelCommand);
     this.registerCommand(UIEvents.LevelSwitch, switchLevelCommand);
     this.registerCommand(UIEvents.ToolSwitch, updateActiveToolCommand);
@@ -117,5 +121,6 @@ export class FizzicsFacade extends Facade {
 
     this.registerObservant(SoundObservant);
     this.registerObservant(CollisionObservant);
+    this.registerObservant(CursorObservant);
   }
 }

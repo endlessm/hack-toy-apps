@@ -15,6 +15,11 @@ export enum BallType {
   DIAMOND
 }
 
+export enum FlingerState {
+  PULLING,
+  WAITING
+}
+
 export interface IButtonConfig {
   upFrame: string;
   hoverFrame: string;

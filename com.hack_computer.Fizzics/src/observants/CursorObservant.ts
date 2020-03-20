@@ -30,6 +30,18 @@ export class CursorObservant extends Observant {
     this._subscribe(ToolsEvents.ActiveToolUpdate, this._refreshCursor);
     this._subscribe(BallsEvents.PointerUp, this._refreshCursor);
     this._subscribe(BallsEvents.PointerDown, this._refreshCursor);
+    this._subscribe(BallsEvents.CreatedByTool, this._onNewBall);
+  }
+
+  private _onNewBall(ball: BallVO): void {
+      const game = window.fizzicsGame;
+      const gameScene = <GameScene>game.scene.getScene(SceneKey.Game);
+      const balls = gameScene.levelView.balls.values;
+
+      balls.filter((b: BallView) => ball.id === b.id).forEach((b: BallView) => {
+        b.on('pointerover', this._refreshCursor.bind(this));
+        b.on('pointerout', this._onBallPointerOut.bind(this));
+      });
   }
 
   private _onLevelStart(levelVO: LevelVO): void {  

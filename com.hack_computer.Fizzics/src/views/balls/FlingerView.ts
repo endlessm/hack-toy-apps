@@ -3,9 +3,11 @@ import { GameScene } from "../../scenes/GameScene";
 import { lineAngle, random, sample, clamp } from "../../utils/utils";
 import { DynamicContainer } from "../dynamics/DynamicContainer";
 import { BallView } from "./BallView";
+import { FlingerState } from "../../constants/types";
 
 export class FlingerView extends DynamicContainer {
   public scene: GameScene;
+  _flingHover: boolean;
 
   constructor(scene: Phaser.Scene) {
     super(scene, "FlingerViewMediator");
@@ -24,6 +26,7 @@ export class FlingerView extends DynamicContainer {
   private _lineGroup: Phaser.GameObjects.Container;
   private _minDistanceReached: boolean;
   private _shakeTweens: Phaser.Tweens.Tween[];
+  private _state: FlingerState = FlingerState.WAITING;
   private readonly _flingUpPoint: Phaser.Geom.Point = new Phaser.Geom.Point();
 
   public build(): void {
@@ -278,10 +281,12 @@ export class FlingerView extends DynamicContainer {
   }
 
   private _onFlingOver(): void {
+    this._flingHover = true;
     this._fling.setFrame("flinger_hover");
   }
 
   private _onFlingOut(): void {
+    this._flingHover = false;
     this._fling.setFrame("flinger_active");
   }
 
@@ -312,6 +317,7 @@ export class FlingerView extends DynamicContainer {
     this._stopShakeTweens();
     document.onmousemove = this._onFlingDrag.bind(this);
     document.onmouseup = this._onFling.bind(this);
+    this._state = FlingerState.PULLING;
     this.emit("flingStart", this._ball.id);
   }
 
@@ -324,6 +330,7 @@ export class FlingerView extends DynamicContainer {
       const diffX = this.x - this._ball.x;
       const diffY = this.y - this._ball.y;
       this._ball.setVelocity(diffX / 10, diffY / 10);
+      this._state = FlingerState.WAITING;
       this.emit("flingEnd", this._ball.id);
       this._startDistanceCheck(x, y);
     } else {
@@ -343,5 +350,13 @@ export class FlingerView extends DynamicContainer {
       this._ball.setOrigin(0.5, 0.5);
       this._ball.y -= this._ball.displayHeight / 2;
     }
+  }
+
+  get state() : FlingerState {
+    return this._state;
+  }
+
+  get flingHover() : boolean {
+    return this._flingHover;
   }
 }

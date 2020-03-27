@@ -1,3 +1,5 @@
+import { LevelBarView } from "../views/ui/LevelBarView";
+import { ToolsBarView } from "../views/ui/ToolsBarView";
 import { AbstractScene } from "./AbstractScene";
 export declare class UIScene extends AbstractScene {
     private _levelBarView;
@@ -5,4 +7,6 @@ export declare class UIScene extends AbstractScene {
     build(): void;
     private _buildLevelBar;
     private _buildToolsBar;
+    readonly levelBarView: LevelBarView;
+    readonly toolsBarView: ToolsBarView;
 }

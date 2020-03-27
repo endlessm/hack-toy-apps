@@ -1,8 +1,10 @@
 import { GameScene } from "../../scenes/GameScene";
 import { DynamicContainer } from "../dynamics/DynamicContainer";
 import { BallView } from "./BallView";
+import { FlingerState } from "../../constants/types";
 export declare class FlingerView extends DynamicContainer {
     scene: GameScene;
+    _flingHover: boolean;
     constructor(scene: Phaser.Scene);
     private static readonly MIN_DISTANCE;
     private static readonly FLING_IMG_DEVIANT;
@@ -17,6 +19,7 @@ export declare class FlingerView extends DynamicContainer {
     private _lineGroup;
     private _minDistanceReached;
     private _shakeTweens;
+    private _state;
     private readonly _flingUpPoint;
     build(): void;
     reset(): void;
@@ -39,4 +42,6 @@ export declare class FlingerView extends DynamicContainer {
     private _onFlingDown;
     private _onFling;
     private _stopShakeTweens;
+    readonly state: FlingerState;
+    readonly flingHover: boolean;
 }

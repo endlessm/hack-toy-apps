@@ -3,7 +3,7 @@ import { NavItem } from "./NavItem";
 export declare class CreateToolOption extends NavItem<BallType> {
     constructor(scene: Phaser.Scene, t: BallType);
     private _outline;
-    get defaultFrame(): string;
+    readonly defaultFrame: string;
     updateBgFrame(frameIndex: number): void;
     select(): void;
     deselect(): void;

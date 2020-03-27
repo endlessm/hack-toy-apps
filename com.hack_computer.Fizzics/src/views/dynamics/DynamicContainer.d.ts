@@ -1,5 +1,5 @@
 export declare class DynamicContainer extends Phaser.GameObjects.Container {
-    get uuid(): string;
+    readonly uuid: string;
     constructor(scene: Phaser.Scene, uuid: string);
     private static readonly _consoleArgs;
     private readonly _uuid;

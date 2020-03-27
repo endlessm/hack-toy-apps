@@ -1,9 +1,9 @@
 export declare abstract class NavItem<T> extends Phaser.GameObjects.Container {
     constructor(scene: Phaser.Scene, t: T);
-    get defaultFrame(): string;
+    readonly defaultFrame: string;
     protected bg: Phaser.GameObjects.Image;
     private readonly _t;
-    get t(): T;
+    readonly t: T;
     show(): void;
     hide(): void;
     abstract select(): void;

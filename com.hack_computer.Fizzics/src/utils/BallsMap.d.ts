@@ -4,10 +4,10 @@ export declare class BallsMap<K, V> {
     private _values;
     private _typedValues;
     private _typedKeys;
-    get size(): number;
-    get values(): V[];
-    get keys(): K[];
-    get types(): V[][];
+    readonly size: number;
+    readonly values: V[];
+    readonly keys: K[];
+    readonly types: V[][];
     getValuesByType(t: number): V[];
     getKeysByType(t: number): K[];
     set(key: K, value: V): void;

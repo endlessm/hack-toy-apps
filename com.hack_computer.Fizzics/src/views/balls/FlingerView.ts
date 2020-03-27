@@ -64,6 +64,11 @@ export class FlingerView extends DynamicContainer {
   }
 
   public start(ballView: BallView): void {
+    // no fling when frozen
+    if (ballView.isStatic()) {
+      return;
+    }
+
     this.reset();
 
     this._rectPath.height = 0;

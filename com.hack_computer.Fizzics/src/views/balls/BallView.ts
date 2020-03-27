@@ -76,6 +76,10 @@ export class BallView extends MatterImage {
   }
 
   public updateFrozen(frozen: boolean): void {
+    if (this.isStatic() === frozen) {
+      return;
+    }
+
     this.setStatic(frozen);
   }
 

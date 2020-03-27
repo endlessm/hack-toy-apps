@@ -1,6 +1,8 @@
 import { DynamicMediator, Facade } from "@koreez/mvcx";
-import { BallsEvents, FlingerEvents, LevelEvents } from "../../constants/EventNames";
+import { BallsEvents, BallTypeEvents, FlingerEvents, LevelEvents } from "../../constants/EventNames";
 import { BallVO } from "../../models/BallVO";
+import { BallView } from "../../views/balls/BallView";
+import { BallType } from "../../constants/types";
 import { FlingerView } from "../../views/balls/FlingerView";
 import { LevelViewMediator } from "./LevelViewMediator";
 
@@ -18,6 +20,7 @@ export class FlingerViewMediator extends DynamicMediator<FlingerView> {
 
     this._subscribe(LevelEvents.LevelStart, this._cleanup);
     this._subscribe(BallsEvents.Flingable, this._onBallFlingEnabled);
+    this._subscribe(BallTypeEvents.Frozen, this._onTypeFrozen);
   }
 
   private _onBallFlingEnabled(ballVO: BallVO, value: boolean): void {
@@ -55,5 +58,11 @@ export class FlingerViewMediator extends DynamicMediator<FlingerView> {
 
   private _cleanup(): void {
     this.view.stop();
+  }
+
+  private _onTypeFrozen(ballType: BallType, value: boolean): void {
+    const levelViewMediator: LevelViewMediator = this.facade.retrieveDynamicMediator("LevelViewMediator");
+    const balls: BallView[] = levelViewMediator.view.balls.getValuesByType(ballType);
+    balls.forEach((ball: BallView) => this._onFlingEnd(ball.id));
   }
 }

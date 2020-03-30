@@ -124,7 +124,33 @@ export function globalParametersUpdateCommand(e: string, prop: string, value: nu
     case "imageIndex_4":
       ballTypesVOProxy.updateImageIndex(+prop.charAt(11), value);
       break;
-
+    case "socialForce_0_0":
+    case "socialForce_0_1":
+    case "socialForce_0_2":
+    case "socialForce_0_3":
+    case "socialForce_0_4":
+    case "socialForce_1_0":
+    case "socialForce_1_1":
+    case "socialForce_1_2":
+    case "socialForce_1_3":
+    case "socialForce_1_4":
+    case "socialForce_2_0":
+    case "socialForce_2_1":
+    case "socialForce_2_2":
+    case "socialForce_2_3":
+    case "socialForce_2_4":
+    case "socialForce_3_0":
+    case "socialForce_3_1":
+    case "socialForce_3_2":
+    case "socialForce_3_3":
+    case "socialForce_3_4":
+    case "socialForce_4_0":
+    case "socialForce_4_1":
+    case "socialForce_4_2":
+    case "socialForce_4_3":
+    case "socialForce_4_4":
+      ballTypesVOProxy.updateSocialForce(+prop.charAt(12), +prop.charAt(14), value);
+      break;
     default:
   }
 }

@@ -65,6 +65,12 @@ export class BallTypesVOProxy extends Proxy<Map<BallType, BallTypeVO>> {
     this.facade.sendNotification(BallTypeEvents.FrameIndex, ballType, value);
   }
 
+  public updateSocialForce(ballTypeA: BallType, ballTypeB: BallType, value: number): void {
+    //@ts-ignore
+    this.vo.get(ballTypeA)[`socialForce_${ballTypeB}`] = value;
+    this.facade.sendNotification(BallTypeEvents.SocialForce, ballTypeA, ballTypeB, value);
+  }
+
   private _initializeBallTypes(): void {
     getEnumValues(BallType).forEach((ballType: BallType) => this.vo.set(ballType, new BallTypeVO(ballType)));
   }

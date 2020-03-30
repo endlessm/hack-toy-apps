@@ -86,5 +86,6 @@ export enum BallTypeEvents {
   VisualBad = "BallTypeVisualBadUpdate",
   SoundGood = "BallTypeSoundGoodUpdate",
   SoundBad = "BallTypeSoundBadUpdate",
-  FrameIndex = "BallTypeFrameIndexUpdate"
+  FrameIndex = "BallTypeFrameIndexUpdate",
+  SocialForce = "BallTypeSocialForceUpdate"
 }

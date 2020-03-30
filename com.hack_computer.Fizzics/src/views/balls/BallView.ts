@@ -1,16 +1,19 @@
 import { BallType } from "../../constants/types";
 import { MatterImage } from "../../utils/MatterImage";
+import { BallTypesVOProxy } from "../../models/BallTypesVOProxy";
+import { BallTypeVO } from "../../models/BallTypeVO";
+import { BallVO } from "../../models/BallVO";
 
 export class BallView extends MatterImage {
   public readonly id: number;
   public readonly species: BallType;
   private _hover: boolean;
 
-  constructor(scene: Phaser.Scene, id: number, species: BallType, x: number, y: number) {
-    super(scene.matter.world, x, y, "fizzics", "ball_0");
+  constructor(scene: Phaser.Scene, model: BallVO, typeModel: BallTypeVO) {
+    super(scene.matter.world, model.x, model.y, "fizzics", "ball_0");
 
-    this.id = id;
-    this.species = species;
+    this.id = model.id;
+    this.species = model.species;
     this._hover = false;
 
     this.setCircle(this.displayWidth * 0.43, {});

@@ -24,7 +24,9 @@ export class LevelViewMediator extends DynamicMediator<LevelView> {
     this._subscribe(BallsEvents.CollisionGroup, this._onBallCollisionGroupUpdate);
 
     const ballsVOProxy = this.facade.retrieveProxy(BallsVOProxy);
-    this.view.build(ballsVOProxy.vo.values);
+    const ballTypesVOProxy = this.facade.retrieveProxy(BallTypesVOProxy);
+
+    this.view.build(ballsVOProxy.vo.values, ballTypesVOProxy.vo);
   }
 
   private _onTypeRadius(ballType: BallType, value: number): void {
@@ -79,7 +81,7 @@ export class LevelViewMediator extends DynamicMediator<LevelView> {
     const typeConfig = ballTypesVOProxy.getTypeConfig(species);
     const { frameIndex, frozen, gravity, bounce, radius, friction } = typeConfig;
 
-    const ballView = this.view.addBall(id, species, x, y);
+    const ballView = this.view.addBall(ballModel, ballTypesVOProxy.vo.get(ballModel.species));
     ballView.updateTexture(frameIndex);
     ballView.updateFrozen(frozen);
     ballView.updateGravity(gravity);

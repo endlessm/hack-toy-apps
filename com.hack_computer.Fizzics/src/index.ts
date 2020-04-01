@@ -37,8 +37,11 @@ function startGame(): void {
     physics: {
       default: "matter",
       matter: {
-        debug: false
-      }
+        debug: false,
+        plugins: {
+          attractors: true,
+        },
+      },
     },
     plugins: {
       global: [{ key: "NinePatchPlugin", plugin: NinePatchPlugin, start: true }],

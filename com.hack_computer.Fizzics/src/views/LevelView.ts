@@ -4,6 +4,7 @@ import { BallsMap } from "../utils/BallsMap";
 import { postRunnable } from "../utils/utils";
 import { BallView } from "./balls/BallView";
 import { DynamicContainer } from "./dynamics/DynamicContainer";
+import { BallTypeVO } from "../models/BallTypeVO";
 
 export class LevelView extends DynamicContainer {
   public balls: BallsMap<number, BallView>;
@@ -12,12 +13,11 @@ export class LevelView extends DynamicContainer {
     super(scene, "LevelViewMediator");
   }
 
-  public build(balls: BallVO[]): void {
+  public build(balls: BallVO[], ballTypes: Map<BallType, BallTypeVO>): void {
     this.balls = new BallsMap();
 
     balls.forEach((ballModel: BallVO) => {
-      const { id, species, x, y } = ballModel;
-      this.addBall(id, species, x, y);
+      this.addBall(ballModel, ballTypes.get(ballModel.species));
     });
   }
 
@@ -66,8 +66,8 @@ export class LevelView extends DynamicContainer {
     return ballView;
   }
 
-  public addBall(id: number, species: BallType, x: number, y: number): BallView {
-    const ballView = new BallView(this.scene, id, species, x, y);
+  public addBall(ballModel: BallVO, ballTypeModel: BallTypeVO): BallView {
+    const ballView = new BallView(this.scene, ballModel, ballTypeModel);
     this.add(ballView);
     this.balls.set(ballView.id, ballView);
 

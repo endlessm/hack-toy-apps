@@ -89,7 +89,7 @@ var game = new Phaser.Game(config);
 
 /* Quests can start a level programatically */
 game.events.on('global-property-change', (obj, property) => {
-    if (Object.is(globalParameters, obj) && property === 'startLevel') {
+    if (property === 'startLevel') {
         const startLevel = globalParameters.startLevel;
 
         if (startLevel < 0 || startLevel > globalParameters.availableLevels)

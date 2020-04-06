@@ -438,6 +438,9 @@ ToyAppTopbar.set_css_name('ToyAppTopbar')
 
 
 class Application(Gtk.Application):
+    _hack_proxy = None
+    _HACK_DBUS = 'com.hack_computer.hack'
+    _HACK_OBJECT_PATH = '/com/hack_computer/hack'
 
     def __init__(self, application_id):
         super().__init__(application_id=application_id)
@@ -552,7 +555,39 @@ class Application(Gtk.Application):
     def _hack_mode_settings_changed_cb(self, settings, pspec):
         self.notify('is-hack-mode')
 
+    @classmethod
+    def _get_hack_properties_proxy(klass):
+        if klass._hack_proxy is None:
+            klass._hack_proxy = Gio.DBusProxy.new_for_bus_sync(
+                Gio.BusType.SESSION,
+                0,
+                None,
+                klass._HACK_DBUS,
+                klass._HACK_OBJECT_PATH,
+                'org.freedesktop.DBus.Properties',
+                None,
+            )
+
+        return klass._hack_proxy
+
+    @classmethod
+    def get_hack_property(klass, prop_name):
+        variant = GLib.Variant('(ss)', (klass._HACK_DBUS, prop_name))
+        value = klass._get_hack_properties_proxy().call_sync('Get', variant,
+                                                             Gio.DBusCallFlags.NONE, -1, None)
+        if value is None:
+            print(f"Failed to get '{prop_name}' property from {klass._HACK_DBUS}")
+            return None
+        return value.unpack()[0]
+
     def _is_hack_mode(self):
+        try:
+            prop = self.get_hack_property('HackModeEnabled')
+            return prop
+        except Exception as e:
+            print("Error loading hack mode: %s" % e)
+
+        # fallback for old installations
         if GLib.getenv('TOY_APP_HACK_MODE_ENABLED'):
             return True
         if not g_settings_has_key(self._shell_settings, 'hack-mode-enabled'):

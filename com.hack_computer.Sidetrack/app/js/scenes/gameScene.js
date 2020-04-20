@@ -1469,7 +1469,7 @@ class GameScene extends Phaser.Scene {
     }
 
     onGlobalPropertyChange(obj, property) {
-        if (Object.is(globalParameters, obj))
+        if ('currentLevel' in obj)
             this.onGlobalParametersNotify(property);
         else if (Object.is(this.params, obj))
             this.onParametersNotify(property);

@@ -274,7 +274,9 @@ class GameScene extends Phaser.Scene {
         this.enterKey.on('up', () => {
             if (!this.isMoving) {
                 this.isMoving = true;
-                this.playButton.setFrame(3);
+                if (this.playButton) {
+                    this.playButton.setFrame(3);
+                }
             }
         }, this);
 

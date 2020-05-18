@@ -1260,6 +1260,7 @@ class GameScene extends Phaser.Scene {
         });
 
         let btnText;
+        let shouldShowBtn = true;
 
         if (modalText === 'game-over') {
             btnText = this.add.text(width / 2, height / 2 + 50,
@@ -1274,7 +1275,12 @@ class GameScene extends Phaser.Scene {
                 'CONTINUE', fontConfig).setOrigin(0.5, 0.5);
 
             btn.on('pointerup', this.continueLevel.bind(this));
-            this.input.keyboard.on('keyup_ENTER', this.continueLevel.bind(this));
+
+            // Last level modal doesn't have continue
+            if (globalParameters.currentLevel < globalParameters.availableLevels)
+                this.input.keyboard.on('keyup_ENTER', this.continueLevel.bind(this));
+            else
+                shouldShowBtn = false;
         } else {
             btnText = this.add.text(width / 2, height / 2 + 50,
                 'CLOSE', fontConfig).setOrigin(0.5);
@@ -1287,6 +1293,14 @@ class GameScene extends Phaser.Scene {
         modalTitle.setDepth(2);
         btn.setDepth(2);
         btnText.setDepth(2);
+
+        // Don't show the continue button when the level is the last level and
+        // center the title vertically
+        if (!shouldShowBtn) {
+            modalTitle.setY(modalTitle.y + 100);
+            btn.destroy();
+            btnText.destroy();
+        }
 
         /* We are not playing anymore */
         globalParameters.playing = false;

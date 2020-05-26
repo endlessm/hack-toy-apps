@@ -133,13 +133,13 @@ class GameScene extends Phaser.Scene {
         let bg;
         if (globalParameters.currentLevel >= 40) {
             Sounds.playLoop('sidetrack/bg/bonus_mode');
-            bg = this.add.sprite(0, -40, 'background3'); // for final and bonus level
+            bg = this.add.sprite(0, 0, 'background3'); // for final and bonus level
         } else if (globalParameters.currentLevel >= 14) {
             Sounds.playLoop('sidetrack/bg/auto_mode');
-            bg = this.add.sprite(0, -40, 'background2'); // auto mode levels
+            bg = this.add.sprite(0, 0, 'background2'); // auto mode levels
         } else {
             Sounds.playLoop('sidetrack/bg/manual_mode');
-            bg = this.add.sprite(0, -40, 'background1'); // manual and default
+            bg = this.add.sprite(0, 0, 'background1'); // manual and default
         }
 
         // change the origin to the top-left corner

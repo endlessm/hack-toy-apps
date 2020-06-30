@@ -962,7 +962,7 @@ class GameScene extends Phaser.Scene {
         this.nextLevelButton.setDepth(1);
         this.previousLevelButton.setDepth(1);
 
-        this.enableLevelSelectors(globalParameters.playing);
+        this.enableLevelSelectors(globalParameters.levelSelectorsEnabled && globalParameters.playing);
 
         const txtLevel = this.add.text(gameW / 2 - 27, gameH / 2 + 4,
             `Level ${this.levelNumber}`, {
@@ -1484,7 +1484,9 @@ class GameScene extends Phaser.Scene {
         else if (property === 'escapeCutscene' && globalParameters.escapeCutscene)
             this.playEscapeCutscene();
         else if (property === 'playing')
-            this.enableLevelSelectors(globalParameters.playing);
+            this.enableLevelSelectors(globalParameters.levelSelectorsEnabled && globalParameters.playing);
+        else if (property === 'levelSelectorsEnabled')
+            this.enableLevelSelectors(globalParameters.levelSelectorsEnabled && globalParameters.playing);
     }
 
     /* This will be called each time something in this.params changes */

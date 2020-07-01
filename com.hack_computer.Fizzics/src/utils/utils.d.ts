@@ -1,0 +1,15 @@
+export declare function getScale(): ScaleConfig;
+export declare function isEmpty(arr: any[]): boolean;
+export declare const getUUID: (prefix?: string) => string;
+export declare function lineAngle(x1: number, y1: number, x2: number, y2: number): number;
+export declare function getCircularReplacer(): (key: string, value: object) => object;
+export declare function postRunnable(scene: Phaser.Scene, runnable: any, context: any, ...args: any[]): Phaser.Time.TimerEvent;
+export declare function delayRunnable(scene: Phaser.Scene, delay: number, runnable: any, context: any, ...args: any[]): Phaser.Time.TimerEvent;
+export declare function loopRunnable(scene: Phaser.Scene, delay: number, runnable: any, context: any, fireImmediately: boolean, ...args: any[]): Phaser.Time.TimerEvent;
+export declare function removeRunnable(runnable: Phaser.Time.TimerEvent): void;
+export declare function isInBounds(x: number, y: number): boolean;
+export declare function random(min: number, max: number, toFixed?: number): number;
+export declare function sample(array: any[]): any;
+export declare function getEnumKeys(e: any): any[];
+export declare function getEnumValues(e: any): any[];
+export declare function clamp(n: number, min: number, max: number): number;

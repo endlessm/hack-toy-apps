@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=System
+Type=Application
+Exec=com.hack_computer.Clubhouse.OperatingSystemApp
+StartupNotify=true
+Icon=com.hack_computer.Clubhouse.OperatingSystemApp
+Categories=Game;
+X-Endless-LaunchMaximized=true
+X-Endless-SplashBackground=com.hack_computer.Clubhouse.OperatingSystemApp.jpg
+X-Flatpak-RenamedFrom=com.endlessm.Clubhouse.OperatingSystemApp.desktop

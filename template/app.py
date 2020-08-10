@@ -116,7 +116,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
             self.view.connect('load-changed', self._on_view_load_changed)
 
         # Finally load html app index
-        self.view.load_uri('file://%s/app/index.html' % SCRIPT_PATH)
+        self.view.load_uri(f'file://{SCRIPT_PATH}/app/{self.app_id}/index.html')
 
     def _on_size_changed(self, window, allocation):
         if self._hints is not None and self._scale_content:
@@ -502,7 +502,8 @@ class Application(Gtk.Application):
         self._setup_actions()
 
         try:
-            with open(os.path.join(SCRIPT_PATH, 'metadata.json')) as metadata_file:
+            metadata = os.path.join(SCRIPT_PATH, f'{self.props.application_id}.metadata.json')
+            with open(metadata) as metadata_file:
                 self._metadata = json.load(metadata_file)
         except IOError:
             self._metadata = {}

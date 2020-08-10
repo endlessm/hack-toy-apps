@@ -1,6 +1,7 @@
 project('toyapp')
 
 app_id = get_option('app-id')
+dest_dir = join_paths('share/toy/app', app_id)
 
 install_subdir(
     'template',
@@ -17,7 +18,7 @@ endif
 
 install_subdir(
     join_paths(app_id, 'app'),
-    install_dir: 'share/toy/app',
+    install_dir: dest_dir,
     strip_directory: true,
     exclude_directories: excluded_from_app
 )
@@ -54,32 +55,33 @@ if app_id == 'com.hack_computer.HackUnlock'
     )
 endif
 
-if app_id == 'com.hack_computer.Fizzics' or app_id == 'com.hack_computer.HackUnlock' or app_id == 'com.hack_computer.OperatingSystemApp' or app_id == 'com.hack_computer.Sidetrack'
+if app_id == 'com.hack_computer.Fizzics' or app_id == 'com.hack_computer.HackUnlock' or app_id == 'com.hack_computer.Clubhouse.OperatingSystemApp' or app_id == 'com.hack_computer.Clubhouse.Sidetrack'
     install_data(
         join_paths(app_id, 'data', 'metadata.json'),
-        install_dir: 'share/toy'
+        install_dir: 'share/toy',
+        rename: app_id + '.metadata.json'
     )
 endif
 
-if app_id == 'com.hack_computer.LightSpeed' or app_id == 'com.hack_computer.Sidetrack' 
+if app_id == 'com.hack_computer.LightSpeed' or app_id == 'com.hack_computer.Clubhouse.Sidetrack'
     install_data(
         join_paths('common', 'phaser-3.17.0.min.js'),
-        install_dir: 'share/toy/app',
+        install_dir: dest_dir,
         rename: 'phaser.min.js'
     )
 endif
 
-if app_id == 'com.hack_computer.LightSpeed' or app_id == 'com.hack_computer.Sidetrack' 
+if app_id == 'com.hack_computer.LightSpeed' or app_id == 'com.hack_computer.Clubhouse.Sidetrack'
     install_data(
         join_paths('common', 'pauseToyApp.js'),
-        install_dir: 'share/toy/app',
+        install_dir: dest_dir,
         rename: 'pauseToyApp.js'
     )
 endif
 
 install_data(
     join_paths('common', 'styles.css'),
-    install_dir: 'share/toy/app',
+    install_dir: dest_dir,
     rename: 'common.css'
 )
 

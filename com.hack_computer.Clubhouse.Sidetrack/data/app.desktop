@@ -2,10 +2,10 @@
 Version=1.0
 Name=Sidetrack
 Type=Application
-Exec=com.hack_computer.Sidetrack
+Exec=com.hack_computer.Clubhouse.Sidetrack
 StartupNotify=true
-Icon=com.hack_computer.Sidetrack
+Icon=com.hack_computer.Clubhouse.Sidetrack
 Categories=Game;
 X-Endless-LaunchMaximized=true
-X-Endless-SplashBackground=com.hack_computer.Sidetrack.jpg
+X-Endless-SplashBackground=com.hack_computer.Clubhouse.Sidetrack.jpg
 X-Endless-HackShader=desaturate

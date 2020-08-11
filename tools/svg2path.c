@@ -1,7 +1,8 @@
 /*
- * svg2path.c
+ * Copyright © 2020 Endless OS Foundation LLC.
  *
- * Copyright (C) 2012 - Juan Pablo Ugarte
+ * This file is part of hack-toy-apps
+ * (see https://github.com/endlessm/hack-toy-apps).
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,10 +14,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * Author: Juan Pablo Ugarte <juanpablougarte@gmail.com>
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
 #define GETTEXT_PACKAGE "cairo-svg2path"

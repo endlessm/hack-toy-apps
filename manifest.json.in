@@ -46,7 +46,7 @@
       "sources": [
         {
           "type": "git",
-          "path": ".",
+          "url": "@GIT_PATH@",@GIT_COMMIT@
           "branch": "@GIT_CLONE_BRANCH@"
         }
       ]

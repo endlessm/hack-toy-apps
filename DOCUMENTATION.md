@@ -110,7 +110,7 @@ These are regular files of each kind. To integrate these files to the project:
 
 ```
 com.endlessm.Bouncing/data/app.icon.png
-com.endlessm.Bouncing/data/appdata.xml
+com.endlessm.Bouncing/data/metainfo.xml
 com.endlessm.Bouncing/data/splashscreen.jpg
 ```
 

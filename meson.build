@@ -29,9 +29,9 @@ install_data(
 )
 
 install_data(
-    join_paths(app_id, 'data', 'appdata.xml'),
-    install_dir: 'share/appdata',
-    rename: app_id + '.appdata.xml'
+    join_paths(app_id, 'data', 'metainfo.xml'),
+    install_dir: 'share/metainfo',
+    rename: app_id + '.metainfo.xml'
 )
 
 install_data(

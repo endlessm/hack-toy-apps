@@ -1103,7 +1103,7 @@ class GameScene extends Phaser.Scene {
         // Show need hack modal after level 14 to ensure that following levels
         // are played only with quests. If the level is greater than 23 the quest
         // is done so the user knows about the FtH to continue
-        if (ToyApp.isHackMode && ToyApp.runningQuest) {
+        if (ToyApp.runningQuest) {
             hideNeedHackScreen();
         } else {
             if (this.levelNumber < 14 || globalParameters.highestAchievedLevel >= 23) {

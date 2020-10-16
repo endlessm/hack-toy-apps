@@ -96,8 +96,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         app_info = Gio.DesktopAppInfo.new(self.app_id + '.desktop')
         decorated = metadata.get('decorated', True)
         hack_mode_properties = metadata.get('hack-mode-properties', {})
-        self.show_topbar = (self.app.is_hack_mode and
-                            hack_mode_properties.get('topbar', False))
+        self.show_topbar = hack_mode_properties.get('topbar', False)
         use_load_notify = metadata.get('use-load-notify', False)
         self._scale_content = metadata.get('scale-content', False)
         maximize = metadata.get('maximize', True)
@@ -110,7 +109,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.set_application(application)
         self.set_title(app_info.get_name())
         self.set_decorated(decorated)
-        if self.app.is_hack_mode and self.app_id == "com.hack_computer.HackUnlock":
+        if self.app_id == "com.hack_computer.HackUnlock":
             Desktop.minimize_all()
 
         if maximize:
@@ -172,15 +171,6 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         manager.add_script(
             WebKit2.UserScript.new(
                 open(os.path.join(SCRIPT_PATH, 'app.js'), 'r').read(),
-                WebKit2.UserContentInjectedFrames.TOP_FRAME,
-                WebKit2.UserScriptInjectionTime.START,
-                None,
-                None
-            )
-        )
-        manager.add_script(
-            WebKit2.UserScript.new(
-                'window.ToyApp.isHackMode = %s;' % str(self.app.is_hack_mode).lower(),
                 WebKit2.UserContentInjectedFrames.TOP_FRAME,
                 WebKit2.UserScriptInjectionTime.START,
                 None,
@@ -467,17 +457,8 @@ class Application(Gtk.Application):
         self._window = None
         self._hackable = True
 
-        self._shell_settings = Gio.Settings.new('org.gnome.shell')
         self._gtk_settings = Gtk.Settings.get_default()
-
-        if (not GLib.getenv('TOY_APP_HACK_MODE_ENABLED') and
-                g_settings_has_key(self._shell_settings, 'hack-mode-enabled')):
-            self._shell_settings.connect('changed::hack-mode-enabled',
-                                         self._hack_mode_settings_changed_cb)
-        if self.is_hack_mode:
-            self._gtk_settings.props.gtk_application_prefer_dark_theme = True
-
-        self.connect('notify::is-hack-mode', self._is_hack_mode_changed_cb)
+        self._gtk_settings.props.gtk_application_prefer_dark_theme = True
 
     def _setup_actions(self):
         flip = Gio.SimpleAction(name='flip',
@@ -562,19 +543,6 @@ class Application(Gtk.Application):
                                                'PropertiesChanged',
                                                variant)
 
-    def _has_hack_mode_enabled_key(self, schema_id, key):
-        schema_source = Gio.SettingsSchemaSource.get_default()
-        schema = schema_source.lookup('org.gnome.shell', False)
-        if 'hack-mode-enabled' not in schema.list_keys():
-            return False
-        settings = Gio.Settings.new('org.gnome.shell')
-
-    def _is_hack_mode_changed_cb(self, app, pspec):
-        self._gtk_settings.props.gtk_application_prefer_dark_theme = app.is_hack_mode
-
-    def _hack_mode_settings_changed_cb(self, settings, pspec):
-        self.notify('is-hack-mode')
-
     @classmethod
     def _get_hack_properties_proxy(klass):
         if klass._hack_proxy is None:
@@ -599,27 +567,6 @@ class Application(Gtk.Application):
             print(f"Failed to get '{prop_name}' property from {klass._HACK_DBUS}")
             return None
         return value.unpack()[0]
-
-    def _is_hack_mode(self):
-        try:
-            prop = self.get_hack_property('HackModeEnabled')
-            return prop
-        except Exception as e:
-            print("Error loading hack mode: %s" % e)
-
-        # fallback for old installations
-        if GLib.getenv('TOY_APP_HACK_MODE_ENABLED'):
-            return True
-        if not g_settings_has_key(self._shell_settings, 'hack-mode-enabled'):
-            return False
-        return self._shell_settings.get_boolean('hack-mode-enabled')
-
-    is_hack_mode = \
-        GObject.Property(getter=_is_hack_mode,
-                         type=bool,
-                         default=bool(GLib.getenv('TOY_APP_HACK_MODE_ENABLED')),
-                         flags=(GObject.ParamFlags.READABLE |
-                                GObject.ParamFlags.EXPLICIT_NOTIFY))
 
 
 if __name__ == "__main__":

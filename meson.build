@@ -39,6 +39,11 @@ install_data(
     install_dir: 'share/icons/hicolor/64x64/apps',
     rename: app_id + '.png'
 )
+install_data(
+    join_paths(app_id, 'data', 'app.icon.png'),
+    install_dir: 'share/icons/hicolor/128x128/apps',
+    rename: app_id + '.png'
+)
 
 install_data(
     join_paths(app_id, 'data', 'splashscreen.jpg'),

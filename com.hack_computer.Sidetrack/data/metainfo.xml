@@ -2,7 +2,7 @@
 <component type="desktop">
   <id>com.hack_computer.Sidetrack.desktop</id>
   <metadata_license>CC0</metadata_license>
-  <project_license>LicenseRef-proprietary</project_license>
+  <project_license>GPL-2.0</project_license>
   <categories>
     <category>Game</category>
   </categories>

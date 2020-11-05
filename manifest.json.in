@@ -14,12 +14,10 @@
   "sdk": "org.gnome.Sdk",
   "command": "@APP_ID@",
   "finish-args": [
-    "--share=ipc",
     "--socket=fallback-x11",
     "--socket=wayland",
     "--socket=pulseaudio",
     "--device=dri",
-    "--own-name=@APP_ID@",
     "--env=GTK3_MODULES=/app/clippy/lib/libclippy-module.so",
     "--talk-name=com.hack_computer.Clubhouse",
     "--talk-name=com.hack_computer.GameStateService",
@@ -38,7 +36,7 @@
       "sources": []
     },
     {
-      "name": "toyapp",
+      "name": "@APP_ID@",
       "buildsystem": "meson",
       "config-opts": [
         "-Dapp-id=@APP_ID@"

@@ -24,7 +24,8 @@
     "--talk-name=com.hack_computer.HackSoundServer",
     "--talk-name=org.gnome.Shell",
     "--talk-name=com.hack_computer.HackableAppsManager",
-    "--talk-name=com.hack_computer.hack"
+    "--talk-name=com.hack_computer.hack",
+    "--require-version=1.8.2"
   ],
   "modules": [
     {

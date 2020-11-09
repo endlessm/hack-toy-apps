@@ -71,6 +71,8 @@ fi
 if [ -n "$JENKINS_MODE" ]; then
   sed \
     -e "s|@APP_ID@|${APP_ID}|g" \
+    -e "s|@GIT_PATH@|${GIT_PATH}|g" \
+    -e "s|@GIT_COMMIT@|${GIT_COMMIT}|g" \
     manifest.json.in \
     > ${APP_ID}.json.in
 else

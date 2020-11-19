@@ -143,27 +143,23 @@ class GameScene extends Phaser.Scene {
             this.robotBDirection =
                 GameScene.getRobotDirection(this.params.robotBDirection, ROBOTB);
         }
-
-        this.cameras.main.setBackgroundColor('#131430');
     }
 
     create() {
         Sounds.stop('sidetrack/bg/lobby_loop');
         // create bg sprite and add background audio
-        let bg;
+        const bgTag = document.querySelector('.bg');
+        bgTag.style.backgroundSize = '100% 100%';
         if (globalParameters.currentLevel >= 40) {
             Sounds.playLoop('sidetrack/bg/bonus_mode');
-            bg = this.add.sprite(0, 0, 'background3'); // for final and bonus level
+            bgTag.style.backgroundImage = 'url("assets/images/background3.jpg")';
         } else if (globalParameters.currentLevel >= 14) {
             Sounds.playLoop('sidetrack/bg/auto_mode');
-            bg = this.add.sprite(0, 0, 'background2'); // auto mode levels
+            bgTag.style.backgroundImage = 'url("assets/images/background2.jpg")';
         } else {
             Sounds.playLoop('sidetrack/bg/manual_mode');
-            bg = this.add.sprite(0, 0, 'background1'); // manual and default
+            bgTag.style.backgroundImage = 'url("assets/images/background1.jpg")';
         }
-
-        // change the origin to the top-left corner
-        bg.setOrigin(0, 0);
 
         this.displayLevelUI();
 

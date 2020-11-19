@@ -43,7 +43,7 @@ const loadingScene = new LoadingScene('Loading');
 var config = {
     title: 'Sidetrack',
     type: Phaser.AUTO,
-    backgroundColor: 'ffffff',
+    transparent: true,
     width: 1920,
     height: 1080,
     scale: {

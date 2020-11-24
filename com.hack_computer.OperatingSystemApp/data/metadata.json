@@ -1,12 +1,9 @@
 {
     "use-load-notify": true,
     "scale-content": true,
+    "scale-design-width": 1920,
     "geometry-hints": {
         "min-width": 1280,
-        "min-height": 670,
-        "max-width": 1920,
-        "max-height": 1004,
-        "min-aspect": 1.9124,
-        "max-aspect": 1.9124
+        "min-height": 670
     }
 }

@@ -2,8 +2,6 @@
     "use-load-notify": true,
     "geometry-hints": {
         "min-width": 1280,
-        "min-height": 749,
-        "min-aspect": 1.708,
-        "max-aspect": 1.708
+        "min-height": 749
     }
 }

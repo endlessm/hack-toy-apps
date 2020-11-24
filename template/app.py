@@ -99,6 +99,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
         self.show_topbar = hack_mode_properties.get('topbar', False)
         use_load_notify = metadata.get('use-load-notify', False)
         self._scale_content = metadata.get('scale-content', False)
+        self._scale_design_width = metadata.get('scale-design-width', 1920)
         maximize = metadata.get('maximize', True)
         self._set_geometry_hints(metadata.get('geometry-hints'))
 
@@ -139,7 +140,7 @@ class ToyAppWindow(Gtk.ApplicationWindow):
 
     def _on_size_changed(self, window, allocation):
         if self._hints is not None and self._scale_content:
-            self.view.set_zoom_level(allocation.width / self._hints.max_width)
+            self.view.set_zoom_level(allocation.width / self._scale_design_width)
 
     def _on_destroy(self, window):
         for sound_id in self._played_async_sounds:

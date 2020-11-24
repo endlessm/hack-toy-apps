@@ -23,9 +23,20 @@ div.Animation > img {
   position: absolute;
 }
 
+#full-bg {
+  background-image: url('images/background.png');
+  background-size: 100% 100%;
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  filter: blur(8px);
+}
+
 body {
   margin: 0px;
-  overflow: hidden;
+  overflow-x: hidden;
   position: absolute;
   top: -38px;
 }

@@ -69,6 +69,11 @@ class Clubhouse(GObject.Object):
 
     @classmethod
     def show_clubhouse(klass, character_name):
+        if not klass._proxy.get_name_owner():
+            # Clubhouse is not installed, show the app center
+            GnomeSoftware.details(klass._INTERFACE_NAME)
+            return
+
         action_group = klass.get_action_group()
         variant = GLib.Variant('s', character_name)
         action_group.activate_action('show-character', variant)
@@ -88,3 +93,31 @@ class Clubhouse(GObject.Object):
             proxy.connect('g-properties-changed', _props_changed_cb, *args)
 
         klass.get_proxy_async(_proxy_ready)
+
+
+class GnomeSoftware:
+    _proxy = None
+
+    @classmethod
+    def get_proxy(klass):
+        if klass._proxy is None:
+            klass._proxy = \
+                Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION,
+                                               Gio.DBusProxyFlags.DO_NOT_AUTO_START |
+                                               Gio.DBusProxyFlags.DO_NOT_AUTO_START_AT_CONSTRUCTION,
+                                               None,
+                                               'org.gnome.Software',
+                                               '/org/gnome/Software',
+                                               'org.gtk.Actions',
+                                               None)
+        return klass._proxy
+
+    @classmethod
+    def details(klass, app_id):
+        def _on_error_callback(obj, error, user_data):
+            logger.error('Error showing details of app: %s', error)
+
+        args = GLib.Variant('(ss)', (app_id, ''))
+        klass.get_proxy().Activate('(sava{sv})',
+                                   'details', [args], None,
+                                   error_handler=_on_error_callback)

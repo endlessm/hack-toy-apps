@@ -36,7 +36,7 @@ div.Animation > img {
 
 body {
   margin: 0px;
-  overflow-x: hidden;
+  overflow: hidden;
   position: absolute;
   top: -38px;
 }

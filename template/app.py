@@ -24,7 +24,7 @@ import os
 import sys
 gi.require_version('Gdk', '3.0')  # nopep8
 gi.require_version('Gtk', '3.0')  # nopep8
-gi.require_version('WebKit2', '4.0')  # nopep8
+gi.require_version('WebKit2', '4.1')  # nopep8
 from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import GLib
